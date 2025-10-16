@@ -19,7 +19,7 @@ function App() {
           </Routes>
           
           <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>© 2025 Forward Volatility Calculator. For educational purposes only.</p>
+            <p>© 2025 @ozcta. For educational purposes only. Questions? Contact me on X.</p>
           </footer>
         </div>
       </div>
