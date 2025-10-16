@@ -25,18 +25,18 @@ export default function Navigation() {
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
-                Calculator
+                Scanner Results
               </Link>
               
               <Link
-                to="/scanner"
+                to="/calculator"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/scanner') 
+                  isActive('/calculator') 
                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
-                Scanner Results
+                Calculator
               </Link>
             </div>
           </div>

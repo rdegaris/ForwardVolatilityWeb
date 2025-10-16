@@ -12,8 +12,8 @@ function App() {
           <Navigation />
           
           <Routes>
-            <Route path="/" element={<Calculator />} />
-            <Route path="/scanner" element={<ScannerResults />} />
+            <Route path="/" element={<ScannerResults />} />
+            <Route path="/calculator" element={<Calculator />} />
           </Routes>
           
           <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
