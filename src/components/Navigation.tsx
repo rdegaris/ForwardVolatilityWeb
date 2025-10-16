@@ -25,7 +25,18 @@ export default function Navigation() {
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
-                Scanner Results
+                MAG7 Scanner
+              </Link>
+              
+              <Link
+                to="/nasdaq100"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/nasdaq100') 
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                NASDAQ 100
               </Link>
               
               <Link

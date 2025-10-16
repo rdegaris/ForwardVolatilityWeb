@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Calculator from './pages/Calculator';
 import ScannerResults from './pages/ScannerResults';
+import Nasdaq100Results from './pages/Nasdaq100Results';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
           
           <Routes>
             <Route path="/" element={<ScannerResults />} />
+            <Route path="/nasdaq100" element={<Nasdaq100Results />} />
             <Route path="/calculator" element={<Calculator />} />
           </Routes>
           
