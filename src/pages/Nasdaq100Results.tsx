@@ -49,6 +49,8 @@ export default function Nasdaq100Results() {
   const [loading, setLoading] = useState(false);
   const [showLog, setShowLog] = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [searchTicker, setSearchTicker] = useState<string>('');
+  const [ffFilter, setFfFilter] = useState<number>(0);
 
   // Generate last 5 days
   useEffect(() => {
@@ -145,6 +147,13 @@ export default function Nasdaq100Results() {
     setExpandedRows(newExpanded);
   };
 
+  // Filter opportunities based on search and FF filter
+  const filteredOpportunities = scanData?.opportunities.filter((opp) => {
+    const matchesTicker = opp.ticker.toLowerCase().includes(searchTicker.toLowerCase());
+    const matchesFF = opp.best_ff >= ffFilter;
+    return matchesTicker && matchesFF;
+  }) || [];
+
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -178,6 +187,51 @@ export default function Nasdaq100Results() {
             </button>
           ))}
         </div>
+
+        {/* Filters */}
+        {scanData && scanData.opportunities.length > 0 && (
+          <div className="mb-6 space-y-4">
+            {/* Search Box */}
+            <div>
+              <label htmlFor="ticker-search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Search by Ticker
+              </label>
+              <input
+                id="ticker-search"
+                type="text"
+                placeholder="Type ticker symbol..."
+                value={searchTicker}
+                onChange={(e) => setSearchTicker(e.target.value)}
+                className="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* FF Filter Buttons */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Forward Factor
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {[0, 0.2, 0.4, 0.6, 0.8].map((threshold) => (
+                  <button
+                    key={threshold}
+                    onClick={() => setFfFilter(threshold)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      ffFilter === threshold
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {threshold === 0 ? 'All' : `â‰¥ ${(threshold * 100).toFixed(0)}%`}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredOpportunities.length} of {scanData.opportunities.length} opportunities
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Terminal Output */}
         {scanData && showLog && scanData.scan_log && (
@@ -243,7 +297,7 @@ export default function Nasdaq100Results() {
         )}
 
         {/* Results Table with Expandable Rows */}
-        {!loading && scanData && scanData.opportunities.length > 0 && (
+        {!loading && scanData && filteredOpportunities.length > 0 && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
@@ -275,7 +329,7 @@ export default function Nasdaq100Results() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {scanData.opportunities.map((result, idx) => (
+                {filteredOpportunities.map((result, idx) => (
                   <>
                     <tr 
                       key={idx} 
@@ -331,7 +385,7 @@ export default function Nasdaq100Results() {
                             {/* Trade Setup */}
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                               <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                                í³Š {result.trade_details.spread_type} CALENDAR SPREAD
+                                ï¿½ï¿½ï¿½ {result.trade_details.spread_type} CALENDAR SPREAD
                               </h4>
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
@@ -358,11 +412,11 @@ export default function Nasdaq100Results() {
                             {/* P&L Scenarios */}
                             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                               <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                                í³ˆ Potential Outcomes
+                                ï¿½ï¿½ï¿½ Potential Outcomes
                               </h4>
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-green-600 dark:text-green-400">í¾¯ Best Case:</span>
+                                  <span className="text-green-600 dark:text-green-400">ï¿½ï¿½ï¿½ Best Case:</span>
                                   <span className="font-medium text-green-600 dark:text-green-400">
                                     +${result.trade_details.best_case.toFixed(0)} ({result.trade_details.best_case_pct.toFixed(0)}%)
                                   </span>
@@ -374,7 +428,7 @@ export default function Nasdaq100Results() {
                                   </span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-orange-600 dark:text-orange-400">í»‘ Adverse:</span>
+                                  <span className="text-orange-600 dark:text-orange-400">ï¿½ï¿½ï¿½ Adverse:</span>
                                   <span className="font-medium text-orange-600 dark:text-orange-400">
                                     ${result.trade_details.adverse_case.toFixed(0)} ({result.trade_details.adverse_case_pct.toFixed(0)}%)
                                   </span>
@@ -392,7 +446,7 @@ export default function Nasdaq100Results() {
                           {/* Trade Instructions */}
                           <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                             <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
-                              í²¡ Trade Setup
+                              ï¿½ï¿½ï¿½ Trade Setup
                             </h4>
                             <div className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
                               <div>â€¢ Sell: {formatExpiry(result.expiry1)} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
@@ -411,6 +465,31 @@ export default function Nasdaq100Results() {
         )}
 
         {/* Empty State */}
+        {!loading && scanData && scanData.opportunities.length > 0 && filteredOpportunities.length === 0 && (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              No opportunities match your filters
+            </p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Try adjusting your search or filter criteria
+            </p>
+          </div>
+        )}
+
+        {/* No Data State */}
         {!loading && (!scanData || scanData.opportunities.length === 0) && (
           <div className="text-center py-12">
             <svg

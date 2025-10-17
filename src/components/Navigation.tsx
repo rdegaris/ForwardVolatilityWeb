@@ -51,6 +51,19 @@ export default function Navigation() {
               </Link>
             </div>
           </div>
+          
+          <div className="hidden md:block text-sm text-gray-600 dark:text-gray-400">
+            Follow and DM me at{' '}
+            <a 
+              href="https://x.com/OzCTA" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+              @OzCTA
+            </a>
+            {' '}on X with comments / suggestions
+          </div>
         </div>
       </div>
     </nav>

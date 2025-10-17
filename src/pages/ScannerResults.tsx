@@ -54,6 +54,8 @@ export default function ScannerResults() {
   const [loading, setLoading] = useState(false);
   const [showLog, setShowLog] = useState(true);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [searchTicker, setSearchTicker] = useState<string>('');
+  const [ffFilter, setFfFilter] = useState<number>(0);
 
   useEffect(() => {
     const generateDates = () => {
@@ -148,6 +150,13 @@ export default function ScannerResults() {
     return (value * 100).toFixed(1) + '%';
   };
 
+  // Filter opportunities based on search and FF filter
+  const filteredOpportunities = scanData?.opportunities.filter((opp) => {
+    const matchesTicker = opp.ticker.toLowerCase().includes(searchTicker.toLowerCase());
+    const matchesFF = opp.best_ff >= ffFilter;
+    return matchesTicker && matchesFF;
+  }) || [];
+
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -180,6 +189,51 @@ export default function ScannerResults() {
             </button>
           ))}
         </div>
+
+        {/* Filters */}
+        {scanData && scanData.opportunities.length > 0 && (
+          <div className="mb-6 space-y-4">
+            {/* Search Box */}
+            <div>
+              <label htmlFor="ticker-search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Search by Ticker
+              </label>
+              <input
+                id="ticker-search"
+                type="text"
+                placeholder="Type ticker symbol..."
+                value={searchTicker}
+                onChange={(e) => setSearchTicker(e.target.value)}
+                className="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* FF Filter Buttons */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Forward Factor
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {[0, 0.2, 0.4, 0.6, 0.8].map((threshold) => (
+                  <button
+                    key={threshold}
+                    onClick={() => setFfFilter(threshold)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      ffFilter === threshold
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {threshold === 0 ? 'All' : `≥ ${(threshold * 100).toFixed(0)}%`}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredOpportunities.length} of {scanData.opportunities.length} opportunities
+              </div>
+            </div>
+          </div>
+        )}
 
         {scanData && showLog && scanData.scan_log && (
           <div className="mb-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
@@ -239,9 +293,9 @@ export default function ScannerResults() {
           </div>
         )}
 
-        {!loading && scanData && scanData.opportunities.length > 0 && (
+        {!loading && scanData && filteredOpportunities.length > 0 && (
           <div className="space-y-4">
-            {scanData.opportunities.map((result, idx) => (
+            {filteredOpportunities.map((result, idx) => (
               <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                 <div 
                   className="bg-gray-50 dark:bg-gray-700 p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
@@ -387,6 +441,32 @@ export default function ScannerResults() {
           </div>
         )}
 
+        {/* Empty Filter State */}
+        {!loading && scanData && scanData.opportunities.length > 0 && filteredOpportunities.length === 0 && (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              No opportunities match your filters
+            </p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Try adjusting your search or filter criteria
+            </p>
+          </div>
+        )}
+
+        {/* No Data State */}
         {!loading && (!scanData || scanData.opportunities.length === 0) && (
           <div className="text-center py-12">
             <svg
