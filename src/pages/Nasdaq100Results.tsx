@@ -11,6 +11,7 @@ interface ScanResult {
   ff_put: number | null;
   ff_avg: number | null;
   best_ff: number;
+  next_earnings?: string | null;
   trade_details?: {
     spread_type: string;
     strike: number;
@@ -135,6 +136,12 @@ export default function Nasdaq100Results() {
   const formatFF = (value: number | null) => {
     if (value === null) return 'N/A';
     return (value * 100).toFixed(1) + '%';
+  };
+
+  const formatEarningsDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
 
@@ -297,7 +304,7 @@ export default function Nasdaq100Results() {
                   onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4 flex-wrap">
                       <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         #{idx + 1}
                       </div>
@@ -313,6 +320,11 @@ export default function Nasdaq100Results() {
                       <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                         FF: {formatFF(result.best_ff)}
                       </div>
+                      {result.next_earnings && (
+                        <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">
+                          ✓ Next Earnings: {formatEarningsDate(result.next_earnings)}
+                        </div>
+                      )}
                     </div>
                     <svg
                       className={`w-5 h-5 text-gray-500 transition-transform ${expandedRow === idx ? 'transform rotate-180' : ''}`}
