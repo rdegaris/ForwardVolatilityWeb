@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../assets/IMG_5896.jpg';
 
 export default function Navigation() {
   const location = useLocation();
@@ -53,24 +52,17 @@ export default function Navigation() {
             </div>
           </div>
           
-          <div className="hidden md:flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
-            <img 
-              src={logo} 
-              alt="OzCTA" 
-              className="w-10 h-10 rounded-full object-cover border-2 border-blue-500 dark:border-blue-400"
-            />
-            <div>
-              Follow and DM me at{' '}
-              <a 
-                href="https://x.com/OzCTA" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-              >
-                @OzCTA
-              </a>
-              {' '}on X with comments / suggestions
-            </div>
+          <div className="hidden md:block text-sm text-gray-600 dark:text-gray-400">
+            Follow and DM me at{' '}
+            <a 
+              href="https://x.com/OzCTA" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+              @OzCTA
+            </a>
+            {' '}on X with comments / suggestions
           </div>
         </div>
       </div>
