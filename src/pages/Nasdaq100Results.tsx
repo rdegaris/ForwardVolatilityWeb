@@ -47,8 +47,8 @@ export default function Nasdaq100Results() {
   const [dates, setDates] = useState<string[]>([]);
   const [scanData, setScanData] = useState<ScanData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showLog, setShowLog] = useState(false);
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [showLog, setShowLog] = useState(true);
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [searchTicker, setSearchTicker] = useState<string>('');
   const [ffFilter, setFfFilter] = useState<number>(0);
 
@@ -137,15 +137,7 @@ export default function Nasdaq100Results() {
     return (value * 100).toFixed(1) + '%';
   };
 
-  const toggleRow = (idx: number) => {
-    const newExpanded = new Set(expandedRows);
-    if (newExpanded.has(idx)) {
-      newExpanded.delete(idx);
-    } else {
-      newExpanded.add(idx);
-    }
-    setExpandedRows(newExpanded);
-  };
+
 
   // Filter opportunities based on search and FF filter
   const filteredOpportunities = scanData?.opportunities.filter((opp) => {
@@ -296,171 +288,151 @@ export default function Nasdaq100Results() {
           </div>
         )}
 
-        {/* Results Table with Expandable Rows */}
         {!loading && scanData && filteredOpportunities.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Ticker
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Expiry
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    DTE
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Call FF
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Put FF
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Best FF
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredOpportunities.map((result, idx) => (
-                  <>
-                    <tr 
-                      key={idx} 
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                      onClick={() => toggleRow(idx)}
+          <div className="space-y-4">
+            {filteredOpportunities.map((result, idx) => (
+              <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <div 
+                  className="bg-gray-50 dark:bg-gray-700 p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        #{idx + 1}
+                      </div>
+                      <div className="text-lg font-bold text-gray-900 dark:text-white">
+                        {result.ticker}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        ${result.price.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {formatExpiry(result.expiry1)} → {formatExpiry(result.expiry2)}
+                      </div>
+                      <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        FF: {formatFF(result.best_ff)}
+                      </div>
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-gray-500 transition-transform ${expandedRow === idx ? 'transform rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                          {expandedRows.has(idx) ? '▼' : '▶'}
-                        </button>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900 dark:text-white">
-                          {result.ticker}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          ${result.price.toFixed(2)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {formatExpiry(result.expiry1)} → {formatExpiry(result.expiry2)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {result.dte1}d → {result.dte2}d
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {formatFF(result.ff_call)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {formatFF(result.ff_put)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                          {formatFF(result.best_ff)}
-                        </div>
-                      </td>
-                    </tr>
-                    {/* Expanded Row Details */}
-                    {expandedRows.has(idx) && result.trade_details && (
-                      <tr key={`${idx}-details`} className="bg-gray-50 dark:bg-gray-900">
-                        <td colSpan={8} className="px-4 py-6">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Trade Setup */}
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                                ��� {result.trade_details.spread_type} CALENDAR SPREAD
-                              </h4>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600 dark:text-gray-400">Front IV:</span>
-                                  <span className="font-medium text-gray-900 dark:text-white">
-                                    {result.trade_details.front_iv.toFixed(2)}%
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600 dark:text-gray-400">Back IV:</span>
-                                  <span className="font-medium text-gray-900 dark:text-white">
-                                    {result.trade_details.back_iv.toFixed(2)}%
-                                  </span>
-                                </div>
-                                <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
-                                  <span className="text-gray-600 dark:text-gray-400">Net Debit:</span>
-                                  <span className="font-bold text-gray-900 dark:text-white">
-                                    ${result.trade_details.net_debit_total.toFixed(0)}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
 
-                            {/* P&L Scenarios */}
-                            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                                ��� Potential Outcomes
-                              </h4>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-green-600 dark:text-green-400">��� Best Case:</span>
-                                  <span className="font-medium text-green-600 dark:text-green-400">
-                                    +${result.trade_details.best_case.toFixed(0)} ({result.trade_details.best_case_pct.toFixed(0)}%)
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-blue-600 dark:text-blue-400">✅ Typical:</span>
-                                  <span className="font-medium text-blue-600 dark:text-blue-400">
-                                    +${result.trade_details.typical_case.toFixed(0)} ({result.trade_details.typical_case_pct.toFixed(0)}%)
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-orange-600 dark:text-orange-400">��� Adverse:</span>
-                                  <span className="font-medium text-orange-600 dark:text-orange-400">
-                                    ${result.trade_details.adverse_case.toFixed(0)} ({result.trade_details.adverse_case_pct.toFixed(0)}%)
-                                  </span>
-                                </div>
-                                <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
-                                  <span className="text-red-600 dark:text-red-400">⚠️ Max Loss:</span>
-                                  <span className="font-bold text-red-600 dark:text-red-400">
-                                    ${result.trade_details.max_loss.toFixed(0)} ({result.trade_details.max_loss_pct.toFixed(0)}%)
-                                  </span>
-                                </div>
-                              </div>
+                {expandedRow === idx && result.trade_details && (
+                  <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                          ��� RECOMMENDED: {result.trade_details.spread_type} CALENDAR SPREAD
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Forward Factor:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {(result.best_ff * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Front IV:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {result.trade_details.front_iv.toFixed(2)}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Back IV:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {result.trade_details.back_iv.toFixed(2)}%
+                            </span>
+                          </div>
+                        </div>
+
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-3">
+                          ��� ESTIMATED PRICING (per contract)
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Front {result.trade_details.spread_type}:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              ${(result.trade_details.net_debit / 2).toFixed(2)} (${(result.trade_details.net_debit_total / 2).toFixed(0)})
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Back {result.trade_details.spread_type}:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              ${(result.trade_details.net_debit / 2).toFixed(2)} (${(result.trade_details.net_debit_total / 2).toFixed(0)})
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2">
+                            <span className="text-gray-900 dark:text-white font-semibold">Net Debit:</span>
+                            <span className="font-bold text-gray-900 dark:text-white">
+                              ${result.trade_details.net_debit.toFixed(2)} (${result.trade_details.net_debit_total.toFixed(0)})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                          ��� POTENTIAL OUTCOMES (1 contract)
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">��� Best Case:</span>
+                              <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                                +${result.trade_details.best_case.toFixed(0)} ({result.trade_details.best_case_pct.toFixed(0)}%)
+                              </span>
                             </div>
                           </div>
-
-                          {/* Trade Instructions */}
-                          <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                            <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
-                              ��� Trade Setup
-                            </h4>
-                            <div className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
-                              <div>• Sell: {formatExpiry(result.expiry1)} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
-                              <div>• Buy: {formatExpiry(result.expiry2)} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
-                              <div>• Hold until: {formatExpiry(result.expiry1)} (exit 15 min before close)</div>
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">✅ Typical:</span>
+                              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                +${result.trade_details.typical_case.toFixed(0)} ({result.trade_details.typical_case_pct.toFixed(0)}%)
+                              </span>
                             </div>
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                  </>
-                ))}
-              </tbody>
-            </table>
+                          <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">��� Adverse:</span>
+                              <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                                ${result.trade_details.adverse_case.toFixed(0)} ({result.trade_details.adverse_case_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                          <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">⚠️ Max Loss:</span>
+                              <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                                ${result.trade_details.max_loss.toFixed(0)} ({result.trade_details.max_loss_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                            ��� Trade Setup
+                          </h4>
+                          <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                            <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
+                            <div>• <strong>Buy:</strong> {result.expiry2} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
+                            <div>• <strong>Hold until:</strong> {result.expiry1}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
