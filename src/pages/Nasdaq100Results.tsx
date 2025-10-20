@@ -17,6 +17,9 @@ interface ScanResult {
     strike: number;
     front_iv: number;
     back_iv: number;
+    ff_display: number;
+    front_price: number;
+    back_price: number;
     net_debit: number;
     net_debit_total: number;
     best_case: number;
@@ -372,13 +375,13 @@ export default function Nasdaq100Results() {
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Front {result.trade_details.spread_type}:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              ${(result.trade_details.net_debit / 2).toFixed(2)} (${(result.trade_details.net_debit_total / 2).toFixed(0)})
+                              ${result.trade_details.front_price.toFixed(2)} (${(result.trade_details.front_price * 100).toFixed(0)})
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Back {result.trade_details.spread_type}:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              ${(result.trade_details.net_debit / 2).toFixed(2)} (${(result.trade_details.net_debit_total / 2).toFixed(0)})
+                              ${result.trade_details.back_price.toFixed(2)} (${(result.trade_details.back_price * 100).toFixed(0)})
                             </span>
                           </div>
                           <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2">

@@ -32,7 +32,7 @@ interface ScanResult {
   ff_avg: number | null;
   best_ff: number;
   next_earnings?: string | null;
-  trade: TradeDetails;
+  trade_details: TradeDetails;
 }
 
 interface ScanData {
@@ -342,30 +342,30 @@ export default function ScannerResults() {
                   </div>
                 </div>
 
-                {expandedRow === idx && result.trade && (
+                {expandedRow === idx && result.trade_details && (
                   <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                          ��� RECOMMENDED: {result.trade.spread_type} CALENDAR SPREAD
+                          ��� RECOMMENDED: {result.trade_details.spread_type} CALENDAR SPREAD
                         </h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Forward Factor:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {(result.trade.ff_display * 100).toFixed(1)}%
+                              {(result.trade_details.ff_display * 100).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Front IV:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {result.trade.front_iv.toFixed(2)}%
+                              {result.trade_details.front_iv.toFixed(2)}%
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Back IV:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {result.trade.back_iv.toFixed(2)}%
+                              {result.trade_details.back_iv.toFixed(2)}%
                             </span>
                           </div>
                         </div>
@@ -375,21 +375,21 @@ export default function ScannerResults() {
                         </h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Front {result.trade.spread_type}:</span>
+                            <span className="text-gray-600 dark:text-gray-400">Front {result.trade_details.spread_type}:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              ${result.trade.front_price.toFixed(2)} (${(result.trade.front_price * 100).toFixed(0)})
+                              ${result.trade_details.front_price.toFixed(2)} (${(result.trade_details.front_price * 100).toFixed(0)})
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Back {result.trade.spread_type}:</span>
+                            <span className="text-gray-600 dark:text-gray-400">Back {result.trade_details.spread_type}:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              ${result.trade.back_price.toFixed(2)} (${(result.trade.back_price * 100).toFixed(0)})
+                              ${result.trade_details.back_price.toFixed(2)} (${(result.trade_details.back_price * 100).toFixed(0)})
                             </span>
                           </div>
                           <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2">
                             <span className="text-gray-900 dark:text-white font-semibold">Net Debit:</span>
                             <span className="font-bold text-gray-900 dark:text-white">
-                              ${result.trade.net_debit.toFixed(2)} (${result.trade.net_debit_total.toFixed(0)})
+                              ${result.trade_details.net_debit.toFixed(2)} (${result.trade_details.net_debit_total.toFixed(0)})
                             </span>
                           </div>
                         </div>
@@ -404,7 +404,7 @@ export default function ScannerResults() {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-700 dark:text-gray-300">��� Best Case:</span>
                               <span className="text-lg font-bold text-green-600 dark:text-green-400">
-                                +${result.trade.best_case.toFixed(0)} ({result.trade.best_case_pct.toFixed(0)}%)
+                                +${result.trade_details.best_case.toFixed(0)} ({result.trade_details.best_case_pct.toFixed(0)}%)
                               </span>
                             </div>
                           </div>
@@ -412,7 +412,7 @@ export default function ScannerResults() {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-700 dark:text-gray-300">✅ Typical:</span>
                               <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                +${result.trade.typical_case.toFixed(0)} ({result.trade.typical_case_pct.toFixed(0)}%)
+                                +${result.trade_details.typical_case.toFixed(0)} ({result.trade_details.typical_case_pct.toFixed(0)}%)
                               </span>
                             </div>
                           </div>
@@ -420,7 +420,7 @@ export default function ScannerResults() {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-700 dark:text-gray-300">��� Adverse:</span>
                               <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                                ${result.trade.adverse_case.toFixed(0)} ({result.trade.adverse_case_pct.toFixed(0)}%)
+                                ${result.trade_details.adverse_case.toFixed(0)} ({result.trade_details.adverse_case_pct.toFixed(0)}%)
                               </span>
                             </div>
                           </div>
@@ -428,7 +428,7 @@ export default function ScannerResults() {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-700 dark:text-gray-300">⚠️ Max Loss:</span>
                               <span className="text-lg font-bold text-red-600 dark:text-red-400">
-                                ${result.trade.max_loss.toFixed(0)} ({result.trade.max_loss_pct.toFixed(0)}%)
+                                ${result.trade_details.max_loss.toFixed(0)} ({result.trade_details.max_loss_pct.toFixed(0)}%)
                               </span>
                             </div>
                           </div>
@@ -439,8 +439,8 @@ export default function ScannerResults() {
                             ��� Trade Setup
                           </h4>
                           <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
-                            <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade.strike.toFixed(0)} {result.trade.spread_type}</div>
-                            <div>• <strong>Buy:</strong> {result.expiry2} ${result.trade.strike.toFixed(0)} {result.trade.spread_type}</div>
+                            <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
+                            <div>• <strong>Buy:</strong> {result.expiry2} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
                             <div>• <strong>Hold until:</strong> {result.expiry1}</div>
                           </div>
                         </div>
@@ -448,6 +448,7 @@ export default function ScannerResults() {
                     </div>
                   </div>
                 )}
+```
               </div>
             ))}
           </div>
