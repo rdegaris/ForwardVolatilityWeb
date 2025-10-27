@@ -33,6 +33,14 @@ interface ScanResult {
   best_ff: number;
   next_earnings?: string | null;
   trade_details: TradeDetails;
+  ma_200?: number | null;
+  above_ma_200?: boolean | null;
+  fwd_vol_call?: number | null;
+  fwd_vol_put?: number | null;
+  fwd_vol_avg?: number | null;
+  fwd_var_call?: number | null;
+  fwd_var_put?: number | null;
+  fwd_var_avg?: number | null;
 }
 
 interface ScanData {
@@ -319,6 +327,15 @@ export default function ScannerResults() {
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         ${result.price.toFixed(2)}
                       </div>
+                      {result.ma_200 && result.above_ma_200 !== null && (
+                        <div className={`text-xs px-2 py-1 rounded ${
+                          result.above_ma_200 
+                            ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20' 
+                            : 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20'
+                        }`}>
+                          {result.above_ma_200 ? '↑' : '↓'} 200MA: ${result.ma_200.toFixed(2)}
+                        </div>
+                      )}
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         {formatExpiry(result.expiry1)} → {formatExpiry(result.expiry2)}
                       </div>
@@ -436,7 +453,7 @@ export default function ScannerResults() {
 
                         <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
                           <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                            ��� Trade Setup
+                            📋 Trade Setup
                           </h4>
                           <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                             <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
@@ -446,9 +463,50 @@ export default function ScannerResults() {
                         </div>
                       </div>
                     </div>
+
+                    {(result.fwd_vol_avg || result.fwd_var_avg) && (
+                      <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                        <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-2">
+                          📊 Forward Volatility Metrics
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          {result.fwd_vol_avg && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Avg):</span>
+                              <span className="font-medium text-purple-700 dark:text-purple-300">
+                                {result.fwd_vol_avg.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_call && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Call):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_call.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_put && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Put):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_put.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_var_avg && (
+                            <div className="flex justify-between border-t border-purple-200 dark:border-purple-700 pt-2 mt-2">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Var (Avg):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_var_avg.toFixed(4)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-```
               </div>
             ))}
           </div>
