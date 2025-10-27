@@ -561,18 +561,18 @@ export default function ScannerResults() {
             </p>
           </div>
         )}
-      </div>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
-          About MAG7 Scanner
-        </h3>
-        <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
-          Scans the Magnificent 7 stocks (AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA) for forward volatility opportunities with detailed trade recommendations and P&L estimates.
-        </p>
-        <p className="text-sm text-blue-800 dark:text-blue-300">
-          <strong>To generate new results:</strong> Run <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">python run_mag7_scan.py</code> from the terminal
-        </p>
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
+            About MAG7 Scanner
+          </h3>
+          <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
+            Scans the Magnificent 7 stocks (AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA) for forward volatility opportunities with detailed trade recommendations and P&L estimates.
+          </p>
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            <strong>To generate new results:</strong> Run <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">python run_mag7_scan.py</code> from the terminal
+          </p>
+        </div>
       </div>
     </div>
   );

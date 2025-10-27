@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react';
 
+interface TradeDetails {
+  spread_type: string;
+  strike: number;
+  front_iv: number;
+  back_iv: number;
+  ff_display: number;
+  front_price: number;
+  back_price: number;
+  net_debit: number;
+  net_debit_total: number;
+  best_case: number;
+  typical_case: number;
+  adverse_case: number;
+  max_loss: number;
+  best_case_pct: number;
+  typical_case_pct: number;
+  adverse_case_pct: number;
+  max_loss_pct: number;
+}
+
 interface ScanResult {
   ticker: string;
   price: number;
@@ -12,25 +32,15 @@ interface ScanResult {
   ff_avg: number | null;
   best_ff: number;
   next_earnings?: string | null;
-  trade_details?: {
-    spread_type: string;
-    strike: number;
-    front_iv: number;
-    back_iv: number;
-    ff_display: number;
-    front_price: number;
-    back_price: number;
-    net_debit: number;
-    net_debit_total: number;
-    best_case: number;
-    typical_case: number;
-    adverse_case: number;
-    max_loss: number;
-    best_case_pct: number;
-    typical_case_pct: number;
-    adverse_case_pct: number;
-    max_loss_pct: number;
-  };
+  trade_details: TradeDetails;
+  ma_200?: number | null;
+  above_ma_200?: boolean | null;
+  fwd_vol_call?: number | null;
+  fwd_vol_put?: number | null;
+  fwd_vol_avg?: number | null;
+  fwd_var_call?: number | null;
+  fwd_var_put?: number | null;
+  fwd_var_avg?: number | null;
 }
 
 interface ScanData {
@@ -46,7 +56,7 @@ interface ScanData {
   };
 }
 
-export default function Nasdaq100Results() {
+export default function ScannerResults() {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [dates, setDates] = useState<string[]>([]);
   const [scanData, setScanData] = useState<ScanData | null>(null);
@@ -56,47 +66,56 @@ export default function Nasdaq100Results() {
   const [searchTicker, setSearchTicker] = useState<string>('');
   const [ffFilter, setFfFilter] = useState<number>(0);
 
-  // Generate last 5 days
   useEffect(() => {
     const generateDates = () => {
       const today = new Date();
       const dateList: string[] = [];
+      
       for (let i = 0; i < 5; i++) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
         dateList.push(dateStr);
       }
+      
       setDates(dateList);
-      setSelectedDate(dateList[0]); // Set today as default
+      setSelectedDate(dateList[0]);
     };
+
     generateDates();
   }, []);
 
-  // Load scan results for selected date
   useEffect(() => {
     if (!selectedDate) return;
 
     const loadResults = async () => {
       setLoading(true);
       try {
-        // Try to load today's results from the JSON file
         if (isToday(selectedDate)) {
           const response = await fetch('/nasdaq100_results_latest.json');
           if (response.ok) {
             const data = await response.json();
-            data.opportunities.sort((a: ScanResult, b: ScanResult) => a.ticker.localeCompare(b.ticker));
+            // Sort opportunities by ticker alphabetically
+            if (data.opportunities) {
+              data.opportunities.sort((a: ScanResult, b: ScanResult) => 
+                a.ticker.localeCompare(b.ticker)
+              );
+            }
             setScanData(data);
           } else {
             setScanData(null);
           }
         } else {
-          // For historical dates, try to load dated files
           const formattedDate = selectedDate.replace(/-/g, '');
           const response = await fetch(`/nasdaq100_results_${formattedDate}.json`);
           if (response.ok) {
             const data = await response.json();
-            data.opportunities.sort((a: ScanResult, b: ScanResult) => a.ticker.localeCompare(b.ticker));
+            // Sort opportunities by ticker alphabetically
+            if (data.opportunities) {
+              data.opportunities.sort((a: ScanResult, b: ScanResult) => 
+                a.ticker.localeCompare(b.ticker)
+              );
+            }
             setScanData(data);
           } else {
             setScanData(null);
@@ -123,7 +142,6 @@ export default function Nasdaq100Results() {
   };
 
   const formatExpiry = (expiry: string) => {
-    // Format YYYYMMDD to MMM DD
     const year = expiry.substring(0, 4);
     const month = expiry.substring(4, 6);
     const day = expiry.substring(6, 8);
@@ -147,8 +165,6 @@ export default function Nasdaq100Results() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-
-
   // Filter opportunities based on search and FF filter
   const filteredOpportunities = scanData?.opportunities.filter((opp) => {
     const matchesTicker = opp.ticker.toLowerCase().includes(searchTicker.toLowerCase());
@@ -161,7 +177,7 @@ export default function Nasdaq100Results() {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            NASDAQ 100 Scanner Results
+            Nasdaq 100 Scanner Results
           </h2>
           {scanData && (
             <button
@@ -172,8 +188,7 @@ export default function Nasdaq100Results() {
             </button>
           )}
         </div>
-
-        {/* Date Navigation */}
+        
         <div className="flex flex-wrap gap-2 mb-6">
           {dates.map((date) => (
             <button
@@ -235,22 +250,19 @@ export default function Nasdaq100Results() {
           </div>
         )}
 
-        {/* Terminal Output */}
         {scanData && showLog && scanData.scan_log && (
-          <div className="mb-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto max-h-96 overflow-y-auto">
+          <div className="mb-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
             <div className="flex items-center justify-between mb-2">
               <div className="text-gray-400 text-xs">Terminal Output</div>
-              <div className="text-gray-400 text-xs">
-                {new Date(scanData.timestamp).toLocaleString()}
-              </div>
+              <div className="text-gray-400 text-xs">{new Date(scanData.timestamp).toLocaleString()}</div>
             </div>
             {scanData.scan_log.map((line, idx) => (
               <div key={idx} className="py-0.5">
-                {line.includes('✅') || line.includes('Found') ? (
+                {line.includes('Found') ? (
                   <span className="text-green-400">{line}</span>
-                ) : line.includes('⚪') || line.includes('No opportunities') ? (
+                ) : line.includes('No opportunities') ? (
                   <span className="text-gray-500">{line}</span>
-                ) : line.includes('❌') || line.includes('Error') ? (
+                ) : line.includes('Error') ? (
                   <span className="text-red-400">{line}</span>
                 ) : (
                   <span className="text-blue-300">{line}</span>
@@ -260,7 +272,6 @@ export default function Nasdaq100Results() {
           </div>
         )}
 
-        {/* Summary Stats */}
         {scanData && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <div>
@@ -290,7 +301,6 @@ export default function Nasdaq100Results() {
           </div>
         )}
 
-        {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -317,6 +327,15 @@ export default function Nasdaq100Results() {
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         ${result.price.toFixed(2)}
                       </div>
+                      {result.ma_200 && result.above_ma_200 !== null && (
+                        <div className={`text-xs px-2 py-1 rounded ${
+                          result.above_ma_200 
+                            ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20' 
+                            : 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20'
+                        }`}>
+                          {result.above_ma_200 ? '↑' : '↓'} 200MA: ${result.ma_200.toFixed(2)}
+                        </div>
+                      )}
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         {formatExpiry(result.expiry1)} → {formatExpiry(result.expiry2)}
                       </div>
@@ -351,7 +370,7 @@ export default function Nasdaq100Results() {
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Forward Factor:</span>
                             <span className="font-medium text-gray-900 dark:text-white">
-                              {(result.best_ff * 100).toFixed(1)}%
+                              {(result.trade_details.ff_display * 100).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex justify-between">
@@ -434,7 +453,7 @@ export default function Nasdaq100Results() {
 
                         <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
                           <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                            ��� Trade Setup
+                            📋 Trade Setup
                           </h4>
                           <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                             <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
@@ -444,6 +463,48 @@ export default function Nasdaq100Results() {
                         </div>
                       </div>
                     </div>
+
+                    {(result.fwd_vol_avg || result.fwd_var_avg) && (
+                      <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                        <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-2">
+                          📊 Forward Volatility Metrics
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          {result.fwd_vol_avg && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Avg):</span>
+                              <span className="font-medium text-purple-700 dark:text-purple-300">
+                                {result.fwd_vol_avg.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_call && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Call):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_call.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_put && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Put):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_put.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_var_avg && (
+                            <div className="flex justify-between border-t border-purple-200 dark:border-purple-700 pt-2 mt-2">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Var (Avg):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_var_avg.toFixed(4)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -451,7 +512,7 @@ export default function Nasdaq100Results() {
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Empty Filter State */}
         {!loading && scanData && scanData.opportunities.length > 0 && filteredOpportunities.length === 0 && (
           <div className="text-center py-12">
             <svg
@@ -500,23 +561,18 @@ export default function Nasdaq100Results() {
             </p>
           </div>
         )}
-      </div>
 
-      {/* Info Card */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
-          About NASDAQ 100 Scanner
-        </h3>
-        <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
-          Scans all 100+ NASDAQ 100 stocks for forward volatility opportunities with earnings filtering enabled.
-        </p>
-        <p className="text-sm text-blue-800 dark:text-blue-300">
-          <strong>To generate new results:</strong> Run{' '}
-          <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">
-            python run_nasdaq100_scan.py
-          </code>{' '}
-          from the terminal
-        </p>
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
+            About MAG7 Scanner
+          </h3>
+          <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
+            Scans the Magnificent 7 stocks (AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA) for forward volatility opportunities with detailed trade recommendations and P&L estimates.
+          </p>
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            <strong>To generate new results:</strong> Run <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">python run_mag7_scan.py</code> from the terminal
+          </p>
+        </div>
       </div>
     </div>
   );
