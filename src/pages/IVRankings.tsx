@@ -33,63 +33,19 @@ export default function IVRankings() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Load data from existing scan results
+    // Load IV rankings from dedicated ranking files
     Promise.all([
-      fetch('/scan_results_latest.json').then(res => res.json()),
-      fetch('/nasdaq100_results_latest.json').then(res => res.json()),
-      fetch('/midcap400_results_latest.json').then(res => res.json())
+      fetch('/mag7_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
+      fetch('/nasdaq100_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
+      fetch('/midcap400_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] })
     ])
       .then(([mag7Data, nasdaq100Data, midcapData]) => {
-        // Combine all opportunities and extract IV data
-        const allRankings: IVRanking[] = [];
-        
-        // Process MAG7
-        mag7Data.opportunities?.forEach((opp: any) => {
-          if (opp.avg_iv1) {
-            allRankings.push({
-              ticker: opp.ticker,
-              price: opp.price,
-              iv: opp.avg_iv1,
-              expiry: opp.expiry1,
-              dte: opp.dte1,
-              ma_200: opp.ma_200,
-              above_ma_200: opp.above_ma_200,
-              universe: 'MAG7'
-            });
-          }
-        });
-        
-        // Process NASDAQ 100
-        nasdaq100Data.opportunities?.forEach((opp: any) => {
-          if (opp.avg_iv1) {
-            allRankings.push({
-              ticker: opp.ticker,
-              price: opp.price,
-              iv: opp.avg_iv1,
-              expiry: opp.expiry1,
-              dte: opp.dte1,
-              ma_200: opp.ma_200,
-              above_ma_200: opp.above_ma_200,
-              universe: 'NASDAQ100'
-            });
-          }
-        });
-        
-        // Process MidCap 400
-        midcapData.opportunities?.forEach((opp: any) => {
-          if (opp.avg_iv1) {
-            allRankings.push({
-              ticker: opp.ticker,
-              price: opp.price,
-              iv: opp.avg_iv1,
-              expiry: opp.expiry1,
-              dte: opp.dte1,
-              ma_200: opp.ma_200,
-              above_ma_200: opp.above_ma_200,
-              universe: 'MIDCAP400'
-            });
-          }
-        });
+        // Combine all rankings
+        const allRankings: IVRanking[] = [
+          ...(mag7Data.rankings || []),
+          ...(nasdaq100Data.rankings || []),
+          ...(midcapData.rankings || [])
+        ];
         
         // Sort by IV descending
         allRankings.sort((a, b) => b.iv - a.iv);
@@ -97,7 +53,7 @@ export default function IVRankings() {
         const result: IVResults = {
           timestamp: new Date().toISOString(),
           date: new Date().toISOString().split('T')[0],
-          universe: 'ALL (from scan results)',
+          universe: 'ALL',
           total_scanned: allRankings.length,
           rankings: allRankings,
           summary: {
@@ -116,9 +72,9 @@ export default function IVRankings() {
         setLoading(false);
       })
       .catch(err => {
-        setError('Failed to load scan results');
+        setError('Failed to load IV rankings');
         setLoading(false);
-        console.error('Error loading results:', err);
+        console.error('Error loading IV rankings:', err);
       });
   }, []);
 
