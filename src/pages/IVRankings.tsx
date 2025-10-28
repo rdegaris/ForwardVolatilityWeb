@@ -4,8 +4,6 @@ interface IVRanking {
   ticker: string;
   price: number;
   iv: number;
-  expiry: string;
-  dte: number;
   ma_200?: number | null;
   above_ma_200?: boolean | null;
   universe: string;
@@ -214,9 +212,8 @@ export default function IVRankings() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Universe</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Price</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">IV</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">DTE</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">200MA</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Expiry</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">vs 200MA</th>
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">200MA</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
@@ -244,7 +241,6 @@ export default function IVRankings() {
                         {ranking.iv.toFixed(1)}%
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right text-gray-400">{ranking.dte}d</td>
                     <td className="px-6 py-4 text-center">
                       {ranking.above_ma_200 !== null && (
                         <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
@@ -252,12 +248,12 @@ export default function IVRankings() {
                             ? 'bg-green-500/20 text-green-300'
                             : 'bg-red-500/20 text-red-300'
                         }`}>
-                          {ranking.above_ma_200 ? '↑' : '↓'}
+                          {ranking.above_ma_200 ? 'Above' : 'Below'}
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right text-gray-400 font-mono text-sm">
-                      {ranking.expiry}
+                      {ranking.ma_200 ? `$${ranking.ma_200.toFixed(2)}` : '-'}
                     </td>
                   </tr>
                 ))}
