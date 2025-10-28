@@ -3,6 +3,8 @@ import Navigation from './components/Navigation';
 import Calculator from './pages/Calculator';
 import ScannerResults from './pages/ScannerResults';
 import Nasdaq100Results from './pages/Nasdaq100Results';
+import MidCap400Results from './pages/MidCap400Results';
+import IVRankings from './pages/IVRankings';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
@@ -16,6 +18,8 @@ function App() {
           <Routes>
             <Route path="/" element={<ScannerResults />} />
             <Route path="/nasdaq100" element={<Nasdaq100Results />} />
+            <Route path="/midcap400" element={<MidCap400Results />} />
+            <Route path="/iv-rankings" element={<IVRankings />} />
             <Route path="/calculator" element={<Calculator />} />
           </Routes>
           
