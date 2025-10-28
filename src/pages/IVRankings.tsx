@@ -33,14 +33,90 @@ export default function IVRankings() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetch('/iv_rankings_all_latest.json')
-      .then(res => res.json())
-      .then(data => {
-        setResults(data);
+    // Load data from existing scan results
+    Promise.all([
+      fetch('/scan_results_latest.json').then(res => res.json()),
+      fetch('/nasdaq100_results_latest.json').then(res => res.json()),
+      fetch('/midcap400_results_latest.json').then(res => res.json())
+    ])
+      .then(([mag7Data, nasdaq100Data, midcapData]) => {
+        // Combine all opportunities and extract IV data
+        const allRankings: IVRanking[] = [];
+        
+        // Process MAG7
+        mag7Data.opportunities?.forEach((opp: any) => {
+          if (opp.avg_iv1) {
+            allRankings.push({
+              ticker: opp.ticker,
+              price: opp.price,
+              iv: opp.avg_iv1,
+              expiry: opp.expiry1,
+              dte: opp.dte1,
+              ma_200: opp.ma_200,
+              above_ma_200: opp.above_ma_200,
+              universe: 'MAG7'
+            });
+          }
+        });
+        
+        // Process NASDAQ 100
+        nasdaq100Data.opportunities?.forEach((opp: any) => {
+          if (opp.avg_iv1) {
+            allRankings.push({
+              ticker: opp.ticker,
+              price: opp.price,
+              iv: opp.avg_iv1,
+              expiry: opp.expiry1,
+              dte: opp.dte1,
+              ma_200: opp.ma_200,
+              above_ma_200: opp.above_ma_200,
+              universe: 'NASDAQ100'
+            });
+          }
+        });
+        
+        // Process MidCap 400
+        midcapData.opportunities?.forEach((opp: any) => {
+          if (opp.avg_iv1) {
+            allRankings.push({
+              ticker: opp.ticker,
+              price: opp.price,
+              iv: opp.avg_iv1,
+              expiry: opp.expiry1,
+              dte: opp.dte1,
+              ma_200: opp.ma_200,
+              above_ma_200: opp.above_ma_200,
+              universe: 'MIDCAP400'
+            });
+          }
+        });
+        
+        // Sort by IV descending
+        allRankings.sort((a, b) => b.iv - a.iv);
+        
+        const result: IVResults = {
+          timestamp: new Date().toISOString(),
+          date: new Date().toISOString().split('T')[0],
+          universe: 'ALL (from scan results)',
+          total_scanned: allRankings.length,
+          rankings: allRankings,
+          summary: {
+            highest_iv: allRankings[0]?.iv || 0,
+            lowest_iv: allRankings[allRankings.length - 1]?.iv || 0,
+            average_iv: allRankings.length > 0 
+              ? Math.round(allRankings.reduce((sum, r) => sum + r.iv, 0) / allRankings.length * 100) / 100 
+              : 0,
+            median_iv: allRankings.length > 0 
+              ? allRankings[Math.floor(allRankings.length / 2)].iv 
+              : 0
+          }
+        };
+        
+        setResults(result);
         setLoading(false);
       })
       .catch(err => {
-        setError('Failed to load IV rankings');
+        setError('Failed to load scan results');
         setLoading(false);
         console.error('Error loading results:', err);
       });
