@@ -1,57 +1,53 @@
 import { useState, useEffect } from 'react';
 
-interface Opportunity {
+interface TradeDetails {
+  spread_type: string;
+  strike: number;
+  front_iv: number;
+  back_iv: number;
+  ff_display: number;
+  front_price: number;
+  back_price: number;
+  net_debit: number;
+  net_debit_total: number;
+  best_case: number;
+  typical_case: number;
+  adverse_case: number;
+  max_loss: number;
+  best_case_pct: number;
+  typical_case_pct: number;
+  adverse_case_pct: number;
+  max_loss_pct: number;
+}
+
+interface ScanResult {
   ticker: string;
   price: number;
-  ma_200?: number | null;
-  above_ma_200?: boolean | null;
   expiry1: string;
   expiry2: string;
   dte1: number;
   dte2: number;
-  ff_call?: number | null;
-  ff_put?: number | null;
-  ff_avg?: number | null;
+  ff_call: number | null;
+  ff_put: number | null;
+  ff_avg: number | null;
   best_ff: number;
   next_earnings?: string | null;
-  call_iv1?: number | null;
-  call_iv2?: number | null;
-  put_iv1?: number | null;
-  put_iv2?: number | null;
-  avg_iv1?: number | null;
-  avg_iv2?: number | null;
-  fwd_var_call?: number | null;
-  fwd_var_put?: number | null;
-  fwd_var_avg?: number | null;
+  trade_details: TradeDetails;
+  ma_200?: number | null;
+  above_ma_200?: boolean | null;
   fwd_vol_call?: number | null;
   fwd_vol_put?: number | null;
   fwd_vol_avg?: number | null;
-  trade_details?: {
-    spread_type: string;
-    strike: number;
-    front_iv: number;
-    back_iv: number;
-    ff_display: number;
-    front_price: number;
-    back_price: number;
-    net_debit: number;
-    net_debit_total: number;
-    best_case: number;
-    typical_case: number;
-    adverse_case: number;
-    max_loss: number;
-    best_case_pct: number;
-    typical_case_pct: number;
-    adverse_case_pct: number;
-    max_loss_pct: number;
-  };
+  fwd_var_call?: number | null;
+  fwd_var_put?: number | null;
+  fwd_var_avg?: number | null;
 }
 
-interface ScanResults {
+interface ScanData {
   timestamp: string;
   date: string;
   scan_log: string[];
-  opportunities: Opportunity[];
+  opportunities: ScanResult[];
   summary: {
     total_opportunities: number;
     tickers_scanned: number;
@@ -61,268 +57,520 @@ interface ScanResults {
 }
 
 export default function MidCap400Results() {
-  const [results, setResults] = useState<ScanResults | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedOpportunity, setSelectedOpportunity] = useState<number>(0);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [dates, setDates] = useState<string[]>([]);
+  const [scanData, setScanData] = useState<ScanData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showLog, setShowLog] = useState(true);
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [searchTicker, setSearchTicker] = useState<string>('');
+  const [ffFilter, setFfFilter] = useState<number>(0);
 
   useEffect(() => {
-    fetch('/midcap400_results_latest.json')
-      .then(res => res.json())
-      .then(data => {
-        setResults(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError('Failed to load scan results');
-        setLoading(false);
-        console.error('Error loading results:', err);
-      });
+    const generateDates = () => {
+      const today = new Date();
+      const dateList: string[] = [];
+      
+      for (let i = 0; i < 5; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        dateList.push(dateStr);
+      }
+      
+      setDates(dateList);
+      setSelectedDate(dateList[0]);
+    };
+
+    generateDates();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading S&P MidCap 400 results...</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!selectedDate) return;
 
-  if (error || !results) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
-        <div className="text-red-400 text-xl">{error || 'No results available'}</div>
-      </div>
-    );
-  }
+    const loadResults = async () => {
+      setLoading(true);
+      try {
+        if (isToday(selectedDate)) {
+          const response = await fetch('/midcap400_results_latest.json');
+          if (response.ok) {
+            const data = await response.json();
+            // Sort opportunities by ticker alphabetically
+            if (data.opportunities) {
+              data.opportunities.sort((a: ScanResult, b: ScanResult) => 
+                a.ticker.localeCompare(b.ticker)
+              );
+            }
+            setScanData(data);
+          } else {
+            setScanData(null);
+          }
+        } else {
+          const formattedDate = selectedDate.replace(/-/g, '');
+          const response = await fetch(`/midcap400_results_${formattedDate}.json`);
+          if (response.ok) {
+            const data = await response.json();
+            // Sort opportunities by ticker alphabetically
+            if (data.opportunities) {
+              data.opportunities.sort((a: ScanResult, b: ScanResult) => 
+                a.ticker.localeCompare(b.ticker)
+              );
+            }
+            setScanData(data);
+          } else {
+            setScanData(null);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading scan results:', error);
+        setScanData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const opportunity = results.opportunities[selectedOpportunity];
+    loadResults();
+  }, [selectedDate]);
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatExpiry = (expiry: string) => {
+    const year = expiry.substring(0, 4);
+    const month = expiry.substring(4, 6);
+    const day = expiry.substring(6, 8);
+    const date = new Date(`${year}-${month}-${day}`);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const isToday = (dateStr: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    return dateStr === today;
+  };
+
+  const formatFF = (value: number | null) => {
+    if (value === null) return 'N/A';
+    return (value * 100).toFixed(1) + '%';
+  };
+
+  const formatEarningsDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  // Filter opportunities based on search and FF filter
+  const filteredOpportunities = scanData?.opportunities.filter((opp) => {
+    const matchesTicker = opp.ticker.toLowerCase().includes(searchTicker.toLowerCase());
+    const matchesFF = opp.best_ff >= ffFilter;
+    return matchesTicker && matchesFF;
+  }) || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             S&P MidCap 400 Scanner Results
-          </h1>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Scan Date</div>
-              <div className="text-xl font-bold">{results.date}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Opportunities</div>
-              <div className="text-xl font-bold text-green-400">{results.summary.total_opportunities}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Tickers Scanned</div>
-              <div className="text-xl font-bold">{results.summary.tickers_scanned}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Best FF</div>
-              <div className="text-xl font-bold text-yellow-400">
-                {results.summary.best_ff > 0 ? results.summary.best_ff.toFixed(3) : 'N/A'}
-              </div>
-            </div>
-          </div>
+          </h2>
+          {scanData && (
+            <button
+              onClick={() => setShowLog(!showLog)}
+              className="text-sm px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+            >
+              {showLog ? 'Hide' : 'Show'} Terminal Output
+            </button>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-2 mb-6">
+          {dates.map((date) => (
+            <button
+              key={date}
+              onClick={() => setSelectedDate(date)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                selectedDate === date
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              {isToday(date) ? 'Today' : formatDate(date)}
+            </button>
+          ))}
         </div>
 
-        {results.opportunities.length === 0 ? (
-          <div className="bg-white/10 rounded-xl p-8 backdrop-blur-sm text-center">
-            <p className="text-xl text-gray-300">No opportunities found in current scan.</p>
-            <p className="text-sm text-gray-400 mt-2">
-              This may be due to earnings conflicts or market conditions.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Opportunities List */}
-            <div className="lg:col-span-1">
-              <h2 className="text-2xl font-bold mb-4">Opportunities</h2>
-              <div className="space-y-2">
-                {results.opportunities.map((opp, idx) => (
+        {/* Filters */}
+        {scanData && scanData.opportunities.length > 0 && (
+          <div className="mb-6 space-y-4">
+            {/* Search Box */}
+            <div>
+              <label htmlFor="ticker-search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Search by Ticker
+              </label>
+              <input
+                id="ticker-search"
+                type="text"
+                placeholder="Type ticker symbol..."
+                value={searchTicker}
+                onChange={(e) => setSearchTicker(e.target.value)}
+                className="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* FF Filter Buttons */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Forward Factor
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {[0, 0.2, 0.4, 0.6, 0.8].map((threshold) => (
                   <button
-                    key={idx}
-                    onClick={() => setSelectedOpportunity(idx)}
-                    className={`w-full text-left p-4 rounded-lg transition-all ${
-                      idx === selectedOpportunity
-                        ? 'bg-purple-600 shadow-lg scale-105'
-                        : 'bg-white/10 hover:bg-white/20'
+                    key={threshold}
+                    onClick={() => setFfFilter(threshold)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      ffFilter === threshold
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="text-xl font-bold">{opp.ticker}</div>
-                        <div className="text-sm text-gray-300">${opp.price.toFixed(2)}</div>
-                        {opp.above_ma_200 !== null && (
-                          <span className={`inline-block mt-1 px-2 py-1 text-xs rounded ${
-                            opp.above_ma_200 
-                              ? 'bg-green-500/20 text-green-300' 
-                              : 'bg-red-500/20 text-red-300'
-                          }`}>
-                            {opp.above_ma_200 ? '↑ Above' : '↓ Below'} 200MA
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-yellow-400">
-                          {opp.best_ff.toFixed(3)}
-                        </div>
-                        <div className="text-xs text-gray-400">FF</div>
-                      </div>
-                    </div>
+                    {threshold === 0 ? 'All' : `≥ ${(threshold * 100).toFixed(0)}%`}
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Selected Opportunity Details */}
-            {opportunity && (
-              <div className="lg:col-span-2">
-                <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h2 className="text-3xl font-bold">{opportunity.ticker}</h2>
-                      <p className="text-gray-300">Price: ${opportunity.price.toFixed(2)}</p>
-                      {opportunity.ma_200 && (
-                        <p className="text-sm text-gray-400">
-                          200-day MA: ${opportunity.ma_200.toFixed(2)}
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-yellow-400">
-                        {opportunity.best_ff.toFixed(3)}
-                      </div>
-                      <div className="text-sm text-gray-400">Forward Factor</div>
-                    </div>
-                  </div>
-
-                  {/* Trade Setup */}
-                  {opportunity.trade_details && (
-                    <div className="bg-purple-900/30 rounded-lg p-6 mb-6">
-                      <h3 className="text-xl font-bold mb-4 text-purple-300">
-                        {opportunity.trade_details.spread_type} Calendar Spread
-                      </h3>
-                      
-                      <div className="space-y-3 text-sm">
-                        <div className="flex justify-between py-2 border-b border-purple-500/30">
-                          <span className="text-gray-300">Sell (Front)</span>
-                          <span className="font-mono font-bold">
-                            {opportunity.expiry1} ${opportunity.trade_details.strike.toFixed(0)} {opportunity.trade_details.spread_type}
-                          </span>
-                        </div>
-                        <div className="flex justify-between py-2 border-b border-purple-500/30">
-                          <span className="text-gray-300">Buy (Back)</span>
-                          <span className="font-mono font-bold">
-                            {opportunity.expiry2} ${opportunity.trade_details.strike.toFixed(0)} {opportunity.trade_details.spread_type}
-                          </span>
-                        </div>
-                        <div className="flex justify-between py-2">
-                          <span className="text-gray-300">Net Debit</span>
-                          <span className="font-bold text-yellow-400">
-                            ${opportunity.trade_details.net_debit_total.toFixed(0)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 pt-4 border-t border-purple-500/30">
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <div className="text-gray-400">Front IV</div>
-                            <div className="font-bold">{opportunity.trade_details.front_iv.toFixed(1)}%</div>
-                          </div>
-                          <div>
-                            <div className="text-gray-400">Back IV</div>
-                            <div className="font-bold">{opportunity.trade_details.back_iv.toFixed(1)}%</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Forward Volatility Metrics */}
-                  {(opportunity.fwd_vol_call || opportunity.fwd_vol_put || opportunity.fwd_vol_avg) && (
-                    <div className="bg-purple-900/30 rounded-lg p-6 mb-6">
-                      <h3 className="text-xl font-bold mb-4 text-purple-300">Forward Volatility Metrics</h3>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        {opportunity.fwd_vol_call && (
-                          <div>
-                            <div className="text-gray-400">Call Fwd Vol</div>
-                            <div className="font-bold text-lg">{opportunity.fwd_vol_call.toFixed(1)}%</div>
-                          </div>
-                        )}
-                        {opportunity.fwd_vol_put && (
-                          <div>
-                            <div className="text-gray-400">Put Fwd Vol</div>
-                            <div className="font-bold text-lg">{opportunity.fwd_vol_put.toFixed(1)}%</div>
-                          </div>
-                        )}
-                        {opportunity.fwd_vol_avg && (
-                          <div>
-                            <div className="text-gray-400">Avg Fwd Vol</div>
-                            <div className="font-bold text-lg text-yellow-400">{opportunity.fwd_vol_avg.toFixed(1)}%</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* P&L Scenarios */}
-                  {opportunity.trade_details && (
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="bg-green-900/20 rounded-lg p-4">
-                        <div className="text-gray-300 mb-1">Best Case</div>
-                        <div className="text-xl font-bold text-green-400">
-                          +${opportunity.trade_details.best_case.toFixed(0)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          ({opportunity.trade_details.best_case_pct.toFixed(0)}%)
-                        </div>
-                      </div>
-                      <div className="bg-blue-900/20 rounded-lg p-4">
-                        <div className="text-gray-300 mb-1">Typical</div>
-                        <div className="text-xl font-bold text-blue-400">
-                          +${opportunity.trade_details.typical_case.toFixed(0)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          ({opportunity.trade_details.typical_case_pct.toFixed(0)}%)
-                        </div>
-                      </div>
-                      <div className="bg-orange-900/20 rounded-lg p-4">
-                        <div className="text-gray-300 mb-1">Adverse</div>
-                        <div className="text-xl font-bold text-orange-400">
-                          ${opportunity.trade_details.adverse_case.toFixed(0)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          ({opportunity.trade_details.adverse_case_pct.toFixed(0)}%)
-                        </div>
-                      </div>
-                      <div className="bg-red-900/20 rounded-lg p-4">
-                        <div className="text-gray-300 mb-1">Max Loss</div>
-                        <div className="text-xl font-bold text-red-400">
-                          ${opportunity.trade_details.max_loss.toFixed(0)}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          ({opportunity.trade_details.max_loss_pct.toFixed(0)}%)
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredOpportunities.length} of {scanData.opportunities.length} opportunities
               </div>
-            )}
+            </div>
           </div>
         )}
 
-        {/* About Section */}
-        <div className="mt-8 bg-white/5 rounded-xl p-6 backdrop-blur-sm">
-          <h3 className="text-xl font-bold mb-3 text-purple-300">About S&P MidCap 400 Scanner</h3>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            This scanner analyzes S&P MidCap 400 stocks for calendar spread opportunities based on forward volatility.
-            It scans {results.summary.tickers_scanned} mid-cap stocks (market cap ~$3.7B to ~$13.1B) and identifies 
-            opportunities where implied volatility structure suggests favorable conditions for calendar spreads.
+        {scanData && showLog && scanData.scan_log && (
+          <div className="mb-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-gray-400 text-xs">Terminal Output</div>
+              <div className="text-gray-400 text-xs">{new Date(scanData.timestamp).toLocaleString()}</div>
+            </div>
+            {scanData.scan_log.map((line, idx) => (
+              <div key={idx} className="py-0.5">
+                {line.includes('Found') ? (
+                  <span className="text-green-400">{line}</span>
+                ) : line.includes('No opportunities') ? (
+                  <span className="text-gray-500">{line}</span>
+                ) : line.includes('Error') ? (
+                  <span className="text-red-400">{line}</span>
+                ) : (
+                  <span className="text-blue-300">{line}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {scanData && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Opportunities</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {scanData.summary.total_opportunities}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Tickers Scanned</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {scanData.summary.tickers_scanned}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Best FF</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {formatFF(scanData.summary.best_ff)}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Avg FF</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {formatFF(scanData.summary.avg_ff)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">Loading scan results...</p>
+          </div>
+        )}
+
+        {!loading && scanData && filteredOpportunities.length > 0 && (
+          <div className="space-y-4">
+            {filteredOpportunities.map((result, idx) => (
+              <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <div 
+                  className="bg-gray-50 dark:bg-gray-700 p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-wrap">
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        #{idx + 1}
+                      </div>
+                      <div className="text-lg font-bold text-gray-900 dark:text-white">
+                        {result.ticker}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        ${result.price.toFixed(2)}
+                      </div>
+                      {result.ma_200 && result.above_ma_200 !== null && (
+                        <div className={`text-xs px-2 py-1 rounded ${
+                          result.above_ma_200 
+                            ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20' 
+                            : 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20'
+                        }`}>
+                          {result.above_ma_200 ? '↑' : '↓'} 200MA: ${result.ma_200.toFixed(2)}
+                        </div>
+                      )}
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {formatExpiry(result.expiry1)} → {formatExpiry(result.expiry2)}
+                      </div>
+                      <div className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        FF: {formatFF(result.best_ff)}
+                      </div>
+                      {result.next_earnings && (
+                        <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">
+                          ✓ Next Earnings: {formatEarningsDate(result.next_earnings)}
+                        </div>
+                      )}
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-gray-500 transition-transform ${expandedRow === idx ? 'transform rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {expandedRow === idx && result.trade_details && (
+                  <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                          🎯 RECOMMENDED: {result.trade_details.spread_type} CALENDAR SPREAD
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Forward Factor:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {(result.trade_details.ff_display * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Front IV:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {result.trade_details.front_iv.toFixed(2)}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Back IV:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              {result.trade_details.back_iv.toFixed(2)}%
+                            </span>
+                          </div>
+                        </div>
+
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-3">
+                          💰 ESTIMATED PRICING (per contract)
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Front {result.trade_details.spread_type}:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              ${result.trade_details.front_price.toFixed(2)} (${(result.trade_details.front_price * 100).toFixed(0)})
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Back {result.trade_details.spread_type}:</span>
+                            <span className="font-medium text-gray-900 dark:text-white">
+                              ${result.trade_details.back_price.toFixed(2)} (${(result.trade_details.back_price * 100).toFixed(0)})
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-2">
+                            <span className="text-gray-900 dark:text-white font-semibold">Net Debit:</span>
+                            <span className="font-bold text-gray-900 dark:text-white">
+                              ${result.trade_details.net_debit.toFixed(2)} (${result.trade_details.net_debit_total.toFixed(0)})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                          📊 POTENTIAL OUTCOMES (1 contract)
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">🚀 Best Case:</span>
+                              <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                                +${result.trade_details.best_case.toFixed(0)} ({result.trade_details.best_case_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">✅ Typical:</span>
+                              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                +${result.trade_details.typical_case.toFixed(0)} ({result.trade_details.typical_case_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                          <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">⚠️ Adverse:</span>
+                              <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                                ${result.trade_details.adverse_case.toFixed(0)} ({result.trade_details.adverse_case_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                          <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">🛑 Max Loss:</span>
+                              <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                                ${result.trade_details.max_loss.toFixed(0)} ({result.trade_details.max_loss_pct.toFixed(0)}%)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                            📋 Trade Setup
+                          </h4>
+                          <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                            <div>• <strong>Sell:</strong> {result.expiry1} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
+                            <div>• <strong>Buy:</strong> {result.expiry2} ${result.trade_details.strike.toFixed(0)} {result.trade_details.spread_type}</div>
+                            <div>• <strong>Hold until:</strong> {result.expiry1}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {(result.fwd_vol_avg || result.fwd_var_avg) && (
+                      <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                        <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-2">
+                          📊 Forward Volatility Metrics
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          {result.fwd_vol_avg && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Avg):</span>
+                              <span className="font-medium text-purple-700 dark:text-purple-300">
+                                {result.fwd_vol_avg.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_call && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Call):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_call.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_vol_put && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Put):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_vol_put.toFixed(2)}%
+                              </span>
+                            </div>
+                          )}
+                          {result.fwd_var_avg && (
+                            <div className="flex justify-between border-t border-purple-200 dark:border-purple-700 pt-2 mt-2">
+                              <span className="text-gray-600 dark:text-gray-400">Fwd Var (Avg):</span>
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {result.fwd_var_avg.toFixed(4)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty Filter State */}
+        {!loading && scanData && scanData.opportunities.length > 0 && filteredOpportunities.length === 0 && (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              No opportunities match your filters
+            </p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Try adjusting your search or filter criteria
+            </p>
+          </div>
+        )}
+
+        {/* No Data State */}
+        {!loading && (!scanData || scanData.opportunities.length === 0) && (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              No scan results found for {formatDate(selectedDate)}
+            </p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Run the scanner to generate results
+            </p>
+          </div>
+        )}
+
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
+            About S&P MidCap 400 Scanner
+          </h3>
+          <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
+            Scans the S&P MidCap 400 index (mid-cap stocks with market cap ~$3.7B to ~$13.1B) for forward volatility opportunities with detailed trade recommendations and P&L estimates.
+          </p>
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            <strong>To generate new results:</strong> Run <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">python run_midcap400_scan.py</code> from the terminal
           </p>
         </div>
       </div>
