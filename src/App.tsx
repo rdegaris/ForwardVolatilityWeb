@@ -5,6 +5,7 @@ import ScannerResults from './pages/ScannerResults';
 import Nasdaq100Results from './pages/Nasdaq100Results';
 import MidCap400Results from './pages/MidCap400Results';
 import IVRankings from './pages/IVRankings';
+import TradeTracker from './pages/TradeTracker';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/midcap400" element={<MidCap400Results />} />
             <Route path="/iv-rankings" element={<IVRankings />} />
             <Route path="/calculator" element={<Calculator />} />
+            <Route path="/trade-tracker" element={<TradeTracker />} />
           </Routes>
           
           <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
