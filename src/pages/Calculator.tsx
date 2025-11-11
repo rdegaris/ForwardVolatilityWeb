@@ -1,14 +1,31 @@
 import VolatilityCalculator from '../components/VolatilityCalculator';
+import ForwardFactorCalculator from '../components/ForwardFactorCalculator';
 
 export default function Calculator() {
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Forward Volatility Calculator
+          Forward Volatility Calculators
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Calculate forward implied volatility for options trading strategies
+        </p>
+      </div>
+      
+      {/* Forward Factor Calculator - Direct IV Input */}
+      <ForwardFactorCalculator />
+      
+      {/* Divider */}
+      <div className="my-12 border-t-2 border-gray-300 dark:border-gray-600"></div>
+      
+      {/* Original Calculator - From Option Prices */}
+      <div className="text-center mb-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          Calculate from Option Prices
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300">
+          Derive implied volatility from option prices using Black-Scholes
         </p>
       </div>
       
