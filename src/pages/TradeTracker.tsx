@@ -1,11 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
+const TRADES_STORAGE_KEY = 'forward_vol_trades';
+
 export default function TradeTracker() {
-  const [trades, setTrades] = useState<CalendarSpreadTrade[]>([]);
+  // Load trades from localStorage on mount
+  const [trades, setTrades] = useState<CalendarSpreadTrade[]>(() => {
+    const stored = localStorage.getItem(TRADES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [updateTradeId, setUpdateTradeId] = useState<string>('');
+  const [updatePrices, setUpdatePrices] = useState({ front: 0, back: 0, underlying: 0 });
+
+  // Save trades to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(trades));
+  }, [trades]);
 
   // Form state
   const [formData, setFormData] = useState<Partial<CalendarSpreadTrade>>({
@@ -145,23 +159,80 @@ export default function TradeTracker() {
     }
   };
 
-  // Update current prices for a trade (for future use)
-  // const handleUpdatePrices = (id: string, frontPrice: number, backPrice: number, underlyingPrice: number) => {
-  //   setTrades(trades.map(t => 
-  //     t.id === id 
-  //       ? { ...t, frontCurrentPrice: frontPrice, backCurrentPrice: backPrice, underlyingCurrentPrice: underlyingPrice }
-  //       : t
-  //   ));
-  //   
-  //   if (selectedTrade?.id === id) {
-  //     setSelectedTrade({ 
-  //       ...selectedTrade, 
-  //       frontCurrentPrice: frontPrice, 
-  //       backCurrentPrice: backPrice, 
-  //       underlyingCurrentPrice: underlyingPrice 
-  //     });
-  //   }
-  // };
+  // Update current prices for a trade
+  const handleUpdatePrices = (id: string, frontPrice: number, backPrice: number, underlyingPrice: number) => {
+    setTrades(trades.map(t => 
+      t.id === id 
+        ? { ...t, frontCurrentPrice: frontPrice, backCurrentPrice: backPrice, underlyingCurrentPrice: underlyingPrice }
+        : t
+    ));
+    
+    if (selectedTrade?.id === id) {
+      setSelectedTrade({ 
+        ...selectedTrade, 
+        frontCurrentPrice: frontPrice, 
+        backCurrentPrice: backPrice, 
+        underlyingCurrentPrice: underlyingPrice 
+      });
+    }
+  };
+
+  // Open update modal for a trade
+  const openUpdateModal = (trade: CalendarSpreadTrade) => {
+    setUpdateTradeId(trade.id);
+    setUpdatePrices({
+      front: trade.frontCurrentPrice,
+      back: trade.backCurrentPrice,
+      underlying: trade.underlyingCurrentPrice
+    });
+    setShowUpdateModal(true);
+  };
+
+  // Submit price update
+  const submitPriceUpdate = () => {
+    handleUpdatePrices(updateTradeId, updatePrices.front, updatePrices.back, updatePrices.underlying);
+    setShowUpdateModal(false);
+  };
+
+  // Clear all trades
+  const handleClearAllTrades = () => {
+    if (window.confirm('Are you sure you want to delete all trades? This cannot be undone.')) {
+      setTrades([]);
+      setSelectedTrade(null);
+    }
+  };
+
+  // Export trades to CSV
+  const handleExportCSV = () => {
+    if (trades.length === 0) return;
+    
+    const headers = ['Symbol', 'Strike', 'Type', 'Quantity', 'Front Exp', 'Front Entry', 'Front Current', 'Back Exp', 'Back Entry', 'Back Current', 'Underlying Entry', 'Underlying Current', 'P&L', 'Entry Date'];
+    const rows = trades.map(t => [
+      t.symbol,
+      t.strike,
+      t.callOrPut,
+      t.quantity,
+      t.frontExpiration,
+      t.frontEntryPrice,
+      t.frontCurrentPrice,
+      t.backExpiration,
+      t.backEntryPrice,
+      t.backCurrentPrice,
+      t.underlyingEntryPrice,
+      t.underlyingCurrentPrice,
+      calculatePnL(t).toFixed(2),
+      t.entryDate
+    ]);
+    
+    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `trades_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
@@ -175,12 +246,30 @@ export default function TradeTracker() {
             Monitor your calendar spread positions and P&L
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
-        >
-          {showForm ? 'Cancel' : '+ Add Trade'}
-        </button>
+        <div className="flex gap-2">
+          {trades.length > 0 && (
+            <>
+              <button
+                onClick={handleExportCSV}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                📊 Export CSV
+              </button>
+              <button
+                onClick={handleClearAllTrades}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                🗑️ Clear All
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+          >
+            {showForm ? 'Cancel' : '+ Add Trade'}
+          </button>
+        </div>
       </div>
 
       {/* Add Trade Form */}
@@ -433,15 +522,26 @@ export default function TradeTracker() {
                         ${pnl.toFixed(2)}
                       </td>
                       <td className="text-center py-3 px-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteTrade(trade.id);
-                          }}
-                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openUpdateModal(trade);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                          >
+                            Update
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTrade(trade.id);
+                            }}
+                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -600,6 +700,71 @@ export default function TradeTracker() {
           >
             Add Your First Trade
           </button>
+        </div>
+      )}
+
+      {/* Update Prices Modal */}
+      {showUpdateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowUpdateModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Update Current Prices</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Front Month Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.front}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, front: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Back Month Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.back}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, back: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Underlying Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.underlying}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, underlying: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitPriceUpdate}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Update
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
