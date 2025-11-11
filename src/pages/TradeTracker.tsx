@@ -15,6 +15,8 @@ export default function TradeTracker() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [updateTradeId, setUpdateTradeId] = useState<string>('');
   const [updatePrices, setUpdatePrices] = useState({ front: 0, back: 0, underlying: 0 });
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importJson, setImportJson] = useState('');
 
   // Save trades to localStorage whenever they change
   useEffect(() => {
@@ -234,6 +236,47 @@ export default function TradeTracker() {
     window.URL.revokeObjectURL(url);
   };
 
+  // Import trades from JSON
+  const handleImportJSON = () => {
+    try {
+      const imported = JSON.parse(importJson);
+      
+      // Validate it's an array
+      if (!Array.isArray(imported)) {
+        alert('Invalid JSON: Expected an array of trades');
+        return;
+      }
+      
+      // Validate each trade has required fields
+      const requiredFields = ['symbol', 'strike', 'callOrPut', 'quantity', 'frontExpiration', 
+                              'frontEntryPrice', 'frontCurrentPrice', 'backExpiration', 
+                              'backEntryPrice', 'backCurrentPrice', 'underlyingEntryPrice', 
+                              'underlyingCurrentPrice', 'entryDate'];
+      
+      for (const trade of imported) {
+        for (const field of requiredFields) {
+          if (!(field in trade)) {
+            alert(`Invalid trade data: Missing field "${field}"`);
+            return;
+          }
+        }
+      }
+      
+      // Merge with existing trades (avoid duplicates by ID if present)
+      const existingIds = new Set(trades.map(t => t.id));
+      const newTrades = imported.filter((t: CalendarSpreadTrade) => !existingIds.has(t.id));
+      
+      setTrades([...trades, ...newTrades]);
+      setShowImportModal(false);
+      setImportJson('');
+      
+      alert(`Successfully imported ${newTrades.length} trades!`);
+      
+    } catch (error) {
+      alert(`Failed to import JSON: ${(error as Error).message}`);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -263,6 +306,12 @@ export default function TradeTracker() {
               </button>
             </>
           )}
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+          >
+            📥 Import from IB
+          </button>
           <button
             onClick={() => setShowForm(!showForm)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
@@ -762,6 +811,60 @@ export default function TradeTracker() {
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
               >
                 Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import from IB Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowImportModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Import Trades from Interactive Brokers</h2>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-4 rounded">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
+                <strong>Instructions:</strong>
+              </p>
+              <ol className="text-sm text-blue-700 dark:text-blue-300 list-decimal ml-4 mt-2 space-y-1">
+                <li>Run <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">python fetch_ib_positions.py</code> in your calculator folder</li>
+                <li>Open the generated <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">trades.json</code> file</li>
+                <li>Copy the entire JSON content</li>
+                <li>Paste it in the text area below</li>
+                <li>Click Import</li>
+              </ol>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Paste JSON from fetch_ib_positions.py:
+              </label>
+              <textarea
+                value={importJson}
+                onChange={(e) => setImportJson(e.target.value)}
+                placeholder='[{"id": "...", "symbol": "AMD", "strike": 237.5, ...}]'
+                rows={10}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportJson('');
+                }}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleImportJSON}
+                disabled={!importJson.trim()}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Import Trades
               </button>
             </div>
           </div>
