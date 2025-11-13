@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-11-12T14:50:37.122052",
+  "date": "2025-11-12",
+  "scan_log": [
+    "================================================================================",
+    "NASDAQ 100 FORWARD VOLATILITY SCANNER",
+    "================================================================================",
+    "",
+    "Scanning: 104 NASDAQ 100 stocks",
+    "Threshold: 0.2",
+    "Strategy: Scan top 30 by near-term IV",
+    "",
+    "Ranking all tickers by near-term IV...",
+    "Ranked 52 tickers by IV",
+    ""
+  ],
+  "opportunities": [],
+  "summary": {
+    "total_opportunities": 0,
+    "tickers_scanned": 104,
+    "best_ff": 0,
+    "avg_ff": 0
+  }
+}
