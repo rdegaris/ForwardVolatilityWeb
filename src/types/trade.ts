@@ -19,6 +19,8 @@ export interface CalendarSpreadTrade {
   underlyingEntryPrice: number;
   underlyingCurrentPrice: number;
   entryDate: string;
+  dateOpened?: string;
+  dateToClose?: string;
   
   // Optional Greeks
   delta?: number;

@@ -73,6 +73,8 @@ export default function TradeTracker() {
     underlyingEntryPrice: 0,
     underlyingCurrentPrice: 0,
     entryDate: new Date().toISOString().split('T')[0],
+    dateOpened: new Date().toISOString().split('T')[0],
+    dateToClose: '',
   });
 
   // Calculate P&L for a trade
@@ -549,6 +551,32 @@ export default function TradeTracker() {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date Opened
+              </label>
+              <input
+                type="date"
+                value={formData.dateOpened}
+                onChange={(e) => setFormData({ ...formData, dateOpened: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date to Close (Optional)
+              </label>
+              <input
+                type="date"
+                value={formData.dateToClose}
+                onChange={(e) => setFormData({ ...formData, dateToClose: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+          </div>
+
           <button
             onClick={handleAddTrade}
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-md transition duration-200"
@@ -606,6 +634,8 @@ export default function TradeTracker() {
                   <tr className="border-b border-gray-300 dark:border-gray-600">
                     <th className="text-left py-2 px-3 font-semibold text-gray-900 dark:text-white">Financial Instrument</th>
                     <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Position</th>
+                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Date Opened</th>
+                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Date to Close</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Avg Price</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Last</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change</th>
@@ -642,6 +672,12 @@ export default function TradeTracker() {
                         </td>
                         <td className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">
                           {trade.quantity}
+                        </td>
+                        <td className="text-center py-2 px-2 text-gray-700 dark:text-gray-300">
+                          {trade.dateOpened ? new Date(trade.dateOpened).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' }) : '-'}
+                        </td>
+                        <td className="text-center py-2 px-2 text-gray-700 dark:text-gray-300">
+                          {trade.dateToClose ? new Date(trade.dateToClose).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' }) : '-'}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {(backEntry - frontEntry).toFixed(2)}
@@ -693,6 +729,8 @@ export default function TradeTracker() {
                         <td className="text-center py-2 px-2 text-red-600 dark:text-red-400 font-semibold">
                           -{trade.quantity}
                         </td>
+                        <td></td>
+                        <td></td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {frontEntry.toFixed(2)}
                         </td>
@@ -722,6 +760,8 @@ export default function TradeTracker() {
                         <td className="text-center py-2 px-2 text-green-600 dark:text-green-400 font-semibold">
                           +{trade.quantity}
                         </td>
+                        <td></td>
+                        <td></td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {backEntry.toFixed(2)}
                         </td>
