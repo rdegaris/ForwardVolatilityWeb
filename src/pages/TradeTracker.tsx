@@ -550,25 +550,60 @@ export default function TradeTracker() {
 
       {/* Open Positions - IB Style */}
       {trades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
+        <>
+          {/* Summary Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Portfolio Summary</h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Positions</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{trades.length}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Contracts</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {trades.reduce((sum, t) => sum + t.quantity, 0)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total P&L</div>
+                  <div className={`text-2xl font-bold ${trades.reduce((sum, t) => sum + calculatePnL(t), 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    ${trades.reduce((sum, t) => sum + calculatePnL(t), 0).toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg P&L per Trade</div>
+                  <div className={`text-2xl font-bold ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead className="bg-gray-50 dark:bg-gray-750">
-                <tr className="border-b border-gray-200 dark:border-gray-600">
-                  <th className="text-left py-2 px-3 font-medium text-gray-700 dark:text-gray-300">Financial Instrument</th>
-                  <th className="text-center py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Position</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Avg Price</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Last</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Change</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Change %</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Daily P&L</th>
-                  <th className="text-center py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Actions</th>
-                </tr>
-              </thead>
+
+          {/* Positions Table */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr className="border-b border-gray-300 dark:border-gray-600">
+                    <th className="text-left py-2 px-3 font-semibold text-gray-900 dark:text-white">Financial Instrument</th>
+                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Position</th>
+                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Avg Price</th>
+                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Last</th>
+                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change</th>
+                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change %</th>
+                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Daily P&L</th>
+                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Actions</th>
+                  </tr>
+                </thead>
               <tbody>
                 {trades.map(trade => {
                   const frontPnL = (trade.frontCurrentPrice - trade.frontEntryPrice) * trade.quantity * 100;
@@ -695,6 +730,7 @@ export default function TradeTracker() {
             </table>
           </div>
         </div>
+        </>
       )}
 
       {/* Trade Details - Scenario Analysis & Chart */}
