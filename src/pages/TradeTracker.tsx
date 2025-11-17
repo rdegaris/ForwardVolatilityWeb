@@ -14,7 +14,6 @@ export default function TradeTracker() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [updateTradeId, setUpdateTradeId] = useState<string>('');
   const [updatePrices, setUpdatePrices] = useState({ front: 0, back: 0, underlying: 0 });
   const [showImportModal, setShowImportModal] = useState(false);
   const [importJson, setImportJson] = useState('');
