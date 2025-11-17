@@ -3,13 +3,23 @@ import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
+const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
 
 export default function TradeTracker() {
+  const [activeTab, setActiveTab] = useState<'calendar' | 'earnings'>('calendar');
+  
   // Load trades from localStorage on mount
   const [trades, setTrades] = useState<CalendarSpreadTrade[]>(() => {
     const stored = localStorage.getItem(TRADES_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
+  
+  // Load earnings trades from localStorage
+  const [earningsTrades, setEarningsTrades] = useState<CalendarSpreadTrade[]>(() => {
+    const stored = localStorage.getItem(EARNINGS_TRADES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
+  
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);

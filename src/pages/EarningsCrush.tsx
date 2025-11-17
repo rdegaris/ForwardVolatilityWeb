@@ -8,7 +8,19 @@ interface EarningsCrushTrade {
   iv: number;
   expected_move: number;
   expected_move_pct: number;
-  // Add more fields as needed based on your Python script
+  recommendation: string;
+  criteria: {
+    avg_volume: boolean;
+    iv30_rv30: boolean;
+    ts_slope_0_45: boolean;
+  };
+  suggested_trade?: {
+    strike: number;
+    sell_expiration: string;
+    buy_expiration: string;
+    sell_dte: number;
+    buy_dte: number;
+  };
 }
 
 interface EarningsCrushResults {
@@ -103,64 +115,167 @@ export default function EarningsCrush() {
 
         {/* Opportunities Table */}
         {results.opportunities.length > 0 ? (
-          <div className="bg-white/10 rounded-xl backdrop-blur-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-white/5">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Ticker</th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Price</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Earnings Date</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Days Until</th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">IV</th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Expected Move</th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Expected Move %</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {results.opportunities.map((trade, idx) => (
-                    <tr key={idx} className="hover:bg-white/5 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-lg font-bold font-mono">{trade.ticker}</span>
-                      </td>
-                      <td className="px-6 py-4 text-right font-mono">
-                        ${trade.price.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-center font-mono text-sm">
-                        {new Date(trade.earnings_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                          trade.days_to_earnings <= 1 ? 'bg-red-500/20 text-red-300' :
-                          trade.days_to_earnings <= 3 ? 'bg-yellow-500/20 text-yellow-300' :
-                          'bg-green-500/20 text-green-300'
+          <div className="space-y-6">
+            {results.opportunities.map((trade, idx) => {
+              const isRecommended = trade.recommendation === 'RECOMMENDED';
+              const isConsider = trade.recommendation === 'CONSIDER';
+              
+              return (
+                <div key={idx} className={`rounded-xl overflow-hidden ${
+                  isRecommended ? 'bg-green-900/20 border-2 border-green-500/30' :
+                  isConsider ? 'bg-yellow-900/20 border-2 border-yellow-500/30' :
+                  'bg-white/10 border border-white/10'
+                } backdrop-blur-sm`}>
+                  {/* Main Trade Info */}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <span className="text-3xl font-bold font-mono">{trade.ticker}</span>
+                        <span className={`px-4 py-2 rounded-lg text-sm font-semibold ${
+                          isRecommended ? 'bg-green-500/20 text-green-300 border border-green-500/50' :
+                          isConsider ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/50' :
+                          'bg-red-500/20 text-red-300 border border-red-500/50'
                         }`}>
-                          {trade.days_to_earnings} days
+                          {trade.recommendation}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <span className={`text-lg font-bold ${
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold font-mono">${trade.price.toFixed(2)}</div>
+                        <div className="text-sm text-gray-400">Current Price</div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <div className="text-xs text-gray-400 mb-1">Earnings Date</div>
+                        <div className="font-mono text-sm">
+                          {new Date(trade.earnings_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <div className="text-xs text-gray-400 mb-1">Days Until</div>
+                        <div className={`text-lg font-bold ${
+                          trade.days_to_earnings <= 1 ? 'text-red-300' :
+                          trade.days_to_earnings <= 3 ? 'text-yellow-300' :
+                          'text-green-300'
+                        }`}>
+                          {trade.days_to_earnings}
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <div className="text-xs text-gray-400 mb-1">IV Rank</div>
+                        <div className={`text-lg font-bold ${
                           trade.iv > 100 ? 'text-red-400' :
                           trade.iv > 70 ? 'text-orange-400' :
                           trade.iv > 50 ? 'text-yellow-400' :
                           'text-green-400'
                         }`}>
                           {trade.iv.toFixed(1)}%
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right font-mono">
-                        ${trade.expected_move.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="text-lg font-bold text-purple-400">
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <div className="text-xs text-gray-400 mb-1">Expected Move</div>
+                        <div className="text-lg font-bold text-purple-400">
                           ±{trade.expected_move_pct.toFixed(1)}%
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        </div>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <div className="text-xs text-gray-400 mb-1">Expected Move $</div>
+                        <div className="font-mono text-sm">
+                          ${trade.expected_move.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Criteria Badges */}
+                    <div className="flex gap-2 text-xs">
+                      <span className={`px-3 py-1 rounded-full ${
+                        trade.criteria.avg_volume ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                      }`}>
+                        {trade.criteria.avg_volume ? '✓' : '✗'} Volume &gt; 1.5M
+                      </span>
+                      <span className={`px-3 py-1 rounded-full ${
+                        trade.criteria.iv30_rv30 ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                      }`}>
+                        {trade.criteria.iv30_rv30 ? '✓' : '✗'} IV/RV &gt; 1.25
+                      </span>
+                      <span className={`px-3 py-1 rounded-full ${
+                        trade.criteria.ts_slope_0_45 ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                      }`}>
+                        {trade.criteria.ts_slope_0_45 ? '✓' : '✗'} Term Structure Slope
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Suggested Trade - Only show for RECOMMENDED */}
+                  {isRecommended && trade.suggested_trade && (
+                    <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 border-t border-white/10 p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <h4 className="text-lg font-bold text-green-300">Suggested Calendar Spread</h4>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="bg-black/30 rounded-lg p-4 border border-red-500/30">
+                          <div className="text-red-400 font-semibold mb-3 flex items-center gap-2">
+                            <span className="text-xl">↓</span> SELL (Short Front)
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Strike:</span>
+                              <span className="font-mono font-bold">${trade.suggested_trade.strike.toFixed(0)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Expiration:</span>
+                              <span className="font-mono">{new Date(trade.suggested_trade.sell_expiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">DTE:</span>
+                              <span className="font-bold">{trade.suggested_trade.sell_dte} days</span>
+                            </div>
+                            <div className="mt-3 pt-3 border-t border-white/10">
+                              <span className="text-xs text-gray-400">ATM Call - Expires around earnings</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-black/30 rounded-lg p-4 border border-green-500/30">
+                          <div className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                            <span className="text-xl">↑</span> BUY (Long Back)
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Strike:</span>
+                              <span className="font-mono font-bold">${trade.suggested_trade.strike.toFixed(0)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Expiration:</span>
+                              <span className="font-mono">{new Date(trade.suggested_trade.buy_expiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">DTE:</span>
+                              <span className="font-bold">{trade.suggested_trade.buy_dte} days</span>
+                            </div>
+                            <div className="mt-3 pt-3 border-t border-white/10">
+                              <span className="text-xs text-gray-400">ATM Call - 30 days out for protection</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 bg-blue-900/20 rounded-lg p-4 border border-blue-500/30">
+                        <div className="text-sm text-blue-200">
+                          <strong>Strategy:</strong> Sell near-term inflated IV before earnings, buy longer-dated for protection. 
+                          Profit from IV crush post-earnings as front month decays faster than back month.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12 text-gray-400">
