@@ -73,8 +73,6 @@ export default function TradeTracker() {
     underlyingEntryPrice: 0,
     underlyingCurrentPrice: 0,
     entryDate: new Date().toISOString().split('T')[0],
-    dateOpened: new Date().toISOString().split('T')[0],
-    dateToClose: '',
   });
 
   // Calculate P&L for a trade
@@ -172,6 +170,7 @@ export default function TradeTracker() {
       underlyingEntryPrice: formData.underlyingEntryPrice || 0,
       underlyingCurrentPrice: formData.underlyingCurrentPrice || 0,
       entryDate: formData.entryDate || new Date().toISOString().split('T')[0],
+      dateToClose: formData.frontExpiration || '', // Set to front month expiration
     };
 
     setTrades([...trades, newTrade]);
@@ -551,32 +550,6 @@ export default function TradeTracker() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Date Opened
-              </label>
-              <input
-                type="date"
-                value={formData.dateOpened}
-                onChange={(e) => setFormData({ ...formData, dateOpened: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Date to Close (Optional)
-              </label>
-              <input
-                type="date"
-                value={formData.dateToClose}
-                onChange={(e) => setFormData({ ...formData, dateToClose: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-          </div>
-
           <button
             onClick={handleAddTrade}
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-md transition duration-200"
@@ -634,8 +607,7 @@ export default function TradeTracker() {
                   <tr className="border-b border-gray-300 dark:border-gray-600">
                     <th className="text-left py-2 px-3 font-semibold text-gray-900 dark:text-white">Financial Instrument</th>
                     <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Position</th>
-                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Date Opened</th>
-                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Date to Close</th>
+                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Close By</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Avg Price</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Last</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change</th>
@@ -660,6 +632,15 @@ export default function TradeTracker() {
                   const frontChangePct = (frontChange / frontEntry) * 100;
                   const backChangePct = (backChange / backEntry) * 100;
                   
+                  // Calculate days to close (front month expiration)
+                  const closeDate = trade.dateToClose ? new Date(trade.dateToClose) : new Date(trade.frontExpiration);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  closeDate.setHours(0, 0, 0, 0);
+                  const daysToClose = Math.ceil((closeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                  const isToday = daysToClose === 0;
+                  const isThisWeek = daysToClose > 0 && daysToClose <= 7;
+                  
                   return (
                     <>
                       {/* Calendar Spread Row */}
@@ -673,11 +654,14 @@ export default function TradeTracker() {
                         <td className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">
                           {trade.quantity}
                         </td>
-                        <td className="text-center py-2 px-2 text-gray-700 dark:text-gray-300">
-                          {trade.dateOpened ? new Date(trade.dateOpened).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' }) : '-'}
-                        </td>
-                        <td className="text-center py-2 px-2 text-gray-700 dark:text-gray-300">
-                          {trade.dateToClose ? new Date(trade.dateToClose).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' }) : '-'}
+                        <td className="text-center py-2 px-2">
+                          <div className="flex items-center justify-center gap-1">
+                            {isToday && <span className="text-red-600 dark:text-red-400 font-bold text-lg" title="Expires TODAY!">🔴</span>}
+                            {isThisWeek && !isToday && <span className="text-yellow-600 dark:text-yellow-400 text-lg" title="Expires this week">⚠️</span>}
+                            <span className={isToday ? 'text-red-600 dark:text-red-400 font-bold' : isThisWeek ? 'text-yellow-600 dark:text-yellow-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}>
+                              {closeDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' })}
+                            </span>
+                          </div>
                         </td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {(backEntry - frontEntry).toFixed(2)}
@@ -730,7 +714,6 @@ export default function TradeTracker() {
                           -{trade.quantity}
                         </td>
                         <td></td>
-                        <td></td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {frontEntry.toFixed(2)}
                         </td>
@@ -760,7 +743,6 @@ export default function TradeTracker() {
                         <td className="text-center py-2 px-2 text-green-600 dark:text-green-400 font-semibold">
                           +{trade.quantity}
                         </td>
-                        <td></td>
                         <td></td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
                           {backEntry.toFixed(2)}
