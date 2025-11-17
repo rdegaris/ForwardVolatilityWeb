@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-11-12T14:50:37.122052",
-  "date": "2025-11-12",
+  "timestamp": "2025-11-17T09:47:11.939265",
+  "date": "2025-11-17",
   "scan_log": [
     "================================================================================",
     "NASDAQ 100 FORWARD VOLATILITY SCANNER",
@@ -11,14 +11,62 @@
     "Strategy: Scan top 30 by near-term IV",
     "",
     "Ranking all tickers by near-term IV...",
-    "Ranked 52 tickers by IV",
+    "Ranked 75 tickers by IV",
     ""
   ],
-  "opportunities": [],
+  "opportunities": [
+    {
+      "ticker": "WBD",
+      "price": 22.87,
+      "ma_200": 12.86,
+      "above_ma_200": true,
+      "expiry1": "20251219",
+      "expiry2": "20260220",
+      "dte1": 31,
+      "dte2": 94,
+      "ff_call": 0.353,
+      "ff_put": 0.353,
+      "ff_avg": 0.353,
+      "best_ff": 0.353,
+      "next_earnings": null,
+      "call_iv1": 54.12,
+      "call_iv2": 45.14,
+      "put_iv1": 54.12,
+      "put_iv2": 45.14,
+      "avg_iv1": 54.12,
+      "avg_iv2": 45.14,
+      "fwd_var_call": 0.159915,
+      "fwd_var_put": 0.159915,
+      "fwd_var_avg": 0.159915,
+      "fwd_vol_call": 39.99,
+      "fwd_vol_put": 39.99,
+      "fwd_vol_avg": 39.99,
+      "trade_details": {
+        "spread_type": "CALL",
+        "strike": 23.0,
+        "front_iv": 54.120000000000005,
+        "back_iv": 45.14,
+        "ff_display": 0.353,
+        "front_price": 1.4428406137743952,
+        "back_price": 2.095584633762672,
+        "net_debit": 0.6527440199882766,
+        "net_debit_total": 65.27440199882766,
+        "price_source": "estimated",
+        "best_case": 26.109760799531063,
+        "typical_case": 13.054880399765532,
+        "adverse_case": -19.5823205996483,
+        "max_loss": -65.27440199882766,
+        "best_case_pct": 40.0,
+        "typical_case_pct": 20.0,
+        "adverse_case_pct": -30.0,
+        "max_loss_pct": -100.0
+      }
+    }
+  ],
   "summary": {
-    "total_opportunities": 0,
+    "total_opportunities": 1,
     "tickers_scanned": 104,
-    "best_ff": 0,
-    "avg_ff": 0
+    "best_ff": 0.353,
+    "avg_ff": 0.353
   }
 }
