@@ -613,7 +613,6 @@ export default function TradeTracker() {
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change %</th>
                     <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Daily P&L</th>
-                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Actions</th>
                   </tr>
                 </thead>
               <tbody>
@@ -678,28 +677,6 @@ export default function TradeTracker() {
                         <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {totalPnL.toFixed(0)}
                         </td>
-                        <td className="text-center py-2 px-2">
-                          <button
-                            onClick={() => {
-                              setUpdateTradeId(trade.id);
-                              setUpdatePrices({
-                                front: trade.frontCurrentPrice,
-                                back: trade.backCurrentPrice,
-                                underlying: trade.underlyingCurrentPrice
-                              });
-                              setShowUpdateModal(true);
-                            }}
-                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-2"
-                          >
-                            Update
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTrade(trade.id)}
-                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                          >
-                            Close
-                          </button>
-                        </td>
                       </tr>
                       
                       {/* Front Month (Short) Row */}
@@ -729,7 +706,6 @@ export default function TradeTracker() {
                         <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {(-frontPnL).toFixed(0)}
                         </td>
-                        <td></td>
                       </tr>
                       
                       {/* Back Month (Long) Row */}
@@ -759,7 +735,6 @@ export default function TradeTracker() {
                         <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {backPnL.toFixed(0)}
                         </td>
-                        <td></td>
                       </tr>
                     </>
                   );
