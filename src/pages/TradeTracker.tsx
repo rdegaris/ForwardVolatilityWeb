@@ -3,20 +3,11 @@ import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
-const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
 
 export default function TradeTracker() {
-  const [activeTab, setActiveTab] = useState<'calendar' | 'earnings'>('calendar');
-  
   // Load trades from localStorage on mount
   const [trades, setTrades] = useState<CalendarSpreadTrade[]>(() => {
     const stored = localStorage.getItem(TRADES_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  });
-  
-  // Load earnings trades from localStorage
-  const [earningsTrades, setEarningsTrades] = useState<CalendarSpreadTrade[]>(() => {
-    const stored = localStorage.getItem(EARNINGS_TRADES_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
   
@@ -104,15 +95,6 @@ export default function TradeTracker() {
     const backPnL = (backCurrent - backEntry) * trade.quantity * 100;
     const frontPnL = (frontCurrent - frontEntry) * trade.quantity * 100;
     return backPnL - frontPnL;
-  };
-
-  // Calculate DTE
-  const calculateDTE = (expirationDate: string): number => {
-    const expiration = new Date(expirationDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const diffTime = expiration.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   // Generate scenario analysis for a trade
@@ -211,14 +193,6 @@ export default function TradeTracker() {
     });
   };
 
-  // Delete trade
-  const handleDeleteTrade = (id: string) => {
-    setTrades(trades.filter(t => t.id !== id));
-    if (selectedTrade?.id === id) {
-      setSelectedTrade(null);
-    }
-  };
-
   // Update current prices for a trade
   const handleUpdatePrices = (id: string, frontPrice: number, backPrice: number, underlyingPrice: number) => {
     setTrades(trades.map(t => 
@@ -235,17 +209,6 @@ export default function TradeTracker() {
         underlyingCurrentPrice: underlyingPrice 
       });
     }
-  };
-
-  // Open update modal for a trade
-  const openUpdateModal = (trade: CalendarSpreadTrade) => {
-    setUpdateTradeId(trade.id);
-    setUpdatePrices({
-      front: trade.frontCurrentPrice,
-      back: trade.backCurrentPrice,
-      underlying: trade.underlyingCurrentPrice
-    });
-    setShowUpdateModal(true);
   };
 
   // Submit price update
