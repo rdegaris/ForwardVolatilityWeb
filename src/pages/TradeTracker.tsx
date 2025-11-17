@@ -18,10 +18,41 @@ export default function TradeTracker() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importJson, setImportJson] = useState('');
 
+  // Auto-load trades from data file on mount
+  useEffect(() => {
+    const loadTradesFromFile = async () => {
+      try {
+        const response = await fetch('/data/trades.json');
+        if (response.ok) {
+          const fileTrades = await response.json();
+          if (fileTrades && fileTrades.length > 0) {
+            // Merge with existing trades, avoiding duplicates by ID
+            setTrades(prevTrades => {
+              const existingIds = new Set(prevTrades.map(t => t.id));
+              const newTrades = fileTrades.filter((t: CalendarSpreadTrade) => !existingIds.has(t.id));
+              if (newTrades.length > 0) {
+                return [...prevTrades, ...newTrades];
+              }
+              // If all IDs exist, update prices for matching trades
+              return prevTrades.map(existing => {
+                const updated = fileTrades.find((t: CalendarSpreadTrade) => t.id === existing.id);
+                return updated || existing;
+              });
+            });
+          }
+        }
+      } catch (error) {
+        console.log('No trades file found or error loading:', error);
+      }
+    };
+    loadTradesFromFile();
+  }, []);
+
   // Save trades to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(trades));
   }, [trades]);
+
 
   // Form state
   const [formData, setFormData] = useState<Partial<CalendarSpreadTrade>>({
