@@ -548,82 +548,147 @@ export default function TradeTracker() {
         </div>
       )}
 
-      {/* Open Positions */}
+      {/* Open Positions - IB Style */}
       {trades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Open Positions</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
+          </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-300 dark:border-gray-600">
-                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Position</th>
-                  <th className="text-right py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Strike</th>
-                  <th className="text-right py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Front DTE</th>
-                  <th className="text-right py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Back DTE</th>
-                  <th className="text-right py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Underlying</th>
-                  <th className="text-right py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">P&L</th>
-                  <th className="text-center py-3 px-2 text-sm font-semibold text-gray-900 dark:text-white">Actions</th>
+            <table className="w-full text-xs">
+              <thead className="bg-gray-50 dark:bg-gray-750">
+                <tr className="border-b border-gray-200 dark:border-gray-600">
+                  <th className="text-left py-2 px-3 font-medium text-gray-700 dark:text-gray-300">Financial Instrument</th>
+                  <th className="text-center py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Position</th>
+                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Avg Price</th>
+                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Last</th>
+                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Change</th>
+                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Change %</th>
+                  <th className="text-right py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Daily P&L</th>
+                  <th className="text-center py-2 px-2 font-medium text-gray-700 dark:text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {trades.map(trade => {
-                  const pnl = calculatePnL(trade);
-                  const frontDTE = calculateDTE(trade.frontExpiration);
-                  const backDTE = calculateDTE(trade.backExpiration);
+                  const frontPnL = (trade.frontCurrentPrice - trade.frontEntryPrice) * trade.quantity * 100;
+                  const backPnL = (trade.backCurrentPrice - trade.backEntryPrice) * trade.quantity * 100;
+                  const totalPnL = backPnL - frontPnL;
+                  const frontChange = trade.frontCurrentPrice - trade.frontEntryPrice;
+                  const backChange = trade.backCurrentPrice - trade.backEntryPrice;
+                  const frontChangePct = (frontChange / trade.frontEntryPrice) * 100;
+                  const backChangePct = (backChange / trade.backEntryPrice) * 100;
                   
                   return (
-                    <tr 
-                      key={trade.id} 
-                      className={`border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${selectedTrade?.id === trade.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                      onClick={() => setSelectedTrade(trade)}
-                    >
-                      <td className="py-3 px-2">
-                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {trade.quantity} x {trade.symbol} {trade.callOrPut}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          Calendar Spread
-                        </div>
-                      </td>
-                      <td className="text-right py-3 px-2 text-sm text-gray-900 dark:text-white">
-                        ${trade.strike.toFixed(2)}
-                      </td>
-                      <td className="text-right py-3 px-2 text-sm text-gray-900 dark:text-white">
-                        {frontDTE}d
-                      </td>
-                      <td className="text-right py-3 px-2 text-sm text-gray-900 dark:text-white">
-                        {backDTE}d
-                      </td>
-                      <td className="text-right py-3 px-2 text-sm text-gray-900 dark:text-white">
-                        ${trade.underlyingCurrentPrice.toFixed(2)}
-                      </td>
-                      <td className={`text-right py-3 px-2 text-sm font-bold ${pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        ${pnl.toFixed(2)}
-                      </td>
-                      <td className="text-center py-3 px-2">
-                        <div className="flex gap-2 justify-center">
+                    <>
+                      {/* Calendar Spread Row */}
+                      <tr 
+                        key={`${trade.id}-spread`}
+                        className="border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/10"
+                      >
+                        <td className="py-2 px-3 font-medium text-gray-900 dark:text-white">
+                          {trade.symbol} {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}/{new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })} {trade.strike} CalC
+                        </td>
+                        <td className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">
+                          {trade.quantity}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                          {((trade.backEntryPrice - trade.frontEntryPrice) / 100).toFixed(2)}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                          {((trade.backCurrentPrice - trade.frontCurrentPrice) / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {totalPnL >= 0 ? '+' : ''}{(totalPnL / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {totalPnL >= 0 ? '+' : ''}{(((backChange - frontChange) / (trade.backEntryPrice - trade.frontEntryPrice)) * 100).toFixed(2)}%
+                        </td>
+                        <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {totalPnL.toFixed(0)}
+                        </td>
+                        <td className="text-center py-2 px-2">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openUpdateModal(trade);
+                            onClick={() => {
+                              setUpdateTradeId(trade.id);
+                              setUpdatePrices({
+                                front: trade.frontCurrentPrice,
+                                back: trade.backCurrentPrice,
+                                underlying: trade.underlyingCurrentPrice
+                              });
+                              setShowUpdateModal(true);
                             }}
-                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-2"
                           >
                             Update
                           </button>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTrade(trade.id);
-                            }}
-                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                            onClick={() => handleDeleteTrade(trade.id)}
+                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                           >
-                            Delete
+                            Close
                           </button>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                      
+                      {/* Front Month (Short) Row */}
+                      <tr 
+                        key={`${trade.id}-front`}
+                        className="border-b border-gray-100 dark:border-gray-700 bg-red-50 dark:bg-red-900/10"
+                      >
+                        <td className="py-2 px-3 pl-8 text-gray-700 dark:text-gray-300">
+                          -{trade.quantity} {trade.symbol} {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}'{new Date(trade.frontExpiration).getFullYear().toString().slice(2)} {trade.strike} {trade.callOrPut === 'CALL' ? 'C' : 'P'}
+                        </td>
+                        <td className="text-center py-2 px-2 text-red-600 dark:text-red-400 font-semibold">
+                          -{trade.quantity}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                          {(trade.frontEntryPrice / 100).toFixed(2)}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                          {(trade.frontCurrentPrice / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {-frontPnL >= 0 ? '+' : ''}{(-frontChange / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {-frontPnL >= 0 ? '+' : ''}{(-frontChangePct).toFixed(2)}%
+                        </td>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {(-frontPnL).toFixed(0)}
+                        </td>
+                        <td></td>
+                      </tr>
+                      
+                      {/* Back Month (Long) Row */}
+                      <tr 
+                        key={`${trade.id}-back`}
+                        className="border-b-2 border-gray-300 dark:border-gray-600 bg-green-50 dark:bg-green-900/10"
+                      >
+                        <td className="py-2 px-3 pl-8 text-gray-700 dark:text-gray-300">
+                          +{trade.quantity} {trade.symbol} {new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}'{new Date(trade.backExpiration).getFullYear().toString().slice(2)} {trade.strike} {trade.callOrPut === 'CALL' ? 'C' : 'P'}
+                        </td>
+                        <td className="text-center py-2 px-2 text-green-600 dark:text-green-400 font-semibold">
+                          +{trade.quantity}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                          {(trade.backEntryPrice / 100).toFixed(2)}
+                        </td>
+                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                          {(trade.backCurrentPrice / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {backPnL >= 0 ? '+' : ''}{(backChange / 100).toFixed(2)}
+                        </td>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {backPnL >= 0 ? '+' : ''}{backChangePct.toFixed(2)}%
+                        </td>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {backPnL.toFixed(0)}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </>
                   );
                 })}
               </tbody>
