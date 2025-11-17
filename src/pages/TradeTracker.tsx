@@ -53,6 +53,10 @@ export default function TradeTracker() {
     localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(trades));
   }, [trades]);
 
+  // Normalize price - if > 100, assume it's in cents and convert to dollars
+  const normalizePrice = (price: number): number => {
+    return price > 100 ? price / 100 : price;
+  };
 
   // Form state
   const [formData, setFormData] = useState<Partial<CalendarSpreadTrade>>({
@@ -73,10 +77,16 @@ export default function TradeTracker() {
 
   // Calculate P&L for a trade
   const calculatePnL = (trade: CalendarSpreadTrade): number => {
+    // Normalize prices first
+    const frontEntry = normalizePrice(trade.frontEntryPrice);
+    const frontCurrent = normalizePrice(trade.frontCurrentPrice);
+    const backEntry = normalizePrice(trade.backEntryPrice);
+    const backCurrent = normalizePrice(trade.backCurrentPrice);
+    
     // Calendar spread: Long back month, Short front month
-    // P&L = (Current back price - Entry back price) - (Current front price - Entry front price)
-    const backPnL = (trade.backCurrentPrice - trade.backEntryPrice) * trade.quantity * 100;
-    const frontPnL = (trade.frontCurrentPrice - trade.frontEntryPrice) * trade.quantity * 100;
+    // P&L = (Current back - Entry back) - (Current front - Entry front) * quantity * 100
+    const backPnL = (backCurrent - backEntry) * trade.quantity * 100;
+    const frontPnL = (frontCurrent - frontEntry) * trade.quantity * 100;
     return backPnL - frontPnL;
   };
 
@@ -606,13 +616,19 @@ export default function TradeTracker() {
                 </thead>
               <tbody>
                 {trades.map(trade => {
-                  const frontPnL = (trade.frontCurrentPrice - trade.frontEntryPrice) * trade.quantity * 100;
-                  const backPnL = (trade.backCurrentPrice - trade.backEntryPrice) * trade.quantity * 100;
+                  // Normalize all prices
+                  const frontEntry = normalizePrice(trade.frontEntryPrice);
+                  const frontCurrent = normalizePrice(trade.frontCurrentPrice);
+                  const backEntry = normalizePrice(trade.backEntryPrice);
+                  const backCurrent = normalizePrice(trade.backCurrentPrice);
+                  
+                  const frontPnL = (frontCurrent - frontEntry) * trade.quantity * 100;
+                  const backPnL = (backCurrent - backEntry) * trade.quantity * 100;
                   const totalPnL = backPnL - frontPnL;
-                  const frontChange = trade.frontCurrentPrice - trade.frontEntryPrice;
-                  const backChange = trade.backCurrentPrice - trade.backEntryPrice;
-                  const frontChangePct = (frontChange / trade.frontEntryPrice) * 100;
-                  const backChangePct = (backChange / trade.backEntryPrice) * 100;
+                  const frontChange = frontCurrent - frontEntry;
+                  const backChange = backCurrent - backEntry;
+                  const frontChangePct = (frontChange / frontEntry) * 100;
+                  const backChangePct = (backChange / backEntry) * 100;
                   
                   return (
                     <>
@@ -628,16 +644,16 @@ export default function TradeTracker() {
                           {trade.quantity}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                          {((trade.backEntryPrice - trade.frontEntryPrice) / 100).toFixed(2)}
+                          {(backEntry - frontEntry).toFixed(2)}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
-                          {((trade.backCurrentPrice - trade.frontCurrentPrice) / 100).toFixed(2)}
+                          {(backCurrent - frontCurrent).toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {totalPnL >= 0 ? '+' : ''}{(totalPnL / 100).toFixed(2)}
+                          {totalPnL >= 0 ? '+' : ''}{((backChange - frontChange)).toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {totalPnL >= 0 ? '+' : ''}{(((backChange - frontChange) / (trade.backEntryPrice - trade.frontEntryPrice)) * 100).toFixed(2)}%
+                          {totalPnL >= 0 ? '+' : ''}{(((backChange - frontChange) / (backEntry - frontEntry)) * 100).toFixed(2)}%
                         </td>
                         <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {totalPnL.toFixed(0)}
@@ -678,13 +694,13 @@ export default function TradeTracker() {
                           -{trade.quantity}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                          {(trade.frontEntryPrice / 100).toFixed(2)}
+                          {frontEntry.toFixed(2)}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
-                          {(trade.frontCurrentPrice / 100).toFixed(2)}
+                          {frontCurrent.toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {-frontPnL >= 0 ? '+' : ''}{(-frontChange / 100).toFixed(2)}
+                          {-frontPnL >= 0 ? '+' : ''}{(-frontChange).toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {-frontPnL >= 0 ? '+' : ''}{(-frontChangePct).toFixed(2)}%
@@ -707,13 +723,13 @@ export default function TradeTracker() {
                           +{trade.quantity}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                          {(trade.backEntryPrice / 100).toFixed(2)}
+                          {backEntry.toFixed(2)}
                         </td>
                         <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
-                          {(trade.backCurrentPrice / 100).toFixed(2)}
+                          {backCurrent.toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {backPnL >= 0 ? '+' : ''}{(backChange / 100).toFixed(2)}
+                          {backPnL >= 0 ? '+' : ''}{backChange.toFixed(2)}
                         </td>
                         <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                           {backPnL >= 0 ? '+' : ''}{backChangePct.toFixed(2)}%
