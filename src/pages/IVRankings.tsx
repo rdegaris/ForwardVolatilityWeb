@@ -7,6 +7,7 @@ interface IVRanking {
   ma_200?: number | null;
   above_ma_200?: boolean | null;
   universe: string;
+  next_earnings?: string | null;
 }
 
 interface IVResults {
@@ -212,6 +213,7 @@ export default function IVRankings() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Universe</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Price</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">IV</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Next Earnings</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">vs 200MA</th>
                   <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">200MA</th>
                 </tr>
@@ -240,6 +242,15 @@ export default function IVRankings() {
                       }`}>
                         {ranking.iv.toFixed(1)}%
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-center font-mono text-sm">
+                      {ranking.next_earnings ? (
+                        <span className="text-yellow-300">
+                          {new Date(ranking.next_earnings).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      ) : (
+                        <span className="text-gray-500">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-center">
                       {ranking.above_ma_200 !== null && (
