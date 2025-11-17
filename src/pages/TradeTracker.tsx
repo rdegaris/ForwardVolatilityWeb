@@ -77,6 +77,12 @@ export default function TradeTracker() {
 
   // Calculate P&L for a trade
   const calculatePnL = (trade: CalendarSpreadTrade): number => {
+    // Use IB's unrealized P&L if available
+    if (trade.unrealizedPnL !== undefined && trade.unrealizedPnL !== null) {
+      return trade.unrealizedPnL;
+    }
+    
+    // Otherwise calculate from prices
     // Normalize prices first
     const frontEntry = normalizePrice(trade.frontEntryPrice);
     const frontCurrent = normalizePrice(trade.frontCurrentPrice);
@@ -623,9 +629,16 @@ export default function TradeTracker() {
                   const backEntry = normalizePrice(trade.backEntryPrice);
                   const backCurrent = normalizePrice(trade.backCurrentPrice);
                   
-                  const frontPnL = (frontCurrent - frontEntry) * trade.quantity * 100;
-                  const backPnL = (backCurrent - backEntry) * trade.quantity * 100;
-                  const totalPnL = backPnL - frontPnL;
+                  // Use IB's unrealized P&L if available, otherwise calculate
+                  const frontPnL = trade.frontUnrealizedPnL !== undefined && trade.frontUnrealizedPnL !== null
+                    ? trade.frontUnrealizedPnL
+                    : (frontCurrent - frontEntry) * trade.quantity * 100;
+                  const backPnL = trade.backUnrealizedPnL !== undefined && trade.backUnrealizedPnL !== null
+                    ? trade.backUnrealizedPnL
+                    : (backCurrent - backEntry) * trade.quantity * 100;
+                  const totalPnL = trade.unrealizedPnL !== undefined && trade.unrealizedPnL !== null
+                    ? trade.unrealizedPnL
+                    : backPnL - frontPnL;
                   const frontChange = frontCurrent - frontEntry;
                   const backChange = backCurrent - backEntry;
                   const frontChangePct = (frontChange / frontEntry) * 100;

@@ -9,17 +9,20 @@ export interface CalendarSpreadTrade {
   frontExpiration: string;
   frontEntryPrice: number;
   frontCurrentPrice: number;
+  frontUnrealizedPnL?: number;
   
   // Back month (long)
   backExpiration: string;
   backEntryPrice: number;
   backCurrentPrice: number;
+  backUnrealizedPnL?: number;
   
   // Entry details
   underlyingEntryPrice: number;
   underlyingCurrentPrice: number;
   entryDate: string;
   dateToClose?: string;
+  unrealizedPnL?: number;
   
   // Optional Greeks
   delta?: number;
