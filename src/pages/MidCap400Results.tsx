@@ -96,7 +96,7 @@ export default function MidCap400Results() {
       setLoading(true);
       try {
         if (isToday(selectedDate)) {
-          const response = await fetch('/midcap400_results_latest.json');
+          const response = await fetch('/data/midcap400_results_latest.json');
           if (response.ok) {
             const data = await response.json();
             // Sort opportunities by ticker alphabetically

@@ -96,7 +96,7 @@ export default function ScannerResults() {
       setLoading(true);
       try {
         if (isToday(selectedDate)) {
-          const response = await fetch('/nasdaq100_results_latest.json');
+          const response = await fetch('/data/nasdaq100_results_latest.json');
           if (response.ok) {
             const data = await response.json();
             // Sort opportunities by ticker alphabetically

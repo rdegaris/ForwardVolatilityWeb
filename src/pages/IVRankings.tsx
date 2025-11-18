@@ -35,9 +35,9 @@ export default function IVRankings() {
   useEffect(() => {
     // Load IV rankings from dedicated ranking files
     Promise.all([
-      fetch('/mag7_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
-      fetch('/nasdaq100_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
-      fetch('/midcap400_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] })
+      fetch('/data/mag7_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
+      fetch('/data/nasdaq100_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
+      fetch('/data/midcap400_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] })
     ])
       .then(([mag7Data, nasdaq100Data, midcapData]) => {
         // Combine all rankings
