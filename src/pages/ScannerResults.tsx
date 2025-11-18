@@ -154,7 +154,7 @@ export default function ScannerResults() {
   };
 
   const isToday = (dateStr: string) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayPacific();
     return dateStr === today;
   };
 
