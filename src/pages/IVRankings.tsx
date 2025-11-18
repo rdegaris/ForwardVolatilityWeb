@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getTodayPacific } from '../lib/dateUtils';
 
 interface IVRanking {
   ticker: string;
@@ -50,8 +51,8 @@ export default function IVRankings() {
         allRankings.sort((a, b) => b.iv - a.iv);
         
         const result: IVResults = {
-          timestamp: new Date().toISOString(),
-          date: new Date().toISOString().split('T')[0],
+          timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
+          date: getTodayPacific(),
           universe: 'ALL',
           total_scanned: allRankings.length,
           rankings: allRankings,

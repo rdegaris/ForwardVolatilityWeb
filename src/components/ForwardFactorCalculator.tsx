@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getTodayDatePacific } from '../lib/dateUtils';
 
 interface ForwardFactorInputs {
   frontIV: string;
@@ -29,8 +30,7 @@ export default function ForwardFactorCalculator() {
   // Calculate DTE from a date string
   const calculateDTE = (dateStr: string): number => {
     const targetDate = new Date(dateStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getTodayDatePacific();
     const diffTime = targetDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
