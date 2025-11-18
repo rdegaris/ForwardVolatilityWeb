@@ -154,7 +154,7 @@ export default function MidCap400Results() {
   };
 
   const isToday = (dateStr: string) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayPacific();
     return dateStr === today;
   };
 
