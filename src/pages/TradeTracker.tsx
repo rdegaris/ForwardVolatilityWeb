@@ -3,16 +3,28 @@ import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
+const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
 
 export default function TradeTracker() {
+  const [activeTab, setActiveTab] = useState<'calendar' | 'earnings'>('calendar');
+  
   // Load trades from localStorage on mount
   const [trades, setTrades] = useState<CalendarSpreadTrade[]>(() => {
     const stored = localStorage.getItem(TRADES_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
   
+  // Load earnings trades from localStorage
+  const [earningsTrades, setEarningsTrades] = useState<CalendarSpreadTrade[]>(() => {
+    const stored = localStorage.getItem(EARNINGS_TRADES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
+  
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [updateTradeId, setUpdateTradeId] = useState<string>('');
+  const [updatePrices, setUpdatePrices] = useState({ front: 0, back: 0, underlying: 0 });
   const [showImportModal, setShowImportModal] = useState(false);
   const [importJson, setImportJson] = useState('');
 
@@ -92,6 +104,15 @@ export default function TradeTracker() {
     const backPnL = (backCurrent - backEntry) * trade.quantity * 100;
     const frontPnL = (frontCurrent - frontEntry) * trade.quantity * 100;
     return backPnL - frontPnL;
+  };
+
+  // Calculate DTE
+  const calculateDTE = (expirationDate: string): number => {
+    const expiration = new Date(expirationDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffTime = expiration.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   // Generate scenario analysis for a trade
@@ -190,6 +211,14 @@ export default function TradeTracker() {
     });
   };
 
+  // Delete trade
+  const handleDeleteTrade = (id: string) => {
+    setTrades(trades.filter(t => t.id !== id));
+    if (selectedTrade?.id === id) {
+      setSelectedTrade(null);
+    }
+  };
+
   // Update current prices for a trade
   const handleUpdatePrices = (id: string, frontPrice: number, backPrice: number, underlyingPrice: number) => {
     setTrades(trades.map(t => 
@@ -206,6 +235,23 @@ export default function TradeTracker() {
         underlyingCurrentPrice: underlyingPrice 
       });
     }
+  };
+
+  // Open update modal for a trade
+  const openUpdateModal = (trade: CalendarSpreadTrade) => {
+    setUpdateTradeId(trade.id);
+    setUpdatePrices({
+      front: trade.frontCurrentPrice,
+      back: trade.backCurrentPrice,
+      underlying: trade.underlyingCurrentPrice
+    });
+    setShowUpdateModal(true);
+  };
+
+  // Submit price update
+  const submitPriceUpdate = () => {
+    handleUpdatePrices(updateTradeId, updatePrices.front, updatePrices.back, updatePrices.underlying);
+    setShowUpdateModal(false);
   };
 
   // Clear all trades
@@ -874,7 +920,72 @@ export default function TradeTracker() {
         </div>
       )}
 
-      {/* Import from IB Modal */
+      {/* Update Prices Modal */}
+      {showUpdateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowUpdateModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Update Current Prices</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Front Month Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.front}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, front: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Back Month Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.back}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, back: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Underlying Current Price
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={updatePrices.underlying}
+                  onChange={(e) => setUpdatePrices({ ...updatePrices, underlying: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitPriceUpdate}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import from IB Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowImportModal(false)}>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
