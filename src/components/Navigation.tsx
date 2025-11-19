@@ -8,7 +8,7 @@ export default function Navigation() {
   };
 
   const isForwardVolSection = () => {
-    return ['/', '/nasdaq100', '/midcap400', '/iv-rankings', '/calculator', '/trade-tracker'].includes(location.pathname);
+    return ['/', '/midcap400', '/iv-rankings', '/calculator', '/trade-tracker'].includes(location.pathname);
   };
 
   const isEarningsCrushSection = () => {
@@ -66,17 +66,6 @@ export default function Navigation() {
                 to="/"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
-                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                MAG7
-              </Link>
-              
-              <Link
-                to="/nasdaq100"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/nasdaq100') 
                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}

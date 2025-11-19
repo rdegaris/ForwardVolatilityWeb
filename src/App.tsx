@@ -18,8 +18,7 @@ function App() {
           <Navigation />
           
           <Routes>
-            <Route path="/" element={<ScannerResults />} />
-            <Route path="/nasdaq100" element={<Nasdaq100Results />} />
+            <Route path="/" element={<Nasdaq100Results />} />
             <Route path="/midcap400" element={<MidCap400Results />} />
             <Route path="/iv-rankings" element={<IVRankings />} />
             <Route path="/earnings-crush" element={<EarningsCrush />} />
