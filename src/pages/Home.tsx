@@ -237,15 +237,16 @@ export default function Home() {
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {opp.universe}
                       </p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                        {opp.expiry1} / {opp.expiry2}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {opp.dte1} / {opp.dte2} DTE
+                      </p>
                       {opp.trade_details && (
                         <>
-                          <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                            {opp.trade_details.spread_type} ${opp.trade_details.strike}
-                          </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Sell {opp.expiry1} / Buy {opp.expiry2}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {opp.trade_details.spread_type} ${opp.trade_details.strike} - 
                             Debit: ${(opp.trade_details.net_debit * 100).toFixed(0)} | 
                             Target: +${opp.trade_details.typical_case.toFixed(0)} ({opp.trade_details.typical_case_pct.toFixed(0)}%)
                           </p>
