@@ -51,11 +51,24 @@ interface EarningsOpportunity {
   };
 }
 
+interface ScanData {
+  date: string;
+  timestamp: string;
+  opportunities: ScanOpportunity[];
+}
+
+interface EarningsData {
+  date: string;
+  timestamp: string;
+  opportunities: EarningsOpportunity[];
+}
+
 export default function Home() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [nasdaq100, setNasdaq100] = useState<ScanOpportunity[]>([]);
   const [midcap400, setMidcap400] = useState<ScanOpportunity[]>([]);
   const [earnings, setEarnings] = useState<EarningsOpportunity[]>([]);
+  const [lastScanDate, setLastScanDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,36 +87,45 @@ export default function Home() {
           setTrades(Array.isArray(tradesData) ? tradesData : []);
         }
 
+        // Helper to check if scan data is recent (within last 3 days for weekends)
+        const isDataRecent = (scanDate: string) => {
+          const today = getTodayDatePacific();
+          const dataDate = new Date(scanDate + 'T00:00:00');
+          const daysDiff = Math.floor((today.getTime() - dataDate.getTime()) / (1000 * 60 * 60 * 24));
+          // Allow data from last 3 days (covers weekends)
+          return daysDiff <= 3;
+        };
+
         if (nasdaq100Res.ok) {
-          const nasdaq100Data = await nasdaq100Res.json();
-          const today = getTodayPacific();
-          const isToday = nasdaq100Data.date === today;
+          const nasdaq100Data: ScanData = await nasdaq100Res.json();
+          const isRecent = isDataRecent(nasdaq100Data.date);
           const opps = (nasdaq100Data.opportunities || []).map((opp: ScanOpportunity) => ({
             ...opp,
             universe: 'NASDAQ 100'
           }));
-          setNasdaq100(isToday ? opps : []);
+          setNasdaq100(isRecent ? opps : []);
+          if (nasdaq100Data.date) {
+            setLastScanDate(nasdaq100Data.date);
+          }
         }
 
         if (midcap400Res.ok) {
-          const midcap400Data = await midcap400Res.json();
-          const today = getTodayPacific();
-          const isToday = midcap400Data.date === today;
+          const midcap400Data: ScanData = await midcap400Res.json();
+          const isRecent = isDataRecent(midcap400Data.date);
           const opps = (midcap400Data.opportunities || []).map((opp: ScanOpportunity) => ({
             ...opp,
             universe: 'MidCap 400'
           }));
-          setMidcap400(isToday ? opps : []);
+          setMidcap400(isRecent ? opps : []);
         }
 
         if (earningsRes.ok) {
-          const earningsData = await earningsRes.json();
-          const today = getTodayPacific();
-          const isToday = earningsData.date === today;
+          const earningsData: EarningsData = await earningsRes.json();
+          const isRecent = isDataRecent(earningsData.date);
           const recommended = (earningsData.opportunities || []).filter(
             (opp: EarningsOpportunity) => opp.recommendation === 'RECOMMENDED'
           );
-          setEarnings(isToday ? recommended : []);
+          setEarnings(isRecent ? recommended : []);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -159,15 +181,26 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Daily Trading Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            timeZone: 'America/Los_Angeles'
-          })}
-        </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <p className="text-gray-600 dark:text-gray-400">
+            {new Date().toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              timeZone: 'America/Los_Angeles'
+            })}
+          </p>
+          {lastScanDate && (
+            <span className={`text-sm px-2 py-1 rounded ${
+              lastScanDate === getTodayPacific() 
+                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+            }`}>
+              📊 Scan data from {lastScanDate === getTodayPacific() ? 'today' : lastScanDate}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Positions Needing Action This Week */}
