@@ -41,7 +41,7 @@ export default function EarningsCrush() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/earnings_crush_latest.json')
+    fetch('/data/earnings_crush_latest.json')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load earnings crush data');
         return res.json();
