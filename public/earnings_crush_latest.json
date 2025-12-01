@@ -1,14 +1,90 @@
 {
-  "timestamp": "2025-12-01T11:57:33.351099",
+  "timestamp": "2025-12-01T12:31:03.533144",
   "date": "2025-12-01",
   "total_scanned": 40,
-  "earnings_found": 5,
-  "opportunities": [],
+  "earnings_found": 4,
+  "opportunities": [
+    {
+      "ticker": "CRWD",
+      "price": 502.31,
+      "earnings_date": "2025-12-02",
+      "days_to_earnings": 1,
+      "iv": 50.0,
+      "expected_move": 39.8,
+      "expected_move_pct": 7.9,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_0_45": true
+      },
+      "suggested_trade": {
+        "strike": 500.0,
+        "sell_expiration": "2025-12-05",
+        "buy_expiration": "2025-12-26",
+        "sell_dte": 4,
+        "buy_dte": 25,
+        "sell_price": 19.9,
+        "buy_price": 28.32,
+        "net_credit": -8.43
+      }
+    },
+    {
+      "ticker": "ADBE",
+      "price": 322.8,
+      "earnings_date": "2025-12-11",
+      "days_to_earnings": 10,
+      "iv": 50.0,
+      "expected_move": 31.1,
+      "expected_move_pct": 9.6,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_0_45": true
+      },
+      "suggested_trade": {
+        "strike": 320.0,
+        "sell_expiration": "2025-12-12",
+        "buy_expiration": "2025-12-26",
+        "sell_dte": 11,
+        "buy_dte": 25,
+        "sell_price": 15.55,
+        "buy_price": 18.35,
+        "net_credit": -2.8
+      }
+    },
+    {
+      "ticker": "AVGO",
+      "price": 385.32,
+      "earnings_date": "2025-12-11",
+      "days_to_earnings": 10,
+      "iv": 50.0,
+      "expected_move": 32.0,
+      "expected_move_pct": 8.3,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_0_45": true
+      },
+      "suggested_trade": {
+        "strike": 390.0,
+        "sell_expiration": "2025-12-12",
+        "buy_expiration": "2025-12-26",
+        "sell_dte": 11,
+        "buy_dte": 25,
+        "sell_price": 16.0,
+        "buy_price": 20.25,
+        "net_credit": -4.25
+      }
+    }
+  ],
   "summary": {
     "total_recommended": 0,
     "total_consider": 0,
-    "total_avoid": 0,
-    "avg_iv": 0,
-    "avg_expected_move": 0
+    "total_avoid": 3,
+    "avg_iv": 50.0,
+    "avg_expected_move": 8.6
   }
 }

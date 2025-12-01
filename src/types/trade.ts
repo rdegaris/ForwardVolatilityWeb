@@ -24,6 +24,12 @@ export interface CalendarSpreadTrade {
   dateToClose?: string;
   unrealizedPnL?: number;
   
+  // Trade status
+  status?: 'open' | 'closed';
+  closedDate?: string;
+  realizedPnL?: number;
+  closeNotes?: string;
+  
   // Optional Greeks
   delta?: number;
   gamma?: number;
