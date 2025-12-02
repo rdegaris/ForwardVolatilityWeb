@@ -137,20 +137,17 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // Get end of this week (Friday)
-  const getEndOfWeek = () => {
+  // Get end of this month
+  const getEndOfMonth = () => {
     const today = getTodayDatePacific();
-    const dayOfWeek = today.getDay();
-    const daysUntilFriday = dayOfWeek <= 5 ? 5 - dayOfWeek : 0;
-    const friday = new Date(today);
-    friday.setDate(today.getDate() + daysUntilFriday);
-    return friday.toISOString().split('T')[0];
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    return endOfMonth.toISOString().split('T')[0];
   };
 
-  // Filter trades expiring this week
-  const tradesExpiringThisWeek = trades.filter(trade => {
-    const endOfWeek = getEndOfWeek();
-    return trade.frontExpiration <= endOfWeek;
+  // Filter trades expiring this month
+  const tradesExpiringThisMonth = trades.filter(trade => {
+    const endOfMonth = getEndOfMonth();
+    return trade.frontExpiration <= endOfMonth;
   });
 
   // Combine and sort all opportunities
@@ -203,19 +200,19 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Positions Needing Action This Week */}
-      {tradesExpiringThisWeek.length > 0 && (
+      {/* Positions Needing Action This Month */}
+      {tradesExpiringThisMonth.length > 0 && (
         <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-6 border-2 border-red-200 dark:border-red-800">
           <div className="flex items-center mb-4">
             <svg className="w-6 h-6 text-red-600 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <h2 className="text-2xl font-bold text-red-900 dark:text-red-200">
-              Action Required - Expiring This Week
+              Action Required - Expiring This Month
             </h2>
           </div>
           <div className="space-y-3">
-            {tradesExpiringThisWeek.map((trade) => {
+            {tradesExpiringThisMonth.map((trade) => {
               const pnl = calculatePnL(trade);
               const pnlColor = pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
               
@@ -377,7 +374,7 @@ export default function Home() {
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
           <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-            {tradesExpiringThisWeek.length}
+            {tradesExpiringThisMonth.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Need Action</p>
         </div>
