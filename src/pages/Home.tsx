@@ -9,8 +9,12 @@ interface Trade {
   quantity: number;
   frontExpiration: string;
   backExpiration: string;
+  frontEntryPrice?: number;
   frontCurrentPrice: number;
+  backEntryPrice?: number;
   backCurrentPrice: number;
+  spreadEntryPrice?: number;
+  spreadCurrentPrice?: number;
   underlyingCurrentPrice: number;
   entryDate: string;
   unrealizedPnL?: number;
@@ -216,6 +220,14 @@ export default function Home() {
               const pnl = calculatePnL(trade);
               const pnlColor = pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
               
+              // Calculate spread prices
+              const spreadEntry = trade.spreadEntryPrice ?? 
+                ((trade.backEntryPrice ?? 0) - (trade.frontEntryPrice ?? 0));
+              const spreadCurrent = trade.spreadCurrentPrice ?? 
+                (trade.backCurrentPrice - trade.frontCurrentPrice);
+              const spreadChange = spreadCurrent - spreadEntry;
+              const spreadChangePct = spreadEntry !== 0 ? (spreadChange / spreadEntry) * 100 : 0;
+              
               return (
                 <div key={trade.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
                   <div className="flex justify-between items-start">
@@ -224,11 +236,23 @@ export default function Home() {
                         {trade.quantity}x {trade.symbol} ${trade.strike} {trade.callOrPut}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Front: {trade.frontExpiration} @ ${trade.frontCurrentPrice.toFixed(2)} | 
-                        Back: {trade.backExpiration} @ ${trade.backCurrentPrice.toFixed(2)}
+                        {trade.frontExpiration} / {trade.backExpiration} Calendar
                       </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Underlying: ${trade.underlyingCurrentPrice.toFixed(2)}
+                      <div className="mt-2 flex items-center gap-4">
+                        <div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Entry: </span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">${spreadEntry.toFixed(2)}</span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Current: </span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">${spreadCurrent.toFixed(2)}</span>
+                        </div>
+                        <div className={`text-sm font-semibold ${spreadChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {spreadChange >= 0 ? '+' : ''}{spreadChange.toFixed(2)} ({spreadChangePct >= 0 ? '+' : ''}{spreadChangePct.toFixed(0)}%)
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {trade.symbol} @ ${trade.underlyingCurrentPrice.toFixed(2)}
                       </p>
                     </div>
                     <div className="text-right">
