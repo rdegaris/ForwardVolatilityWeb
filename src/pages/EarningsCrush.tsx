@@ -12,7 +12,8 @@ interface EarningsCrushTrade {
   criteria: {
     avg_volume: boolean;
     iv30_rv30: boolean;
-    ts_slope_0_45: boolean;
+    ts_slope_positive: boolean;
+    iv_slope_pct?: number;
   };
   suggested_trade?: {
     strike: number;
@@ -200,9 +201,9 @@ export default function EarningsCrush() {
                         {trade.criteria.iv30_rv30 ? '✓' : '✗'} IV/RV &gt; 1.25
                       </span>
                       <span className={`px-3 py-1 rounded-full ${
-                        trade.criteria.ts_slope_0_45 ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                        trade.criteria.ts_slope_positive ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
                       }`}>
-                        {trade.criteria.ts_slope_0_45 ? '✓' : '✗'} Term Structure Slope
+                        {trade.criteria.ts_slope_positive ? '✓' : '✗'} IV Slope {trade.criteria.iv_slope_pct ? `(+${trade.criteria.iv_slope_pct.toFixed(0)}%)` : ''}
                       </span>
                     </div>
                   </div>
