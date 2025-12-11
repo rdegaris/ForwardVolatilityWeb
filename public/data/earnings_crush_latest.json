@@ -1,99 +1,71 @@
 {
-  "timestamp": "2025-12-10T09:54:27.287337",
-  "date": "2025-12-10",
+  "timestamp": "2025-12-11T08:34:01.958708",
+  "date": "2025-12-11",
   "total_scanned": 40,
-  "earnings_found": 3,
+  "earnings_found": 2,
   "opportunities": [
     {
-      "ticker": "ADBE",
-      "price": 343.0,
-      "earnings_date": "2025-12-10",
-      "days_to_earnings": 0,
-      "iv": 115.2,
-      "expected_move": 27.75,
-      "expected_move_pct": 8.1,
-      "recommendation": "RECOMMENDED",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": true,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 170.1
-      },
-      "front_iv": 115.2,
-      "back_iv": 42.7,
-      "suggested_trade": {
-        "strike": 340.0,
-        "sell_expiration": "2025-12-12",
-        "buy_expiration": "2026-01-09",
-        "sell_dte": 2,
-        "buy_dte": 30,
-        "sell_price": 13.88,
-        "buy_price": 19.45,
-        "net_credit": -5.57
-      }
-    },
-    {
       "ticker": "AVGO",
-      "price": 404.24,
+      "price": 397.05,
       "earnings_date": "2025-12-11",
-      "days_to_earnings": 1,
-      "iv": 113.8,
-      "expected_move": 32.6,
-      "expected_move_pct": 8.1,
+      "days_to_earnings": 0,
+      "iv": 154.7,
+      "expected_move": 25.35,
+      "expected_move_pct": 6.4,
       "recommendation": "RECOMMENDED",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 127.9
+        "iv_slope_pct": 200.5
       },
-      "front_iv": 113.8,
-      "back_iv": 49.9,
+      "front_iv": 154.7,
+      "back_iv": 51.5,
       "suggested_trade": {
         "strike": 400.0,
         "sell_expiration": "2025-12-12",
         "buy_expiration": "2026-01-09",
-        "sell_dte": 2,
-        "buy_dte": 30,
-        "sell_price": 16.3,
-        "buy_price": 25.65,
-        "net_credit": -9.35
+        "sell_dte": 1,
+        "buy_dte": 29,
+        "sell_price": 12.68,
+        "buy_price": 22.05,
+        "net_credit": -9.37
       }
     },
     {
       "ticker": "COST",
-      "price": 876.68,
+      "price": 876.74,
       "earnings_date": "2025-12-11",
-      "days_to_earnings": 1,
-      "iv": 59.7,
-      "expected_move": 29.05,
-      "expected_move_pct": 3.3,
-      "recommendation": "CONSIDER",
+      "days_to_earnings": 0,
+      "iv": 73.5,
+      "expected_move": 26.9,
+      "expected_move_pct": 3.1,
+      "recommendation": "RECOMMENDED",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 130.5
+        "iv_slope_pct": 190.2
       },
-      "front_iv": 59.7,
-      "back_iv": 25.9,
+      "front_iv": 73.5,
+      "back_iv": 25.3,
       "suggested_trade": {
         "strike": 880.0,
         "sell_expiration": "2025-12-12",
         "buy_expiration": "2026-01-09",
-        "sell_dte": 2,
-        "buy_dte": 30,
-        "sell_price": 14.53,
-        "buy_price": 25.8,
-        "net_credit": -11.28
+        "sell_dte": 1,
+        "buy_dte": 29,
+        "sell_price": 13.45,
+        "buy_price": 24.9,
+        "net_credit": -11.45
       }
     }
   ],
   "summary": {
     "total_recommended": 2,
-    "total_consider": 1,
+    "total_consider": 0,
     "total_avoid": 0,
-    "avg_iv": 96.2,
-    "avg_expected_move": 6.5
+    "avg_iv": 114.1,
+    "avg_expected_move": 4.8
   }
 }
