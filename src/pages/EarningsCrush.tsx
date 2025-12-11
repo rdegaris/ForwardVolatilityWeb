@@ -150,7 +150,7 @@ export default function EarningsCrush() {
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Earnings Date</div>
                         <div className="font-mono text-sm">
-                          {new Date(trade.earnings_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {new Date(trade.earnings_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </div>
                       </div>
                       <div className="bg-white/5 rounded-lg p-3">
