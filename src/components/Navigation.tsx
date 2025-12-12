@@ -145,6 +145,17 @@ export default function Navigation() {
               >
                 Scanner
               </Link>
+              
+              <Link
+                to="/earnings-crush/trades"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/earnings-crush/trades') 
+                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200' 
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Trade Tracker
+              </Link>
             </div>
           </div>
         )}
