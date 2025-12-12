@@ -36,8 +36,8 @@ export default function Navigation() {
               to="/earnings-crush" 
               className={`text-xl font-bold transition-colors ${
                 isEarningsCrushSection() 
-                  ? 'text-purple-600 dark:text-purple-400' 
-                  : 'text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400'
+                  ? 'text-teal-600 dark:text-teal-400' 
+                  : 'text-gray-400 dark:text-gray-500 hover:text-teal-600 dark:hover:text-teal-400'
               }`}
             >
               Earnings Crush
@@ -139,7 +139,7 @@ export default function Navigation() {
                 to="/earnings-crush"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/earnings-crush') 
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200' 
+                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -150,7 +150,7 @@ export default function Navigation() {
                 to="/earnings-crush/trades"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/earnings-crush/trades') 
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200' 
+                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >

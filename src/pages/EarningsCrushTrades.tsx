@@ -212,12 +212,12 @@ export default function EarningsCrushTrades() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+            <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
               Earnings Crush Trades
             </h1>
             <p className="text-gray-300">
@@ -226,7 +226,7 @@ export default function EarningsCrushTrades() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
           >
             {showForm ? 'Cancel' : '+ Add Trade'}
           </button>
@@ -234,7 +234,7 @@ export default function EarningsCrushTrades() {
 
         {/* Add Trade Form */}
         {showForm && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-teal-500/30">
             <h2 className="text-xl font-bold text-white mb-4">New Earnings Crush Trade</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -245,7 +245,7 @@ export default function EarningsCrushTrades() {
                   value={formData.symbol}
                   onChange={(e) => setFormData({ ...formData, symbol: e.target.value.toUpperCase() })}
                   placeholder="AVGO"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
                 />
               </div>
               <div>
@@ -255,7 +255,7 @@ export default function EarningsCrushTrades() {
                   step="0.5"
                   value={formData.strike || ''}
                   onChange={(e) => setFormData({ ...formData, strike: parseFloat(e.target.value) })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
                 />
               </div>
               <div>
@@ -263,7 +263,7 @@ export default function EarningsCrushTrades() {
                 <select
                   value={formData.callOrPut}
                   onChange={(e) => setFormData({ ...formData, callOrPut: e.target.value as 'CALL' | 'PUT' })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="CALL">CALL</option>
                   <option value="PUT">PUT</option>
@@ -275,7 +275,7 @@ export default function EarningsCrushTrades() {
                   type="number"
                   value={formData.quantity || ''}
                   onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
                 />
               </div>
             </div>
@@ -367,7 +367,7 @@ export default function EarningsCrushTrades() {
 
             <button
               onClick={handleAddTrade}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 rounded-md transition"
+              className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-md transition"
             >
               Add Trade
             </button>
@@ -378,7 +378,7 @@ export default function EarningsCrushTrades() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <div className="text-sm text-gray-400 mb-1">Open Positions</div>
-            <div className="text-2xl font-bold text-purple-400">{openTrades.length}</div>
+            <div className="text-2xl font-bold text-teal-400">{openTrades.length}</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <div className="text-sm text-gray-400 mb-1">Open P&L</div>
@@ -400,9 +400,9 @@ export default function EarningsCrushTrades() {
 
         {/* Open Positions */}
         {openTrades.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-purple-500/30">
-            <div className="bg-purple-900/30 px-6 py-4 border-b border-purple-500/30">
-              <h2 className="text-xl font-bold text-purple-300">📈 Open Positions</h2>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-teal-500/30">
+            <div className="bg-teal-900/30 px-6 py-4 border-b border-teal-500/30">
+              <h2 className="text-xl font-bold text-teal-300">📈 Open Positions</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -549,7 +549,7 @@ export default function EarningsCrushTrades() {
             </p>
             <button
               onClick={() => setShowForm(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-md transition"
+              className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-md transition"
             >
               Add Your First Trade
             </button>
@@ -559,7 +559,7 @@ export default function EarningsCrushTrades() {
         {/* Close Trade Modal */}
         {showCloseModal && tradeToClose && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowCloseModal(false)}>
-            <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-purple-500/30" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-teal-500/30" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-xl font-bold text-white mb-4">Close Trade: {tradeToClose.symbol}</h2>
               
               <div className="space-y-4 mb-6">

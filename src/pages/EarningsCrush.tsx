@@ -59,9 +59,9 @@ export default function EarningsCrush() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto mb-4"></div>
           <p className="text-gray-300">Loading earnings crush opportunities...</p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function EarningsCrush() {
 
   if (error || !results) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
           <p className="text-gray-400 text-sm">Run the earnings crush scanner to generate data</p>
@@ -80,11 +80,11 @@ export default function EarningsCrush() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
             Earnings Crush Scanner
           </h1>
           <p className="text-gray-300 mb-6">
@@ -103,7 +103,7 @@ export default function EarningsCrush() {
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Opportunities</div>
-              <div className="text-xl font-bold text-purple-400">{results.opportunities.length}</div>
+              <div className="text-xl font-bold text-teal-400">{results.opportunities.length}</div>
             </div>
             {results.summary && (
               <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
@@ -286,7 +286,7 @@ export default function EarningsCrush() {
 
         {/* About Section */}
         <div className="mt-8 bg-white/5 rounded-xl p-6 backdrop-blur-sm">
-          <h3 className="text-xl font-bold mb-3 text-purple-300">About Earnings Crush Strategy</h3>
+          <h3 className="text-xl font-bold mb-3 text-teal-300">About Earnings Crush Strategy</h3>
           <p className="text-gray-300 text-sm leading-relaxed mb-3">
             The Earnings Crush strategy profits from the volatility collapse that typically occurs after earnings announcements.
             Implied volatility (IV) often spikes in the days leading up to earnings, pricing in uncertainty. Once earnings are released,
