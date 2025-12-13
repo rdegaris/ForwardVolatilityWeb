@@ -56,19 +56,28 @@ export default function PreEarningsStraddles() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/data/pre_earnings_straddle_latest.json')
-      .then(res => {
+    (async () => {
+      try {
+        const res = await fetch('/data/pre_earnings_straddle_latest.json', { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to load pre-earnings straddle data');
-        return res.json();
-      })
-      .then(data => {
+
+        const contentType = (res.headers.get('content-type') || '').toLowerCase();
+        const text = await res.text();
+
+        if (contentType.includes('text/html') || text.trimStart().startsWith('<!doctype') || text.trimStart().startsWith('<html')) {
+          throw new Error(
+            'Expected JSON at /data/pre_earnings_straddle_latest.json but got HTML. The JSON file is missing or the dev server is returning index.html for that path.'
+          );
+        }
+
+        const data = JSON.parse(text) as PreEarningsStraddlesResults;
         setResults(data);
         setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to load pre-earnings straddle data');
         setLoading(false);
-      });
+      }
+    })();
   }, []);
 
   const sorted = useMemo(() => {
