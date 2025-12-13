@@ -9,6 +9,8 @@ import IVRankings from './pages/IVRankings';
 import TradeTracker from './pages/TradeTracker';
 import EarningsCrush from './pages/EarningsCrush';
 import EarningsCrushTrades from './pages/EarningsCrushTrades';
+import PreEarningsStraddles from './pages/PreEarningsStraddles';
+import PreEarningsTrades from './pages/PreEarningsTrades';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
@@ -26,6 +28,8 @@ function App() {
             <Route path="/iv-rankings" element={<IVRankings />} />
             <Route path="/earnings-crush" element={<EarningsCrush />} />
             <Route path="/earnings-crush/trades" element={<EarningsCrushTrades />} />
+            <Route path="/earnings-crush/pre-earnings-straddles" element={<PreEarningsStraddles />} />
+            <Route path="/earnings-crush/pre-earnings-trades" element={<PreEarningsTrades />} />
             <Route path="/calculator" element={<Calculator />} />
             <Route path="/trade-tracker" element={<TradeTracker />} />
           </Routes>

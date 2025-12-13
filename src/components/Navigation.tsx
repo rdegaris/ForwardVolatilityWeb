@@ -156,6 +156,28 @@ export default function Navigation() {
               >
                 Trade Tracker
               </Link>
+
+              <Link
+                to="/earnings-crush/pre-earnings-straddles"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/earnings-crush/pre-earnings-straddles') 
+                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Pre-Earnings Straddles
+              </Link>
+
+              <Link
+                to="/earnings-crush/pre-earnings-trades"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/earnings-crush/pre-earnings-trades') 
+                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Open Trades
+              </Link>
             </div>
           </div>
         )}
