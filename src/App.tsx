@@ -26,10 +26,12 @@ function App() {
             <Route path="/nasdaq100" element={<Nasdaq100Results />} />
             <Route path="/midcap400" element={<MidCap400Results />} />
             <Route path="/iv-rankings" element={<IVRankings />} />
+
+            <Route path="/pre-earnings" element={<PreEarningsStraddles />} />
+            <Route path="/pre-earnings/open-trades" element={<PreEarningsTrades />} />
+
             <Route path="/earnings-crush" element={<EarningsCrush />} />
             <Route path="/earnings-crush/trades" element={<EarningsCrushTrades />} />
-            <Route path="/earnings-crush/pre-earnings-straddles" element={<PreEarningsStraddles />} />
-            <Route path="/earnings-crush/pre-earnings-trades" element={<PreEarningsTrades />} />
             <Route path="/calculator" element={<Calculator />} />
             <Route path="/trade-tracker" element={<TradeTracker />} />
           </Routes>
