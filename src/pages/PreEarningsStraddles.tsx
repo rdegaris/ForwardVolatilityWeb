@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fetchJson } from '../lib/http';
 
 interface HistoricalMove {
   earnings_date: string;
@@ -58,19 +59,9 @@ export default function PreEarningsStraddles() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('/data/pre_earnings_straddle_latest.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to load pre-earnings straddle data');
-
-        const contentType = (res.headers.get('content-type') || '').toLowerCase();
-        const text = await res.text();
-
-        if (contentType.includes('text/html') || text.trimStart().startsWith('<!doctype') || text.trimStart().startsWith('<html')) {
-          throw new Error(
-            'Expected JSON at /data/pre_earnings_straddle_latest.json but got HTML. The JSON file is missing or the dev server is returning index.html for that path.'
-          );
-        }
-
-        const data = JSON.parse(text) as PreEarningsStraddlesResults;
+        const data = await fetchJson<PreEarningsStraddlesResults>('/data/pre_earnings_straddle_latest.json', {
+          cache: 'no-store',
+        });
         setResults(data);
         setLoading(false);
       } catch (err: any) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTodayPacific, getTodayDatePacific } from '../lib/dateUtils';
+import { fetchJson } from '../lib/http';
 
 interface Trade {
   id: string;
@@ -78,17 +79,16 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all data in parallel
-        const [tradesRes, nasdaq100Res, midcap400Res, earningsRes] = await Promise.all([
-          fetch('/data/trades.json'),
-          fetch('/data/nasdaq100_results_latest.json'),
-          fetch('/data/midcap400_results_latest.json'),
-          fetch('/data/earnings_crush_latest.json'),
+        const [tradesResult, nasdaq100Result, midcap400Result, earningsResult] = await Promise.allSettled([
+          fetchJson<unknown>('/data/trades.json', { cache: 'no-store' }),
+          fetchJson<ScanData>('/data/nasdaq100_results_latest.json', { cache: 'no-store' }),
+          fetchJson<ScanData>('/data/midcap400_results_latest.json', { cache: 'no-store' }),
+          fetchJson<EarningsData>('/data/earnings_crush_latest.json', { cache: 'no-store' }),
         ]);
 
-        if (tradesRes.ok) {
-          const tradesData = await tradesRes.json();
-          setTrades(Array.isArray(tradesData) ? tradesData : []);
+        if (tradesResult.status === 'fulfilled') {
+          const tradesData = tradesResult.value;
+          setTrades(Array.isArray(tradesData) ? (tradesData as Trade[]) : []);
         }
 
         // Helper to check if scan data is recent (within last 3 days for weekends)
@@ -100,8 +100,8 @@ export default function Home() {
           return daysDiff <= 3;
         };
 
-        if (nasdaq100Res.ok) {
-          const nasdaq100Data: ScanData = await nasdaq100Res.json();
+        if (nasdaq100Result.status === 'fulfilled') {
+          const nasdaq100Data = nasdaq100Result.value;
           const isRecent = isDataRecent(nasdaq100Data.date);
           const opps = (nasdaq100Data.opportunities || []).map((opp: ScanOpportunity) => ({
             ...opp,
@@ -113,8 +113,8 @@ export default function Home() {
           }
         }
 
-        if (midcap400Res.ok) {
-          const midcap400Data: ScanData = await midcap400Res.json();
+        if (midcap400Result.status === 'fulfilled') {
+          const midcap400Data = midcap400Result.value;
           const isRecent = isDataRecent(midcap400Data.date);
           const opps = (midcap400Data.opportunities || []).map((opp: ScanOpportunity) => ({
             ...opp,
@@ -123,8 +123,8 @@ export default function Home() {
           setMidcap400(isRecent ? opps : []);
         }
 
-        if (earningsRes.ok) {
-          const earningsData: EarningsData = await earningsRes.json();
+        if (earningsResult.status === 'fulfilled') {
+          const earningsData = earningsResult.value;
           const isRecent = isDataRecent(earningsData.date);
           const recommended = (earningsData.opportunities || []).filter(
             (opp: EarningsOpportunity) => opp.recommendation === 'RECOMMENDED'
@@ -326,19 +326,19 @@ export default function Home() {
 
         {/* Earnings Crush Opportunities */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-4">
+          <h2 className="text-2xl font-bold text-teal-600 dark:text-teal-400 mb-4">
             📈 Earnings Crush Plays
           </h2>
           {earnings.length > 0 ? (
             <div className="space-y-3">
               {earnings.map((opp, idx) => (
-                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-purple-500 pl-4 py-2">
+                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-teal-500 pl-4 py-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {opp.ticker} <span className="text-sm text-gray-500">@ ${opp.price.toFixed(2)}</span>
                       </h3>
-                      <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">
+                      <p className="text-sm text-teal-600 dark:text-teal-400 font-medium">
                         Earnings in {opp.days_to_earnings} day{opp.days_to_earnings !== 1 ? 's' : ''}
                       </p>
                       {opp.suggested_trade && (
@@ -356,7 +356,7 @@ export default function Home() {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                      <p className="text-lg font-bold text-teal-600 dark:text-teal-400">
                         {opp.iv.toFixed(1)}%
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">IV</p>

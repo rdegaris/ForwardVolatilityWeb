@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTodayPacific, getTodayDatePacific } from '../lib/dateUtils';
+import { fetchJsonText } from '../lib/http';
 
 interface TradeDetails {
   spread_type: string;
@@ -96,9 +97,9 @@ export default function MidCap400Results() {
       setLoading(true);
       try {
         if (isToday(selectedDate)) {
-          const response = await fetch('/data/midcap400_results_latest.json');
-          if (response.ok) {
-            const data = await response.json();
+          const { res, text } = await fetchJsonText('/data/midcap400_results_latest.json', { cache: 'no-store' });
+          if (res.ok) {
+            const data = JSON.parse(text);
             // Sort opportunities by ticker alphabetically
             if (data.opportunities) {
               data.opportunities.sort((a: ScanResult, b: ScanResult) => 
@@ -111,9 +112,10 @@ export default function MidCap400Results() {
           }
         } else {
           const formattedDate = selectedDate.replace(/-/g, '');
-          const response = await fetch(`/midcap400_results_${formattedDate}.json`);
-          if (response.ok) {
-            const data = await response.json();
+          const url = `/midcap400_results_${formattedDate}.json`;
+          const { res, text } = await fetchJsonText(url, { cache: 'no-store' });
+          if (res.ok) {
+            const data = JSON.parse(text);
             // Sort opportunities by ticker alphabetically
             if (data.opportunities) {
               data.opportunities.sort((a: ScanResult, b: ScanResult) => 

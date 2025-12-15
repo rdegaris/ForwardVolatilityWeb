@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchJson } from '../lib/http';
 
 interface EarningsCrushTrade {
   ticker: string;
@@ -42,19 +43,16 @@ export default function EarningsCrush() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/data/earnings_crush_latest.json')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to load earnings crush data');
-        return res.json();
-      })
-      .then(data => {
+    (async () => {
+      try {
+        const data = await fetchJson<EarningsCrushResults>('/data/earnings_crush_latest.json', { cache: 'no-store' });
         setResults(data);
+      } catch (err: any) {
+        setError(err?.message || 'Failed to load earnings crush data');
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+      }
+    })();
   }, []);
 
   if (loading) {
@@ -176,7 +174,7 @@ export default function EarningsCrush() {
                       </div>
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Expected Move</div>
-                        <div className="text-lg font-bold text-purple-400">
+                        <div className="text-lg font-bold text-teal-300">
                           ±{trade.expected_move_pct.toFixed(1)}%
                         </div>
                       </div>

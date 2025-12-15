@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { fetchJsonText } from '../lib/http';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
 const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
@@ -32,9 +33,9 @@ export default function TradeTracker() {
   useEffect(() => {
     const loadTradesFromFile = async () => {
       try {
-        const response = await fetch('/data/trades.json');
-        if (response.ok) {
-          const fileTrades = await response.json();
+        const { res, text } = await fetchJsonText('/data/trades.json', { cache: 'no-store' });
+        if (res.ok) {
+          const fileTrades = JSON.parse(text);
           if (fileTrades && fileTrades.length > 0) {
             // Merge with existing trades, avoiding duplicates by ID
             setTrades(prevTrades => {

@@ -65,32 +65,6 @@ export default function EarningsCrushTrades() {
     status: 'open'
   });
 
-  // Auto-load trades from data file on mount
-  useEffect(() => {
-    const loadTradesFromFile = async () => {
-      try {
-        const response = await fetch('/data/earnings_crush_trades.json');
-        if (response.ok) {
-          const fileTrades = await response.json();
-          if (fileTrades && fileTrades.length > 0) {
-            // Merge with existing trades, avoiding duplicates by ID
-            setTrades(prevTrades => {
-              const existingIds = new Set(prevTrades.map(t => t.id));
-              const newTrades = fileTrades.filter((t: EarningsCrushTrade) => !existingIds.has(t.id));
-              if (newTrades.length > 0) {
-                return [...prevTrades, ...newTrades];
-              }
-              return prevTrades;
-            });
-          }
-        }
-      } catch (error) {
-        console.log('No earnings trades file found:', error);
-      }
-    };
-    loadTradesFromFile();
-  }, []);
-
   // Save to localStorage whenever trades change
   useEffect(() => {
     localStorage.setItem(EARNINGS_TRADES_STORAGE_KEY, JSON.stringify(trades));

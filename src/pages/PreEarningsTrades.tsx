@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fetchJsonText } from '../lib/http';
 
 type OpenStraddle = {
   ticker: string;
@@ -60,8 +61,13 @@ export default function PreEarningsTrades() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`${API_BASE}/api/preearnings/open`, { cache: 'no-store' });
-        const json = (await res.json()) as OpenStraddlesResponse;
+        const { res, text } = await fetchJsonText(`${API_BASE}/api/preearnings/open`, { cache: 'no-store' });
+        let json: OpenStraddlesResponse;
+        try {
+          json = JSON.parse(text) as OpenStraddlesResponse;
+        } catch {
+          throw new Error('IB bridge returned invalid JSON');
+        }
 
         if (!cancelled) {
           if (!res.ok || !json.ok) {

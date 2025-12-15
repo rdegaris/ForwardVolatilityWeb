@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTodayPacific } from '../lib/dateUtils';
+import { fetchJson } from '../lib/http';
 
 interface IVRanking {
   ticker: string;
@@ -33,13 +34,18 @@ export default function IVRankings() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Load IV rankings from dedicated ranking files
-    Promise.all([
-      fetch('/data/mag7_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
-      fetch('/data/nasdaq100_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] }),
-      fetch('/data/midcap400_iv_rankings_latest.json').then(res => res.ok ? res.json() : { rankings: [] })
-    ])
-      .then(([mag7Data, nasdaq100Data, midcapData]) => {
+    (async () => {
+      try {
+        const settled = await Promise.allSettled([
+          fetchJson<{ rankings?: IVRanking[] }>('/data/mag7_iv_rankings_latest.json', { cache: 'no-store' }),
+          fetchJson<{ rankings?: IVRanking[] }>('/data/nasdaq100_iv_rankings_latest.json', { cache: 'no-store' }),
+          fetchJson<{ rankings?: IVRanking[] }>('/data/midcap400_iv_rankings_latest.json', { cache: 'no-store' }),
+        ]);
+
+        const mag7Data = settled[0].status === 'fulfilled' ? settled[0].value : { rankings: [] };
+        const nasdaq100Data = settled[1].status === 'fulfilled' ? settled[1].value : { rankings: [] };
+        const midcapData = settled[2].status === 'fulfilled' ? settled[2].value : { rankings: [] };
+
         // Combine all rankings
         const allRankings: IVRanking[] = [
           ...(mag7Data.rankings || []),
@@ -69,13 +75,13 @@ export default function IVRankings() {
         };
         
         setResults(result);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         setError('Failed to load IV rankings');
-        setLoading(false);
         console.error('Error loading IV rankings:', err);
-      });
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   if (loading) {
@@ -106,7 +112,7 @@ export default function IVRankings() {
     switch (universe) {
       case 'MAG7': return 'bg-yellow-500/20 text-yellow-300';
       case 'NASDAQ100': return 'bg-blue-500/20 text-blue-300';
-      case 'MIDCAP400': return 'bg-purple-500/20 text-purple-300';
+      case 'MIDCAP400': return 'bg-teal-500/20 text-teal-300';
       default: return 'bg-gray-500/20 text-gray-300';
     }
   };
@@ -193,7 +199,7 @@ export default function IVRankings() {
                 onClick={() => setFilterUniverse('midcap400')}
                 className={`px-4 py-2 rounded-lg transition-all ${
                   filterUniverse === 'midcap400'
-                    ? 'bg-purple-600 shadow-lg'
+                    ? 'bg-teal-600 shadow-lg'
                     : 'bg-white/10 hover:bg-white/20'
                 }`}
               >
