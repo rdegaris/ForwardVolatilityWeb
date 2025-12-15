@@ -29,6 +29,7 @@ interface ScanOpportunity {
   expiry2: string;
   dte1: number;
   dte2: number;
+  next_earnings?: string | null;
   trade_details?: {
     spread_type: string;
     strike: number;
@@ -296,6 +297,9 @@ export default function Home() {
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {opp.dte1} / {opp.dte2} DTE
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Next earnings: {opp.next_earnings || '—'}
                       </p>
                       {opp.trade_details && (
                         <>
