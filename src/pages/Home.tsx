@@ -207,12 +207,12 @@ export default function Home() {
 
       {/* Positions Needing Action This Month */}
       {tradesExpiringThisMonth.length > 0 && (
-        <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-6 border-2 border-red-200 dark:border-red-800">
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 rounded-lg shadow-lg p-6 border-2 border-amber-200 dark:border-amber-800/40">
           <div className="flex items-center mb-4">
-            <svg className="w-6 h-6 text-red-600 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-amber-700 dark:text-amber-300 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <h2 className="text-2xl font-bold text-red-900 dark:text-red-200">
+            <h2 className="text-2xl font-bold text-amber-950 dark:text-amber-200">
               Action Required - Expiring This Month
             </h2>
           </div>
@@ -267,7 +267,7 @@ export default function Home() {
               );
             })}
           </div>
-          <p className="mt-4 text-sm text-red-800 dark:text-red-300 font-medium">
+          <p className="mt-4 text-sm text-amber-950 dark:text-amber-200 font-medium">
             💡 Consider closing these positions before front expiration
           </p>
         </div>
@@ -277,13 +277,13 @@ export default function Home() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Forward Vol Opportunities */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             🎯 Top Forward Vol Opportunities
           </h2>
           {allOpportunities.length > 0 ? (
             <div className="space-y-3">
               {allOpportunities.map((opp, idx) => (
-                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-blue-500 pl-4 py-2">
+                  <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-indigo-500 pl-4 py-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -292,7 +292,7 @@ export default function Home() {
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {opp.universe}
                       </p>
-                      <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                      <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">
                         {opp.expiry1} / {opp.expiry2}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -312,7 +312,7 @@ export default function Home() {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                      <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
                         {(opp.best_ff * 100).toFixed(1)}%
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">FF</p>
@@ -330,19 +330,19 @@ export default function Home() {
 
         {/* Earnings Crush Opportunities */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-teal-600 dark:text-teal-400 mb-4">
+           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
             📈 Earnings Crush Plays
           </h2>
           {earnings.length > 0 ? (
             <div className="space-y-3">
               {earnings.map((opp, idx) => (
-                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-teal-500 pl-4 py-2">
+                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-indigo-500 pl-4 py-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {opp.ticker} <span className="text-sm text-gray-500">@ ${opp.price.toFixed(2)}</span>
                       </h3>
-                      <p className="text-sm text-teal-600 dark:text-teal-400 font-medium">
+                      <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">
                         Earnings in {opp.days_to_earnings} day{opp.days_to_earnings !== 1 ? 's' : ''}
                       </p>
                       {opp.suggested_trade && (
@@ -360,7 +360,7 @@ export default function Home() {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-teal-600 dark:text-teal-400">
+                      <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
                         {opp.iv.toFixed(1)}%
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">IV</p>
@@ -383,13 +383,13 @@ export default function Home() {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+          <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-300">
             {allOpportunities.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Forward Vol</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+          <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-300">
             {earnings.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Earnings</p>
@@ -401,7 +401,7 @@ export default function Home() {
           <p className="text-sm text-gray-600 dark:text-gray-400">Open Positions</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+          <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">
             {tradesExpiringThisMonth.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Need Action</p>

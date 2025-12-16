@@ -29,8 +29,8 @@ export default function Navigation() {
               to="/" 
               className={`text-xl font-bold transition-colors ${
                 isForwardVolSection() 
-                  ? 'text-blue-600 dark:text-blue-400' 
-                  : 'text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400'
+                  ? 'text-slate-900 dark:text-slate-100' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300'
               }`}
             >
               Forward Vol
@@ -40,8 +40,8 @@ export default function Navigation() {
               to="/earnings-crush" 
               className={`text-xl font-bold transition-colors ${
                 isEarningsCrushSection() 
-                  ? 'text-teal-600 dark:text-teal-400' 
-                  : 'text-gray-400 dark:text-gray-500 hover:text-teal-600 dark:hover:text-teal-400'
+                  ? 'text-slate-900 dark:text-slate-100' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300'
               }`}
             >
               Earnings Crush
@@ -51,8 +51,8 @@ export default function Navigation() {
               to="/pre-earnings"
               className={`text-xl font-bold transition-colors ${
                 isPreEarningsSection()
-                  ? 'text-cyan-600 dark:text-cyan-400'
-                  : 'text-gray-400 dark:text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400'
+                  ? 'text-slate-900 dark:text-slate-100'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300'
               }`}
             >
               Pre-Earnings Straddles
@@ -65,7 +65,7 @@ export default function Navigation() {
               href="https://x.com/OzCTA" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              className="text-indigo-700 dark:text-indigo-300 hover:underline font-medium"
             >
               @OzCTA
             </a>
@@ -81,7 +81,7 @@ export default function Navigation() {
                 to="/"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -92,7 +92,7 @@ export default function Navigation() {
                 to="/nasdaq100"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/nasdaq100') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -103,7 +103,7 @@ export default function Navigation() {
                 to="/midcap400"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/midcap400') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -114,7 +114,7 @@ export default function Navigation() {
                 to="/iv-rankings"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/iv-rankings') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -125,7 +125,7 @@ export default function Navigation() {
                 to="/calculator"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/calculator') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -136,7 +136,7 @@ export default function Navigation() {
                 to="/trade-tracker"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/trade-tracker') 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -154,7 +154,7 @@ export default function Navigation() {
                 to="/earnings-crush"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/earnings-crush') 
-                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -165,7 +165,7 @@ export default function Navigation() {
                 to="/earnings-crush/trades"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/earnings-crush/trades') 
-                    ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-200' 
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200' 
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -183,7 +183,7 @@ export default function Navigation() {
                 to="/pre-earnings"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/pre-earnings')
-                    ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-200'
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
@@ -194,7 +194,7 @@ export default function Navigation() {
                 to="/pre-earnings/open-trades"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/pre-earnings/open-trades')
-                    ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-200'
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >

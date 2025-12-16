@@ -350,21 +350,21 @@ export default function EarningsCrushTrades() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Open Positions</div>
             <div className="text-2xl font-bold text-teal-400">{openTrades.length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Open P&L</div>
             <div className={`text-2xl font-bold ${totalOpenPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               ${totalOpenPnL.toFixed(2)}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Closed Trades</div>
             <div className="text-2xl font-bold text-gray-300">{closedTrades.length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Realized P&L</div>
             <div className={`text-2xl font-bold ${totalClosedPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               ${totalClosedPnL.toFixed(2)}

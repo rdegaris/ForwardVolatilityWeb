@@ -84,7 +84,7 @@ export default function PreEarningsStraddles() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
           <p className="text-gray-300">Loading pre-earnings straddles...</p>
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function PreEarningsStraddles() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
+          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
             Pre-Earnings Long Straddles
           </h1>
           <p className="text-gray-300 mb-6">
@@ -123,11 +123,11 @@ export default function PreEarningsStraddles() {
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Candidates Scanned</div>
-              <div className="text-xl font-bold text-teal-400">{results.candidates_scanned}</div>
+              <div className="text-xl font-bold text-indigo-300">{results.candidates_scanned}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">CANDIDATE</div>
-              <div className="text-xl font-bold text-green-400">{results.summary.total_candidate}</div>
+              <div className="text-xl font-bold text-emerald-300">{results.summary.total_candidate}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">WATCH / PASS</div>
@@ -139,7 +139,7 @@ export default function PreEarningsStraddles() {
         </div>
 
         {sorted.length === 0 ? (
-          <div className="bg-white/10 rounded-lg p-6 border border-white/10">
+          <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
             <div className="text-gray-300">No opportunities found in the entry window.</div>
           </div>
         ) : (
@@ -152,10 +152,10 @@ export default function PreEarningsStraddles() {
                   key={`${o.ticker}-${idx}`}
                   className={`rounded-xl overflow-hidden backdrop-blur-sm border ${
                     isCandidate
-                      ? 'bg-green-900/20 border-green-500/30'
+                      ? 'bg-emerald-900/15 border-emerald-500/25'
                       : isWatch
-                        ? 'bg-white/10 border-white/10'
-                        : 'bg-red-900/10 border-red-500/20'
+                        ? 'bg-white/10 border-slate-700/60'
+                        : 'bg-rose-900/10 border-rose-500/20'
                   }`}
                 >
                   <div className="p-6">
@@ -165,10 +165,10 @@ export default function PreEarningsStraddles() {
                         <span
                           className={`px-4 py-2 rounded-lg text-sm font-semibold border ${
                             isCandidate
-                              ? 'bg-green-500/20 text-green-300 border-green-500/40'
+                              ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/35'
                               : isWatch
-                                ? 'bg-teal-500/10 text-teal-200 border-teal-500/30'
-                                : 'bg-red-500/10 text-red-200 border-red-500/30'
+                                ? 'bg-amber-500/10 text-amber-200 border-amber-500/30'
+                                : 'bg-rose-500/10 text-rose-200 border-rose-500/30'
                           }`}
                         >
                           {o.recommendation}
@@ -202,7 +202,7 @@ export default function PreEarningsStraddles() {
                       </div>
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Implied Move</div>
-                        <div className="text-lg font-bold text-teal-300">±{formatPct(o.implied_move_pct)}</div>
+                        <div className="text-lg font-bold text-indigo-200">±{formatPct(o.implied_move_pct)}</div>
                       </div>
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Realized (avg / last)</div>
@@ -215,7 +215,7 @@ export default function PreEarningsStraddles() {
                       </div>
                     </div>
 
-                    <div className="mt-4 bg-black/20 rounded-lg p-4 border border-white/10">
+                    <div className="mt-4 bg-black/20 rounded-lg p-4 border border-slate-700/50">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <div className="text-gray-400">Straddle Mid</div>

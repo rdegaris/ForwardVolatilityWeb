@@ -107,7 +107,7 @@ export default function PreEarningsTrades() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
             Pre-Earnings Straddles — Open Trades
           </h1>
           <p className="text-gray-300">
@@ -121,15 +121,15 @@ export default function PreEarningsTrades() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="text-gray-400">Open Straddles</div>
-            <div className="text-xl font-bold text-teal-300">{summary.total}</div>
+            <div className="text-xl font-bold text-indigo-300">{summary.total}</div>
           </div>
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="text-gray-400">Need Action</div>
-            <div className="text-xl font-bold text-yellow-300">{summary.needsAction}</div>
+            <div className="text-xl font-bold text-amber-300">{summary.needsAction}</div>
           </div>
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="text-gray-400">Unrealized P&amp;L</div>
-            <div className={`text-xl font-bold ${summary.totalPnl >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+            <div className={`text-xl font-bold ${summary.totalPnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
               {formatMoney(summary.totalPnl)}
             </div>
           </div>
@@ -140,9 +140,9 @@ export default function PreEarningsTrades() {
         </div>
 
         {loading ? (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/10 backdrop-blur-sm">
+          <div className="bg-white/10 rounded-xl p-6 border border-slate-700/60 backdrop-blur-sm">
             <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-400"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-400"></div>
               <div className="text-gray-300">Loading open straddles from IB…</div>
             </div>
           </div>
@@ -152,11 +152,11 @@ export default function PreEarningsTrades() {
             <div className="text-gray-300 text-sm mb-4">{error}</div>
             <div className="text-gray-400 text-sm">
               Run the bridge locally from <span className="font-mono">forward-volatility-calculator</span>:
-              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-white/10 font-mono text-xs whitespace-pre-wrap">
+              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-slate-700/50 font-mono text-xs whitespace-pre-wrap">
                 /c/Ryan/CTA Business/Forward Volatility/forward-volatility-calculator/.venv/Scripts/python.exe ib_bridge_server.py
               </div>
               Then run the web locally (so /api can proxy):
-              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-white/10 font-mono text-xs whitespace-pre-wrap">
+              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-slate-700/50 font-mono text-xs whitespace-pre-wrap">
                 cd /c/Ryan/CTA Business/Forward Volatility/forward-volatility-web
                 npm run dev
               </div>
@@ -164,7 +164,7 @@ export default function PreEarningsTrades() {
             </div>
           </div>
         ) : openStraddles.length === 0 ? (
-          <div className="bg-white/10 rounded-xl p-6 border border-white/10 backdrop-blur-sm">
+          <div className="bg-white/10 rounded-xl p-6 border border-slate-700/60 backdrop-blur-sm">
             <div className="text-gray-200 font-semibold mb-1">No open pre-earnings straddles found</div>
             <div className="text-gray-400 text-sm">
               This page detects long straddles from IB positions (paired long call + long put, same strike/expiry).
@@ -178,7 +178,7 @@ export default function PreEarningsTrades() {
                 <div
                   key={`${s.ticker}-${s.expiry}-${s.strike}-${idx}`}
                   className={`rounded-xl overflow-hidden backdrop-blur-sm border ${
-                    urgent ? 'bg-yellow-900/20 border-yellow-500/30' : 'bg-white/10 border-white/10'
+                    urgent ? 'bg-amber-900/20 border-amber-500/30' : 'bg-white/10 border-slate-700/60'
                   }`}
                 >
                   <div className="p-6">
@@ -187,11 +187,11 @@ export default function PreEarningsTrades() {
                         <div className="flex items-center gap-3">
                           <span className="text-3xl font-bold font-mono">{s.ticker}</span>
                           {s.action_needed ? (
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-200 border border-yellow-500/40">
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-500/40">
                               {s.action_needed}
                             </span>
                           ) : (
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-200 border border-green-500/40">
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-500/40">
                               OK
                             </span>
                           )}
@@ -201,7 +201,7 @@ export default function PreEarningsTrades() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`text-2xl font-bold font-mono ${(s.unrealized_pnl || 0) >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                        <div className={`text-2xl font-bold font-mono ${(s.unrealized_pnl || 0) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
                           {formatMoney(s.unrealized_pnl || 0)}
                         </div>
                         <div className="text-xs text-gray-400">Unrealized P&amp;L</div>
@@ -219,7 +219,7 @@ export default function PreEarningsTrades() {
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Days To</div>
                         <div className={`text-lg font-bold ${
-                          (s.days_to_earnings ?? 999) <= 1 ? 'text-red-300' : (s.days_to_earnings ?? 999) <= 3 ? 'text-yellow-300' : 'text-green-300'
+                          (s.days_to_earnings ?? 999) <= 1 ? 'text-rose-300' : (s.days_to_earnings ?? 999) <= 3 ? 'text-amber-300' : 'text-emerald-300'
                         }`}>
                           {s.days_to_earnings ?? '—'}
                         </div>

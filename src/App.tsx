@@ -17,7 +17,7 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <Navigation />
           
@@ -53,10 +53,10 @@ function App() {
             <img
               src={logo}
               alt="OzCTA"
-              className="w-16 h-16 rounded-full object-cover border-3 border-blue-500 dark:border-blue-400 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl"
+              className="w-16 h-16 rounded-full object-cover border-3 border-slate-300 dark:border-slate-600 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl"
             />
-            <div className="absolute inset-0 rounded-full bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 dark:bg-blue-400 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">
+            <div className="absolute inset-0 rounded-full bg-slate-900 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-slate-900 dark:bg-slate-700 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md">
               X
             </div>
           </div>
