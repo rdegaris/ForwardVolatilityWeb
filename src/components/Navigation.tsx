@@ -19,6 +19,10 @@ export default function Navigation() {
     return location.pathname.startsWith('/pre-earnings');
   };
 
+  const isTurtleSection = () => {
+    return location.pathname.startsWith('/turtle');
+  };
+
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-md mb-8">
       <div className="max-w-7xl mx-auto px-4">
@@ -56,6 +60,17 @@ export default function Navigation() {
               }`}
             >
               Pre-Earnings Straddles
+            </Link>
+
+            <Link
+              to="/turtle"
+              className={`text-xl font-bold transition-colors ${
+                isTurtleSection()
+                  ? 'text-slate-900 dark:text-slate-100'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300'
+              }`}
+            >
+              Turtle
             </Link>
           </div>
           
@@ -199,6 +214,46 @@ export default function Navigation() {
                 }`}
               >
                 Open Trades
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Sub Navigation - Turtle */}
+        {isTurtleSection() && (
+          <div className="flex items-center h-12">
+            <div className="flex space-x-2">
+              <Link
+                to="/turtle"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/turtle')
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Suggested
+              </Link>
+
+              <Link
+                to="/turtle/open-trades"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/turtle/open-trades')
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Open Trades
+              </Link>
+
+              <Link
+                to="/turtle/triggers"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/turtle/triggers')
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Triggers Soon
               </Link>
             </div>
           </div>
