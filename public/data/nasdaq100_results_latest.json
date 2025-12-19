@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-18T09:53:36.778198",
-  "date": "2025-12-18",
+  "timestamp": "2025-12-19T11:12:50.047331",
+  "date": "2025-12-19",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -13,60 +13,12 @@
     "Strategy: Adaptive - scan top 25% by IV as we go",
     ""
   ],
-  "opportunities": [
-    {
-      "ticker": "LULU",
-      "price": 221.1,
-      "ma_200": 228.28,
-      "above_ma_200": false,
-      "expiry1": "20251226",
-      "expiry2": "20260102",
-      "dte1": 7,
-      "dte2": 14,
-      "ff_call": 0.126,
-      "ff_put": 0.126,
-      "ff_avg": 0.126,
-      "best_ff": 0.126,
-      "next_earnings": null,
-      "call_iv1": 35.8,
-      "call_iv2": 33.86,
-      "put_iv1": 35.8,
-      "put_iv2": 33.86,
-      "avg_iv1": 35.8,
-      "avg_iv2": 33.86,
-      "fwd_var_call": 0.10109,
-      "fwd_var_put": 0.10109,
-      "fwd_var_avg": 0.10109,
-      "fwd_vol_call": 31.79,
-      "fwd_vol_put": 31.79,
-      "fwd_vol_avg": 31.79,
-      "trade_details": {
-        "spread_type": "PUT",
-        "strike": 220.0,
-        "front_iv": 35.8,
-        "back_iv": 33.86,
-        "ff_display": 0.126,
-        "front_price": 4.384644107321674,
-        "back_price": 5.86480090197867,
-        "net_debit": 1.4801567946569962,
-        "net_debit_total": 148.01567946569963,
-        "price_source": "estimated",
-        "best_case": 59.20627178627985,
-        "typical_case": 29.603135893139925,
-        "adverse_case": -44.40470383970989,
-        "max_loss": -148.01567946569963,
-        "best_case_pct": 40.0,
-        "typical_case_pct": 20.0,
-        "adverse_case_pct": -30.0,
-        "max_loss_pct": -100.0
-      }
-    }
-  ],
+  "opportunities": [],
   "summary": {
-    "total_opportunities": 1,
+    "total_opportunities": 0,
     "tickers_scanned": 104,
-    "tickers_with_iv": 101,
-    "best_ff": 0.126,
-    "avg_ff": 0.126
+    "tickers_with_iv": 98,
+    "best_ff": 0,
+    "avg_ff": 0
   }
 }

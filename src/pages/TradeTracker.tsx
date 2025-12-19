@@ -37,18 +37,15 @@ export default function TradeTracker() {
         if (res.ok) {
           const fileTrades = JSON.parse(text);
           if (fileTrades && fileTrades.length > 0) {
-            // Merge with existing trades, avoiding duplicates by ID
+            // Keep manual/local trades, but treat IB-sourced trades as authoritative from the file.
+            // This prevents duplicates across runs and removes trades that were closed (no longer in IB).
             setTrades(prevTrades => {
-              const existingIds = new Set(prevTrades.map(t => t.id));
-              const newTrades = fileTrades.filter((t: CalendarSpreadTrade) => !existingIds.has(t.id));
-              if (newTrades.length > 0) {
-                return [...prevTrades, ...newTrades];
-              }
-              // If all IDs exist, update prices for matching trades
-              return prevTrades.map(existing => {
-                const updated = fileTrades.find((t: CalendarSpreadTrade) => t.id === existing.id);
-                return updated || existing;
+              const keepLocal = prevTrades.filter(t => {
+                const anyT = t as any;
+                const source = anyT?.source;
+                return source !== 'ib' && !t.id.startsWith('ib_') && !t.id.startsWith('ibcal_');
               });
+              return [...keepLocal, ...fileTrades];
             });
           }
         }
