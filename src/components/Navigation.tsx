@@ -235,6 +235,17 @@ export default function Navigation() {
               </Link>
 
               <Link
+                to="/turtle/signals"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/turtle/signals')
+                    ? 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                }`}
+              >
+                Signals
+              </Link>
+
+              <Link
                 to="/turtle/open-trades"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActive('/turtle/open-trades')

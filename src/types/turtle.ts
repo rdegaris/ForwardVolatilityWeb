@@ -81,3 +81,33 @@ export interface TurtleTriggersPayload {
   threshold_note?: string;
   triggers: TurtleTriggerSoon[];
 }
+
+export interface TurtleSignalRow {
+  symbol: string;
+  exchange?: string;
+  currency?: string;
+
+  asof: string; // YYYY-MM-DD
+  N: number;
+
+  last_open: number;
+  last_high: number;
+  last_low: number;
+  last_close: number;
+
+  long_entry?: number | null;
+  short_entry?: number | null;
+
+  long_triggered: boolean;
+  short_triggered: boolean;
+}
+
+export interface TurtleSignalsPayload {
+  timestamp: string;
+  date: string;
+  system: 'S2' | string;
+  configs_dir?: string;
+  duration?: string;
+  signals: TurtleSignalRow[];
+  triggered: TurtleSignalRow[];
+}
