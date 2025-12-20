@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchJson } from '../lib/http';
-import type { TurtleSignalRow, TurtleSignalsPayload } from '../types/turtle';
+import type { TurtleSignalRow, TurtleSignalsPayload, TurtleTriggeredSignal } from '../types/turtle';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -27,7 +27,11 @@ export default function TurtleSignals() {
 
   const triggeredRows = useMemo(() => {
     const rows = data?.triggered ?? [];
-    return [...rows].sort((a, b) => a.symbol.localeCompare(b.symbol));
+    return [...rows].sort((a, b) => {
+      const sym = a.symbol.localeCompare(b.symbol);
+      if (sym !== 0) return sym;
+      return (a.side || '').localeCompare(b.side || '');
+    });
   }, [data]);
 
   const allRows = useMemo(() => {
@@ -76,6 +80,12 @@ export default function TurtleSignals() {
     return 'text-gray-400';
   };
 
+  const triggeredSideColor = (r: TurtleTriggeredSignal) => {
+    if (r.side === 'long') return 'text-emerald-200';
+    if (r.side === 'short') return 'text-rose-200';
+    return 'text-gray-400';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
@@ -84,8 +94,19 @@ export default function TurtleSignals() {
             Turtle (System 2) — Signals
           </h1>
           <p className="text-gray-300">
-            Markets that have already hit their breakout entry level on the latest daily bar.
+            "Triggered Today" means the latest daily bar's high/low crossed the prior Donchian breakout entry level.
+            This is an entry signal only if you're flat and your rules allow a new position.
           </p>
+
+          <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
+            <div className="font-semibold text-gray-200 mb-1">How to use this page</div>
+            <ul className="space-y-1">
+              <li>Use the <span className="font-mono">ENTRY</span> as your stop-entry reference (classic Turtle: place for the next session).</li>
+              <li>Use the <span className="font-mono">STOP</span> as the protective stop-loss ($2N$ from entry), rounded to tick size.</li>
+              <li>If price already ran far past entry, you may be late — consider skipping or using your execution rules.</li>
+              <li>Check <span className="font-mono">Open Trades</span> before entering a duplicate position.</li>
+            </ul>
+          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6">
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
@@ -122,22 +143,26 @@ export default function TurtleSignals() {
                       <th className="px-4 py-3 text-left">Symbol</th>
                       <th className="px-4 py-3 text-left">Side</th>
                       <th className="px-4 py-3 text-right">Close</th>
-                      <th className="px-4 py-3 text-right">Long Entry</th>
-                      <th className="px-4 py-3 text-right">Short Entry</th>
+                      <th className="px-4 py-3 text-right">ENTRY</th>
+                      <th className="px-4 py-3 text-right">STOP</th>
+                      <th className="px-4 py-3 text-right">Unit Qty</th>
                       <th className="px-4 py-3 text-right">N</th>
                       <th className="px-4 py-3 text-left">Asof</th>
+                      <th className="px-4 py-3 text-left">Notes</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {triggeredRows.map((r: TurtleSignalRow, idx: number) => (
+                    {triggeredRows.map((r: TurtleTriggeredSignal, idx: number) => (
                       <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
                         <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>{sideText(r)}</td>
+                        <td className={`px-4 py-3 font-semibold ${triggeredSideColor(r)}`}>{r.side.toUpperCase()}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_entry, 6)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_entry, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{r.unit_qty}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.N, 6)}</td>
                         <td className="px-4 py-3 text-gray-300 font-mono">{r.asof}</td>
+                        <td className="px-4 py-3 text-gray-300">{r.notes || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -159,6 +184,9 @@ export default function TurtleSignals() {
                     <th className="px-4 py-3 text-right">Close</th>
                     <th className="px-4 py-3 text-right">Long Entry</th>
                     <th className="px-4 py-3 text-right">Short Entry</th>
+                    <th className="px-4 py-3 text-right">Long STOP</th>
+                    <th className="px-4 py-3 text-right">Short STOP</th>
+                    <th className="px-4 py-3 text-right">Unit Qty</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -169,6 +197,9 @@ export default function TurtleSignals() {
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_entry, 6)}</td>
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_entry, 6)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_stop_loss, 6)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_stop_loss, 6)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{r.unit_qty ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>

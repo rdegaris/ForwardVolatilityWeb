@@ -98,8 +98,28 @@ export interface TurtleSignalRow {
   long_entry?: number | null;
   short_entry?: number | null;
 
+  long_stop_loss?: number | null;
+  short_stop_loss?: number | null;
+
+  unit_qty?: number | null;
+
   long_triggered: boolean;
   short_triggered: boolean;
+}
+
+export interface TurtleTriggeredSignal {
+  symbol: string;
+  exchange?: string;
+  currency?: string;
+  side: TurtleSide;
+  asof: string; // YYYY-MM-DD
+
+  last_close: number;
+  entry_stop: number;
+  stop_loss: number;
+  unit_qty: number;
+  N: number;
+  notes?: string | null;
 }
 
 export interface TurtleSignalsPayload {
@@ -109,5 +129,5 @@ export interface TurtleSignalsPayload {
   configs_dir?: string;
   duration?: string;
   signals: TurtleSignalRow[];
-  triggered: TurtleSignalRow[];
+  triggered: TurtleTriggeredSignal[];
 }
