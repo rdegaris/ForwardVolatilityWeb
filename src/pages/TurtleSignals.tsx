@@ -19,7 +19,7 @@ export default function TurtleSignals() {
         setData(d);
         setLoading(false);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load turtle signals');
+        setError(err?.message || 'Failed to load Trendorama signals');
         setLoading(false);
       }
     })();
@@ -44,7 +44,7 @@ export default function TurtleSignals() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading Turtle signals...</p>
+          <p className="text-gray-300">Loading Trendorama signals...</p>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ export default function TurtleSignals() {
         <div className="text-center max-w-lg">
           <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
           <p className="text-gray-400 text-sm">
-            Generate <span className="font-mono">turtle_signals_latest.json</span> into <span className="font-mono">public/data</span>.
+            Generate the latest signals JSON into <span className="font-mono">public/data</span>.
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function TurtleSignals() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
-            Turtle (System 2) — Signals
+            Trendorama (System 2) — Signals
           </h1>
           <p className="text-gray-300">
             "Triggered Today" means the latest daily bar's high/low crossed the prior Donchian breakout entry level.
@@ -113,7 +113,7 @@ export default function TurtleSignals() {
           <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
             <div className="font-semibold text-gray-200 mb-1">How to use this page</div>
             <ul className="space-y-1">
-              <li>Use the <span className="font-mono">ENTRY</span> as your stop-entry reference (classic Turtle: place for the next session).</li>
+              <li>Use the <span className="font-mono">ENTRY</span> as your stop-entry reference (classic Trendorama: place for the next session).</li>
               <li>Use the <span className="font-mono">STOP</span> as the protective stop-loss ($2N$ from entry), rounded to tick size.</li>
               <li>If price already ran far past entry, you may be late — consider skipping or using your execution rules.</li>
               <li>Check <span className="font-mono">Open Trades</span> before entering a duplicate position.</li>

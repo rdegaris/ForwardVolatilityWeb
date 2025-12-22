@@ -279,7 +279,7 @@ export default function Home() {
             <div className="text-xs text-slate-500 dark:text-slate-400">WATCH / CANDIDATE</div>
           </div>
           <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-slate-500 dark:text-slate-400">Turtle Triggers</div>
+            <div className="text-slate-500 dark:text-slate-400">Trendorama Triggers</div>
             <div className="text-2xl font-bold text-fuchsia-700 dark:text-fuchsia-300">{turtleTriggered.length}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">eligible: {turtleTriggeredEligible.length}</div>
           </div>
@@ -348,12 +348,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Turtle */}
+        {/* Trendorama */}
         <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-fuchsia-200/60 dark:border-fuchsia-800/40 backdrop-blur overflow-hidden">
           <div className="px-6 py-4 border-b border-fuchsia-200/60 dark:border-fuchsia-800/40 bg-fuchsia-50/60 dark:bg-fuchsia-950/25">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-200">Turtle</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-200">Trendorama</div>
                 <div className="text-xl font-bold text-slate-900 dark:text-slate-100">System 2 signals</div>
               </div>
               <div className="flex gap-2">
@@ -577,7 +577,7 @@ export default function Home() {
           </div>
 
           <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Turtle (front-month)</div>
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trendorama (front-month)</div>
             <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
               Open: <span className="font-bold">{turtleOpen?.open_trades?.length ?? 0}</span>
             </div>

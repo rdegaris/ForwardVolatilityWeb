@@ -115,7 +115,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-200/70 dark:border-slate-800/60">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-              Options Scanners
+              The OzCTA System
             </Link>
 
             <div className="hidden sm:flex items-center gap-2">
@@ -124,7 +124,7 @@ export default function Navigation() {
                   { key: 'forward' as const, label: 'Forward Vol', to: '/' },
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                   { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
-                  { key: 'turtle' as const, label: 'Turtle', to: '/turtle' },
+                  { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
               ).map((item) => {
                 const isSectionActive = section === item.key;
@@ -175,7 +175,7 @@ export default function Navigation() {
                     ? 'Earnings Crush'
                     : section === 'preEarnings'
                       ? 'Pre-Earnings'
-                      : 'Turtle'}
+                      : 'Trendorama'}
               </span>
             </div>
 
@@ -208,7 +208,7 @@ export default function Navigation() {
                 { key: 'forward' as const, label: 'Forward Vol', to: '/' },
                 { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                 { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
-                { key: 'turtle' as const, label: 'Turtle', to: '/turtle' },
+                { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
               ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
             ).map((item) => {
               const isSectionActive = section === item.key;
