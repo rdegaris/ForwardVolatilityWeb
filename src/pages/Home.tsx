@@ -217,6 +217,18 @@ export default function Home() {
     return calendarTrades.filter(t => (t.frontExpiration || '') <= todayStr);
   }, [calendarTrades]);
 
+  const calendarTradesSoonest = useMemo(() => {
+    const withDue = calendarTrades
+      .map((t) => ({ t, due: daysUntil(t.frontExpiration) }))
+      .sort((a, b) => {
+        const ad = a.due ?? 9999;
+        const bd = b.due ?? 9999;
+        return ad - bd;
+      })
+      .map(x => x.t);
+    return withDue;
+  }, [calendarTrades]);
+
   const earningsRecommended = useMemo(() => {
     const opps = earningsCrush?.opportunities || [];
     return opps.filter(o => o.recommendation === 'RECOMMENDED').slice(0, 5);
@@ -287,11 +299,14 @@ export default function Home() {
       </div>
 
       {/* Open Positions / Actions */}
-      <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md p-6 border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
+      <div className="rounded-xl shadow-sm p-6 border border-slate-200/70 dark:border-slate-800/60 bg-gradient-to-br from-slate-50/90 via-white/75 to-slate-100/60 dark:from-slate-950/35 dark:via-slate-900/45 dark:to-slate-950/20 backdrop-blur">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">Positions</div>
             <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">Open positions & actions</div>
+            <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              Fast checklist across systems.
+            </div>
           </div>
           <div className="flex gap-2">
             <Link
@@ -303,76 +318,127 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-4 grid md:grid-cols-3 gap-4">
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Calendar spreads (IB)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Open: <span className="font-bold">{calendarTrades.length}</span> · needs action:{' '}
-              <span className="font-bold text-rose-600 dark:text-rose-300">{calendarNeedsAction.length}</span>
+        <div className="mt-4 grid lg:grid-cols-12 gap-4">
+          {/* Calendar spreads */}
+          <div className="lg:col-span-6 rounded-lg border border-slate-200/70 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/20 shadow-sm">
+            <div className="px-4 py-3 border-b border-slate-200/70 dark:border-slate-800/60 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Calendar spreads (IB)</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Front-month expirations and roll/close timing</div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 px-2 py-1 rounded-full">
+                  Open: {calendarTrades.length}
+                </span>
+                <span
+                  className={`text-xs font-semibold px-2 py-1 rounded-full border ${
+                    calendarNeedsAction.length > 0
+                      ? 'text-rose-700 dark:text-rose-200 bg-rose-50/80 dark:bg-rose-950/30 border-rose-200/70 dark:border-rose-800/40'
+                      : 'text-emerald-700 dark:text-emerald-200 bg-emerald-50/70 dark:bg-emerald-950/25 border-emerald-200/60 dark:border-emerald-800/40'
+                  }`}
+                >
+                  {calendarNeedsAction.length > 0 ? `Action: ${calendarNeedsAction.length}` : 'No action'}
+                </span>
+              </div>
             </div>
-            {calendarTrades.length > 0 && (
-              <div className="mt-3 space-y-2">
-                {calendarTrades.slice(0, 4).map((t) => {
-                  const due = daysUntil(t.frontExpiration);
-                  const isDue = due !== null && due <= 0;
-                  return (
-                    <div key={t.id} className="flex items-start justify-between gap-3 text-sm">
-                      <div>
-                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{t.symbol}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">
-                          {t.frontExpiration} / {t.backExpiration} · {t.quantity}× · {t.callOrPut}
+
+            <div className="p-4">
+              {calendarTrades.length === 0 ? (
+                <div className="text-sm text-slate-600 dark:text-slate-300">No open calendar spreads.</div>
+              ) : (
+                <div className="space-y-2">
+                  {calendarTradesSoonest.slice(0, 5).map((t) => {
+                    const due = daysUntil(t.frontExpiration);
+                    const isDue = due !== null && due <= 0;
+                    return (
+                      <div
+                        key={t.id}
+                        className="flex items-start justify-between gap-3 rounded-md px-3 py-2 border border-slate-200/60 dark:border-slate-800/50 bg-white/60 dark:bg-slate-950/10"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{t.symbol}</div>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {t.quantity}× {t.callOrPut}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">
+                            {t.frontExpiration} → {t.backExpiration}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div
+                            className={`text-xs font-semibold ${
+                              isDue ? 'text-rose-700 dark:text-rose-200' : 'text-slate-600 dark:text-slate-300'
+                            }`}
+                          >
+                            {due === null ? '—' : isDue ? 'ROLL/CLOSE' : `${due}d`}
+                          </div>
+                          <div className="text-[11px] text-slate-500 dark:text-slate-400">to front exp</div>
                         </div>
                       </div>
-                      <div
-                        className={`text-xs font-semibold ${
-                          isDue ? 'text-rose-600 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400'
-                        }`}
-                      >
-                        {due === null ? '—' : isDue ? 'ROLL/CLOSE' : `${due}d`}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Trendorama */}
+          <div className="lg:col-span-3 rounded-lg border border-slate-200/70 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/20 shadow-sm">
+            <div className="px-4 py-3 border-b border-slate-200/70 dark:border-slate-800/60 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trendorama</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Front-month positions</div>
               </div>
-            )}
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 px-2 py-1 rounded-full">
+                Open: {turtleOpen?.open_trades?.length ?? 0}
+              </span>
+            </div>
+            <div className="p-4">
+              <div className="flex flex-wrap gap-2">
+                <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
+                  Manage
+                </Link>
+                <Link
+                  to="/turtle/signals"
+                  className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30"
+                >
+                  Signals
+                </Link>
+              </div>
+              <div className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+                Triggered today: <span className="font-semibold">{turtleTriggered.length}</span>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trendorama (front-month)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Open: <span className="font-bold">{turtleOpen?.open_trades?.length ?? 0}</span>
+          {/* Earnings Crush tracked */}
+          <div className="lg:col-span-3 rounded-lg border border-slate-200/70 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/20 shadow-sm">
+            <div className="px-4 py-3 border-b border-slate-200/70 dark:border-slate-800/60 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Earnings Crush</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Tracked trades (this browser)</div>
+              </div>
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60 px-2 py-1 rounded-full">
+                Open: {earningsStoredOpen.length}
+              </span>
             </div>
-            <div className="mt-3 flex gap-2">
-              <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
-                Manage
-              </Link>
-              <Link
-                to="/turtle/signals"
-                className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30"
-              >
-                Signals
-              </Link>
+            <div className="p-4">
+              <div className="flex flex-wrap gap-2">
+                <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
+                  Update Trades
+                </Link>
+                <Link
+                  to="/earnings-crush"
+                  className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
+                >
+                  Scanner
+                </Link>
+              </div>
+              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">Stored in localStorage.</div>
             </div>
-          </div>
-
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Earnings Crush (tracked)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Local trades: <span className="font-bold">{earningsStoredTrades.length}</span> · open:{' '}
-              <span className="font-bold">{earningsStoredOpen.length}</span>
-            </div>
-            <div className="mt-3 flex gap-2">
-              <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
-                Update Trades
-              </Link>
-              <Link
-                to="/earnings-crush"
-                className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
-              >
-                Scanner
-              </Link>
-            </div>
-            <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">Stored in your browser (localStorage).</div>
           </div>
         </div>
       </div>
@@ -380,7 +446,7 @@ export default function Home() {
       {/* Strategy Summary */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Forward Vol */}
-        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-indigo-200/60 dark:border-indigo-800/40 backdrop-blur overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-indigo-200/60 dark:border-indigo-800/40 bg-gradient-to-br from-white/85 to-indigo-50/35 dark:from-slate-900/55 dark:to-indigo-950/15 backdrop-blur overflow-hidden">
           <div className="px-6 py-4 border-b border-indigo-200/60 dark:border-indigo-800/40 bg-indigo-50/60 dark:bg-indigo-950/25">
             <div className="flex items-center justify-between">
               <div>
@@ -440,7 +506,7 @@ export default function Home() {
         </div>
 
         {/* Trendorama */}
-        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-fuchsia-200/60 dark:border-fuchsia-800/40 backdrop-blur overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-fuchsia-200/60 dark:border-fuchsia-800/40 bg-gradient-to-br from-white/85 to-fuchsia-50/30 dark:from-slate-900/55 dark:to-fuchsia-950/15 backdrop-blur overflow-hidden">
           <div className="px-6 py-4 border-b border-fuchsia-200/60 dark:border-fuchsia-800/40 bg-fuchsia-50/60 dark:bg-fuchsia-950/25">
             <div className="flex items-center justify-between">
               <div>
@@ -519,7 +585,7 @@ export default function Home() {
       {/* Earnings / Pre-earnings */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Earnings Crush */}
-        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-teal-200/60 dark:border-teal-800/40 backdrop-blur overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-teal-200/60 dark:border-teal-800/40 bg-gradient-to-br from-white/85 to-teal-50/25 dark:from-slate-900/55 dark:to-teal-950/15 backdrop-blur overflow-hidden">
           <div className="px-6 py-4 border-b border-teal-200/60 dark:border-teal-800/40 bg-teal-50/60 dark:bg-teal-950/25">
             <div className="flex items-center justify-between">
               <div>
@@ -568,7 +634,7 @@ export default function Home() {
         </div>
 
         {/* Pre-Earnings Straddles */}
-        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-amber-200/60 dark:border-amber-800/40 backdrop-blur overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-amber-200/60 dark:border-amber-800/40 bg-gradient-to-br from-white/85 to-amber-50/25 dark:from-slate-900/55 dark:to-amber-950/15 backdrop-blur overflow-hidden">
           <div className="px-6 py-4 border-b border-amber-200/60 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/25">
             <div className="flex items-center justify-between">
               <div>
