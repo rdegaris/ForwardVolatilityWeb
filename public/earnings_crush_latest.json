@@ -1,71 +1,14 @@
 {
-  "timestamp": "2025-12-22T07:03:24.496014",
-  "date": "2025-12-22",
+  "timestamp": "2025-12-19T10:19:22.488311",
+  "date": "2025-12-19",
   "total_scanned": 40,
-  "earnings_found": 3,
-  "opportunities": [
-    {
-      "ticker": "SBUX",
-      "price": 88.11,
-      "earnings_date": "2026-01-19",
-      "days_to_earnings": 28,
-      "iv": 25.8,
-      "expected_move": 3.27,
-      "expected_move_pct": 3.7,
-      "recommendation": "AVOID",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": false,
-        "ts_slope_positive": false,
-        "iv_slope_pct": -26.2
-      },
-      "front_iv": 25.8,
-      "back_iv": 35.0,
-      "suggested_trade": {
-        "strike": 90.0,
-        "sell_expiration": "2026-01-16",
-        "buy_expiration": "2026-02-20",
-        "sell_dte": 25,
-        "buy_dte": 60,
-        "sell_price": 1.64,
-        "buy_price": 4.3,
-        "net_credit": -2.67
-      }
-    },
-    {
-      "ticker": "ISRG",
-      "price": 574.23,
-      "earnings_date": "2026-01-21",
-      "days_to_earnings": 30,
-      "iv": 40.5,
-      "expected_move": 65.8,
-      "expected_move_pct": 11.5,
-      "recommendation": "AVOID",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": false,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 14.8
-      },
-      "front_iv": 40.5,
-      "back_iv": 35.3,
-      "suggested_trade": {
-        "strike": 570.0,
-        "sell_expiration": "2026-01-23",
-        "buy_expiration": "2026-02-20",
-        "sell_dte": 32,
-        "buy_dte": 60,
-        "sell_price": 32.9,
-        "buy_price": 37.5,
-        "net_credit": -4.6
-      }
-    }
-  ],
+  "earnings_found": 0,
+  "opportunities": [],
   "summary": {
     "total_recommended": 0,
     "total_consider": 0,
-    "total_avoid": 2,
-    "avg_iv": 33.1,
-    "avg_expected_move": 7.6
+    "total_avoid": 0,
+    "avg_iv": 0,
+    "avg_expected_move": 0
   }
 }
