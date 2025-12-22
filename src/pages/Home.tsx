@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { getTodayPacific, getTodayDatePacific } from '../lib/dateUtils';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getTodayDatePacific } from '../lib/dateUtils';
 import { fetchJson } from '../lib/http';
+import type { TurtleOpenTradesPayload, TurtleSignalsPayload, TurtleSuggestedTradesPayload } from '../types/turtle';
 
-interface Trade {
+type CalendarTrade = {
   id: string;
   symbol: string;
   strike: number;
@@ -16,12 +18,14 @@ interface Trade {
   backCurrentPrice: number;
   spreadEntryPrice?: number;
   spreadCurrentPrice?: number;
+  underlyingEntryPrice?: number;
   underlyingCurrentPrice: number;
   entryDate: string;
   unrealizedPnL?: number;
-}
+  asOf?: string;
+};
 
-interface ScanOpportunity {
+type ForwardVolOpportunity = {
   ticker: string;
   price: number;
   best_ff: number;
@@ -38,10 +42,15 @@ interface ScanOpportunity {
     typical_case: number;
     typical_case_pct: number;
   };
-  universe: string;
-}
+};
 
-interface EarningsOpportunity {
+type ForwardVolScan = {
+  date: string;
+  timestamp: string;
+  opportunities: ForwardVolOpportunity[];
+};
+
+type EarningsCrushOpportunity = {
   ticker: string;
   price: number;
   earnings_date: string;
@@ -53,125 +62,180 @@ interface EarningsOpportunity {
     strike: number;
     sell_expiration: string;
     buy_expiration: string;
-    net_credit: number;
+    net_credit?: number;
   };
-}
+};
 
-interface ScanData {
+type EarningsCrushScan = {
   date: string;
   timestamp: string;
-  opportunities: ScanOpportunity[];
-}
+  total_scanned?: number;
+  opportunities: EarningsCrushOpportunity[];
+};
 
-interface EarningsData {
+type PreEarningsStraddleOpportunity = {
+  ticker: string;
+  price: number;
+  earnings_date: string;
+  days_to_earnings: number;
+  expiry: string;
+  expiry_dte: number;
+  expiry_is_monthly: boolean;
+  strike: number;
+  implied_move_pct: number;
+  recommendation: string;
+};
+
+type PreEarningsStraddlesScan = {
   date: string;
   timestamp: string;
-  opportunities: EarningsOpportunity[];
+  universe_size: number;
+  earnings_found: number;
+  candidates_scanned: number;
+  opportunities: PreEarningsStraddleOpportunity[];
+  summary?: {
+    total_opportunities: number;
+    total_candidate: number;
+    total_watch: number;
+    total_pass: number;
+  };
+};
+
+type EarningsCrushStoredTrade = {
+  id: string;
+  symbol: string;
+  quantity: number;
+  status: 'open' | 'closed';
+  entryDate: string;
+  earningsDate: string;
+};
+
+const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
+
+function formatPct(value?: number | null, digits = 1) {
+  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  return `${value.toFixed(digits)}%`;
+}
+
+function safeDateLabel(yyyymmdd?: string | null) {
+  if (!yyyymmdd) return '—';
+  try {
+    return new Date(yyyymmdd + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch {
+    return yyyymmdd;
+  }
+}
+
+function daysUntil(yyyymmdd?: string | null) {
+  if (!yyyymmdd) return null;
+  const today = getTodayDatePacific();
+  const d = new Date(yyyymmdd + 'T00:00:00');
+  return Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 export default function Home() {
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [nasdaq100, setNasdaq100] = useState<ScanOpportunity[]>([]);
-  const [midcap400, setMidcap400] = useState<ScanOpportunity[]>([]);
-  const [earnings, setEarnings] = useState<EarningsOpportunity[]>([]);
-  const [lastScanDate, setLastScanDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [calendarTrades, setCalendarTrades] = useState<CalendarTrade[]>([]);
+  const [nasdaq100, setNasdaq100] = useState<ForwardVolScan | null>(null);
+  const [midcap400, setMidcap400] = useState<ForwardVolScan | null>(null);
+  const [earningsCrush, setEarningsCrush] = useState<EarningsCrushScan | null>(null);
+  const [preEarnings, setPreEarnings] = useState<PreEarningsStraddlesScan | null>(null);
+  const [turtleSignals, setTurtleSignals] = useState<TurtleSignalsPayload | null>(null);
+  const [turtleOpen, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
+  const [turtleSuggested, setTurtleSuggested] = useState<TurtleSuggestedTradesPayload | null>(null);
+
+  const [earningsStoredTrades, setEarningsStoredTrades] = useState<EarningsCrushStoredTrade[]>([]);
+
   useEffect(() => {
-    const fetchData = async () => {
+    const load = async () => {
       try {
-        const [tradesResult, nasdaq100Result, midcap400Result, earningsResult] = await Promise.allSettled([
+        const results = await Promise.allSettled([
           fetchJson<unknown>('/data/trades.json', { cache: 'no-store' }),
-          fetchJson<ScanData>('/data/nasdaq100_results_latest.json', { cache: 'no-store' }),
-          fetchJson<ScanData>('/data/midcap400_results_latest.json', { cache: 'no-store' }),
-          fetchJson<EarningsData>('/data/earnings_crush_latest.json', { cache: 'no-store' }),
+          fetchJson<ForwardVolScan>('/data/nasdaq100_results_latest.json', { cache: 'no-store' }),
+          fetchJson<ForwardVolScan>('/data/midcap400_results_latest.json', { cache: 'no-store' }),
+          fetchJson<EarningsCrushScan>('/data/earnings_crush_latest.json', { cache: 'no-store' }),
+          fetchJson<PreEarningsStraddlesScan>('/data/pre_earnings_straddle_latest.json', { cache: 'no-store' }),
+          fetchJson<TurtleSignalsPayload>('/data/turtle_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<TurtleOpenTradesPayload>('/data/turtle_open_trades_latest.json', { cache: 'no-store' }),
+          fetchJson<TurtleSuggestedTradesPayload>('/data/turtle_suggested_latest.json', { cache: 'no-store' }),
         ]);
 
-        if (tradesResult.status === 'fulfilled') {
-          const tradesData = tradesResult.value;
-          setTrades(Array.isArray(tradesData) ? (tradesData as Trade[]) : []);
-        }
+        const [
+          tradesRes,
+          n100Res,
+          m400Res,
+          ecRes,
+          peRes,
+          tsRes,
+          toRes,
+          tSugRes,
+        ] = results;
 
-        // Helper to check if scan data is recent (within last 3 days for weekends)
-        const isDataRecent = (scanDate: string) => {
-          const today = getTodayDatePacific();
-          const dataDate = new Date(scanDate + 'T00:00:00');
-          const daysDiff = Math.floor((today.getTime() - dataDate.getTime()) / (1000 * 60 * 60 * 24));
-          // Allow data from last 3 days (covers weekends)
-          return daysDiff <= 3;
-        };
-
-        if (nasdaq100Result.status === 'fulfilled') {
-          const nasdaq100Data = nasdaq100Result.value;
-          const isRecent = isDataRecent(nasdaq100Data.date);
-          const opps = (nasdaq100Data.opportunities || []).map((opp: ScanOpportunity) => ({
-            ...opp,
-            universe: 'NASDAQ 100'
-          }));
-          setNasdaq100(isRecent ? opps : []);
-          if (nasdaq100Data.date) {
-            setLastScanDate(nasdaq100Data.date);
-          }
+        if (tradesRes.status === 'fulfilled') {
+          const v = tradesRes.value;
+          setCalendarTrades(Array.isArray(v) ? (v as CalendarTrade[]) : []);
         }
-
-        if (midcap400Result.status === 'fulfilled') {
-          const midcap400Data = midcap400Result.value;
-          const isRecent = isDataRecent(midcap400Data.date);
-          const opps = (midcap400Data.opportunities || []).map((opp: ScanOpportunity) => ({
-            ...opp,
-            universe: 'MidCap 400'
-          }));
-          setMidcap400(isRecent ? opps : []);
-        }
-
-        if (earningsResult.status === 'fulfilled') {
-          const earningsData = earningsResult.value;
-          const isRecent = isDataRecent(earningsData.date);
-          const recommended = (earningsData.opportunities || []).filter(
-            (opp: EarningsOpportunity) => opp.recommendation === 'RECOMMENDED'
-          );
-          setEarnings(isRecent ? recommended : []);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        if (n100Res.status === 'fulfilled') setNasdaq100(n100Res.value);
+        if (m400Res.status === 'fulfilled') setMidcap400(m400Res.value);
+        if (ecRes.status === 'fulfilled') setEarningsCrush(ecRes.value);
+        if (peRes.status === 'fulfilled') setPreEarnings(peRes.value);
+        if (tsRes.status === 'fulfilled') setTurtleSignals(tsRes.value);
+        if (toRes.status === 'fulfilled') setTurtleOpen(toRes.value);
+        if (tSugRes.status === 'fulfilled') setTurtleSuggested(tSugRes.value);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    load();
   }, []);
 
-  // Get end of this month
-  const getEndOfMonth = () => {
-    const today = getTodayDatePacific();
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    return endOfMonth.toISOString().split('T')[0];
-  };
-
-  // Filter trades expiring this month
-  const tradesExpiringThisMonth = trades.filter(trade => {
-    const endOfMonth = getEndOfMonth();
-    return trade.frontExpiration <= endOfMonth;
-  });
-
-  // Combine and sort all opportunities
-  const allOpportunities = [...nasdaq100, ...midcap400]
-    .sort((a, b) => b.best_ff - a.best_ff)
-    .slice(0, 5);
-
-  const calculatePnL = (trade: Trade) => {
-    if (trade.unrealizedPnL !== undefined) {
-      return trade.unrealizedPnL;
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const raw = window.localStorage.getItem(EARNINGS_TRADES_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setEarningsStoredTrades(parsed as EarningsCrushStoredTrade[]);
+      }
+    } catch {
+      // ignore
     }
-    // Calculate from prices if not provided
-    return ((trade.backCurrentPrice - trade.frontCurrentPrice) * trade.quantity * 100);
-  };
+  }, []);
+
+  const forwardVolTop = useMemo(() => {
+    const n = (nasdaq100?.opportunities || []).map(o => ({ ...o, universe: 'NASDAQ 100' as const }));
+    const m = (midcap400?.opportunities || []).map(o => ({ ...o, universe: 'MidCap 400' as const }));
+    return [...n, ...m].sort((a, b) => b.best_ff - a.best_ff).slice(0, 5);
+  }, [nasdaq100, midcap400]);
+
+  const calendarNeedsAction = useMemo(() => {
+    const today = getTodayDatePacific();
+    const todayStr = today.toISOString().split('T')[0];
+    return calendarTrades.filter(t => (t.frontExpiration || '') <= todayStr);
+  }, [calendarTrades]);
+
+  const earningsRecommended = useMemo(() => {
+    const opps = earningsCrush?.opportunities || [];
+    return opps.filter(o => o.recommendation === 'RECOMMENDED').slice(0, 5);
+  }, [earningsCrush]);
+
+  const preEarningsTop = useMemo(() => {
+    const opps = preEarnings?.opportunities || [];
+    return opps.slice(0, 5);
+  }, [preEarnings]);
+
+  const turtleTriggered = turtleSignals?.triggered || [];
+  const turtleTriggeredEligible = turtleTriggered.filter(t => t.eligible !== false);
+
+  const earningsStoredOpen = useMemo(() => earningsStoredTrades.filter(t => t.status === 'open'), [earningsStoredTrades]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600 dark:text-gray-400">Loading...</div>
+        <div className="text-lg text-slate-600 dark:text-slate-300">Loading overview…</div>
       </div>
     );
   }
@@ -179,232 +243,369 @@ export default function Home() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Daily Trading Dashboard
-        </h1>
-        <div className="flex flex-wrap items-center gap-4">
-          <p className="text-gray-600 dark:text-gray-400">
-            {new Date().toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
+      <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md p-6 border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-1">Overview</h1>
+            <p className="text-slate-600 dark:text-slate-300">
+              One screen for signals, opportunities, open positions, and next actions.
+            </p>
+          </div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
               day: 'numeric',
-              timeZone: 'America/Los_Angeles'
+              timeZone: 'America/Los_Angeles',
             })}
-          </p>
-          {lastScanDate && (
-            <span className={`text-sm px-2 py-1 rounded ${
-              lastScanDate === getTodayPacific() 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-            }`}>
-              📊 Scan data from {lastScanDate === getTodayPacific() ? 'today' : lastScanDate}
-            </span>
-          )}
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-slate-500 dark:text-slate-400">Forward Vol Top</div>
+            <div className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">{forwardVolTop.length}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">from N100 + M400</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-slate-500 dark:text-slate-400">Earnings Crush</div>
+            <div className="text-2xl font-bold text-teal-700 dark:text-teal-300">{earningsRecommended.length}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">RECOMMENDED</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-slate-500 dark:text-slate-400">Pre-Earnings</div>
+            <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">{preEarnings?.summary?.total_watch ?? preEarningsTop.length}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">WATCH / CANDIDATE</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-slate-500 dark:text-slate-400">Turtle Triggers</div>
+            <div className="text-2xl font-bold text-fuchsia-700 dark:text-fuchsia-300">{turtleTriggered.length}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">eligible: {turtleTriggeredEligible.length}</div>
+          </div>
         </div>
       </div>
 
-      {/* Positions Needing Action This Month */}
-      {tradesExpiringThisMonth.length > 0 && (
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 rounded-lg shadow-lg p-6 border-2 border-amber-200 dark:border-amber-800/40">
-          <div className="flex items-center mb-4">
-            <svg className="w-6 h-6 text-amber-700 dark:text-amber-300 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <h2 className="text-2xl font-bold text-amber-950 dark:text-amber-200">
-              Action Required - Expiring This Month
-            </h2>
+      {/* Strategy Summary */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Forward Vol */}
+        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-indigo-200/60 dark:border-indigo-800/40 backdrop-blur overflow-hidden">
+          <div className="px-6 py-4 border-b border-indigo-200/60 dark:border-indigo-800/40 bg-indigo-50/60 dark:bg-indigo-950/25">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-indigo-700 dark:text-indigo-200">Forward Vol</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-slate-100">Calendar opportunities</div>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/nasdaq100" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700">
+                  NASDAQ 100
+                </Link>
+                <Link to="/midcap400" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-indigo-800 dark:text-indigo-200 border border-indigo-200/60 dark:border-indigo-800/40 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30">
+                  MidCap 400
+                </Link>
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Latest: N100 {nasdaq100?.date || '—'} · M400 {midcap400?.date || '—'}
+            </div>
           </div>
-          <div className="space-y-3">
-            {tradesExpiringThisMonth.map((trade) => {
-              const pnl = calculatePnL(trade);
-              const pnlColor = pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-              
-              // Calculate spread prices
-              const spreadEntry = trade.spreadEntryPrice ?? 
-                ((trade.backEntryPrice ?? 0) - (trade.frontEntryPrice ?? 0));
-              const spreadCurrent = trade.spreadCurrentPrice ?? 
-                (trade.backCurrentPrice - trade.frontCurrentPrice);
-              const spreadChange = spreadCurrent - spreadEntry;
-              const spreadChangePct = spreadEntry !== 0 ? (spreadChange / spreadEntry) * 100 : 0;
-              
-              return (
-                <div key={trade.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        {trade.quantity}x {trade.symbol} ${trade.strike} {trade.callOrPut}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {trade.frontExpiration} / {trade.backExpiration} Calendar
-                      </p>
-                      <div className="mt-2 flex items-center gap-4">
-                        <div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">Entry: </span>
-                          <span className="text-sm font-semibold text-gray-900 dark:text-white">${spreadEntry.toFixed(2)}</span>
+
+          <div className="p-6">
+            {forwardVolTop.length === 0 ? (
+              <div className="text-slate-600 dark:text-slate-300">No Forward Vol opportunities found.</div>
+            ) : (
+              <div className="space-y-3">
+                {forwardVolTop.map((o, idx) => (
+                  <div key={`${o.ticker}-${idx}`} className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">
+                          {o.ticker} <span className="text-xs font-sans text-slate-500 dark:text-slate-400">({o.universe})</span>
                         </div>
-                        <div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">Current: </span>
-                          <span className="text-sm font-semibold text-gray-900 dark:text-white">${spreadCurrent.toFixed(2)}</span>
+                        <div className="text-sm text-slate-600 dark:text-slate-300">
+                          ${o.price.toFixed(2)} · {o.expiry1} / {o.expiry2} ({o.dte1}/{o.dte2} DTE)
                         </div>
-                        <div className={`text-sm font-semibold ${spreadChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {spreadChange >= 0 ? '+' : ''}{spreadChange.toFixed(2)} ({spreadChangePct >= 0 ? '+' : ''}{spreadChangePct.toFixed(0)}%)
+                        <div className="text-xs text-slate-500 dark:text-slate-400">Next earnings: {o.next_earnings || '—'}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{(o.best_ff * 100).toFixed(1)}%</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">FF</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link to="/trade-tracker" className="px-3 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700">
+                View Open Calendars
+              </Link>
+              <Link to="/iv-rankings" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-indigo-800 dark:text-indigo-200 border border-indigo-200/60 dark:border-indigo-800/40 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30">
+                IV Rankings
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Turtle */}
+        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-fuchsia-200/60 dark:border-fuchsia-800/40 backdrop-blur overflow-hidden">
+          <div className="px-6 py-4 border-b border-fuchsia-200/60 dark:border-fuchsia-800/40 bg-fuchsia-50/60 dark:bg-fuchsia-950/25">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-200">Turtle</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-slate-100">System 2 signals</div>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/turtle/signals" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
+                  Signals
+                </Link>
+                <Link to="/turtle/open-trades" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30">
+                  Open Trades
+                </Link>
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Latest: {turtleSignals?.date || turtleOpen?.date || turtleSuggested?.date || '—'}
+            </div>
+          </div>
+
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                <div className="text-slate-500 dark:text-slate-400">Triggered</div>
+                <div className="text-2xl font-bold text-fuchsia-700 dark:text-fuchsia-300">{turtleTriggered.length}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">eligible: {turtleTriggeredEligible.length}</div>
+              </div>
+              <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                <div className="text-slate-500 dark:text-slate-400">Open trades</div>
+                <div className="text-2xl font-bold text-fuchsia-700 dark:text-fuchsia-300">{turtleOpen?.open_trades?.length ?? 0}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">front-month positions</div>
+              </div>
+            </div>
+
+            {turtleTriggered.length === 0 ? (
+              <div className="text-slate-600 dark:text-slate-300">No breakouts triggered on the latest bar.</div>
+            ) : (
+              <div className="space-y-2">
+                {turtleTriggered.slice(0, 5).map((t, idx) => (
+                  <div key={`${t.symbol}-${idx}`} className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">
+                          {t.symbol} <span className="text-xs font-sans text-slate-500 dark:text-slate-400">{t.side.toUpperCase()}</span>
+                        </div>
+                        <div className="text-sm text-slate-600 dark:text-slate-300">
+                          Entry {t.entry_stop} · Stop {t.stop_loss}
+                        </div>
+                        {t.blocked_reason ? (
+                          <div className="text-xs text-rose-600 dark:text-rose-300">Blocked: {t.blocked_reason}</div>
+                        ) : (
+                          <div className="text-xs text-emerald-700 dark:text-emerald-300">OK to consider (per cap rules)</div>
+                        )}
+                      </div>
+                      <div className="text-right text-xs text-slate-500 dark:text-slate-400">
+                        asof {t.asof}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              <Link to="/turtle" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30">
+                Suggested
+              </Link>
+              <Link to="/turtle/triggers" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30">
+                Triggers Soon
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Earnings / Pre-earnings */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Earnings Crush */}
+        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-teal-200/60 dark:border-teal-800/40 backdrop-blur overflow-hidden">
+          <div className="px-6 py-4 border-b border-teal-200/60 dark:border-teal-800/40 bg-teal-50/60 dark:bg-teal-950/25">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-200">Earnings Crush</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-slate-100">IV crush setups</div>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/earnings-crush" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
+                  Scanner
+                </Link>
+                <Link to="/earnings-crush/trades" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30">
+                  Trades
+                </Link>
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Latest: {earningsCrush?.date || '—'} · stored trades (local): {earningsStoredOpen.length} open
+            </div>
+          </div>
+
+          <div className="p-6">
+            {earningsRecommended.length === 0 ? (
+              <div className="text-slate-600 dark:text-slate-300">No RECOMMENDED earnings crush plays today.</div>
+            ) : (
+              <div className="space-y-3">
+                {earningsRecommended.map((o, idx) => (
+                  <div key={`${o.ticker}-${idx}`} className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{o.ticker}</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-300">
+                          ${o.price.toFixed(2)} · earnings {safeDateLabel(o.earnings_date)} ({o.days_to_earnings}d)
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">Expected move: ±{formatPct(o.expected_move_pct)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-teal-700 dark:text-teal-300">{o.iv.toFixed(1)}%</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">IV</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Pre-Earnings Straddles */}
+        <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md border border-amber-200/60 dark:border-amber-800/40 backdrop-blur overflow-hidden">
+          <div className="px-6 py-4 border-b border-amber-200/60 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/25">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-amber-800 dark:text-amber-200">Pre-Earnings</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-slate-100">Long straddles (entry window)</div>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/pre-earnings" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700">
+                  Opportunities
+                </Link>
+                <Link to="/pre-earnings/open-trades" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-amber-900 dark:text-amber-200 border border-amber-200/60 dark:border-amber-800/40 hover:bg-amber-100/60 dark:hover:bg-amber-900/30">
+                  Open Trades
+                </Link>
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Latest: {preEarnings?.date || '—'} · universe {preEarnings?.universe_size ?? '—'} · scanned {preEarnings?.candidates_scanned ?? '—'}
+            </div>
+          </div>
+
+          <div className="p-6">
+            {preEarningsTop.length === 0 ? (
+              <div className="text-slate-600 dark:text-slate-300">No opportunities in the entry window.</div>
+            ) : (
+              <div className="space-y-3">
+                {preEarningsTop.map((o, idx) => (
+                  <div key={`${o.ticker}-${idx}`} className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">
+                          {o.ticker} <span className="text-xs font-sans text-slate-500 dark:text-slate-400">{o.recommendation}</span>
+                        </div>
+                        <div className="text-sm text-slate-600 dark:text-slate-300">
+                          ${o.price.toFixed(2)} · earnings {safeDateLabel(o.earnings_date)} ({o.days_to_earnings}d)
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          Exp {safeDateLabel(o.expiry)} · ±{formatPct(o.implied_move_pct)} implied
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {trade.symbol} @ ${trade.underlyingCurrentPrice.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className={`text-xl font-bold ${pnlColor}`}>
-                        ${pnl.toFixed(0)}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">P&L</p>
+                      <div className="text-right text-xs text-slate-500 dark:text-slate-400">
+                        asof {preEarnings?.date || '—'}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            )}
+
+            <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+              Note: Open Trades requires the local IB bridge + local web dev server.
+            </div>
           </div>
-          <p className="mt-4 text-sm text-amber-950 dark:text-amber-200 font-medium">
-            💡 Consider closing these positions before front expiration
-          </p>
-        </div>
-      )}
-
-      {/* Best Opportunities Today */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Forward Vol Opportunities */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            🎯 Top Forward Vol Opportunities
-          </h2>
-          {allOpportunities.length > 0 ? (
-            <div className="space-y-3">
-              {allOpportunities.map((opp, idx) => (
-                  <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-indigo-500 pl-4 py-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        {opp.ticker} <span className="text-sm text-gray-500">@ ${opp.price.toFixed(2)}</span>
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {opp.universe}
-                      </p>
-                      <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">
-                        {opp.expiry1} / {opp.expiry2}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {opp.dte1} / {opp.dte2} DTE
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Next earnings: {opp.next_earnings || '—'}
-                      </p>
-                      {opp.trade_details && (
-                        <>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {opp.trade_details.spread_type} ${opp.trade_details.strike} - 
-                            Debit: ${(opp.trade_details.net_debit * 100).toFixed(0)} | 
-                            Target: +${opp.trade_details.typical_case.toFixed(0)} ({opp.trade_details.typical_case_pct.toFixed(0)}%)
-                          </p>
-                        </>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
-                        {(opp.best_ff * 100).toFixed(1)}%
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">FF</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-              No opportunities found today
-            </p>
-          )}
-        </div>
-
-        {/* Earnings Crush Opportunities */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-            📈 Earnings Crush Plays
-          </h2>
-          {earnings.length > 0 ? (
-            <div className="space-y-3">
-              {earnings.map((opp, idx) => (
-                <div key={`${opp.ticker}-${idx}`} className="border-l-4 border-indigo-500 pl-4 py-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        {opp.ticker} <span className="text-sm text-gray-500">@ ${opp.price.toFixed(2)}</span>
-                      </h3>
-                      <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">
-                        Earnings in {opp.days_to_earnings} day{opp.days_to_earnings !== 1 ? 's' : ''}
-                      </p>
-                      {opp.suggested_trade && (
-                        <>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            ${opp.suggested_trade.strike} Calendar Spread
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Sell {opp.suggested_trade.sell_expiration} / Buy {opp.suggested_trade.buy_expiration}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Credit: ${(opp.suggested_trade.net_credit * 100).toFixed(0)}
-                          </p>
-                        </>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
-                        {opp.iv.toFixed(1)}%
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">IV</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        ±{opp.expected_move_pct.toFixed(1)}%
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-              No recommended earnings plays today
-            </p>
-          )}
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-300">
-            {allOpportunities.length}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Forward Vol</p>
+      {/* Open Positions / Actions */}
+      <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md p-6 border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">Positions</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">Open positions & actions</div>
+          </div>
+          <div className="flex gap-2">
+            <Link to="/trade-tracker" className="px-3 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
+              Trade Tracker
+            </Link>
+          </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-indigo-700 dark:text-indigo-300">
-            {earnings.length}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Earnings</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {trades.length}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Open Positions</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-          <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">
-            {tradesExpiringThisMonth.length}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Need Action</p>
+
+        <div className="mt-4 grid md:grid-cols-3 gap-4">
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Calendar spreads (IB)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Open: <span className="font-bold">{calendarTrades.length}</span> · needs action: <span className="font-bold text-rose-600 dark:text-rose-300">{calendarNeedsAction.length}</span>
+            </div>
+            {calendarTrades.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {calendarTrades.slice(0, 4).map((t) => {
+                  const due = daysUntil(t.frontExpiration);
+                  const isDue = due !== null && due <= 0;
+                  return (
+                    <div key={t.id} className="flex items-start justify-between gap-3 text-sm">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{t.symbol}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          {t.frontExpiration} / {t.backExpiration} · {t.quantity}× · {t.callOrPut}
+                        </div>
+                      </div>
+                      <div className={`text-xs font-semibold ${isDue ? 'text-rose-600 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400'}`}>
+                        {due === null ? '—' : isDue ? 'ROLL/CLOSE' : `${due}d`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Turtle (front-month)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Open: <span className="font-bold">{turtleOpen?.open_trades?.length ?? 0}</span>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
+                Manage
+              </Link>
+              <Link to="/turtle/signals" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30">
+                Signals
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Earnings Crush (tracked)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Local trades: <span className="font-bold">{earningsStoredTrades.length}</span> · open: <span className="font-bold">{earningsStoredOpen.length}</span>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
+                Update Trades
+              </Link>
+              <Link to="/earnings-crush" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30">
+                Scanner
+              </Link>
+            </div>
+            <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">Stored in your browser (localStorage).</div>
+          </div>
         </div>
       </div>
     </div>
