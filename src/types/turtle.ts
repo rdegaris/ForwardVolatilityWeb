@@ -119,6 +119,12 @@ export interface TurtleTriggeredSignal {
   stop_loss: number;
   unit_qty: number;
   N: number;
+
+  cluster?: string;
+  cluster_open_count?: number;
+  cluster_cap?: number;
+  eligible?: boolean;
+  blocked_reason?: string | null;
   notes?: string | null;
 }
 

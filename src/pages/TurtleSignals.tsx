@@ -86,6 +86,18 @@ export default function TurtleSignals() {
     return 'text-gray-400';
   };
 
+  const eligibleText = (r: TurtleTriggeredSignal) => {
+    if (r.eligible === true) return 'OK';
+    if (r.eligible === false) return 'BLOCKED';
+    return '—';
+  };
+
+  const eligibleColor = (r: TurtleTriggeredSignal) => {
+    if (r.eligible === true) return 'text-emerald-200';
+    if (r.eligible === false) return 'text-amber-200';
+    return 'text-gray-400';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
@@ -142,6 +154,8 @@ export default function TurtleSignals() {
                     <tr>
                       <th className="px-4 py-3 text-left">Symbol</th>
                       <th className="px-4 py-3 text-left">Side</th>
+                      <th className="px-4 py-3 text-left">Status</th>
+                      <th className="px-4 py-3 text-left">Cluster</th>
                       <th className="px-4 py-3 text-right">Close</th>
                       <th className="px-4 py-3 text-right">ENTRY</th>
                       <th className="px-4 py-3 text-right">STOP</th>
@@ -153,16 +167,21 @@ export default function TurtleSignals() {
                   </thead>
                   <tbody>
                     {triggeredRows.map((r: TurtleTriggeredSignal, idx: number) => (
-                      <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
+                      <tr
+                        key={`${r.symbol}-${idx}`}
+                        className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
+                      >
                         <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
                         <td className={`px-4 py-3 font-semibold ${triggeredSideColor(r)}`}>{r.side.toUpperCase()}</td>
+                        <td className={`px-4 py-3 font-semibold ${eligibleColor(r)}`}>{eligibleText(r)}</td>
+                        <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 6)}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss, 6)}</td>
                         <td className="px-4 py-3 text-right font-mono">{r.unit_qty}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.N, 6)}</td>
                         <td className="px-4 py-3 text-gray-300 font-mono">{r.asof}</td>
-                        <td className="px-4 py-3 text-gray-300">{r.notes || '—'}</td>
+                        <td className="px-4 py-3 text-gray-300">{r.blocked_reason ? `${r.notes || ''} (${r.blocked_reason})` : r.notes || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -191,7 +210,10 @@ export default function TurtleSignals() {
                 </thead>
                 <tbody>
                   {allRows.map((r: TurtleSignalRow, idx: number) => (
-                    <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
+                    <tr
+                      key={`${r.symbol}-${idx}`}
+                      className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
+                    >
                       <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
                       <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>{sideText(r)}</td>
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
