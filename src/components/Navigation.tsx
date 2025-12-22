@@ -100,6 +100,46 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   ],
 };
 
+function OzCtaMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="ozcta-g" x1="6" y1="10" x2="42" y2="38" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#6366F1" />
+          <stop offset="0.5" stopColor="#14B8A6" />
+          <stop offset="1" stopColor="#D946EF" />
+        </linearGradient>
+      </defs>
+      <rect x="6" y="6" width="36" height="36" rx="10" fill="url(#ozcta-g)" />
+      <path
+        d="M16.5 28.5c0-5.6 4.6-10.2 10.2-10.2 2.2 0 4.2.6 5.9 1.7"
+        stroke="rgba(255,255,255,0.92)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M31.5 19.5l3 3-3 3"
+        stroke="rgba(255,255,255,0.92)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.8 31.2h16.4"
+        stroke="rgba(255,255,255,0.85)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export default function Navigation() {
   const location = useLocation();
 
@@ -114,8 +154,23 @@ export default function Navigation() {
         {/* Top Level Navigation */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-200/70 dark:border-slate-800/60">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-              The OzCTA System
+            <Link
+              to="/"
+              aria-label="The OzCTA System (Home)"
+              className="group inline-flex items-center gap-2 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800/40"
+            >
+              <span className="relative">
+                <OzCtaMark className="h-8 w-8 drop-shadow-sm" />
+                <span className="pointer-events-none absolute inset-0 rounded-[12px] ring-1 ring-white/25" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                  The
+                </span>
+                <span className="block text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+                  OzCTA System
+                </span>
+              </span>
             </Link>
 
             <div className="hidden sm:flex items-center gap-2">
