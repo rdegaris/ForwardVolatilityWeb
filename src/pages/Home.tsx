@@ -286,6 +286,97 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Open Positions / Actions */}
+      <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md p-6 border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">Positions</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">Open positions & actions</div>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              to="/trade-tracker"
+              className="px-3 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+            >
+              Trade Tracker
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-4 grid md:grid-cols-3 gap-4">
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Calendar spreads (IB)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Open: <span className="font-bold">{calendarTrades.length}</span> · needs action:{' '}
+              <span className="font-bold text-rose-600 dark:text-rose-300">{calendarNeedsAction.length}</span>
+            </div>
+            {calendarTrades.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {calendarTrades.slice(0, 4).map((t) => {
+                  const due = daysUntil(t.frontExpiration);
+                  const isDue = due !== null && due <= 0;
+                  return (
+                    <div key={t.id} className="flex items-start justify-between gap-3 text-sm">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{t.symbol}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          {t.frontExpiration} / {t.backExpiration} · {t.quantity}× · {t.callOrPut}
+                        </div>
+                      </div>
+                      <div
+                        className={`text-xs font-semibold ${
+                          isDue ? 'text-rose-600 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400'
+                        }`}
+                      >
+                        {due === null ? '—' : isDue ? 'ROLL/CLOSE' : `${due}d`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trendorama (front-month)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Open: <span className="font-bold">{turtleOpen?.open_trades?.length ?? 0}</span>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
+                Manage
+              </Link>
+              <Link
+                to="/turtle/signals"
+                className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30"
+              >
+                Signals
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Earnings Crush (tracked)</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Local trades: <span className="font-bold">{earningsStoredTrades.length}</span> · open:{' '}
+              <span className="font-bold">{earningsStoredOpen.length}</span>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
+                Update Trades
+              </Link>
+              <Link
+                to="/earnings-crush"
+                className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
+              >
+                Scanner
+              </Link>
+            </div>
+            <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">Stored in your browser (localStorage).</div>
+          </div>
+        </div>
+      </div>
+
       {/* Strategy Summary */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Forward Vol */}
@@ -533,81 +624,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Open Positions / Actions */}
-      <div className="bg-white/80 dark:bg-slate-900/50 rounded-xl shadow-md p-6 border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">Positions</div>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">Open positions & actions</div>
-          </div>
-          <div className="flex gap-2">
-            <Link to="/trade-tracker" className="px-3 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
-              Trade Tracker
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-4 grid md:grid-cols-3 gap-4">
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Calendar spreads (IB)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Open: <span className="font-bold">{calendarTrades.length}</span> · needs action: <span className="font-bold text-rose-600 dark:text-rose-300">{calendarNeedsAction.length}</span>
-            </div>
-            {calendarTrades.length > 0 && (
-              <div className="mt-3 space-y-2">
-                {calendarTrades.slice(0, 4).map((t) => {
-                  const due = daysUntil(t.frontExpiration);
-                  const isDue = due !== null && due <= 0;
-                  return (
-                    <div key={t.id} className="flex items-start justify-between gap-3 text-sm">
-                      <div>
-                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">{t.symbol}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">
-                          {t.frontExpiration} / {t.backExpiration} · {t.quantity}× · {t.callOrPut}
-                        </div>
-                      </div>
-                      <div className={`text-xs font-semibold ${isDue ? 'text-rose-600 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400'}`}>
-                        {due === null ? '—' : isDue ? 'ROLL/CLOSE' : `${due}d`}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trendorama (front-month)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Open: <span className="font-bold">{turtleOpen?.open_trades?.length ?? 0}</span>
-            </div>
-            <div className="mt-3 flex gap-2">
-              <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
-                Manage
-              </Link>
-              <Link to="/turtle/signals" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/40 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30">
-                Signals
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Earnings Crush (tracked)</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Local trades: <span className="font-bold">{earningsStoredTrades.length}</span> · open: <span className="font-bold">{earningsStoredOpen.length}</span>
-            </div>
-            <div className="mt-3 flex gap-2">
-              <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
-                Update Trades
-              </Link>
-              <Link to="/earnings-crush" className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-slate-950/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/40 hover:bg-teal-100/60 dark:hover:bg-teal-900/30">
-                Scanner
-              </Link>
-            </div>
-            <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">Stored in your browser (localStorage).</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
