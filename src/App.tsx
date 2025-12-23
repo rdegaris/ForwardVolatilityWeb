@@ -1,6 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
 import Calculator from './pages/Calculator';
 import ScannerResults from './pages/ScannerResults';
 import Nasdaq100Results from './pages/Nasdaq100Results';
@@ -26,7 +25,7 @@ function App() {
           <Navigation />
           
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Navigate to="/trade-tracker" replace />} />
             <Route path="/nasdaq100" element={<Nasdaq100Results />} />
             <Route path="/midcap400" element={<MidCap400Results />} />
             <Route path="/iv-rankings" element={<IVRankings />} />

@@ -77,7 +77,6 @@ type NavItem = { label: string; to: string };
 
 const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   forward: [
-    { label: 'Home', to: '/' },
     { label: 'NASDAQ 100', to: '/nasdaq100' },
     { label: 'MidCap 400', to: '/midcap400' },
     { label: 'IV Rankings', to: '/iv-rankings' },
@@ -155,8 +154,8 @@ export default function Navigation() {
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-200/70 dark:border-slate-800/60">
           <div className="flex items-center gap-6">
             <Link
-              to="/"
-              aria-label="The OzCTA System (Home)"
+              to="/trade-tracker"
+              aria-label="The OzCTA System"
               className="group inline-flex items-center gap-2 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800/40"
             >
               <span className="relative">
@@ -176,7 +175,7 @@ export default function Navigation() {
             <div className="hidden sm:flex items-center gap-2">
               {(
                 [
-                  { key: 'forward' as const, label: 'Forward Vol', to: '/' },
+                  { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                   { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
@@ -260,7 +259,7 @@ export default function Navigation() {
           <div className="sm:hidden mt-3 flex flex-wrap gap-2">
             {(
               [
-                { key: 'forward' as const, label: 'Forward Vol', to: '/' },
+                { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                 { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                 { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
                 { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
