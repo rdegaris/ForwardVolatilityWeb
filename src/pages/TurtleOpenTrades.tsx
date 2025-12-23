@@ -27,7 +27,9 @@ export default function TurtleOpenTrades() {
 
   const rows = useMemo(() => {
     const open = data?.open_trades ?? [];
-    return [...open].sort((a, b) => a.symbol.localeCompare(b.symbol));
+    return [...open]
+      .filter(t => typeof t.qty !== 'number' || t.qty !== 0)
+      .sort((a, b) => a.symbol.localeCompare(b.symbol));
   }, [data]);
 
   if (loading) {

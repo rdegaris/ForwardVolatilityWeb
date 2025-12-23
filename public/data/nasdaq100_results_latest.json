@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-19T11:12:50.047331",
-  "date": "2025-12-19",
+  "timestamp": "2025-12-23T08:29:33.245008",
+  "date": "2025-12-23",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -13,12 +13,60 @@
     "Strategy: Adaptive - scan top 25% by IV as we go",
     ""
   ],
-  "opportunities": [],
+  "opportunities": [
+    {
+      "ticker": "ALGN",
+      "price": 156.43,
+      "ma_200": 159.22,
+      "above_ma_200": false,
+      "expiry1": "20260109",
+      "expiry2": "20260116",
+      "dte1": 16,
+      "dte2": 23,
+      "ff_call": 0.13,
+      "ff_put": 0.13,
+      "ff_avg": 0.13,
+      "best_ff": 0.13,
+      "next_earnings": "2026-02-03",
+      "call_iv1": 34.31,
+      "call_iv2": 33.16,
+      "put_iv1": 34.31,
+      "put_iv2": 33.16,
+      "avg_iv1": 34.31,
+      "avg_iv2": 33.16,
+      "fwd_var_call": 0.092223,
+      "fwd_var_put": 0.092223,
+      "fwd_var_avg": 0.092223,
+      "fwd_vol_call": 30.37,
+      "fwd_vol_put": 30.37,
+      "fwd_vol_avg": 30.37,
+      "trade_details": {
+        "spread_type": "PUT",
+        "strike": 157.5,
+        "front_iv": 34.31,
+        "back_iv": 33.16,
+        "ff_display": 0.13,
+        "front_price": 4.494840794355371,
+        "back_price": 5.208492513877755,
+        "net_debit": 0.7136517195223844,
+        "net_debit_total": 71.36517195223844,
+        "price_source": "estimated",
+        "best_case": 28.54606878089538,
+        "typical_case": 14.27303439044769,
+        "adverse_case": -21.40955158567153,
+        "max_loss": -71.36517195223844,
+        "best_case_pct": 40.0,
+        "typical_case_pct": 20.0,
+        "adverse_case_pct": -30.0,
+        "max_loss_pct": -100.0
+      }
+    }
+  ],
   "summary": {
-    "total_opportunities": 0,
+    "total_opportunities": 1,
     "tickers_scanned": 104,
-    "tickers_with_iv": 98,
-    "best_ff": 0,
-    "avg_ff": 0
+    "tickers_with_iv": 57,
+    "best_ff": 0.13,
+    "avg_ff": 0.13
   }
 }

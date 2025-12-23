@@ -116,6 +116,17 @@ export default function PreEarningsStraddles() {
             Candidates ~{results.entry_target_days} days before earnings (buy ATM straddle expiring after earnings; exit before earnings).
           </p>
 
+          <div className="bg-white/10 rounded-xl p-4 border border-slate-700/60 backdrop-blur-sm">
+            <div className="text-sm text-gray-200 font-semibold mb-1">How to read WATCH</div>
+            <div className="text-sm text-gray-300">
+              <span className="font-semibold text-emerald-200">CANDIDATE</span>: implied move is "cheap" vs historical realized (scanner requires both ratios).
+              {' '}
+              <span className="font-semibold text-amber-200">WATCH</span>: inside the entry window, but either (a) no historical realized move data yet (ratios show —), or (b) implied move isn’t cheap enough yet.
+              {' '}
+              <span className="font-semibold text-rose-200">PASS</span>: implied move is expensive vs history.
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Scan Date</div>
@@ -147,6 +158,9 @@ export default function PreEarningsStraddles() {
             {sorted.map((o, idx) => {
               const isCandidate = o.recommendation === 'CANDIDATE';
               const isWatch = o.recommendation === 'WATCH';
+              const missingHistory = o.realized_move_avg_pct === null || o.realized_move_last_pct === null;
+              const ratioAvg = typeof o.ratio_implied_to_avg_realized === 'number' ? o.ratio_implied_to_avg_realized : null;
+              const ratioLast = typeof o.ratio_implied_to_last_realized === 'number' ? o.ratio_implied_to_last_realized : null;
               return (
                 <div
                   key={`${o.ticker}-${idx}`}
@@ -173,6 +187,16 @@ export default function PreEarningsStraddles() {
                         >
                           {o.recommendation}
                         </span>
+
+                        {isWatch ? (
+                          <span className="text-xs text-gray-300">
+                            {missingHistory
+                              ? 'Waiting: historical realized move data'
+                              : ratioAvg !== null && ratioLast !== null
+                                ? `Waiting: implied cheaper (ratios ${ratioAvg.toFixed(2)} / ${ratioLast.toFixed(2)})`
+                                : 'Waiting: implied cheaper'}
+                          </span>
+                        ) : null}
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold font-mono">${o.price.toFixed(2)}</div>

@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-19T11:19:34.650437",
-  "date": "2025-12-19",
+  "timestamp": "2025-12-23T08:29:48.142882",
+  "date": "2025-12-23",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -12,63 +12,14 @@
     "Min IV Threshold: 40.0%",
     "Strategy: Adaptive - scan top 20% by IV as we go",
     "",
-    "Prefiltering tickers by underlying IV snapshot (fast)...",
-    "[WARNING] Prefilter produced no results; scanning full universe"
+    "Prefiltering tickers by underlying IV snapshot (fast)..."
   ],
-  "opportunities": [
-    {
-      "ticker": "AMWD",
-      "price": 54.66,
-      "ma_200": null,
-      "above_ma_200": null,
-      "expiry1": "20260116",
-      "expiry2": "20260220",
-      "dte1": 27,
-      "dte2": 62,
-      "ff_call": 0.599,
-      "ff_put": 0.599,
-      "ff_avg": 0.599,
-      "best_ff": 0.599,
-      "next_earnings": null,
-      "call_iv1": 58.56,
-      "call_iv2": 47.44,
-      "put_iv1": 58.56,
-      "put_iv2": 47.44,
-      "avg_iv1": 58.56,
-      "avg_iv2": 47.44,
-      "fwd_var_call": 0.134082,
-      "fwd_var_put": 0.134082,
-      "fwd_var_avg": 0.134082,
-      "fwd_vol_call": 36.62,
-      "fwd_vol_put": 36.62,
-      "fwd_vol_avg": 36.62,
-      "trade_details": {
-        "spread_type": "PUT",
-        "strike": 55.0,
-        "front_iv": 58.56,
-        "back_iv": 47.44,
-        "ff_display": 0.599,
-        "front_price": 3.4822996290869144,
-        "back_price": 4.274877867857687,
-        "net_debit": 0.7925782387707727,
-        "net_debit_total": 79.25782387707727,
-        "price_source": "estimated",
-        "best_case": 31.703129550830912,
-        "typical_case": 15.851564775415456,
-        "adverse_case": -23.77734716312318,
-        "max_loss": -79.25782387707727,
-        "best_case_pct": 40.0,
-        "typical_case_pct": 20.0,
-        "adverse_case_pct": -30.0,
-        "max_loss_pct": -100.0
-      }
-    }
-  ],
+  "opportunities": [],
   "summary": {
-    "total_opportunities": 1,
+    "total_opportunities": 0,
     "tickers_scanned": 594,
-    "tickers_with_iv": 63,
-    "best_ff": 0.599,
-    "avg_ff": 0.599
+    "tickers_with_iv": 0,
+    "best_ff": 0,
+    "avg_ff": 0
   }
 }

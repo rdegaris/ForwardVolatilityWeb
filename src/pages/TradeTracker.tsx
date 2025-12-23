@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { fetchJsonText } from '../lib/http';
+import type { TurtleOpenTradesPayload } from '../types/turtle';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
 const EARNINGS_TRADES_STORAGE_KEY = 'earnings_crush_trades';
@@ -29,6 +31,8 @@ export default function TradeTracker() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importJson, setImportJson] = useState('');
 
+  const [turtleOpen, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
+
   // Auto-load trades from data file on mount
   useEffect(() => {
     const loadTradesFromFile = async () => {
@@ -36,9 +40,10 @@ export default function TradeTracker() {
         const { res, text } = await fetchJsonText('/data/trades.json', { cache: 'no-store' });
         if (res.ok) {
           const fileTrades = JSON.parse(text);
-          if (fileTrades && fileTrades.length > 0) {
+          if (Array.isArray(fileTrades)) {
             // Keep manual/local trades, but treat IB-sourced trades as authoritative from the file.
             // This prevents duplicates across runs and removes trades that were closed (no longer in IB).
+            // Important: if the file contains an empty array, that means "no open IB positions" and we should clear old IB trades.
             setTrades(prevTrades => {
               const keepLocal = prevTrades.filter(t => {
                 const anyT = t as any;
@@ -54,6 +59,22 @@ export default function TradeTracker() {
       }
     };
     loadTradesFromFile();
+  }, []);
+
+  useEffect(() => {
+    const loadTurtleOpen = async () => {
+      try {
+        const { res, text } = await fetchJsonText('/data/turtle_open_trades_latest.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const parsed = JSON.parse(text);
+        if (parsed && typeof parsed === 'object' && Array.isArray(parsed.open_trades)) {
+          setTurtleOpen(parsed as TurtleOpenTradesPayload);
+        }
+      } catch {
+        // Ignore; Turtle pages will show their own loading/errors.
+      }
+    };
+    loadTurtleOpen();
   }, []);
 
   // Save trades to localStorage whenever they change
@@ -333,6 +354,26 @@ export default function TradeTracker() {
     }
   };
 
+  const isOpenTrade = (t: CalendarSpreadTrade) => t.status !== 'closed';
+
+  const isIbTrade = (t: CalendarSpreadTrade) => {
+    const anyT = t as any;
+    const source = anyT?.source;
+    return source === 'ib' || t.id.startsWith('ib_') || t.id.startsWith('ibcal_');
+  };
+
+  const safeDTE = (expirationDate: string): number => {
+    const dte = calculateDTE(expirationDate);
+    return Number.isFinite(dte) ? dte : 9999;
+  };
+
+  const ibOpenTrades = trades.filter(isOpenTrade).filter(isIbTrade);
+  const ibNeedsAction = ibOpenTrades.filter(t => safeDTE(t.frontExpiration) <= 0);
+  const ibSoonest = [...ibOpenTrades].sort((a, b) => safeDTE(a.frontExpiration) - safeDTE(b.frontExpiration));
+
+  const earningsOpenTrades = earningsTrades.filter(isOpenTrade);
+  const turtleOpenCount = (turtleOpen?.open_trades ?? []).filter(r => (r as any)?.qty !== 0).length;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -374,6 +415,137 @@ export default function TradeTracker() {
           >
             {showForm ? 'Cancel' : '+ Add Trade'}
           </button>
+        </div>
+      </div>
+
+      {/* Open Positions / Actions */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Positions</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">Open positions & actions</div>
+            <div className="mt-1 text-sm text-gray-600 dark:text-gray-300">Fast checklist across systems.</div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid lg:grid-cols-12 gap-4">
+          {/* Calendar spreads */}
+          <div className="lg:col-span-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/30 shadow-sm">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Calendar spreads (IB)</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Front-month expirations and roll/close timing</div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full">
+                  Open: {ibOpenTrades.length}
+                </span>
+                <span
+                  className={`text-xs font-semibold px-2 py-1 rounded-full border ${
+                    ibNeedsAction.length > 0
+                      ? 'text-red-700 dark:text-red-300 bg-red-50/80 dark:bg-red-900/20 border-red-200 dark:border-red-800/50'
+                      : 'text-green-700 dark:text-green-300 bg-green-50/70 dark:bg-green-900/15 border-green-200 dark:border-green-800/50'
+                  }`}
+                >
+                  {ibNeedsAction.length > 0 ? `Action: ${ibNeedsAction.length}` : 'No action'}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-4">
+              {ibOpenTrades.length === 0 ? (
+                <div className="text-sm text-gray-600 dark:text-gray-300">No open IB calendar spreads.</div>
+              ) : (
+                <div className="space-y-2">
+                  {ibSoonest.slice(0, 5).map((t) => {
+                    const dte = safeDTE(t.frontExpiration);
+                    const isDue = dte <= 0;
+                    return (
+                      <div
+                        key={t.id}
+                        className="flex items-start justify-between gap-3 rounded-md px-3 py-2 border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/20"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-mono font-bold text-gray-900 dark:text-white">{t.symbol}</div>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {t.quantity}× {t.callOrPut}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {t.frontExpiration} → {t.backExpiration}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-xs font-semibold ${isDue ? 'text-red-700 dark:text-red-300' : 'text-gray-700 dark:text-gray-300'}`}>
+                            {isDue ? 'ROLL/CLOSE' : `${dte}d`}
+                          </div>
+                          <div className="text-[11px] text-gray-500 dark:text-gray-400">to front exp</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Trendorama */}
+          <div className="lg:col-span-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/30 shadow-sm">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Trendorama</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Front-month positions</div>
+              </div>
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full">
+                Open: {turtleOpenCount}
+              </span>
+            </div>
+            <div className="p-4">
+              <div className="flex flex-wrap gap-2">
+                <Link to="/turtle/open-trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700">
+                  Manage
+                </Link>
+                <Link
+                  to="/turtle/signals"
+                  className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-gray-900/20 text-fuchsia-800 dark:text-fuchsia-200 border border-fuchsia-200/60 dark:border-fuchsia-800/50 hover:bg-fuchsia-100/60 dark:hover:bg-fuchsia-900/30"
+                >
+                  Signals
+                </Link>
+              </div>
+              {turtleOpen?.date ? (
+                <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">Latest: {turtleOpen.date}</div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Earnings Crush tracked */}
+          <div className="lg:col-span-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/30 shadow-sm">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">Earnings Crush</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Tracked trades (this browser)</div>
+              </div>
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100/80 dark:bg-gray-800/40 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full">
+                Open: {earningsOpenTrades.length}
+              </span>
+            </div>
+            <div className="p-4">
+              <div className="flex flex-wrap gap-2">
+                <Link to="/earnings-crush/trades" className="px-3 py-2 rounded-lg text-sm font-semibold bg-teal-600 text-white hover:bg-teal-700">
+                  Update Trades
+                </Link>
+                <Link
+                  to="/earnings-crush"
+                  className="px-3 py-2 rounded-lg text-sm font-semibold bg-white/70 dark:bg-gray-900/20 text-teal-800 dark:text-teal-200 border border-teal-200/60 dark:border-teal-800/50 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
+                >
+                  Scanner
+                </Link>
+              </div>
+              <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">Stored in localStorage.</div>
+            </div>
+          </div>
         </div>
       </div>
 
