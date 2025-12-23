@@ -1,25 +1,25 @@
 {
-  "timestamp": "2025-12-23T07:34:52.235845",
+  "timestamp": "2025-12-23T09:18:29.501629",
   "date": "2025-12-23",
   "total_scanned": 40,
   "earnings_found": 3,
   "opportunities": [
     {
       "ticker": "SBUX",
-      "price": 84.32,
+      "price": 83.88,
       "earnings_date": "2026-01-19",
       "days_to_earnings": 27,
-      "iv": 27.2,
-      "expected_move": 4.3,
-      "expected_move_pct": 5.1,
+      "iv": 26.1,
+      "expected_move": 3.76,
+      "expected_move_pct": 4.5,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": false,
-        "iv_slope_pct": -23.6
+        "iv_slope_pct": -26.6
       },
-      "front_iv": 27.2,
+      "front_iv": 26.1,
       "back_iv": 35.6,
       "suggested_trade": {
         "strike": 85.0,
@@ -27,37 +27,37 @@
         "buy_expiration": "2026-02-20",
         "sell_dte": 24,
         "buy_dte": 59,
-        "sell_price": 2.15,
-        "buy_price": 4.67,
-        "net_credit": -2.52
+        "sell_price": 1.88,
+        "buy_price": 4.47,
+        "net_credit": -2.59
       }
     },
     {
       "ticker": "ISRG",
-      "price": 576.04,
+      "price": 576.92,
       "earnings_date": "2026-01-21",
       "days_to_earnings": 29,
-      "iv": 40.9,
-      "expected_move": 54.1,
-      "expected_move_pct": 9.4,
+      "iv": 42.0,
+      "expected_move": 55.0,
+      "expected_move_pct": 9.5,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": true,
-        "iv_slope_pct": 16.9
+        "iv_slope_pct": 20.8
       },
-      "front_iv": 40.9,
-      "back_iv": 35.0,
+      "front_iv": 42.0,
+      "back_iv": 34.7,
       "suggested_trade": {
         "strike": 580.0,
         "sell_expiration": "2026-01-23",
         "buy_expiration": "2026-02-20",
         "sell_dte": 31,
         "buy_dte": 59,
-        "sell_price": 27.05,
-        "buy_price": 32.7,
-        "net_credit": -5.65
+        "sell_price": 27.5,
+        "buy_price": 33.2,
+        "net_credit": -5.7
       }
     }
   ],
@@ -66,6 +66,6 @@
     "total_consider": 0,
     "total_avoid": 2,
     "avg_iv": 34.0,
-    "avg_expected_move": 7.2
+    "avg_expected_move": 7.0
   }
 }
