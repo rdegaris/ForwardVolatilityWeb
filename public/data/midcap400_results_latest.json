@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-23T08:29:48.142882",
+  "timestamp": "2025-12-23T09:12:43.556227",
   "date": "2025-12-23",
   "scan_type": "adaptive",
   "scan_log": [
@@ -12,13 +12,14 @@
     "Min IV Threshold: 40.0%",
     "Strategy: Adaptive - scan top 20% by IV as we go",
     "",
-    "Prefiltering tickers by underlying IV snapshot (fast)..."
+    "Prefiltering tickers by underlying IV snapshot (fast)...",
+    "[WARNING] Prefilter produced no results; scanning full universe"
   ],
   "opportunities": [],
   "summary": {
     "total_opportunities": 0,
     "tickers_scanned": 594,
-    "tickers_with_iv": 0,
+    "tickers_with_iv": 511,
     "best_ff": 0,
     "avg_ff": 0
   }
