@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-23T09:12:43.556227",
-  "date": "2025-12-23",
+  "timestamp": "2025-12-26T13:38:59.924333",
+  "date": "2025-12-26",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -15,12 +15,60 @@
     "Prefiltering tickers by underlying IV snapshot (fast)...",
     "[WARNING] Prefilter produced no results; scanning full universe"
   ],
-  "opportunities": [],
+  "opportunities": [
+    {
+      "ticker": "JBLU",
+      "price": 4.69,
+      "ma_200": null,
+      "above_ma_200": null,
+      "expiry1": "20260102",
+      "expiry2": "20260116",
+      "dte1": 6,
+      "dte2": 20,
+      "ff_call": 0.266,
+      "ff_put": -0.337,
+      "ff_avg": -0.072,
+      "best_ff": 0.266,
+      "next_earnings": "2026-01-26",
+      "call_iv1": 66.38,
+      "call_iv2": 56.97,
+      "put_iv1": 40.61,
+      "put_iv2": 55.86,
+      "avg_iv1": 53.5,
+      "avg_iv2": 56.42,
+      "fwd_var_call": 0.274813,
+      "fwd_var_put": 0.375076,
+      "fwd_var_avg": 0.332019,
+      "fwd_vol_call": 52.42,
+      "fwd_vol_put": 61.24,
+      "fwd_vol_avg": 57.62,
+      "trade_details": {
+        "spread_type": "CALL",
+        "strike": 4.5,
+        "front_iv": 66.38,
+        "back_iv": 56.97,
+        "ff_display": 0.266,
+        "front_price": 0.1596611580940244,
+        "back_price": 0.2501771375242487,
+        "net_debit": 0.0905159794302243,
+        "net_debit_total": 9.05159794302243,
+        "price_source": "estimated",
+        "best_case": 3.620639177208972,
+        "typical_case": 1.810319588604486,
+        "adverse_case": -2.7154793829067287,
+        "max_loss": -9.05159794302243,
+        "best_case_pct": 40.0,
+        "typical_case_pct": 20.0,
+        "adverse_case_pct": -30.0,
+        "max_loss_pct": -100.0
+      }
+    }
+  ],
   "summary": {
-    "total_opportunities": 0,
+    "total_opportunities": 1,
     "tickers_scanned": 594,
-    "tickers_with_iv": 511,
-    "best_ff": 0,
-    "avg_ff": 0
+    "tickers_with_iv": 260,
+    "best_ff": 0.266,
+    "avg_ff": 0.266
   }
 }

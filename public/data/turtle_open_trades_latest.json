@@ -1,23 +1,23 @@
 {
-  "timestamp": "2025-12-23T18:49:02Z",
-  "date": "2025-12-23",
+  "timestamp": "2025-12-26T21:00:34Z",
+  "date": "2025-12-26",
   "system": "S2",
   "open_trades": [
     {
-      "symbol": "AUD",
+      "symbol": "ES",
       "exchange": "CME",
       "currency": "USD",
-      "contract_local_symbol": "6AH6",
-      "contract_month": "20260316",
+      "contract_local_symbol": "ESH6",
+      "contract_month": "20260320",
       "side": "long",
-      "qty": 5,
-      "avg_price": 66928.47,
-      "stop_price": 0.66085,
+      "qty": 1,
+      "avg_price": 349027.25,
+      "stop_price": 6825.25,
       "units": 1,
-      "last_add_price": 0.66955,
-      "next_add_trigger": 0.6717500000000001,
+      "last_add_price": 6979.75,
+      "next_add_trigger": 7018.5,
       "unrealized_pnl": null,
-      "asof": "2025-12-23"
+      "asof": "2025-12-26"
     }
   ]
 }
