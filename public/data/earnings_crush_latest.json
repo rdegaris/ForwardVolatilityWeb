@@ -1,63 +1,63 @@
 {
-  "timestamp": "2026-01-05T10:58:48.558604",
-  "date": "2026-01-05",
+  "timestamp": "2026-01-07T09:12:52.978438",
+  "date": "2026-01-07",
   "total_scanned": 40,
   "earnings_found": 22,
   "opportunities": [
     {
       "ticker": "SBUX",
-      "price": 86.94,
+      "price": 86.65,
       "earnings_date": "2026-01-19",
-      "days_to_earnings": 14,
-      "iv": 27.8,
-      "expected_move": 5.88,
-      "expected_move_pct": 6.8,
+      "days_to_earnings": 12,
+      "iv": 30.5,
+      "expected_move": 5.43,
+      "expected_move_pct": 6.3,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": false,
-        "iv_slope_pct": -25.1
+        "iv_slope_pct": -23.5
       },
-      "front_iv": 27.8,
-      "back_iv": 37.2,
+      "front_iv": 30.5,
+      "back_iv": 39.9,
       "suggested_trade": {
         "strike": 85.0,
         "sell_expiration": "2026-01-16",
         "buy_expiration": "2026-02-13",
-        "sell_dte": 11,
-        "buy_dte": 39,
-        "sell_price": 2.94,
-        "buy_price": 5.45,
-        "net_credit": -2.51
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 2.71,
+        "buy_price": 5.53,
+        "net_credit": -2.81
       }
     },
     {
       "ticker": "ISRG",
-      "price": 564.9,
+      "price": 603.19,
       "earnings_date": "2026-01-22",
-      "days_to_earnings": 17,
-      "iv": 49.8,
-      "expected_move": 55.8,
-      "expected_move_pct": 9.9,
+      "days_to_earnings": 15,
+      "iv": 50.0,
+      "expected_move": 57.5,
+      "expected_move_pct": 9.5,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": true,
-        "iv_slope_pct": 32.2
+        "iv_slope_pct": 34.6
       },
-      "front_iv": 49.8,
-      "back_iv": 37.7,
+      "front_iv": 50.0,
+      "back_iv": 37.2,
       "suggested_trade": {
-        "strike": 560.0,
+        "strike": 600.0,
         "sell_expiration": "2026-01-23",
         "buy_expiration": "2026-02-20",
-        "sell_dte": 18,
-        "buy_dte": 46,
-        "sell_price": 27.9,
-        "buy_price": 34.4,
-        "net_credit": -6.5
+        "sell_dte": 16,
+        "buy_dte": 44,
+        "sell_price": 28.75,
+        "buy_price": 34.3,
+        "net_credit": -5.55
       }
     }
   ],
@@ -65,7 +65,7 @@
     "total_recommended": 0,
     "total_consider": 0,
     "total_avoid": 2,
-    "avg_iv": 38.8,
-    "avg_expected_move": 8.3
+    "avg_iv": 40.2,
+    "avg_expected_move": 7.9
   }
 }
