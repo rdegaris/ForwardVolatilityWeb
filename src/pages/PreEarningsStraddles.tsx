@@ -73,10 +73,18 @@ export default function PreEarningsStraddles() {
 
   const sorted = useMemo(() => {
     if (!results) return [];
+    // Order: CANDIDATE first, then WATCH, then PASS
+    const recommendationOrder: Record<string, number> = {
+      'CANDIDATE': 0,
+      'WATCH': 1,
+      'PASS': 2,
+    };
     return [...results.opportunities].sort((a, b) => {
-      const as = a.score ?? -1e9;
-      const bs = b.score ?? -1e9;
-      return bs - as;
+      const orderA = recommendationOrder[a.recommendation] ?? 1;
+      const orderB = recommendationOrder[b.recommendation] ?? 1;
+      if (orderA !== orderB) return orderA - orderB;
+      // Within same recommendation, sort by days_to_earnings ascending (soonest first)
+      return a.days_to_earnings - b.days_to_earnings;
     });
   }, [results]);
 
