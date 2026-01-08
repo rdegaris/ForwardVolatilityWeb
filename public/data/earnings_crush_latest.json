@@ -1,71 +1,239 @@
 {
-  "timestamp": "2026-01-07T09:12:52.978438",
-  "date": "2026-01-07",
+  "timestamp": "2026-01-08T07:44:24.772621",
+  "date": "2026-01-08",
   "total_scanned": 40,
   "earnings_found": 22,
   "opportunities": [
     {
       "ticker": "SBUX",
-      "price": 86.65,
+      "price": 87.6,
       "earnings_date": "2026-01-19",
-      "days_to_earnings": 12,
-      "iv": 30.5,
-      "expected_move": 5.43,
-      "expected_move_pct": 6.3,
+      "days_to_earnings": 11,
+      "iv": 30.9,
+      "expected_move": 1.42,
+      "expected_move_pct": 1.6,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": false,
-        "iv_slope_pct": -23.5
+        "iv_slope_pct": -18.8
       },
-      "front_iv": 30.5,
-      "back_iv": 39.9,
+      "front_iv": 30.9,
+      "back_iv": 38.0,
       "suggested_trade": {
-        "strike": 85.0,
+        "strike": 90.0,
         "sell_expiration": "2026-01-16",
         "buy_expiration": "2026-02-13",
-        "sell_dte": 9,
-        "buy_dte": 37,
-        "sell_price": 2.71,
-        "buy_price": 5.53,
-        "net_credit": -2.81
+        "sell_dte": 8,
+        "buy_dte": 36,
+        "sell_price": 0.71,
+        "buy_price": 3.19,
+        "net_credit": -2.48
       }
     },
     {
       "ticker": "ISRG",
-      "price": 603.19,
+      "price": 586.48,
       "earnings_date": "2026-01-22",
-      "days_to_earnings": 15,
-      "iv": 50.0,
-      "expected_move": 57.5,
-      "expected_move_pct": 9.5,
+      "days_to_earnings": 14,
+      "iv": 52.4,
+      "expected_move": 46.4,
+      "expected_move_pct": 7.9,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": true,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 40.4
+      },
+      "front_iv": 52.4,
+      "back_iv": 37.3,
+      "suggested_trade": {
+        "strike": 590.0,
+        "sell_expiration": "2026-01-23",
+        "buy_expiration": "2026-02-20",
+        "sell_dte": 15,
+        "buy_dte": 43,
+        "sell_price": 23.2,
+        "buy_price": 28.95,
+        "net_credit": -5.75
+      }
+    },
+    {
+      "ticker": "LRCX",
+      "price": 197.68,
+      "earnings_date": "2026-01-28",
+      "days_to_earnings": 20,
+      "iv": 59.0,
+      "expected_move": 22.1,
+      "expected_move_pct": 11.2,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": true,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 7.5
+      },
+      "front_iv": 59.0,
+      "back_iv": 54.9,
+      "suggested_trade": {
+        "strike": 200.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 11.05,
+        "buy_price": 15.67,
+        "net_credit": -4.62
+      }
+    },
+    {
+      "ticker": "NOW",
+      "price": 147.86,
+      "earnings_date": "2026-01-28",
+      "days_to_earnings": 20,
+      "iv": 44.5,
+      "expected_move": 11.6,
+      "expected_move_pct": 7.8,
       "recommendation": "AVOID",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": true,
-        "iv_slope_pct": 34.6
+        "iv_slope_pct": 19.8
       },
-      "front_iv": 50.0,
+      "front_iv": 44.5,
       "back_iv": 37.2,
       "suggested_trade": {
-        "strike": 600.0,
-        "sell_expiration": "2026-01-23",
-        "buy_expiration": "2026-02-20",
-        "sell_dte": 16,
-        "buy_dte": 44,
-        "sell_price": 28.75,
-        "buy_price": 34.3,
-        "net_credit": -5.55
+        "strike": 150.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 5.8,
+        "buy_price": 8.0,
+        "net_credit": -2.2
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "price": 257.08,
+      "earnings_date": "2026-01-29",
+      "days_to_earnings": 21,
+      "iv": 27.7,
+      "expected_move": 12.0,
+      "expected_move_pct": 4.7,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 8.5
+      },
+      "front_iv": 27.7,
+      "back_iv": 25.5,
+      "suggested_trade": {
+        "strike": 260.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 6.0,
+        "buy_price": 9.1,
+        "net_credit": -3.1
+      }
+    },
+    {
+      "ticker": "TEAM",
+      "price": 153.63,
+      "earnings_date": "2026-01-29",
+      "days_to_earnings": 21,
+      "iv": 55.2,
+      "expected_move": 15.5,
+      "expected_move_pct": 10.1,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": true,
+        "ts_slope_positive": false,
+        "iv_slope_pct": -5.3
+      },
+      "front_iv": 55.2,
+      "back_iv": 58.3,
+      "suggested_trade": {
+        "strike": 155.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 7.75,
+        "buy_price": 13.45,
+        "net_credit": -5.7
+      }
+    },
+    {
+      "ticker": "EA",
+      "price": 204.38,
+      "earnings_date": "2026-02-02",
+      "days_to_earnings": 25,
+      "iv": 9.5,
+      "expected_move": 9.8,
+      "expected_move_pct": 4.8,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 44.2
+      },
+      "front_iv": 9.5,
+      "back_iv": 6.6,
+      "suggested_trade": {
+        "strike": 200.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 4.9,
+        "buy_price": 5.7,
+        "net_credit": -0.8
+      }
+    },
+    {
+      "ticker": "PYPL",
+      "price": 58.4,
+      "earnings_date": "2026-02-02",
+      "days_to_earnings": 25,
+      "iv": 29.5,
+      "expected_move": 2.2,
+      "expected_move_pct": 3.8,
+      "recommendation": "AVOID",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": false,
+        "iv_slope_pct": -28.0
+      },
+      "front_iv": 29.5,
+      "back_iv": 41.0,
+      "suggested_trade": {
+        "strike": 60.0,
+        "sell_expiration": "2026-01-30",
+        "buy_expiration": "2026-02-27",
+        "sell_dte": 22,
+        "buy_dte": 50,
+        "sell_price": 1.1,
+        "buy_price": 2.97,
+        "net_credit": -1.87
       }
     }
   ],
   "summary": {
     "total_recommended": 0,
     "total_consider": 0,
-    "total_avoid": 2,
-    "avg_iv": 40.2,
-    "avg_expected_move": 7.9
+    "total_avoid": 8,
+    "avg_iv": 38.6,
+    "avg_expected_move": 6.5
   }
 }
