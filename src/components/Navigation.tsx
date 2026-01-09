@@ -177,7 +177,7 @@ export default function Navigation() {
                 [
                   { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-                  { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
+                  { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
               ).map((item) => {
@@ -228,7 +228,7 @@ export default function Navigation() {
                   : section === 'earningsCrush'
                     ? 'Earnings Crush'
                     : section === 'preEarnings'
-                      ? 'Pre-Earnings'
+                      ? 'Earnings Ramp'
                       : 'Trendorama'}
               </span>
             </div>
@@ -261,7 +261,7 @@ export default function Navigation() {
               [
                 { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                 { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-                { key: 'preEarnings' as const, label: 'Pre-Earnings', to: '/pre-earnings' },
+                { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
                 { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
               ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
             ).map((item) => {
