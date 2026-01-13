@@ -1,5 +1,27 @@
 [
   {
+    "id": "ibcal_URBN_C_84.0_20260116_20260123",
+    "source": "ib",
+    "symbol": "URBN",
+    "strike": 84.0,
+    "callOrPut": "CALL",
+    "quantity": 10,
+    "frontExpiration": "2026-01-16",
+    "frontEntryPrice": 2.57,
+    "frontCurrentPrice": 0.04,
+    "frontUnrealizedPnL": 2525.31,
+    "backExpiration": "2026-01-23",
+    "backEntryPrice": 2.74,
+    "backCurrentPrice": 0.25,
+    "backUnrealizedPnL": -2488.66,
+    "underlyingEntryPrice": 73.54,
+    "underlyingCurrentPrice": 73.54,
+    "entryDate": "2026-01-13",
+    "unrealizedPnL": 36.65,
+    "status": "open",
+    "asOf": "2026-01-13T10:33:03.362279"
+  },
+  {
     "id": "ibcal_SHAK_C_93.0_20260116_20260123",
     "source": "ib",
     "symbol": "SHAK",
@@ -8,17 +30,17 @@
     "quantity": 10,
     "frontExpiration": "2026-01-16",
     "frontEntryPrice": 3.55,
-    "frontCurrentPrice": 6.5,
-    "frontUnrealizedPnL": -2945.02,
+    "frontCurrentPrice": 5.7,
+    "frontUnrealizedPnL": -2145.02,
     "backExpiration": "2026-01-23",
     "backEntryPrice": 4.06,
-    "backCurrentPrice": 6.75,
-    "backUnrealizedPnL": 2693.01,
-    "underlyingEntryPrice": 97.87,
-    "underlyingCurrentPrice": 97.87,
+    "backCurrentPrice": 6.45,
+    "backUnrealizedPnL": 2393.01,
+    "underlyingEntryPrice": 98.31,
+    "underlyingCurrentPrice": 98.31,
     "entryDate": "2026-01-13",
-    "unrealizedPnL": -252.01,
+    "unrealizedPnL": 247.99,
     "status": "open",
-    "asOf": "2026-01-13T07:28:33.599454"
+    "asOf": "2026-01-13T10:33:03.362777"
   }
 ]
