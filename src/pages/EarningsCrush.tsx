@@ -10,6 +10,7 @@ interface EarningsCrushTrade {
   expected_move: number;
   expected_move_pct: number;
   recommendation: string;
+  reason?: string;
   criteria: {
     avg_volume: boolean;
     iv30_rv30: boolean;
@@ -137,6 +138,11 @@ export default function EarningsCrush() {
                         }`}>
                           {trade.recommendation}
                         </span>
+                        {trade.reason && (
+                          <span className="text-sm text-gray-400 italic">
+                            {trade.reason}
+                          </span>
+                        )}
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold font-mono">${trade.price.toFixed(2)}</div>
