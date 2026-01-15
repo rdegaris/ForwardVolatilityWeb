@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 
-type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle';
+type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail';
 
 type AccentStyle = {
   topActiveText: string;
@@ -64,10 +64,23 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
     subHoverPill: 'hover:bg-fuchsia-100/70 dark:hover:bg-fuchsia-900/30',
     dot: 'bg-fuchsia-500',
   },
+  grail: {
+    topActiveText: 'text-orange-900 dark:text-orange-100',
+    topInactiveText: 'text-slate-600 dark:text-slate-300',
+    topHoverText: 'hover:text-orange-800 dark:hover:text-orange-200',
+    topActiveUnderline: 'bg-orange-500',
+    subBarBg: 'bg-orange-50/70 dark:bg-orange-950/25',
+    subBarBorder: 'border-orange-200/70 dark:border-orange-800/40',
+    subActivePill: 'bg-orange-600 text-white',
+    subInactivePill: 'text-slate-700 dark:text-slate-200',
+    subHoverPill: 'hover:bg-orange-100/70 dark:hover:bg-orange-900/30',
+    dot: 'bg-orange-500',
+  },
 };
 
 function getSection(pathname: string): NavSectionKey {
   if (pathname.startsWith('/turtle')) return 'turtle';
+  if (pathname.startsWith('/grail')) return 'grail';
   if (pathname.startsWith('/pre-earnings')) return 'preEarnings';
   if (pathname.startsWith('/earnings-crush')) return 'earningsCrush';
   return 'forward';
@@ -96,6 +109,9 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
     { label: 'Signals', to: '/turtle/signals' },
     { label: 'Open Trades', to: '/turtle/open-trades' },
     { label: 'Triggers Soon', to: '/turtle/triggers' },
+  ],
+  grail: [
+    { label: 'Signals', to: '/grail' },
   ],
 };
 
@@ -179,6 +195,7 @@ export default function Navigation() {
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                   { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+                  { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
               ).map((item) => {
                 const isSectionActive = section === item.key;
@@ -229,7 +246,9 @@ export default function Navigation() {
                     ? 'Earnings Crush'
                     : section === 'preEarnings'
                       ? 'Earnings Ramp'
-                      : 'Trendorama'}
+                      : section === 'grail'
+                        ? 'Grail Trade'
+                        : 'Trendorama'}
               </span>
             </div>
 
@@ -263,6 +282,7 @@ export default function Navigation() {
                 { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                 { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
                 { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+                { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
               ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
             ).map((item) => {
               const isSectionActive = section === item.key;

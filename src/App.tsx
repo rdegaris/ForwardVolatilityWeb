@@ -14,6 +14,7 @@ import TurtleSuggested from './pages/TurtleSuggested';
 import TurtleOpenTrades from './pages/TurtleOpenTrades';
 import TurtleTriggers from './pages/TurtleTriggers';
 import TurtleSignals from './pages/TurtleSignals';
+import GrailTrade from './pages/GrailTrade';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
@@ -34,6 +35,8 @@ function App() {
             <Route path="/turtle/signals" element={<TurtleSignals />} />
             <Route path="/turtle/open-trades" element={<TurtleOpenTrades />} />
             <Route path="/turtle/triggers" element={<TurtleTriggers />} />
+
+            <Route path="/grail" element={<GrailTrade />} />
 
             <Route path="/pre-earnings" element={<PreEarningsStraddles />} />
             <Route path="/pre-earnings/open-trades" element={<PreEarningsTrades />} />
