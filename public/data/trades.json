@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "id": "ibcal_INTC_C_55.0_20260123_20260220",
+    "source": "ib",
+    "symbol": "INTC",
+    "strike": 55.0,
+    "callOrPut": "CALL",
+    "quantity": 2,
+    "frontExpiration": "2026-01-23",
+    "frontEntryPrice": 2.0,
+    "frontCurrentPrice": 1.89,
+    "frontUnrealizedPnL": 22.48,
+    "backExpiration": "2026-02-20",
+    "backEntryPrice": 3.96,
+    "backCurrentPrice": 3.77,
+    "backUnrealizedPnL": -37.52,
+    "underlyingEntryPrice": 54.03,
+    "underlyingCurrentPrice": 54.03,
+    "entryDate": "2026-01-22",
+    "unrealizedPnL": -15.04,
+    "status": "open",
+    "asOf": "2026-01-22T12:22:43.939392"
+  }
+]
