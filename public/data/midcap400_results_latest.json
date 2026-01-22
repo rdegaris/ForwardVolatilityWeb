@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-01-21T09:54:54.655095",
-  "date": "2026-01-21",
+  "timestamp": "2026-01-22T07:43:45.996460",
+  "date": "2026-01-22",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -12,8 +12,7 @@
     "Min IV Threshold: 40.0%",
     "Strategy: Adaptive - scan top 20% by IV as we go",
     "",
-    "Prefiltering tickers by underlying IV snapshot (fast)...",
-    "[WARNING] Prefilter produced no results; scanning full universe"
+    "Prefiltering tickers by underlying IV snapshot (fast)..."
   ],
   "opportunities": [],
   "summary": {
