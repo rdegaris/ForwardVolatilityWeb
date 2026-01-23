@@ -105,8 +105,7 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
     { label: 'Open Trades', to: '/pre-earnings/open-trades' },
   ],
   turtle: [
-    { label: 'Suggested', to: '/turtle' },
-    { label: 'Signals', to: '/turtle/signals' },
+    { label: 'Signals', to: '/turtle' },
     { label: 'Open Trades', to: '/turtle/open-trades' },
     { label: 'Triggers Soon', to: '/turtle/triggers' },
   ],

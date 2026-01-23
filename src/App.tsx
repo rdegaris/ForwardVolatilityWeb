@@ -10,7 +10,7 @@ import EarningsCrush from './pages/EarningsCrush';
 import EarningsCrushTrades from './pages/EarningsCrushTrades';
 import PreEarningsStraddles from './pages/PreEarningsStraddles';
 import PreEarningsTrades from './pages/PreEarningsTrades';
-import TurtleSuggested from './pages/TurtleSuggested';
+
 import TurtleOpenTrades from './pages/TurtleOpenTrades';
 import TurtleTriggers from './pages/TurtleTriggers';
 import TurtleSignals from './pages/TurtleSignals';
@@ -31,8 +31,7 @@ function App() {
             <Route path="/midcap400" element={<MidCap400Results />} />
             <Route path="/iv-rankings" element={<IVRankings />} />
 
-            <Route path="/turtle" element={<TurtleSuggested />} />
-            <Route path="/turtle/signals" element={<TurtleSignals />} />
+            <Route path="/turtle" element={<TurtleSignals />} />
             <Route path="/turtle/open-trades" element={<TurtleOpenTrades />} />
             <Route path="/turtle/triggers" element={<TurtleTriggers />} />
 
