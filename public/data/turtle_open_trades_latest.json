@@ -1,6 +1,23 @@
 {
-  "timestamp": "2026-01-26T17:04:04Z",
-  "date": "2026-01-26",
+  "timestamp": "2026-01-27T16:54:18Z",
+  "date": "2026-01-27",
   "system": "S2",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "JPY",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "6JH6",
+      "contract_month": "20260316",
+      "side": "long",
+      "qty": 2,
+      "avg_price": 82018.095,
+      "stop_price": 0.006454499999999999,
+      "units": 1,
+      "last_add_price": 0.0065585,
+      "next_add_trigger": 0.0065845,
+      "unrealized_pnl": null,
+      "asof": "2026-01-27"
+    }
+  ]
 }
