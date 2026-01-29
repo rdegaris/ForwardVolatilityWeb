@@ -1,39 +1,6 @@
 {
-  "timestamp": "2026-01-28T16:43:52Z",
-  "date": "2026-01-28",
+  "timestamp": "2026-01-29T16:35:41Z",
+  "date": "2026-01-29",
   "system": "S2",
-  "open_trades": [
-    {
-      "symbol": "EUR",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "6EH6",
-      "contract_month": "20260316",
-      "side": "short",
-      "qty": 1,
-      "avg_price": 149528.78,
-      "stop_price": 1.2111,
-      "units": 1,
-      "last_add_price": 1.1961,
-      "next_add_trigger": 1.19235,
-      "unrealized_pnl": null,
-      "asof": "2026-01-28"
-    },
-    {
-      "symbol": "JPY",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "6JH6",
-      "contract_month": "20260316",
-      "side": "short",
-      "qty": 1,
-      "avg_price": 81736.5925,
-      "stop_price": 0.006643,
-      "units": 1,
-      "last_add_price": 0.0065345,
-      "next_add_trigger": 0.006507499999999999,
-      "unrealized_pnl": null,
-      "asof": "2026-01-28"
-    }
-  ]
+  "open_trades": []
 }
