@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "id": "ibcal_AAPL_C_260.0_20260130_20260227",
+    "source": "ib",
+    "symbol": "AAPL",
+    "strike": 260.0,
+    "callOrPut": "CALL",
+    "quantity": 3,
+    "frontExpiration": "2026-01-30",
+    "frontEntryPrice": 4.86,
+    "frontCurrentPrice": 4.85,
+    "frontUnrealizedPnL": 4.07,
+    "backExpiration": "2026-02-27",
+    "backEntryPrice": 8.37,
+    "backCurrentPrice": 8.39,
+    "backUnrealizedPnL": 7.08,
+    "underlyingEntryPrice": 260.54,
+    "underlyingCurrentPrice": 260.54,
+    "entryDate": "2026-01-29",
+    "unrealizedPnL": 11.16,
+    "status": "open",
+    "asOf": "2026-01-29T14:05:12.851583"
+  }
+]
