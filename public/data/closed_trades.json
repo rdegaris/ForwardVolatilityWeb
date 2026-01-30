@@ -1,0 +1,18 @@
+[
+  {
+    "id": "closed_aapl_260_jan30",
+    "symbol": "AAPL",
+    "strike": 260,
+    "callOrPut": "CALL",
+    "quantity": 3,
+    "frontExpiration": "2026-01-30",
+    "backExpiration": "2026-02-27",
+    "entryPrice": 3.50,
+    "exitPrice": 4.95,
+    "entryDate": "2026-01-29",
+    "closedDate": "2026-01-30",
+    "realizedPnL": 435,
+    "strategy": "Earnings Crush Calendar",
+    "notes": "AAPL earnings play - closed at open after earnings"
+  }
+]
