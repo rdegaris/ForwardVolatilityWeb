@@ -1,7 +1,7 @@
 /**
  * Live Price Estimator Component
  * Fetches live/after-hours prices and estimates calendar spread P&L
- * Supports post-earnings IV crush modeling
+ * Supports post-earnings IV modeling with target IVs
  */
 
 import { useState, useCallback } from 'react';
@@ -20,9 +20,9 @@ interface LivePriceEstimatorProps {
   onUpdate?: (estimates: LiveEstimate[]) => void;
 }
 
-// Default IV crush assumptions for post-earnings
-const DEFAULT_FRONT_IV_CRUSH = 0.50; // Front month loses ~50% IV after earnings
-const DEFAULT_BACK_IV_CRUSH = 0.25;  // Back month loses ~25% IV (less because more time to expiry)
+// Default post-earnings IV targets (typical normalized levels)
+const DEFAULT_FRONT_TARGET_IV = 35; // Front month normalizes to ~35% IV
+const DEFAULT_BACK_TARGET_IV = 40;  // Back month ~40% IV (slightly higher due to more time)
 
 export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstimatorProps) {
   const [estimates, setEstimates] = useState<LiveEstimate[]>([]);
@@ -32,8 +32,9 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
   
   // Estimation mode
   const [estimationMode, setEstimationMode] = useState<'realtime' | 'post-earnings'>('post-earnings');
-  const [frontIVCrush, setFrontIVCrush] = useState(DEFAULT_FRONT_IV_CRUSH * 100);
-  const [backIVCrush, setBackIVCrush] = useState(DEFAULT_BACK_IV_CRUSH * 100);
+  // Target IVs for post-earnings (as percentages, e.g., 35 = 35%)
+  const [frontTargetIV, setFrontTargetIV] = useState(DEFAULT_FRONT_TARGET_IV);
+  const [backTargetIV, setBackTargetIV] = useState(DEFAULT_BACK_TARGET_IV);
 
   const fetchLivePrices = useCallback(async () => {
     if (trades.length === 0) return;
@@ -61,8 +62,8 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
       const options: CalendarSpreadOptions = estimationMode === 'post-earnings' 
         ? {
             daysForward: 1,
-            frontIVCrush: frontIVCrush / 100,
-            backIVCrush: backIVCrush / 100,
+            frontTargetIV: frontTargetIV / 100, // Convert percentage to decimal
+            backTargetIV: backTargetIV / 100,
           }
         : {};
       
@@ -96,7 +97,7 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
     } finally {
       setLoading(false);
     }
-  }, [trades, onUpdate, estimationMode, frontIVCrush, backIVCrush]);
+  }, [trades, onUpdate, estimationMode, frontTargetIV, backTargetIV]);
 
   // Get total estimated P&L
   const totalEstimatedPnL = estimates.reduce((sum, e) => sum + e.estimate.estimatedPnL, 0);
@@ -141,33 +142,33 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
               onChange={(e) => setEstimationMode(e.target.value as 'realtime' | 'post-earnings')}
               className="text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
-              <option value="post-earnings">📅 Tomorrow (Post-Earnings + IV Crush)</option>
-              <option value="realtime">⚡ Real-time (No IV Crush)</option>
+              <option value="post-earnings">📅 Tomorrow (Post-Earnings)</option>
+              <option value="realtime">⚡ Real-time (Current IV)</option>
             </select>
           </div>
           
           {estimationMode === 'post-earnings' && (
             <>
               <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 dark:text-gray-400">Front IV Crush:</label>
+                <label className="text-sm text-gray-600 dark:text-gray-400">Front Target IV:</label>
                 <input
                   type="number"
-                  min="0"
-                  max="90"
-                  value={frontIVCrush}
-                  onChange={(e) => setFrontIVCrush(parseFloat(e.target.value) || 0)}
+                  min="10"
+                  max="100"
+                  value={frontTargetIV}
+                  onChange={(e) => setFrontTargetIV(parseFloat(e.target.value) || 35)}
                   className="w-16 text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
                 <span className="text-sm text-gray-500">%</span>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 dark:text-gray-400">Back IV Crush:</label>
+                <label className="text-sm text-gray-600 dark:text-gray-400">Back Target IV:</label>
                 <input
                   type="number"
-                  min="0"
-                  max="90"
-                  value={backIVCrush}
-                  onChange={(e) => setBackIVCrush(parseFloat(e.target.value) || 0)}
+                  min="10"
+                  max="100"
+                  value={backTargetIV}
+                  onChange={(e) => setBackTargetIV(parseFloat(e.target.value) || 40)}
                   className="w-16 text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
                 <span className="text-sm text-gray-500">%</span>
@@ -178,8 +179,8 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
         
         {estimationMode === 'post-earnings' && (
           <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            💡 <strong>Post-earnings mode:</strong> Simulates tomorrow (T+1) with IV crush applied. 
-            Front month (2 DTE) typically crushes 40-60%. Back month crushes less (~20-30%) due to more time value remaining.
+            💡 <strong>Post-earnings mode:</strong> Simulates tomorrow (T+1) with normalized IV levels. 
+            Enter target IV after earnings (typically 30-50% for most stocks). Front month usually has slightly lower IV than back.
           </p>
         )}
       </div>
@@ -220,7 +221,7 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
               <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Scenario</div>
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 {estimationMode === 'post-earnings' 
-                  ? `T+1, ${frontIVCrush}%/${backIVCrush}% crush`
+                  ? `T+1, IV: ${frontTargetIV}%/${backTargetIV}%`
                   : 'Real-time'
                 }
               </div>
@@ -321,7 +322,7 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
           <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-xs text-green-800 dark:text-green-300">
             <p><strong>🎯 Calendar Spread Strategy:</strong> We profit when front month IV crushes more than back month. 
             {estimationMode === 'post-earnings' && (
-              <> At {frontIVCrush}% front crush / {backIVCrush}% back crush, the front option decays faster, widening our spread.</>
+              <> At target IVs of {frontTargetIV}% front / {backTargetIV}% back, the front option loses more time value, widening our spread.</>
             )}
             </p>
           </div>
@@ -332,10 +333,10 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
         <div className="p-8 text-center">
           <div className="text-4xl mb-3">💹</div>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Click "Get Live AH Prices" to estimate tomorrow's P&L after earnings IV crush
+            Click "Get Live AH Prices" to estimate tomorrow's P&L after earnings
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500">
-            Uses Black-Scholes with configurable IV crush to model post-earnings scenarios
+            Uses Black-Scholes with configurable target IV to model post-earnings scenarios
           </p>
         </div>
       )}
@@ -344,8 +345,8 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
       <ManualPriceEstimator 
         trades={trades} 
         estimationMode={estimationMode}
-        frontIVCrush={frontIVCrush}
-        backIVCrush={backIVCrush}
+        frontTargetIV={frontTargetIV}
+        backTargetIV={backTargetIV}
       />
     </div>
   );
@@ -357,13 +358,13 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
 function ManualPriceEstimator({ 
   trades, 
   estimationMode,
-  frontIVCrush,
-  backIVCrush,
+  frontTargetIV,
+  backTargetIV,
 }: { 
   trades: CalendarSpreadTrade[];
   estimationMode: 'realtime' | 'post-earnings';
-  frontIVCrush: number;
-  backIVCrush: number;
+  frontTargetIV: number;
+  backTargetIV: number;
 }) {
   const [manualPrices, setManualPrices] = useState<Record<string, number>>({});
   const [showManual, setShowManual] = useState(false);
@@ -377,8 +378,8 @@ function ManualPriceEstimator({
     const options: CalendarSpreadOptions = estimationMode === 'post-earnings' 
       ? {
           daysForward: 1,
-          frontIVCrush: frontIVCrush / 100,
-          backIVCrush: backIVCrush / 100,
+          frontTargetIV: frontTargetIV / 100,
+          backTargetIV: backTargetIV / 100,
         }
       : {};
 

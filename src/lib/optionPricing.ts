@@ -179,9 +179,19 @@ export function estimateIV(
 export interface CalendarSpreadOptions {
   /** Days forward to simulate (0 = today, 1 = tomorrow) */
   daysForward?: number;
-  /** IV crush percentage for front month (e.g., 0.50 = 50% reduction) */
+  /** 
+   * Post-earnings target IV for front month (e.g., 0.35 = 35%)
+   * If not set, falls back to frontIVCrush percentage reduction
+   */
+  frontTargetIV?: number;
+  /** 
+   * Post-earnings target IV for back month (e.g., 0.40 = 40%)  
+   * If not set, falls back to backIVCrush percentage reduction
+   */
+  backTargetIV?: number;
+  /** IV crush percentage for front month (legacy, use targetIV instead) */
   frontIVCrush?: number;
-  /** IV crush percentage for back month (e.g., 0.30 = 30% reduction) */
+  /** IV crush percentage for back month (legacy, use targetIV instead) */
   backIVCrush?: number;
   /** Risk-free rate */
   riskFreeRate?: number;
@@ -215,6 +225,8 @@ export function estimateCalendarSpread(
 ): CalendarSpreadEstimate {
   const {
     daysForward = 0,
+    frontTargetIV,
+    backTargetIV,
     frontIVCrush = 0,
     backIVCrush = 0,
     riskFreeRate = 0.05,
@@ -233,9 +245,15 @@ export function estimateCalendarSpread(
   const frontIV = estimateIV(frontCurrentPrice, currentUnderlying, strike, frontT, riskFreeRate, isCall);
   const backIV = estimateIV(backCurrentPrice, currentUnderlying, strike, backT, riskFreeRate, isCall);
   
-  // Apply IV crush (reduce IV by the crush percentage)
-  const frontIVNew = frontIV * (1 - frontIVCrush);
-  const backIVNew = backIV * (1 - backIVCrush);
+  // Determine post-earnings IV:
+  // If target IV is set, use it directly (better for post-earnings modeling)
+  // Otherwise fall back to percentage-based crush
+  const frontIVNew = frontTargetIV !== undefined 
+    ? frontTargetIV 
+    : frontIV * (1 - frontIVCrush);
+  const backIVNew = backTargetIV !== undefined 
+    ? backTargetIV 
+    : backIV * (1 - backIVCrush);
   
   // Calculate new prices at the new underlying level, new time, and crushed IV
   const frontNew = blackScholes(newUnderlying, strike, frontTNew, riskFreeRate, frontIVNew, isCall);
