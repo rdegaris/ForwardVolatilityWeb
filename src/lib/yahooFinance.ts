@@ -1,7 +1,12 @@
 /**
  * Yahoo Finance price fetcher
- * Fetches live and after-hours prices using Yahoo Finance's chart API
+ * Fetches live and after-hours prices using:
+ * 1. Local IB Bridge server (preferred - avoids CORS issues)
+ * 2. Direct Yahoo Finance API (fallback - may be blocked by CORS)
  */
+
+// Local bridge server URL (ib_bridge_server.py)
+const LOCAL_BRIDGE_URL = 'http://127.0.0.1:8787';
 
 export interface YahooQuote {
   symbol: string;
@@ -19,8 +24,60 @@ export interface YahooQuote {
 }
 
 /**
- * Fetch live quote from Yahoo Finance
+ * Try fetching quotes from local IB Bridge server first
+ * Falls back to direct Yahoo Finance if bridge is unavailable
+ */
+export async function fetchMultipleQuotes(symbols: string[]): Promise<Map<string, YahooQuote>> {
+  const results = new Map<string, YahooQuote>();
+  
+  if (symbols.length === 0) return results;
+  
+  // Try local bridge first (avoids CORS)
+  try {
+    const bridgeUrl = `${LOCAL_BRIDGE_URL}/api/quotes?symbols=${symbols.join(',')}`;
+    const response = await fetch(bridgeUrl, { 
+      signal: AbortSignal.timeout(5000) // 5 second timeout
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.ok && data.quotes) {
+        for (const [symbol, quote] of Object.entries(data.quotes)) {
+          const q = quote as any;
+          results.set(symbol.toUpperCase(), {
+            symbol: symbol.toUpperCase(),
+            regularMarketPrice: q.regularMarketPrice || q.displayPrice || 0,
+            regularMarketChange: q.change || 0,
+            regularMarketChangePercent: q.changePercent || 0,
+            regularMarketTime: Date.now() / 1000,
+            displayPrice: q.displayPrice || q.regularMarketPrice || 0,
+            marketState: q.marketState || 'CLOSED',
+          });
+        }
+        console.log('[YahooFinance] Used local bridge server');
+        return results;
+      }
+    }
+  } catch (e) {
+    console.log('[YahooFinance] Bridge server not available, trying direct...', e);
+  }
+  
+  // Fallback: fetch directly from Yahoo (may be blocked by CORS)
+  const promises = symbols.map(async (symbol) => {
+    const quote = await fetchYahooQuote(symbol);
+    if (quote) {
+      results.set(symbol.toUpperCase(), quote);
+    }
+  });
+  
+  await Promise.all(promises);
+  return results;
+}
+
+/**
+ * Fetch live quote from Yahoo Finance directly
  * Uses the v8 chart API which doesn't require authentication
+ * Note: This may be blocked by CORS in browsers
  */
 export async function fetchYahooQuote(symbol: string): Promise<YahooQuote | null> {
   try {
@@ -107,24 +164,6 @@ export async function fetchYahooQuote(symbol: string): Promise<YahooQuote | null
     console.error('Error fetching Yahoo quote for', symbol, error);
     return null;
   }
-}
-
-/**
- * Fetch multiple quotes at once
- */
-export async function fetchMultipleQuotes(symbols: string[]): Promise<Map<string, YahooQuote>> {
-  const results = new Map<string, YahooQuote>();
-  
-  // Fetch in parallel
-  const promises = symbols.map(async (symbol) => {
-    const quote = await fetchYahooQuote(symbol);
-    if (quote) {
-      results.set(symbol.toUpperCase(), quote);
-    }
-  });
-  
-  await Promise.all(promises);
-  return results;
 }
 
 /**
