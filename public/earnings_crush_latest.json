@@ -1,421 +1,363 @@
 {
-  "timestamp": "2026-02-03T07:42:57.450131",
-  "date": "2026-02-03",
+  "timestamp": "2026-02-04T07:12:50.259814",
+  "date": "2026-02-04",
   "total_scanned": 40,
-  "earnings_found": 26,
+  "earnings_found": 22,
   "opportunities": [
     {
-      "ticker": "AMD",
-      "price": 243.61,
-      "earnings_date": "2026-02-03",
-      "days_to_earnings": 0,
-      "iv": 109.4,
-      "expected_move": 23.9,
-      "expected_move_pct": 9.8,
-      "recommendation": "RECOMMENDED",
-      "reason": "High IV, strong positive slope, close to earnings",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": true,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 78.1
-      },
-      "front_iv": 109.4,
-      "back_iv": 61.5,
-      "suggested_trade": {
-        "strike": 240.0,
-        "sell_expiration": "2026-02-06",
-        "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 11.95,
-        "buy_price": 19.75,
-        "net_credit": -7.8
-      }
-    },
-    {
-      "ticker": "EA",
-      "price": 203.54,
-      "earnings_date": "2026-02-03",
-      "days_to_earnings": 0,
-      "iv": 20.4,
-      "expected_move": 8.05,
-      "expected_move_pct": 4.0,
-      "recommendation": "AVOID",
-      "reason": "IV too low (20.4% < 50%)",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": false,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 102.7
-      },
-      "front_iv": 20.4,
-      "back_iv": 10.1,
-      "suggested_trade": {
-        "strike": 200.0,
-        "sell_expiration": "2026-02-06",
-        "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 4.03,
-        "buy_price": 4.75,
-        "net_credit": -0.72
-      }
-    },
-    {
-      "ticker": "TTWO",
-      "price": 210.01,
-      "earnings_date": "2026-02-03",
-      "days_to_earnings": 0,
-      "iv": 98.3,
-      "expected_move": 14.7,
-      "expected_move_pct": 7.0,
-      "recommendation": "RECOMMENDED",
-      "reason": "High IV, strong positive slope, close to earnings",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": true,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 129.6
-      },
-      "front_iv": 98.3,
-      "back_iv": 42.8,
-      "suggested_trade": {
-        "strike": 210.0,
-        "sell_expiration": "2026-02-06",
-        "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 7.35,
-        "buy_price": 10.65,
-        "net_credit": -3.3
-      }
-    },
-    {
       "ticker": "GOOGL",
-      "price": 343.4,
+      "price": 335.77,
       "earnings_date": "2026-02-04",
-      "days_to_earnings": 1,
-      "iv": 80.4,
-      "expected_move": 24.15,
-      "expected_move_pct": 7.0,
+      "days_to_earnings": 0,
+      "iv": 101.3,
+      "expected_move": 17.7,
+      "expected_move_pct": 5.3,
       "recommendation": "RECOMMENDED",
       "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 106.5
+        "iv_slope_pct": 146.9
       },
-      "front_iv": 80.4,
-      "back_iv": 39.0,
+      "front_iv": 101.3,
+      "back_iv": 41.0,
       "suggested_trade": {
         "strike": 340.0,
         "sell_expiration": "2026-02-06",
         "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 12.07,
-        "buy_price": 17.85,
-        "net_credit": -5.78
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 8.85,
+        "buy_price": 14.52,
+        "net_credit": -5.67
       }
     },
     {
       "ticker": "QCOM",
-      "price": 146.76,
+      "price": 150.44,
       "earnings_date": "2026-02-04",
-      "days_to_earnings": 1,
-      "iv": 82.9,
-      "expected_move": 12.7,
-      "expected_move_pct": 8.7,
+      "days_to_earnings": 0,
+      "iv": 103.0,
+      "expected_move": 10.3,
+      "expected_move_pct": 6.8,
       "recommendation": "RECOMMENDED",
       "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 96.1
+        "iv_slope_pct": 139.9
       },
-      "front_iv": 82.9,
-      "back_iv": 42.3,
+      "front_iv": 103.0,
+      "back_iv": 42.9,
       "suggested_trade": {
-        "strike": 145.0,
+        "strike": 150.0,
         "sell_expiration": "2026-02-06",
         "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 6.35,
-        "buy_price": 8.88,
-        "net_credit": -2.53
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 5.15,
+        "buy_price": 7.98,
+        "net_credit": -2.83
       }
     },
     {
       "ticker": "UBER",
-      "price": 78.33,
+      "price": 73.04,
       "earnings_date": "2026-02-04",
-      "days_to_earnings": 1,
-      "iv": 98.7,
-      "expected_move": 4.42,
-      "expected_move_pct": 5.6,
+      "days_to_earnings": 0,
+      "iv": 65.2,
+      "expected_move": 1.47,
+      "expected_move_pct": 2.0,
       "recommendation": "RECOMMENDED",
       "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 118.1
+        "iv_slope_pct": 76.2
       },
-      "front_iv": 98.7,
-      "back_iv": 45.2,
+      "front_iv": 65.2,
+      "back_iv": 37.0,
       "suggested_trade": {
-        "strike": 80.0,
+        "strike": 75.0,
         "sell_expiration": "2026-02-06",
         "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 2.21,
-        "buy_price": 3.67,
-        "net_credit": -1.46
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 0.74,
+        "buy_price": 2.94,
+        "net_credit": -2.21
       }
     },
     {
       "ticker": "AMZN",
-      "price": 238.93,
+      "price": 236.66,
       "earnings_date": "2026-02-05",
-      "days_to_earnings": 2,
-      "iv": 42.3,
-      "expected_move": 3.78,
-      "expected_move_pct": 1.6,
-      "recommendation": "AVOID",
-      "reason": "Negative IV slope (back IV > front IV) - no crush opportunity",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": false,
-        "ts_slope_positive": false,
-        "iv_slope_pct": -3.3
-      },
-      "front_iv": 42.3,
-      "back_iv": 43.7,
-      "suggested_trade": {
-        "strike": 240.0,
-        "sell_expiration": "2026-02-04",
-        "buy_expiration": "2026-03-06",
-        "sell_dte": 1,
-        "buy_dte": 31,
-        "sell_price": 1.89,
-        "buy_price": 12.18,
-        "net_credit": -10.29
-      }
-    },
-    {
-      "ticker": "TEAM",
-      "price": 104.72,
-      "earnings_date": "2026-02-05",
-      "days_to_earnings": 2,
-      "iv": 179.6,
-      "expected_move": 13.8,
-      "expected_move_pct": 13.2,
+      "days_to_earnings": 1,
+      "iv": 130.5,
+      "expected_move": 16.6,
+      "expected_move_pct": 7.0,
       "recommendation": "RECOMMENDED",
       "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 126.5
+        "iv_slope_pct": 183.4
       },
-      "front_iv": 179.6,
-      "back_iv": 79.3,
+      "front_iv": 130.5,
+      "back_iv": 46.0,
+      "suggested_trade": {
+        "strike": 240.0,
+        "sell_expiration": "2026-02-06",
+        "buy_expiration": "2026-03-06",
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 8.3,
+        "buy_price": 11.48,
+        "net_credit": -3.18
+      }
+    },
+    {
+      "ticker": "TEAM",
+      "price": 103.43,
+      "earnings_date": "2026-02-05",
+      "days_to_earnings": 1,
+      "iv": 221.3,
+      "expected_move": 11.8,
+      "expected_move_pct": 11.4,
+      "recommendation": "RECOMMENDED",
+      "reason": "High IV, strong positive slope, close to earnings",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": true,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 453.3
+      },
+      "front_iv": 221.3,
+      "back_iv": 40.0,
       "suggested_trade": {
         "strike": 105.0,
         "sell_expiration": "2026-02-06",
         "buy_expiration": "2026-03-06",
-        "sell_dte": 3,
-        "buy_dte": 31,
-        "sell_price": 6.9,
-        "buy_price": 9.85,
-        "net_credit": -2.95
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 5.9,
+        "buy_price": 8.2,
+        "net_credit": -2.3
       }
     },
     {
       "ticker": "DDOG",
-      "price": 119.9,
+      "price": 116.6,
       "earnings_date": "2026-02-10",
-      "days_to_earnings": 7,
-      "iv": 95.6,
-      "expected_move": 15.5,
-      "expected_move_pct": 12.9,
+      "days_to_earnings": 6,
+      "iv": 105.6,
+      "expected_move": 16.25,
+      "expected_move_pct": 13.9,
       "recommendation": "CONSIDER",
       "reason": "Moderate IV with decent slope",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 41.2
+        "iv_slope_pct": 46.5
       },
-      "front_iv": 95.6,
-      "back_iv": 67.7,
+      "front_iv": 105.6,
+      "back_iv": 72.1,
       "suggested_trade": {
-        "strike": 120.0,
+        "strike": 115.0,
         "sell_expiration": "2026-02-13",
         "buy_expiration": "2026-03-13",
-        "sell_dte": 10,
-        "buy_dte": 38,
-        "sell_price": 7.75,
-        "buy_price": 11.3,
-        "net_credit": -3.55
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 8.12,
+        "buy_price": 11.38,
+        "net_credit": -3.25
       }
     },
     {
       "ticker": "GILD",
-      "price": 144.84,
+      "price": 144.4,
       "earnings_date": "2026-02-10",
-      "days_to_earnings": 7,
-      "iv": 42.7,
-      "expected_move": 8.65,
-      "expected_move_pct": 6.0,
+      "days_to_earnings": 6,
+      "iv": 43.4,
+      "expected_move": 7.65,
+      "expected_move_pct": 5.3,
       "recommendation": "AVOID",
-      "reason": "IV too low (42.7% < 50%)",
+      "reason": "IV too low (43.4% < 50%)",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": true,
-        "iv_slope_pct": 43.3
+        "iv_slope_pct": 39.6
       },
-      "front_iv": 42.7,
-      "back_iv": 29.8,
+      "front_iv": 43.4,
+      "back_iv": 31.1,
       "suggested_trade": {
         "strike": 145.0,
         "sell_expiration": "2026-02-13",
         "buy_expiration": "2026-03-13",
-        "sell_dte": 10,
-        "buy_dte": 38,
-        "sell_price": 4.33,
-        "buy_price": 6.2,
-        "net_credit": -1.88
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 3.83,
+        "buy_price": 5.8,
+        "net_credit": -1.98
+      }
+    },
+    {
+      "ticker": "CSCO",
+      "price": 83.8,
+      "earnings_date": "2026-02-11",
+      "days_to_earnings": 7,
+      "iv": 49.6,
+      "expected_move": 4.12,
+      "expected_move_pct": 4.9,
+      "recommendation": "AVOID",
+      "reason": "IV too low (49.6% < 50%)",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 53.1
+      },
+      "front_iv": 49.6,
+      "back_iv": 32.4,
+      "suggested_trade": {
+        "strike": 85.0,
+        "sell_expiration": "2026-02-13",
+        "buy_expiration": "2026-03-13",
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 2.06,
+        "buy_price": 3.25,
+        "net_credit": -1.19
       }
     },
     {
       "ticker": "SHOP",
-      "price": 123.02,
+      "price": 112.47,
       "earnings_date": "2026-02-11",
+      "days_to_earnings": 7,
+      "iv": 110.3,
+      "expected_move": 18.4,
+      "expected_move_pct": 16.4,
+      "recommendation": "CONSIDER",
+      "reason": "Moderate IV with decent slope",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": true,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 51.7
+      },
+      "front_iv": 110.3,
+      "back_iv": 72.7,
+      "suggested_trade": {
+        "strike": 110.0,
+        "sell_expiration": "2026-02-13",
+        "buy_expiration": "2026-03-13",
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 9.2,
+        "buy_price": 11.5,
+        "net_credit": -2.3
+      }
+    },
+    {
+      "ticker": "ABNB",
+      "price": 122.27,
+      "earnings_date": "2026-02-12",
       "days_to_earnings": 8,
-      "iv": 97.9,
-      "expected_move": 14.6,
-      "expected_move_pct": 11.9,
+      "iv": 73.5,
+      "expected_move": 13.2,
+      "expected_move_pct": 10.8,
       "recommendation": "AVOID",
       "reason": "Too far from earnings (8 days > 7)",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 47.2
+        "iv_slope_pct": 55.6
       },
-      "front_iv": 97.9,
-      "back_iv": 66.5,
+      "front_iv": 73.5,
+      "back_iv": 47.2,
       "suggested_trade": {
-        "strike": 125.0,
+        "strike": 120.0,
         "sell_expiration": "2026-02-13",
         "buy_expiration": "2026-03-13",
-        "sell_dte": 10,
-        "buy_dte": 38,
-        "sell_price": 7.3,
-        "buy_price": 10.5,
-        "net_credit": -3.2
+        "sell_dte": 9,
+        "buy_dte": 37,
+        "sell_price": 6.6,
+        "buy_price": 8.15,
+        "net_credit": -1.55
       }
     },
     {
-      "ticker": "ABNB",
-      "price": 126.03,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 9,
-      "iv": 66.7,
-      "expected_move": 13.2,
-      "expected_move_pct": 10.5,
+      "ticker": "PANW",
+      "price": 164.07,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 13,
+      "iv": 61.0,
+      "expected_move": 16.15,
+      "expected_move_pct": 9.8,
       "recommendation": "AVOID",
-      "reason": "Too far from earnings (9 days > 7)",
+      "reason": "Too far from earnings (13 days > 7)",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 52.9
+        "iv_slope_pct": 30.9
       },
-      "front_iv": 66.7,
-      "back_iv": 43.6,
+      "front_iv": 61.0,
+      "back_iv": 46.6,
       "suggested_trade": {
-        "strike": 125.0,
-        "sell_expiration": "2026-02-13",
-        "buy_expiration": "2026-03-13",
-        "sell_dte": 10,
-        "buy_dte": 38,
-        "sell_price": 6.6,
-        "buy_price": 8.8,
-        "net_credit": -2.2
-      }
-    },
-    {
-      "ticker": "CSCO",
-      "price": 81.78,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 15,
-      "iv": 40.4,
-      "expected_move": 8.0,
-      "expected_move_pct": 9.8,
-      "recommendation": "AVOID",
-      "reason": "IV too low (40.4% < 50%); Too far from earnings (15 days > 7)",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": false,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 28.6
-      },
-      "front_iv": 40.4,
-      "back_iv": 31.4,
-      "suggested_trade": {
-        "strike": 80.0,
+        "strike": 165.0,
         "sell_expiration": "2026-02-20",
         "buy_expiration": "2026-03-20",
-        "sell_dte": 17,
-        "buy_dte": 45,
-        "sell_price": 4.0,
-        "buy_price": 4.78,
-        "net_credit": -0.78
+        "sell_dte": 16,
+        "buy_dte": 44,
+        "sell_price": 8.07,
+        "buy_price": 9.57,
+        "net_credit": -1.5
       }
     },
     {
       "ticker": "ZS",
-      "price": 189.8,
+      "price": 183.8,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 16,
-      "iv": 51.4,
-      "expected_move": 17.65,
-      "expected_move_pct": 9.3,
+      "days_to_earnings": 15,
+      "iv": 56.9,
+      "expected_move": 16.8,
+      "expected_move_pct": 9.1,
       "recommendation": "AVOID",
       "reason": "Negative IV slope (back IV > front IV) - no crush opportunity",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": false,
-        "iv_slope_pct": -12.3
+        "iv_slope_pct": -8.7
       },
-      "front_iv": 51.4,
-      "back_iv": 58.6,
+      "front_iv": 56.9,
+      "back_iv": 62.3,
       "suggested_trade": {
-        "strike": 190.0,
+        "strike": 185.0,
         "sell_expiration": "2026-02-20",
         "buy_expiration": "2026-03-20",
-        "sell_dte": 17,
-        "buy_dte": 45,
-        "sell_price": 8.82,
-        "buy_price": 16.0,
-        "net_credit": -7.18
+        "sell_dte": 16,
+        "buy_dte": 44,
+        "sell_price": 8.4,
+        "buy_price": 15.7,
+        "net_credit": -7.3
       }
     }
   ],
   "summary": {
-    "total_recommended": 6,
-    "total_consider": 1,
-    "total_avoid": 7,
-    "avg_iv": 79.1,
-    "avg_expected_move": 8.4
+    "total_recommended": 5,
+    "total_consider": 2,
+    "total_avoid": 5,
+    "avg_iv": 93.5,
+    "avg_expected_move": 8.6
   }
 }
