@@ -639,145 +639,12 @@ export default function TradeTracker() {
               </div>
             </div>
           </div>
-        </>
-      )}
 
-      {/* Recently Closed Trades */}
-      {closedTrades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <span>🏆</span> Recently Closed Trades
-            </h2>
-          </div>
-          
-          {/* Closed Trades Summary */}
-          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Closed This Week</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">{closedTrades.length}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Winners</div>
-                <div className="text-xl font-bold text-green-600 dark:text-green-400">
-                  {closedTrades.filter(t => t.realizedPnL > 0).length}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Losers</div>
-                <div className="text-xl font-bold text-red-600 dark:text-red-400">
-                  {closedTrades.filter(t => t.realizedPnL < 0).length}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Realized P&L</div>
-                <div className={`text-xl font-bold ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0).toFixed(2)}
-                </div>
-              </div>
+          {/* Open Positions Table */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
             </div>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-gray-700">
-                <tr className="border-b border-gray-300 dark:border-gray-600">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Symbol</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strike</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Qty</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strategy</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Entry</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Exit</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">P&L</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Closed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {closedTrades.map(trade => {
-                  const pnlPerContract = trade.exitPrice - trade.entryPrice;
-                  const pnlPct = ((trade.exitPrice - trade.entryPrice) / trade.entryPrice) * 100;
-                  const isWinner = trade.realizedPnL > 0;
-                  const isLoser = trade.realizedPnL < 0;
-                  
-                  return (
-                    <tr 
-                      key={trade.id}
-                      className={`border-b border-gray-200 dark:border-gray-700 transition-colors ${
-                        isWinner 
-                          ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
-                          : isLoser 
-                            ? 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                      }`}
-                    >
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">
-                            {isWinner ? '✅' : isLoser ? '❌' : '➖'}
-                          </span>
-                          <div>
-                            <div className="font-bold text-gray-900 dark:text-white">{trade.symbol}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} / {new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
-                        ${trade.strike} {trade.callOrPut.charAt(0)}
-                      </td>
-                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
-                        {trade.quantity}
-                      </td>
-                      <td className="text-center py-3 px-3">
-                        <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs rounded-full">
-                          {trade.strategy || 'Calendar'}
-                        </span>
-                      </td>
-                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
-                        ${trade.entryPrice.toFixed(2)}
-                      </td>
-                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
-                        ${trade.exitPrice.toFixed(2)}
-                      </td>
-                      <td className="text-right py-3 px-3">
-                        <div className={`font-bold ${isWinner ? 'text-green-600 dark:text-green-400' : isLoser ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-                          {trade.realizedPnL >= 0 ? '+' : ''}${trade.realizedPnL.toFixed(2)}
-                        </div>
-                        <div className={`text-xs ${isWinner ? 'text-green-500 dark:text-green-500' : isLoser ? 'text-red-500 dark:text-red-500' : 'text-gray-500'}`}>
-                          {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
-                        </div>
-                      </td>
-                      <td className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 text-xs">
-                        {new Date(trade.closedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          
-          {closedTrades.some(t => t.notes) && (
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">Trade Notes:</div>
-              {closedTrades.filter(t => t.notes).map(trade => (
-                <div key={trade.id} className="text-sm text-gray-600 dark:text-gray-300 mb-1">
-                  <span className="font-medium">{trade.symbol}:</span> {trade.notes}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Open Positions Table */}
-      {trades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
-          </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
@@ -927,6 +794,137 @@ export default function TradeTracker() {
               </tbody>
             </table>
           </div>
+          </div>
+        </>
+      )}
+
+      {/* Recently Closed Trades */}
+      {closedTrades.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <span>🏆</span> Recently Closed Trades
+            </h2>
+          </div>
+          
+          {/* Closed Trades Summary */}
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Closed This Week</div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">{closedTrades.length}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Winners</div>
+                <div className="text-xl font-bold text-green-600 dark:text-green-400">
+                  {closedTrades.filter(t => t.realizedPnL > 0).length}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Losers</div>
+                <div className="text-xl font-bold text-red-600 dark:text-red-400">
+                  {closedTrades.filter(t => t.realizedPnL < 0).length}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Realized P&L</div>
+                <div className={`text-xl font-bold ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0).toFixed(2)}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100 dark:bg-gray-700">
+                <tr className="border-b border-gray-300 dark:border-gray-600">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Symbol</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strike</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Qty</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strategy</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Entry</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Exit</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">P&L</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Closed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {closedTrades.map(trade => {
+                  const pnlPerContract = trade.exitPrice - trade.entryPrice;
+                  const pnlPct = ((trade.exitPrice - trade.entryPrice) / trade.entryPrice) * 100;
+                  const isWinner = trade.realizedPnL > 0;
+                  const isLoser = trade.realizedPnL < 0;
+                  
+                  return (
+                    <tr 
+                      key={trade.id}
+                      className={`border-b border-gray-200 dark:border-gray-700 transition-colors ${
+                        isWinner 
+                          ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
+                          : isLoser 
+                            ? 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                      }`}
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">
+                            {isWinner ? '✅' : isLoser ? '❌' : '➖'}
+                          </span>
+                          <div>
+                            <div className="font-bold text-gray-900 dark:text-white">{trade.symbol}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} / {new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
+                        ${trade.strike} {trade.callOrPut.charAt(0)}
+                      </td>
+                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
+                        {trade.quantity}
+                      </td>
+                      <td className="text-center py-3 px-3">
+                        <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs rounded-full">
+                          {trade.strategy || 'Calendar'}
+                        </span>
+                      </td>
+                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                        ${trade.entryPrice.toFixed(2)}
+                      </td>
+                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                        ${trade.exitPrice.toFixed(2)}
+                      </td>
+                      <td className="text-right py-3 px-3">
+                        <div className={`font-bold ${isWinner ? 'text-green-600 dark:text-green-400' : isLoser ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                          {trade.realizedPnL >= 0 ? '+' : ''}${trade.realizedPnL.toFixed(2)}
+                        </div>
+                        <div className={`text-xs ${isWinner ? 'text-green-500 dark:text-green-500' : isLoser ? 'text-red-500 dark:text-red-500' : 'text-gray-500'}`}>
+                          {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
+                        </div>
+                      </td>
+                      <td className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 text-xs">
+                        {new Date(trade.closedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          
+          {closedTrades.some(t => t.notes) && (
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">Trade Notes:</div>
+              {closedTrades.filter(t => t.notes).map(trade => (
+                <div key={trade.id} className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                  <span className="font-medium">{trade.symbol}:</span> {trade.notes}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
