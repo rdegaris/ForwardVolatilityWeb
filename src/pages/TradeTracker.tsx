@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { fetchJsonText } from '../lib/http';
+import LivePriceEstimator from '../components/LivePriceEstimator';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
 
@@ -795,6 +796,9 @@ export default function TradeTracker() {
             </table>
           </div>
           </div>
+
+          {/* Live Price Estimator */}
+          <LivePriceEstimator trades={trades} />
         </>
       )}
 
