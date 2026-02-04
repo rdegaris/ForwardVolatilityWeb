@@ -307,8 +307,8 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
                       </td>
                       <td className={`text-right py-2 px-2 font-bold ${totalEstPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         <div>{totalEstPnL >= 0 ? '+' : ''}${totalEstPnL.toFixed(0)}</div>
-                        <div className="text-xs font-normal">
-                          ({estimate.estimatedPnL >= 0 ? '+' : ''}${estimate.estimatedPnL.toFixed(0)} from now)
+                        <div className="text-xs font-normal text-gray-500">
+                          (${(totalEstPnL / trade.quantity).toFixed(0)}/contract × {trade.quantity})
                         </div>
                       </td>
                     </tr>
@@ -484,6 +484,9 @@ function ManualPriceEstimator({
                         </span>
                         <span className={tradePnL >= 0 ? 'text-green-600' : 'text-red-600'}>
                           {tradePnL >= 0 ? '+' : ''}${tradePnL.toFixed(0)}
+                          <span className="text-xs text-gray-500 ml-1">
+                            (${(tradePnL / trade.quantity).toFixed(0)}/ct × {trade.quantity})
+                          </span>
                         </span>
                       </div>
                     );
