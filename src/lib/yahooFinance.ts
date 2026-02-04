@@ -169,7 +169,7 @@ export async function fetchYahooQuote(symbol: string): Promise<YahooQuote | null
 /**
  * Format market state for display
  */
-export function formatMarketState(state: YahooQuote['marketState']): string {
+export function formatMarketState(state: YahooQuote['marketState'] | string): string {
   switch (state) {
     case 'PRE':
     case 'PREPRE':
@@ -181,6 +181,10 @@ export function formatMarketState(state: YahooQuote['marketState']): string {
       return 'After Hours';
     case 'CLOSED':
       return 'Market Closed';
+    case 'FINNHUB':
+      return 'Finnhub';
+    case 'UNKNOWN':
+      return 'Live';
     default:
       return state;
   }
