@@ -476,19 +476,23 @@ function ManualPriceEstimator({
                     const tradePnL = newSpreadChange * trade.quantity * 100;
                     
                     return (
-                      <div key={trade.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ ${manualPrices[trade.symbol].toFixed(2)}
-                          <span className="text-xs ml-1">
-                            (spread ${entrySpread.toFixed(2)} → ${estimate.spreadPrice.toFixed(2)})
+                      <div key={trade.id} className="text-sm border-t border-gray-200 dark:border-gray-600 pt-2">
+                        <div className="flex justify-between mb-1">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
+                            {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ ${manualPrices[trade.symbol].toFixed(2)}
                           </span>
-                        </span>
-                        <span className={tradePnL >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {tradePnL >= 0 ? '+' : ''}${tradePnL.toFixed(0)}
-                          <span className="text-xs text-gray-500 ml-1">
-                            (${(tradePnL / trade.quantity).toFixed(0)}/ct × {trade.quantity})
+                          <span className={`font-bold ${tradePnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {tradePnL >= 0 ? '+' : ''}${tradePnL.toFixed(0)}
+                            <span className="text-xs text-gray-500 ml-1 font-normal">
+                              (${(tradePnL / trade.quantity).toFixed(0)}/ct × {trade.quantity})
+                            </span>
                           </span>
-                        </span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 pl-2 space-y-0.5">
+                          <div>Front: ${trade.frontCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.frontPrice.toFixed(2)}</span></div>
+                          <div>Back: ${trade.backCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.backPrice.toFixed(2)}</span></div>
+                          <div>Spread: ${entrySpread.toFixed(2)} → <span className="font-medium text-gray-700 dark:text-gray-300">${estimate.spreadPrice.toFixed(2)}</span></div>
+                        </div>
                       </div>
                     );
                   })}
