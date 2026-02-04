@@ -176,6 +176,17 @@ export function estimateIV(
   return sigma;
 }
 
+export interface CalendarSpreadOptions {
+  /** Days forward to simulate (0 = today, 1 = tomorrow) */
+  daysForward?: number;
+  /** IV crush percentage for front month (e.g., 0.50 = 50% reduction) */
+  frontIVCrush?: number;
+  /** IV crush percentage for back month (e.g., 0.30 = 30% reduction) */
+  backIVCrush?: number;
+  /** Risk-free rate */
+  riskFreeRate?: number;
+}
+
 /**
  * Estimate calendar spread value at a new underlying price
  * 
@@ -188,7 +199,7 @@ export function estimateIV(
  * @param backCurrentPrice - Current back month option price
  * @param quantity - Number of spreads
  * @param isCall - true for call calendar, false for put
- * @param riskFreeRate - Risk-free rate (default 5%)
+ * @param options - Additional options for time/IV simulation
  */
 export function estimateCalendarSpread(
   currentUnderlying: number,
@@ -200,23 +211,35 @@ export function estimateCalendarSpread(
   backCurrentPrice: number,
   quantity: number,
   isCall: boolean = true,
-  riskFreeRate: number = 0.05
+  options: CalendarSpreadOptions = {}
 ): CalendarSpreadEstimate {
+  const {
+    daysForward = 0,
+    frontIVCrush = 0,
+    backIVCrush = 0,
+    riskFreeRate = 0.05,
+  } = options;
+
+  // Current time to expiration
   const frontT = dteToYears(frontExpiration);
   const backT = dteToYears(backExpiration);
+  
+  // Adjusted time for future date simulation
+  const daysForwardYears = daysForward / 365;
+  const frontTNew = Math.max(0, frontT - daysForwardYears);
+  const backTNew = Math.max(0, backT - daysForwardYears);
   
   // Estimate current IVs from prices
   const frontIV = estimateIV(frontCurrentPrice, currentUnderlying, strike, frontT, riskFreeRate, isCall);
   const backIV = estimateIV(backCurrentPrice, currentUnderlying, strike, backT, riskFreeRate, isCall);
   
-  // Calculate current Greeks for reference
-  const frontCurrent = blackScholes(currentUnderlying, strike, frontT, riskFreeRate, frontIV, isCall);
-  const backCurrent = blackScholes(currentUnderlying, strike, backT, riskFreeRate, backIV, isCall);
+  // Apply IV crush (reduce IV by the crush percentage)
+  const frontIVNew = frontIV * (1 - frontIVCrush);
+  const backIVNew = backIV * (1 - backIVCrush);
   
-  // Calculate new prices at the new underlying level
-  // Note: We keep IV constant for this estimate (in reality, IV might change with price movement)
-  const frontNew = blackScholes(newUnderlying, strike, frontT, riskFreeRate, frontIV, isCall);
-  const backNew = blackScholes(newUnderlying, strike, backT, riskFreeRate, backIV, isCall);
+  // Calculate new prices at the new underlying level, new time, and crushed IV
+  const frontNew = blackScholes(newUnderlying, strike, frontTNew, riskFreeRate, frontIVNew, isCall);
+  const backNew = blackScholes(newUnderlying, strike, backTNew, riskFreeRate, backIVNew, isCall);
   
   const currentSpread = backCurrentPrice - frontCurrentPrice;
   const newSpread = backNew.price - frontNew.price;
