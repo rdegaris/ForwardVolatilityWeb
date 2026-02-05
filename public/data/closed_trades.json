@@ -14,5 +14,37 @@
     "realizedPnL": 435,
     "strategy": "Earnings Crush Calendar",
     "notes": "AAPL earnings play - closed at open after earnings"
+  },
+  {
+    "id": "closed_googl_340_feb05",
+    "symbol": "GOOGL",
+    "strike": 340,
+    "callOrPut": "CALL",
+    "quantity": 2,
+    "frontExpiration": "2026-02-06",
+    "backExpiration": "2026-03-06",
+    "entryPrice": 5.83,
+    "exitPrice": 5.32,
+    "entryDate": "2026-02-04",
+    "closedDate": "2026-02-05",
+    "realizedPnL": -102,
+    "strategy": "Earnings Crush Calendar",
+    "notes": "GOOGL earnings play - closed morning after earnings"
+  },
+  {
+    "id": "closed_qcom_150_feb05",
+    "symbol": "QCOM",
+    "strike": 150,
+    "callOrPut": "CALL",
+    "quantity": 3,
+    "frontExpiration": "2026-02-06",
+    "backExpiration": "2026-03-06",
+    "entryPrice": 3.42,
+    "exitPrice": 2.10,
+    "entryDate": "2026-02-04",
+    "closedDate": "2026-02-05",
+    "realizedPnL": -396,
+    "strategy": "Earnings Crush Calendar",
+    "notes": "QCOM earnings play - closed morning after earnings"
   }
 ]

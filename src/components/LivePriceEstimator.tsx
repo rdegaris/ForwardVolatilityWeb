@@ -489,8 +489,12 @@ function ManualPriceEstimator({
                           </span>
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400 pl-2 space-y-0.5">
-                          <div>Front: ${trade.frontCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.frontPrice.toFixed(2)}</span></div>
-                          <div>Back: ${trade.backCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.backPrice.toFixed(2)}</span></div>
+                          <div>Front: ${trade.frontCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.frontPrice.toFixed(2)}</span>
+                            <span className="ml-2 text-gray-400">(IV: {(estimate.frontIVEstimated * 100).toFixed(0)}% → {(estimate.frontIVUsed * 100).toFixed(0)}%)</span>
+                          </div>
+                          <div>Back: ${trade.backCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.backPrice.toFixed(2)}</span>
+                            <span className="ml-2 text-gray-400">(IV: {(estimate.backIVEstimated * 100).toFixed(0)}% → {(estimate.backIVUsed * 100).toFixed(0)}%)</span>
+                          </div>
                           <div>Spread: ${entrySpread.toFixed(2)} → <span className="font-medium text-gray-700 dark:text-gray-300">${estimate.spreadPrice.toFixed(2)}</span></div>
                         </div>
                       </div>

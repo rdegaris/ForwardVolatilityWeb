@@ -45,6 +45,11 @@ export interface CalendarSpreadEstimate {
   estimatedPnL: number;
   priceChange: number;
   priceChangePct: number;
+  // Debug info for verification
+  frontIVUsed: number;  // Implied volatility used for front month
+  backIVUsed: number;   // Implied volatility used for back month
+  frontIVEstimated: number; // IV estimated from current price
+  backIVEstimated: number;  // IV estimated from current price
 }
 
 /**
@@ -283,6 +288,10 @@ export function estimateCalendarSpread(
     estimatedPnL,
     priceChange: newUnderlying - currentUnderlying,
     priceChangePct: ((newUnderlying - currentUnderlying) / currentUnderlying) * 100,
+    frontIVUsed: frontIVNew,
+    backIVUsed: backIVNew,
+    frontIVEstimated: frontIV,
+    backIVEstimated: backIV,
   };
 }
 
