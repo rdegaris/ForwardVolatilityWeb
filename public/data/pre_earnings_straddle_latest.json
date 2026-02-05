@@ -1,25 +1,25 @@
 {
-  "timestamp": "2026-02-04T08:04:00.607116",
-  "date": "2026-02-04",
+  "timestamp": "2026-02-05T08:04:19.512640",
+  "date": "2026-02-05",
   "entry_target_days": 14,
   "entry_window_days": 7,
   "universe_size": 696,
-  "earnings_found": 467,
-  "candidates_scanned": 244,
+  "earnings_found": 432,
+  "candidates_scanned": 232,
   "opportunities": [
     {
       "ticker": "CEG",
-      "price": 254.23,
+      "price": 244.89,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 250.0,
-      "call_mid": 15.8,
-      "put_mid": 10.05,
-      "straddle_mid": 25.85,
-      "implied_move_pct": 10.17,
+      "strike": 240.0,
+      "call_mid": 16.65,
+      "put_mid": 10.15,
+      "straddle_mid": 26.8,
+      "implied_move_pct": 10.94,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -44,24 +44,24 @@
       ],
       "realized_move_avg_pct": 5.57,
       "realized_move_last_pct": 6.63,
-      "ratio_implied_to_avg_realized": 1.824,
-      "ratio_implied_to_last_realized": 1.534,
-      "score": -0.452,
+      "ratio_implied_to_avg_realized": 1.963,
+      "ratio_implied_to_last_realized": 1.651,
+      "score": -0.491,
       "recommendation": "PASS"
     },
     {
       "ticker": "EQT",
-      "price": 55.34,
+      "price": 54.67,
       "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
+      "days_to_earnings": 12,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 55.0,
-      "call_mid": 2.07,
-      "put_mid": 1.92,
-      "straddle_mid": 3.99,
-      "implied_move_pct": 7.21,
+      "call_mid": 1.68,
+      "put_mid": 2.14,
+      "straddle_mid": 3.82,
+      "implied_move_pct": 7.0,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -86,24 +86,24 @@
       ],
       "realized_move_avg_pct": 2.79,
       "realized_move_last_pct": 3.18,
-      "ratio_implied_to_avg_realized": 2.582,
-      "ratio_implied_to_last_realized": 2.267,
-      "score": -0.613,
+      "ratio_implied_to_avg_realized": 2.505,
+      "ratio_implied_to_last_realized": 2.2,
+      "score": -0.601,
       "recommendation": "PASS"
     },
     {
       "ticker": "RIG",
-      "price": 5.19,
+      "price": 4.93,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 5.0,
-      "call_mid": 0.39,
-      "put_mid": 0.19,
-      "straddle_mid": 0.57,
-      "implied_move_pct": 11.08,
+      "call_mid": 0.23,
+      "put_mid": 0.29,
+      "straddle_mid": 0.53,
+      "implied_move_pct": 10.65,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -128,66 +128,24 @@
       ],
       "realized_move_avg_pct": 4.07,
       "realized_move_last_pct": 3.53,
-      "ratio_implied_to_avg_realized": 2.72,
-      "ratio_implied_to_last_realized": 3.139,
-      "score": -0.632,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "WMB",
-      "price": 65.81,
-      "earnings_date": "2026-02-23",
-      "days_to_earnings": 19,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 65.0,
-      "call_mid": 3.1,
-      "put_mid": 2.3,
-      "straddle_mid": 5.4,
-      "implied_move_pct": 8.21,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.54
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 6.51
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.36
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 3.25
-        }
-      ],
-      "realized_move_avg_pct": 2.92,
-      "realized_move_last_pct": 0.54,
-      "ratio_implied_to_avg_realized": 2.815,
-      "ratio_implied_to_last_realized": 15.195,
-      "score": -0.645,
+      "ratio_implied_to_avg_realized": 2.615,
+      "ratio_implied_to_last_realized": 3.017,
+      "score": -0.618,
       "recommendation": "PASS"
     },
     {
       "ticker": "CRL",
-      "price": 201.81,
+      "price": 191.37,
       "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
+      "days_to_earnings": 13,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 200.0,
-      "call_mid": 11.95,
-      "put_mid": 9.6,
-      "straddle_mid": 21.55,
-      "implied_move_pct": 10.68,
+      "strike": 190.0,
+      "call_mid": 10.75,
+      "put_mid": 9.15,
+      "straddle_mid": 19.9,
+      "implied_move_pct": 10.4,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -212,66 +170,192 @@
       ],
       "realized_move_avg_pct": 3.7,
       "realized_move_last_pct": 8.96,
-      "ratio_implied_to_avg_realized": 2.888,
-      "ratio_implied_to_last_realized": 1.192,
-      "score": -0.654,
+      "ratio_implied_to_avg_realized": 2.812,
+      "ratio_implied_to_last_realized": 1.161,
+      "score": -0.644,
       "recommendation": "PASS"
     },
     {
-      "ticker": "JACK",
-      "price": 22.43,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "ticker": "WMB",
+      "price": 66.21,
+      "earnings_date": "2026-02-23",
+      "days_to_earnings": 18,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 22.5,
-      "call_mid": 1.45,
-      "put_mid": 1.55,
-      "straddle_mid": 3.0,
-      "implied_move_pct": 13.37,
+      "strike": 65.0,
+      "call_mid": 3.5,
+      "put_mid": 2.25,
+      "straddle_mid": 5.75,
+      "implied_move_pct": 8.68,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 4.96
+          "realized_move_pct": 0.54
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 9.34
+          "realized_move_pct": 6.51
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.96
+          "realized_move_pct": 1.36
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 1.61
+          "realized_move_pct": 3.25
         }
       ],
-      "realized_move_avg_pct": 4.22,
-      "realized_move_last_pct": 4.96,
-      "ratio_implied_to_avg_realized": 3.171,
-      "ratio_implied_to_last_realized": 2.697,
-      "score": -0.685,
+      "realized_move_avg_pct": 2.92,
+      "realized_move_last_pct": 0.54,
+      "ratio_implied_to_avg_realized": 2.979,
+      "ratio_implied_to_last_realized": 16.082,
+      "score": -0.664,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "TPL",
+      "price": 337.61,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 340.0,
+      "call_mid": 15.6,
+      "put_mid": 16.3,
+      "straddle_mid": 31.9,
+      "implied_move_pct": 9.45,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.61
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.16
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 2.1
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 6.7
+        }
+      ],
+      "realized_move_avg_pct": 3.14,
+      "realized_move_last_pct": 2.61,
+      "ratio_implied_to_avg_realized": 3.007,
+      "ratio_implied_to_last_realized": 3.62,
+      "score": -0.667,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "FRT",
+      "price": 103.59,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 105.0,
+      "call_mid": 1.67,
+      "put_mid": 3.0,
+      "straddle_mid": 4.67,
+      "implied_move_pct": 4.51,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.65
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.82
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.85
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 2.68
+        }
+      ],
+      "realized_move_avg_pct": 1.5,
+      "realized_move_last_pct": 1.65,
+      "ratio_implied_to_avg_realized": 3.009,
+      "ratio_implied_to_last_realized": 2.735,
+      "score": -0.668,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "INSM",
+      "price": 154.41,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 155.0,
+      "call_mid": 8.0,
+      "put_mid": 7.75,
+      "straddle_mid": 15.75,
+      "implied_move_pct": 10.2,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.27
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.0
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 5.62
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.32
+        }
+      ],
+      "realized_move_avg_pct": 3.05,
+      "realized_move_last_pct": 2.27,
+      "ratio_implied_to_avg_realized": 3.342,
+      "ratio_implied_to_last_realized": 4.493,
+      "score": -0.701,
       "recommendation": "PASS"
     },
     {
       "ticker": "MELI",
-      "price": 2054.27,
+      "price": 2043.62,
       "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "days_to_earnings": 19,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 2050.0,
-      "call_mid": 143.85,
-      "put_mid": 136.7,
-      "straddle_mid": 280.55,
-      "implied_move_pct": 13.66,
+      "strike": 2040.0,
+      "call_mid": 151.75,
+      "put_mid": 135.4,
+      "straddle_mid": 287.15,
+      "implied_move_pct": 14.05,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -296,24 +380,24 @@
       ],
       "realized_move_avg_pct": 4.2,
       "realized_move_last_pct": 6.85,
-      "ratio_implied_to_avg_realized": 3.256,
-      "ratio_implied_to_last_realized": 1.994,
-      "score": -0.693,
+      "ratio_implied_to_avg_realized": 3.349,
+      "ratio_implied_to_last_realized": 2.051,
+      "score": -0.701,
       "recommendation": "PASS"
     },
     {
       "ticker": "ICLR",
-      "price": 164.79,
+      "price": 154.1,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 165.0,
-      "call_mid": 13.05,
-      "put_mid": 12.7,
-      "straddle_mid": 25.75,
-      "implied_move_pct": 15.63,
+      "strike": 155.0,
+      "call_mid": 12.15,
+      "put_mid": 12.8,
+      "straddle_mid": 24.95,
+      "implied_move_pct": 16.19,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -338,108 +422,24 @@
       ],
       "realized_move_avg_pct": 4.62,
       "realized_move_last_pct": 9.89,
-      "ratio_implied_to_avg_realized": 3.386,
-      "ratio_implied_to_last_realized": 1.58,
-      "score": -0.705,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "AMAT",
-      "price": 306.99,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 310.0,
-      "call_mid": 14.97,
-      "put_mid": 18.27,
-      "straddle_mid": 33.25,
-      "implied_move_pct": 10.83,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 4.62
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 6.35
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.38
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.37
-        }
-      ],
-      "realized_move_avg_pct": 2.93,
-      "realized_move_last_pct": 4.62,
-      "ratio_implied_to_avg_realized": 3.697,
-      "ratio_implied_to_last_realized": 2.344,
-      "score": -0.729,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "MRNA",
-      "price": 42.69,
-      "earnings_date": "2026-02-13",
-      "days_to_earnings": 9,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 42.5,
-      "call_mid": 3.3,
-      "put_mid": 3.08,
-      "straddle_mid": 6.38,
-      "implied_move_pct": 14.94,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 6.85
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.99
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 4.2
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.01
-        }
-      ],
-      "realized_move_avg_pct": 4.01,
-      "realized_move_last_pct": 6.85,
-      "ratio_implied_to_avg_realized": 3.725,
-      "ratio_implied_to_last_realized": 2.182,
-      "score": -0.732,
+      "ratio_implied_to_avg_realized": 3.508,
+      "ratio_implied_to_last_realized": 1.637,
+      "score": -0.715,
       "recommendation": "PASS"
     },
     {
       "ticker": "HRI",
-      "price": 168.32,
+      "price": 170.04,
       "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
+      "days_to_earnings": 12,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 170.0,
-      "call_mid": 8.2,
-      "put_mid": 10.6,
-      "straddle_mid": 18.8,
-      "implied_move_pct": 11.17,
+      "call_mid": 9.3,
+      "put_mid": 9.6,
+      "straddle_mid": 18.9,
+      "implied_move_pct": 11.12,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -464,108 +464,108 @@
       ],
       "realized_move_avg_pct": 2.99,
       "realized_move_last_pct": 3.15,
-      "ratio_implied_to_avg_realized": 3.732,
-      "ratio_implied_to_last_realized": 3.546,
-      "score": -0.732,
+      "ratio_implied_to_avg_realized": 3.714,
+      "ratio_implied_to_last_realized": 3.529,
+      "score": -0.731,
       "recommendation": "PASS"
     },
     {
-      "ticker": "RKT",
-      "price": 20.06,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "ticker": "MRNA",
+      "price": 42.53,
+      "earnings_date": "2026-02-13",
+      "days_to_earnings": 8,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 20.0,
-      "call_mid": 1.14,
-      "put_mid": 0.99,
-      "straddle_mid": 2.12,
-      "implied_move_pct": 10.59,
+      "strike": 42.5,
+      "call_mid": 3.42,
+      "put_mid": 3.17,
+      "straddle_mid": 6.58,
+      "implied_move_pct": 15.47,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 1.08
+          "realized_move_pct": 6.85
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 2.12
+          "realized_move_pct": 3.99
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 4.39
+          "realized_move_pct": 4.2
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 3.64
+          "realized_move_pct": 1.01
         }
       ],
-      "realized_move_avg_pct": 2.81,
-      "realized_move_last_pct": 1.08,
-      "ratio_implied_to_avg_realized": 3.773,
-      "ratio_implied_to_last_realized": 9.809,
-      "score": -0.735,
+      "realized_move_avg_pct": 4.01,
+      "realized_move_last_pct": 6.85,
+      "ratio_implied_to_avg_realized": 3.856,
+      "ratio_implied_to_last_realized": 2.259,
+      "score": -0.741,
       "recommendation": "PASS"
     },
     {
-      "ticker": "LAD",
-      "price": 339.35,
-      "earnings_date": "2026-02-11",
+      "ticker": "AMAT",
+      "price": 295.39,
+      "earnings_date": "2026-02-12",
       "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 340.0,
-      "call_mid": 13.85,
-      "put_mid": 14.05,
-      "straddle_mid": 27.9,
-      "implied_move_pct": 8.22,
+      "strike": 300.0,
+      "call_mid": 15.28,
+      "put_mid": 19.38,
+      "straddle_mid": 34.65,
+      "implied_move_pct": 11.73,
       "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 4.62
+        },
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 2.39
+          "realized_move_pct": 6.35
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 1.74
+          "realized_move_pct": 0.38
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 1.12
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 2.43
+          "realized_move_pct": 0.37
         }
       ],
-      "realized_move_avg_pct": 1.92,
-      "realized_move_last_pct": 2.39,
-      "ratio_implied_to_avg_realized": 4.282,
-      "ratio_implied_to_last_realized": 3.44,
-      "score": -0.766,
+      "realized_move_avg_pct": 2.93,
+      "realized_move_last_pct": 4.62,
+      "ratio_implied_to_avg_realized": 4.003,
+      "ratio_implied_to_last_realized": 2.539,
+      "score": -0.75,
       "recommendation": "PASS"
     },
     {
       "ticker": "TRGP",
-      "price": 202.15,
+      "price": 202.03,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 200.0,
-      "call_mid": 7.2,
-      "put_mid": 4.75,
-      "straddle_mid": 11.95,
-      "implied_move_pct": 5.91,
+      "call_mid": 7.9,
+      "put_mid": 5.15,
+      "straddle_mid": 13.05,
+      "implied_move_pct": 6.46,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -590,192 +590,24 @@
       ],
       "realized_move_avg_pct": 1.34,
       "realized_move_last_pct": 0.32,
-      "ratio_implied_to_avg_realized": 4.395,
-      "ratio_implied_to_last_realized": 18.473,
-      "score": -0.772,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "OC",
-      "price": 131.27,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 130.0,
-      "call_mid": 5.15,
-      "put_mid": 3.5,
-      "straddle_mid": 8.65,
-      "implied_move_pct": 6.59,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.11
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 4.3
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.88
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.6
-        }
-      ],
-      "realized_move_avg_pct": 1.47,
-      "realized_move_last_pct": 0.11,
-      "ratio_implied_to_avg_realized": 4.475,
-      "ratio_implied_to_last_realized": 59.904,
-      "score": -0.777,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "GFS",
-      "price": 41.07,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 40.0,
-      "call_mid": 3.03,
-      "put_mid": 1.93,
-      "straddle_mid": 4.95,
-      "implied_move_pct": 12.05,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 3.71
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.25
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 2.52
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.0
-        }
-      ],
-      "realized_move_avg_pct": 2.62,
-      "realized_move_last_pct": 3.71,
-      "ratio_implied_to_avg_realized": 4.6,
-      "ratio_implied_to_last_realized": 3.249,
-      "score": -0.783,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "CPRT",
-      "price": 39.76,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 40.0,
-      "call_mid": 1.43,
-      "put_mid": 1.52,
-      "straddle_mid": 2.95,
-      "implied_move_pct": 7.42,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 3.52
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.27
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.16
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.1
-        }
-      ],
-      "realized_move_avg_pct": 1.51,
-      "realized_move_last_pct": 3.52,
-      "ratio_implied_to_avg_realized": 4.905,
-      "ratio_implied_to_last_realized": 2.108,
-      "score": -0.796,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "LKQ",
-      "price": 34.34,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 35.0,
-      "call_mid": 1.15,
-      "put_mid": 1.75,
-      "straddle_mid": 2.9,
-      "implied_move_pct": 8.44,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.93
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.57
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.01
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.39
-        }
-      ],
-      "realized_move_avg_pct": 1.72,
-      "realized_move_last_pct": 1.93,
-      "ratio_implied_to_avg_realized": 4.896,
-      "ratio_implied_to_last_realized": 4.376,
-      "score": -0.796,
+      "ratio_implied_to_avg_realized": 4.803,
+      "ratio_implied_to_last_realized": 20.186,
+      "score": -0.792,
       "recommendation": "PASS"
     },
     {
       "ticker": "DNLI",
-      "price": 20.94,
+      "price": 20.4,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 20.0,
-      "call_mid": 2.42,
-      "put_mid": 1.4,
-      "straddle_mid": 3.82,
-      "implied_move_pct": 18.27,
+      "call_mid": 2.12,
+      "put_mid": 1.65,
+      "straddle_mid": 3.77,
+      "implied_move_pct": 18.5,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -800,66 +632,24 @@
       ],
       "realized_move_avg_pct": 3.72,
       "realized_move_last_pct": 2.69,
-      "ratio_implied_to_avg_realized": 4.914,
-      "ratio_implied_to_last_realized": 6.791,
-      "score": -0.796,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "NTR",
-      "price": 70.6,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 70.0,
-      "call_mid": 2.78,
-      "put_mid": 2.0,
-      "straddle_mid": 4.78,
-      "implied_move_pct": 6.76,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 3.54
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.48
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.22
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.18
-        }
-      ],
-      "realized_move_avg_pct": 1.35,
-      "realized_move_last_pct": 3.54,
-      "ratio_implied_to_avg_realized": 4.991,
-      "ratio_implied_to_last_realized": 1.911,
-      "score": -0.8,
+      "ratio_implied_to_avg_realized": 4.978,
+      "ratio_implied_to_last_realized": 6.879,
+      "score": -0.799,
       "recommendation": "PASS"
     },
     {
       "ticker": "OVV",
-      "price": 45.41,
+      "price": 44.53,
       "earnings_date": "2026-02-23",
-      "days_to_earnings": 19,
+      "days_to_earnings": 18,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 45.0,
-      "call_mid": 2.75,
-      "put_mid": 2.42,
-      "straddle_mid": 5.17,
-      "implied_move_pct": 11.4,
+      "call_mid": 2.3,
+      "put_mid": 2.75,
+      "straddle_mid": 5.05,
+      "implied_move_pct": 11.34,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -884,66 +674,24 @@
       ],
       "realized_move_avg_pct": 2.25,
       "realized_move_last_pct": 0.37,
-      "ratio_implied_to_avg_realized": 5.06,
-      "ratio_implied_to_last_realized": 30.804,
-      "score": -0.802,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "ADI",
-      "price": 314.8,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 310.0,
-      "call_mid": 14.95,
-      "put_mid": 8.5,
-      "straddle_mid": 23.45,
-      "implied_move_pct": 7.45,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 0.94
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.61
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.1
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.23
-        }
-      ],
-      "realized_move_avg_pct": 1.47,
-      "realized_move_last_pct": 0.94,
-      "ratio_implied_to_avg_realized": 5.067,
-      "ratio_implied_to_last_realized": 7.925,
-      "score": -0.803,
+      "ratio_implied_to_avg_realized": 5.035,
+      "ratio_implied_to_last_realized": 30.65,
+      "score": -0.801,
       "recommendation": "PASS"
     },
     {
       "ticker": "PANW",
-      "price": 165.2,
+      "price": 162.05,
       "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
+      "days_to_earnings": 12,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 165.0,
-      "call_mid": 8.85,
-      "put_mid": 8.5,
-      "straddle_mid": 17.35,
-      "implied_move_pct": 10.5,
+      "strike": 160.0,
+      "call_mid": 9.6,
+      "put_mid": 7.22,
+      "straddle_mid": 16.82,
+      "implied_move_pct": 10.38,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-12-31",
@@ -968,192 +716,108 @@
       ],
       "realized_move_avg_pct": 2.0,
       "realized_move_last_pct": 2.62,
-      "ratio_implied_to_avg_realized": 5.238,
-      "ratio_implied_to_last_realized": 4.009,
+      "ratio_implied_to_avg_realized": 5.178,
+      "ratio_implied_to_last_realized": 3.963,
+      "score": -0.807,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "NTR",
+      "price": 68.78,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 70.0,
+      "call_mid": 1.85,
+      "put_mid": 2.98,
+      "straddle_mid": 4.83,
+      "implied_move_pct": 7.02,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 3.54
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.48
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.22
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.18
+        }
+      ],
+      "realized_move_avg_pct": 1.35,
+      "realized_move_last_pct": 3.54,
+      "ratio_implied_to_avg_realized": 5.177,
+      "ratio_implied_to_last_realized": 1.982,
+      "score": -0.807,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "ADI",
+      "price": 319.56,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 320.0,
+      "call_mid": 12.1,
+      "put_mid": 12.5,
+      "straddle_mid": 24.6,
+      "implied_move_pct": 7.7,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 0.94
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.61
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.1
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.23
+        }
+      ],
+      "realized_move_avg_pct": 1.47,
+      "realized_move_last_pct": 0.94,
+      "ratio_implied_to_avg_realized": 5.237,
+      "ratio_implied_to_last_realized": 8.19,
       "score": -0.809,
       "recommendation": "PASS"
     },
     {
-      "ticker": "LH",
-      "price": 275.03,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 280.0,
-      "call_mid": 5.05,
-      "put_mid": 9.65,
-      "straddle_mid": 14.7,
-      "implied_move_pct": 5.34,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.79
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.67
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.04
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.49
-        }
-      ],
-      "realized_move_avg_pct": 1.0,
-      "realized_move_last_pct": 2.79,
-      "ratio_implied_to_avg_realized": 5.358,
-      "ratio_implied_to_last_realized": 1.916,
-      "score": -0.813,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "RS",
-      "price": 344.3,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 340.0,
-      "call_mid": 11.9,
-      "put_mid": 7.8,
-      "straddle_mid": 19.7,
-      "implied_move_pct": 5.72,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.83
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.37
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.09
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.98
-        }
-      ],
-      "realized_move_avg_pct": 1.07,
-      "realized_move_last_pct": 0.83,
-      "ratio_implied_to_avg_realized": 5.36,
-      "ratio_implied_to_last_realized": 6.894,
-      "score": -0.813,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "TMUS",
-      "price": 202.56,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 200.0,
-      "call_mid": 8.15,
-      "put_mid": 5.88,
-      "straddle_mid": 14.03,
-      "implied_move_pct": 6.92,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.56
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.36
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.69
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.54
-        }
-      ],
-      "realized_move_avg_pct": 1.29,
-      "realized_move_last_pct": 2.56,
-      "ratio_implied_to_avg_realized": 5.378,
-      "ratio_implied_to_last_realized": 2.705,
-      "score": -0.814,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "DAR",
-      "price": 48.23,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 47.5,
-      "call_mid": 2.92,
-      "put_mid": 1.67,
-      "straddle_mid": 4.6,
-      "implied_move_pct": 9.54,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.55
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.45
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 3.23
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.84
-        }
-      ],
-      "realized_move_avg_pct": 1.77,
-      "realized_move_last_pct": 1.55,
-      "ratio_implied_to_avg_realized": 5.396,
-      "ratio_implied_to_last_realized": 6.153,
-      "score": -0.815,
-      "recommendation": "PASS"
-    },
-    {
       "ticker": "VRTX",
-      "price": 475.64,
+      "price": 471.14,
       "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
+      "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 480.0,
-      "call_mid": 17.35,
-      "put_mid": 19.1,
-      "straddle_mid": 36.45,
-      "implied_move_pct": 7.66,
+      "strike": 470.0,
+      "call_mid": 18.35,
+      "put_mid": 16.1,
+      "straddle_mid": 34.45,
+      "implied_move_pct": 7.31,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -1178,276 +842,24 @@
       ],
       "realized_move_avg_pct": 1.39,
       "realized_move_last_pct": 3.21,
-      "ratio_implied_to_avg_realized": 5.523,
-      "ratio_implied_to_last_realized": 2.387,
-      "score": -0.819,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "CW",
-      "price": 633.46,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 630.0,
-      "call_mid": 25.15,
-      "put_mid": 20.75,
-      "straddle_mid": 45.9,
-      "implied_move_pct": 7.25,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.11
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.44
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.64
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.99
-        }
-      ],
-      "realized_move_avg_pct": 1.29,
-      "realized_move_last_pct": 0.11,
-      "ratio_implied_to_avg_realized": 5.595,
-      "ratio_implied_to_last_realized": 65.872,
-      "score": -0.821,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "IBP",
-      "price": 317.2,
-      "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 320.0,
-      "call_mid": 21.5,
-      "put_mid": 24.55,
-      "straddle_mid": 46.05,
-      "implied_move_pct": 14.52,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.58
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 7.96
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.71
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.15
-        }
-      ],
-      "realized_move_avg_pct": 2.6,
-      "realized_move_last_pct": 0.58,
-      "ratio_implied_to_avg_realized": 5.584,
-      "ratio_implied_to_last_realized": 25.03,
-      "score": -0.821,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "KHC",
-      "price": 24.66,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 25.0,
-      "call_mid": 0.55,
-      "put_mid": 1.01,
-      "straddle_mid": 1.56,
-      "implied_move_pct": 6.33,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.92
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.06
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.3
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.2
-        }
-      ],
-      "realized_move_avg_pct": 1.12,
-      "realized_move_last_pct": 0.92,
-      "ratio_implied_to_avg_realized": 5.648,
-      "ratio_implied_to_last_realized": 6.876,
-      "score": -0.823,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "SFM",
-      "price": 70.56,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 70.0,
-      "call_mid": 5.1,
-      "put_mid": 4.25,
-      "straddle_mid": 9.35,
-      "implied_move_pct": 13.25,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.51
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.54
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.71
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 4.64
-        }
-      ],
-      "realized_move_avg_pct": 2.35,
-      "realized_move_last_pct": 1.51,
-      "ratio_implied_to_avg_realized": 5.639,
-      "ratio_implied_to_last_realized": 8.776,
-      "score": -0.823,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "NWE",
-      "price": 69.66,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 70.0,
-      "call_mid": 3.6,
-      "put_mid": 1.6,
-      "straddle_mid": 5.2,
-      "implied_move_pct": 7.46,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.81
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.4
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.11
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.88
-        }
-      ],
-      "realized_move_avg_pct": 1.3,
-      "realized_move_last_pct": 1.81,
-      "ratio_implied_to_avg_realized": 5.742,
-      "ratio_implied_to_last_realized": 4.124,
-      "score": -0.826,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "SM",
-      "price": 20.03,
-      "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 20.0,
-      "call_mid": 1.7,
-      "put_mid": 1.6,
-      "straddle_mid": 3.3,
-      "implied_move_pct": 16.48,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.88
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 5.38
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.6
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 3.61
-        }
-      ],
-      "realized_move_avg_pct": 2.87,
-      "realized_move_last_pct": 1.88,
-      "ratio_implied_to_avg_realized": 5.746,
-      "ratio_implied_to_last_realized": 8.763,
-      "score": -0.826,
+      "ratio_implied_to_avg_realized": 5.27,
+      "ratio_implied_to_last_realized": 2.278,
+      "score": -0.81,
       "recommendation": "PASS"
     },
     {
       "ticker": "ZS",
-      "price": 185.4,
+      "price": 180.43,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 185.0,
-      "call_mid": 10.0,
-      "put_mid": 8.8,
-      "straddle_mid": 18.8,
-      "implied_move_pct": 10.14,
+      "strike": 180.0,
+      "call_mid": 9.0,
+      "put_mid": 8.12,
+      "straddle_mid": 17.12,
+      "implied_move_pct": 9.49,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-12-31",
@@ -1472,150 +884,150 @@
       ],
       "realized_move_avg_pct": 1.75,
       "realized_move_last_pct": 1.93,
-      "ratio_implied_to_avg_realized": 5.786,
-      "ratio_implied_to_last_realized": 5.254,
-      "score": -0.827,
+      "ratio_implied_to_avg_realized": 5.416,
+      "ratio_implied_to_last_realized": 4.918,
+      "score": -0.815,
       "recommendation": "PASS"
     },
     {
-      "ticker": "VMI",
-      "price": 461.27,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
+      "ticker": "CPRT",
+      "price": 39.6,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 460.0,
-      "call_mid": 18.25,
-      "put_mid": 15.55,
-      "straddle_mid": 33.8,
-      "implied_move_pct": 7.33,
+      "strike": 40.0,
+      "call_mid": 1.5,
+      "put_mid": 1.75,
+      "straddle_mid": 3.25,
+      "implied_move_pct": 8.21,
       "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 3.52
+        },
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.82
+          "realized_move_pct": 0.27
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 2.64
+          "realized_move_pct": 1.16
         },
         {
           "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.1
+        }
+      ],
+      "realized_move_avg_pct": 1.51,
+      "realized_move_last_pct": 3.52,
+      "ratio_implied_to_avg_realized": 5.426,
+      "ratio_implied_to_last_realized": 2.332,
+      "score": -0.816,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "LXP",
+      "price": 50.96,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 50.0,
+      "call_mid": 2.5,
+      "put_mid": 3.0,
+      "straddle_mid": 5.5,
+      "implied_move_pct": 10.79,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 5.02
+        },
+        {
+          "earnings_date": "2025-06-30",
           "hour": null,
           "realized_move_pct": 1.09
         },
         {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.23
+        },
+        {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.49
+          "realized_move_pct": 1.35
         }
       ],
-      "realized_move_avg_pct": 1.26,
-      "realized_move_last_pct": 0.82,
-      "ratio_implied_to_avg_realized": 5.816,
-      "ratio_implied_to_last_realized": 8.936,
-      "score": -0.828,
+      "realized_move_avg_pct": 1.92,
+      "realized_move_last_pct": 5.02,
+      "ratio_implied_to_avg_realized": 5.614,
+      "ratio_implied_to_last_realized": 2.15,
+      "score": -0.822,
       "recommendation": "PASS"
     },
     {
-      "ticker": "ACLS",
-      "price": 85.78,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "ticker": "IBP",
+      "price": 319.45,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 85.0,
-      "call_mid": 5.25,
-      "put_mid": 4.8,
-      "straddle_mid": 10.05,
-      "implied_move_pct": 11.72,
+      "strike": 320.0,
+      "call_mid": 23.25,
+      "put_mid": 23.8,
+      "straddle_mid": 47.05,
+      "implied_move_pct": 14.73,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 2.95
+          "realized_move_pct": 0.58
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 3.3
+          "realized_move_pct": 7.96
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 1.31
+          "realized_move_pct": 0.71
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.47
+          "realized_move_pct": 1.15
         }
       ],
-      "realized_move_avg_pct": 2.01,
-      "realized_move_last_pct": 2.95,
-      "ratio_implied_to_avg_realized": 5.836,
-      "ratio_implied_to_last_realized": 3.972,
-      "score": -0.829,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "ANET",
-      "price": 137.0,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 135.0,
-      "call_mid": 9.3,
-      "put_mid": 7.35,
-      "straddle_mid": 16.65,
-      "implied_move_pct": 12.15,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.44
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.32
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.3
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.14
-        }
-      ],
-      "realized_move_avg_pct": 2.05,
-      "realized_move_last_pct": 2.44,
-      "ratio_implied_to_avg_realized": 5.928,
-      "ratio_implied_to_last_realized": 4.981,
-      "score": -0.831,
+      "realized_move_avg_pct": 2.6,
+      "realized_move_last_pct": 0.58,
+      "ratio_implied_to_avg_realized": 5.665,
+      "ratio_implied_to_last_realized": 25.394,
+      "score": -0.823,
       "recommendation": "PASS"
     },
     {
       "ticker": "ORA",
-      "price": 127.83,
+      "price": 125.0,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 130.0,
-      "call_mid": 6.25,
-      "put_mid": 8.05,
-      "straddle_mid": 14.3,
-      "implied_move_pct": 11.19,
+      "strike": 125.0,
+      "call_mid": 6.9,
+      "put_mid": 6.35,
+      "straddle_mid": 13.25,
+      "implied_move_pct": 10.6,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -1640,622 +1052,76 @@
       ],
       "realized_move_avg_pct": 1.88,
       "realized_move_last_pct": 4.23,
-      "ratio_implied_to_avg_realized": 5.966,
-      "ratio_implied_to_last_realized": 2.645,
-      "score": -0.832,
+      "ratio_implied_to_avg_realized": 5.653,
+      "ratio_implied_to_last_realized": 2.506,
+      "score": -0.823,
       "recommendation": "PASS"
     },
     {
-      "ticker": "NTES",
-      "price": 120.65,
-      "earnings_date": "2026-02-11",
+      "ticker": "DXCM",
+      "price": 70.52,
+      "earnings_date": "2026-02-12",
       "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 120.0,
-      "call_mid": 6.15,
-      "put_mid": 6.1,
-      "straddle_mid": 12.25,
-      "implied_move_pct": 10.15,
+      "strike": 70.0,
+      "call_mid": 4.65,
+      "put_mid": 3.8,
+      "straddle_mid": 8.45,
+      "implied_move_pct": 11.98,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 1.3
+          "realized_move_pct": 1.8
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 0.15
+          "realized_move_pct": 4.25
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 3.33
+          "realized_move_pct": 1.42
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 1.63
+          "realized_move_pct": 0.94
         }
       ],
-      "realized_move_avg_pct": 1.6,
-      "realized_move_last_pct": 1.3,
-      "ratio_implied_to_avg_realized": 6.336,
-      "ratio_implied_to_last_realized": 7.81,
-      "score": -0.842,
+      "realized_move_avg_pct": 2.1,
+      "realized_move_last_pct": 1.8,
+      "ratio_implied_to_avg_realized": 5.699,
+      "ratio_implied_to_last_realized": 6.657,
+      "score": -0.825,
       "recommendation": "PASS"
     },
     {
-      "ticker": "MATX",
-      "price": 165.38,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 165.0,
-      "call_mid": 11.0,
-      "put_mid": 8.8,
-      "straddle_mid": 19.8,
-      "implied_move_pct": 11.97,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.2
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.76
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 2.33
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 2.21
-        }
-      ],
-      "realized_move_avg_pct": 1.88,
-      "realized_move_last_pct": 0.2,
-      "ratio_implied_to_avg_realized": 6.385,
-      "ratio_implied_to_last_realized": 59.862,
-      "score": -0.843,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "TAP",
-      "price": 51.1,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 50.0,
-      "call_mid": 2.48,
-      "put_mid": 1.3,
-      "straddle_mid": 3.77,
-      "implied_move_pct": 7.39,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.72
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.04
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.61
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.21
-        }
-      ],
-      "realized_move_avg_pct": 1.15,
-      "realized_move_last_pct": 1.72,
-      "ratio_implied_to_avg_realized": 6.452,
-      "ratio_implied_to_last_realized": 4.295,
-      "score": -0.845,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "NRG",
-      "price": 144.52,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 145.0,
-      "call_mid": 11.15,
-      "put_mid": 9.6,
-      "straddle_mid": 20.75,
-      "implied_move_pct": 14.36,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.02
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.88
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 3.22
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 2.8
-        }
-      ],
-      "realized_move_avg_pct": 2.23,
-      "realized_move_last_pct": 0.02,
-      "ratio_implied_to_avg_realized": 6.439,
-      "ratio_implied_to_last_realized": 717.894,
-      "score": -0.845,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "LYV",
-      "price": 142.01,
+      "ticker": "SFM",
+      "price": 68.0,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 140.0,
-      "call_mid": 6.95,
-      "put_mid": 4.6,
-      "straddle_mid": 11.55,
-      "implied_move_pct": 8.13,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.77
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.93
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.1
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.21
-        }
-      ],
-      "realized_move_avg_pct": 1.25,
-      "realized_move_last_pct": 2.77,
-      "ratio_implied_to_avg_realized": 6.494,
-      "ratio_implied_to_last_realized": 2.936,
-      "score": -0.846,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "NVDA",
-      "price": 175.59,
-      "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
-      "expiry": "2026-02-27",
-      "expiry_dte": 23,
-      "expiry_is_monthly": false,
-      "strike": 175.0,
-      "call_mid": 9.45,
-      "put_mid": 8.38,
-      "straddle_mid": 17.82,
-      "implied_move_pct": 10.15,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 1.26
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.35
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.97
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.63
-        }
-      ],
-      "realized_move_avg_pct": 1.55,
-      "realized_move_last_pct": 1.26,
-      "ratio_implied_to_avg_realized": 6.539,
-      "ratio_implied_to_last_realized": 8.057,
-      "score": -0.847,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "RIVN",
-      "price": 14.55,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 15.0,
-      "call_mid": 0.92,
-      "put_mid": 1.38,
-      "straddle_mid": 2.29,
-      "implied_move_pct": 15.77,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.48
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.97
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 6.67
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.38
-        }
-      ],
-      "realized_move_avg_pct": 2.38,
-      "realized_move_last_pct": 0.48,
-      "ratio_implied_to_avg_realized": 6.641,
-      "ratio_implied_to_last_realized": 32.861,
-      "score": -0.849,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "WST",
-      "price": 239.3,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 240.0,
-      "call_mid": 13.9,
-      "put_mid": 15.05,
-      "straddle_mid": 28.95,
-      "implied_move_pct": 12.1,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 3.47
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.65
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.66
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.25
-        }
-      ],
-      "realized_move_avg_pct": 1.76,
-      "realized_move_last_pct": 3.47,
-      "ratio_implied_to_avg_realized": 6.884,
-      "ratio_implied_to_last_realized": 3.486,
-      "score": -0.855,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "HL",
-      "price": 23.07,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 22.5,
-      "call_mid": 2.31,
-      "put_mid": 1.75,
-      "straddle_mid": 4.07,
-      "implied_move_pct": 17.64,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.32
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.33
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.44
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 7.13
-        }
-      ],
-      "realized_move_avg_pct": 2.55,
-      "realized_move_last_pct": 1.32,
-      "ratio_implied_to_avg_realized": 6.905,
-      "ratio_implied_to_last_realized": 13.365,
-      "score": -0.855,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "WDAY",
-      "price": 169.79,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 170.0,
-      "call_mid": 12.8,
-      "put_mid": 12.25,
-      "straddle_mid": 25.05,
-      "implied_move_pct": 14.75,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 4.19
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 3.54
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.32
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.43
-        }
-      ],
-      "realized_move_avg_pct": 2.12,
-      "realized_move_last_pct": 4.19,
-      "ratio_implied_to_avg_realized": 6.959,
-      "ratio_implied_to_last_realized": 3.521,
-      "score": -0.856,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "PWR",
-      "price": 470.43,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 470.0,
-      "call_mid": 20.05,
-      "put_mid": 18.7,
-      "straddle_mid": 38.75,
-      "implied_move_pct": 8.24,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.5
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.53
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.46
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.17
-        }
-      ],
-      "realized_move_avg_pct": 1.17,
-      "realized_move_last_pct": 1.5,
-      "ratio_implied_to_avg_realized": 7.071,
-      "ratio_implied_to_last_realized": 5.491,
-      "score": -0.859,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "DASH",
-      "price": 195.66,
-      "earnings_date": "2026-02-18",
       "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 195.0,
-      "call_mid": 13.0,
-      "put_mid": 11.43,
-      "straddle_mid": 24.43,
-      "implied_move_pct": 12.48,
+      "strike": 70.0,
+      "call_mid": 3.7,
+      "put_mid": 5.45,
+      "straddle_mid": 9.15,
+      "implied_move_pct": 13.46,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 1.6
+          "realized_move_pct": 1.51
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 3.45
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.19
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.73
-        }
-      ],
-      "realized_move_avg_pct": 1.74,
-      "realized_move_last_pct": 1.6,
-      "ratio_implied_to_avg_realized": 7.164,
-      "ratio_implied_to_last_realized": 7.802,
-      "score": -0.86,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "WLK",
-      "price": 97.29,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 95.0,
-      "call_mid": 9.0,
-      "put_mid": 6.3,
-      "straddle_mid": 15.3,
-      "implied_move_pct": 15.73,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.39
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 5.99
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.05
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 2.2
-        }
-      ],
-      "realized_move_avg_pct": 2.16,
-      "realized_move_last_pct": 0.39,
-      "ratio_implied_to_avg_realized": 7.289,
-      "ratio_implied_to_last_realized": 40.324,
-      "score": -0.863,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "GTES",
-      "price": 25.02,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 25.0,
-      "call_mid": 1.07,
-      "put_mid": 1.07,
-      "straddle_mid": 2.15,
-      "implied_move_pct": 8.59,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.57
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.52
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.87
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.73
-        }
-      ],
-      "realized_move_avg_pct": 1.17,
-      "realized_move_last_pct": 1.57,
-      "ratio_implied_to_avg_realized": 7.329,
-      "ratio_implied_to_last_realized": 5.473,
-      "score": -0.864,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "BKNG",
-      "price": 4604.17,
-      "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 4600.0,
-      "call_mid": 193.7,
-      "put_mid": 186.25,
-      "straddle_mid": 379.95,
-      "implied_move_pct": 8.25,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.9
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 1.01
+          "realized_move_pct": 1.54
         },
         {
           "earnings_date": "2025-03-31",
@@ -2265,113 +1131,29 @@
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.87
+          "realized_move_pct": 4.64
         }
       ],
-      "realized_move_avg_pct": 1.12,
-      "realized_move_last_pct": 0.9,
-      "ratio_implied_to_avg_realized": 7.352,
-      "ratio_implied_to_last_realized": 9.169,
-      "score": -0.864,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "RSG",
-      "price": 216.17,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 220.0,
-      "call_mid": 3.9,
-      "put_mid": 7.8,
-      "straddle_mid": 11.7,
-      "implied_move_pct": 5.41,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.95
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.79
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.64
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.54
-        }
-      ],
-      "realized_move_avg_pct": 0.73,
-      "realized_move_last_pct": 0.95,
-      "ratio_implied_to_avg_realized": 7.414,
-      "ratio_implied_to_last_realized": 5.697,
-      "score": -0.865,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "PSTG",
-      "price": 67.12,
-      "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 65.0,
-      "call_mid": 9.0,
-      "put_mid": 5.95,
-      "straddle_mid": 14.95,
-      "implied_move_pct": 22.27,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 2.98
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.24
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 4.1
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 2.53
-        }
-      ],
-      "realized_move_avg_pct": 2.96,
-      "realized_move_last_pct": 2.98,
-      "ratio_implied_to_avg_realized": 7.518,
-      "ratio_implied_to_last_realized": 7.474,
-      "score": -0.867,
+      "realized_move_avg_pct": 2.35,
+      "realized_move_last_pct": 1.51,
+      "ratio_implied_to_avg_realized": 5.726,
+      "ratio_implied_to_last_realized": 8.911,
+      "score": -0.825,
       "recommendation": "PASS"
     },
     {
       "ticker": "NPO",
-      "price": 253.99,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "price": 254.03,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 250.0,
-      "call_mid": 17.95,
-      "put_mid": 13.7,
-      "straddle_mid": 31.65,
-      "implied_move_pct": 12.46,
+      "call_mid": 13.55,
+      "put_mid": 9.5,
+      "straddle_mid": 23.05,
+      "implied_move_pct": 9.07,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -2396,24 +1178,1116 @@
       ],
       "realized_move_avg_pct": 1.58,
       "realized_move_last_pct": 1.29,
-      "ratio_implied_to_avg_realized": 7.912,
-      "ratio_implied_to_last_realized": 9.66,
-      "score": -0.874,
+      "ratio_implied_to_avg_realized": 5.761,
+      "ratio_implied_to_last_realized": 7.034,
+      "score": -0.826,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "RS",
+      "price": 343.8,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 340.0,
+      "call_mid": 12.65,
+      "put_mid": 8.65,
+      "straddle_mid": 21.3,
+      "implied_move_pct": 6.2,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.83
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.37
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.09
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.98
+        }
+      ],
+      "realized_move_avg_pct": 1.07,
+      "realized_move_last_pct": 0.83,
+      "ratio_implied_to_avg_realized": 5.804,
+      "ratio_implied_to_last_realized": 7.464,
+      "score": -0.828,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "VMI",
+      "price": 456.76,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 12,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 460.0,
+      "call_mid": 16.05,
+      "put_mid": 18.0,
+      "straddle_mid": 34.05,
+      "implied_move_pct": 7.45,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.82
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.64
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.09
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.49
+        }
+      ],
+      "realized_move_avg_pct": 1.26,
+      "realized_move_last_pct": 0.82,
+      "ratio_implied_to_avg_realized": 5.916,
+      "ratio_implied_to_last_realized": 9.091,
+      "score": -0.831,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "TOL",
+      "price": 149.72,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 12,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 150.0,
+      "call_mid": 5.85,
+      "put_mid": 5.75,
+      "straddle_mid": 11.6,
+      "implied_move_pct": 7.75,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 0.27
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.31
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.37
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.27
+        }
+      ],
+      "realized_move_avg_pct": 1.31,
+      "realized_move_last_pct": 0.27,
+      "ratio_implied_to_avg_realized": 5.937,
+      "ratio_implied_to_last_realized": 28.696,
+      "score": -0.832,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "LH",
+      "price": 276.11,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 12,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 280.0,
+      "call_mid": 6.55,
+      "put_mid": 9.9,
+      "straddle_mid": 16.45,
+      "implied_move_pct": 5.96,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.79
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.67
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.04
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.49
+        }
+      ],
+      "realized_move_avg_pct": 1.0,
+      "realized_move_last_pct": 2.79,
+      "ratio_implied_to_avg_realized": 5.973,
+      "ratio_implied_to_last_realized": 2.135,
+      "score": -0.833,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "SM",
+      "price": 19.66,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 20.0,
+      "call_mid": 1.57,
+      "put_mid": 1.8,
+      "straddle_mid": 3.38,
+      "implied_move_pct": 17.17,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.88
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 5.38
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.6
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 3.61
+        }
+      ],
+      "realized_move_avg_pct": 2.87,
+      "realized_move_last_pct": 1.88,
+      "ratio_implied_to_avg_realized": 5.987,
+      "ratio_implied_to_last_realized": 9.131,
+      "score": -0.833,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "MP",
+      "price": 57.1,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 55.0,
+      "call_mid": 7.42,
+      "put_mid": 5.0,
+      "straddle_mid": 12.43,
+      "implied_move_pct": 21.76,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.83
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 5.35
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 3.11
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 5.06
+        }
+      ],
+      "realized_move_avg_pct": 3.59,
+      "realized_move_last_pct": 0.83,
+      "ratio_implied_to_avg_realized": 6.066,
+      "ratio_implied_to_last_realized": 26.217,
+      "score": -0.835,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "ANET",
+      "price": 128.23,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 130.0,
+      "call_mid": 6.9,
+      "put_mid": 9.6,
+      "straddle_mid": 16.5,
+      "implied_move_pct": 12.87,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.44
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.32
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.3
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.14
+        }
+      ],
+      "realized_move_avg_pct": 2.05,
+      "realized_move_last_pct": 2.44,
+      "ratio_implied_to_avg_realized": 6.277,
+      "ratio_implied_to_last_realized": 5.274,
+      "score": -0.841,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "MATX",
+      "price": 161.16,
+      "earnings_date": "2026-02-24",
+      "days_to_earnings": 19,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 160.0,
+      "call_mid": 10.25,
+      "put_mid": 8.85,
+      "straddle_mid": 19.1,
+      "implied_move_pct": 11.85,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.2
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.76
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 2.33
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 2.21
+        }
+      ],
+      "realized_move_avg_pct": 1.88,
+      "realized_move_last_pct": 0.2,
+      "ratio_implied_to_avg_realized": 6.321,
+      "ratio_implied_to_last_realized": 59.258,
+      "score": -0.842,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "WST",
+      "price": 234.12,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 230.0,
+      "call_mid": 15.75,
+      "put_mid": 12.1,
+      "straddle_mid": 27.85,
+      "implied_move_pct": 11.9,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 3.47
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.65
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.66
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.25
+        }
+      ],
+      "realized_move_avg_pct": 1.76,
+      "realized_move_last_pct": 3.47,
+      "ratio_implied_to_avg_realized": 6.768,
+      "ratio_implied_to_last_realized": 3.428,
+      "score": -0.852,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "TAP",
+      "price": 51.61,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 50.0,
+      "call_mid": 2.85,
+      "put_mid": 1.15,
+      "straddle_mid": 4.0,
+      "implied_move_pct": 7.75,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.72
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.04
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.61
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.21
+        }
+      ],
+      "realized_move_avg_pct": 1.15,
+      "realized_move_last_pct": 1.72,
+      "ratio_implied_to_avg_realized": 6.769,
+      "ratio_implied_to_last_realized": 4.506,
+      "score": -0.852,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "BLD",
+      "price": 497.39,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 500.0,
+      "call_mid": 30.5,
+      "put_mid": 30.95,
+      "straddle_mid": 61.45,
+      "implied_move_pct": 12.35,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.85
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 6.01
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.1
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.33
+        }
+      ],
+      "realized_move_avg_pct": 1.82,
+      "realized_move_last_pct": 0.85,
+      "ratio_implied_to_avg_realized": 6.779,
+      "ratio_implied_to_last_realized": 14.535,
+      "score": -0.852,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "HL",
+      "price": 21.45,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 12,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 22.5,
+      "call_mid": 1.35,
+      "put_mid": 2.38,
+      "straddle_mid": 3.73,
+      "implied_move_pct": 17.39,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.32
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.33
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.44
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 7.13
+        }
+      ],
+      "realized_move_avg_pct": 2.55,
+      "realized_move_last_pct": 1.32,
+      "ratio_implied_to_avg_realized": 6.806,
+      "ratio_implied_to_last_realized": 13.174,
+      "score": -0.853,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "RSG",
+      "price": 220.2,
+      "earnings_date": "2026-02-17",
+      "days_to_earnings": 12,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 220.0,
+      "call_mid": 5.5,
+      "put_mid": 5.45,
+      "straddle_mid": 10.95,
+      "implied_move_pct": 4.97,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.95
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.79
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.64
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.54
+        }
+      ],
+      "realized_move_avg_pct": 0.73,
+      "realized_move_last_pct": 0.95,
+      "ratio_implied_to_avg_realized": 6.812,
+      "ratio_implied_to_last_realized": 5.234,
+      "score": -0.853,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "NRG",
+      "price": 144.75,
+      "earnings_date": "2026-02-24",
+      "days_to_earnings": 19,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 145.0,
+      "call_mid": 11.6,
+      "put_mid": 10.7,
+      "straddle_mid": 22.3,
+      "implied_move_pct": 15.41,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.02
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.88
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 3.22
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 2.8
+        }
+      ],
+      "realized_move_avg_pct": 2.23,
+      "realized_move_last_pct": 0.02,
+      "ratio_implied_to_avg_realized": 6.908,
+      "ratio_implied_to_last_realized": 770.294,
+      "score": -0.855,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "NVDA",
+      "price": 173.03,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-02-27",
+      "expiry_dte": 22,
+      "expiry_is_monthly": false,
+      "strike": 175.0,
+      "call_mid": 8.5,
+      "put_mid": 9.97,
+      "straddle_mid": 18.48,
+      "implied_move_pct": 10.68,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 1.26
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.35
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.97
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.63
+        }
+      ],
+      "realized_move_avg_pct": 1.55,
+      "realized_move_last_pct": 1.26,
+      "ratio_implied_to_avg_realized": 6.878,
+      "ratio_implied_to_last_realized": 8.474,
+      "score": -0.855,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "RIVN",
+      "price": 14.1,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 15.0,
+      "call_mid": 0.74,
+      "put_mid": 1.59,
+      "straddle_mid": 2.33,
+      "implied_move_pct": 16.52,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.48
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.97
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 6.67
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.38
+        }
+      ],
+      "realized_move_avg_pct": 2.38,
+      "realized_move_last_pct": 0.48,
+      "ratio_implied_to_avg_realized": 6.958,
+      "ratio_implied_to_last_realized": 34.427,
+      "score": -0.856,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "WLK",
+      "price": 92.92,
+      "earnings_date": "2026-02-24",
+      "days_to_earnings": 19,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 95.0,
+      "call_mid": 6.35,
+      "put_mid": 7.9,
+      "straddle_mid": 14.25,
+      "implied_move_pct": 15.34,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.39
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 5.99
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.05
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 2.2
+        }
+      ],
+      "realized_move_avg_pct": 2.16,
+      "realized_move_last_pct": 0.39,
+      "ratio_implied_to_avg_realized": 7.108,
+      "ratio_implied_to_last_realized": 39.322,
+      "score": -0.859,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "PWR",
+      "price": 470.29,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 470.0,
+      "call_mid": 19.5,
+      "put_mid": 19.6,
+      "straddle_mid": 39.1,
+      "implied_move_pct": 8.31,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.5
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.53
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.46
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.17
+        }
+      ],
+      "realized_move_avg_pct": 1.17,
+      "realized_move_last_pct": 1.5,
+      "ratio_implied_to_avg_realized": 7.136,
+      "ratio_implied_to_last_realized": 5.543,
+      "score": -0.86,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "WDAY",
+      "price": 165.29,
+      "earnings_date": "2026-02-24",
+      "days_to_earnings": 19,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 165.0,
+      "call_mid": 13.1,
+      "put_mid": 11.9,
+      "straddle_mid": 25.0,
+      "implied_move_pct": 15.12,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 4.19
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 3.54
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.32
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.43
+        }
+      ],
+      "realized_move_avg_pct": 2.12,
+      "realized_move_last_pct": 4.19,
+      "ratio_implied_to_avg_realized": 7.134,
+      "ratio_implied_to_last_realized": 3.61,
+      "score": -0.86,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "TRU",
+      "price": 69.32,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 70.0,
+      "call_mid": 3.58,
+      "put_mid": 3.9,
+      "straddle_mid": 7.47,
+      "implied_move_pct": 10.78,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.81
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.16
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.05
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.93
+        }
+      ],
+      "realized_move_avg_pct": 1.49,
+      "realized_move_last_pct": 1.81,
+      "ratio_implied_to_avg_realized": 7.249,
+      "ratio_implied_to_last_realized": 5.957,
+      "score": -0.862,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "RKT",
+      "price": 19.16,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 20.0,
+      "call_mid": 1.6,
+      "put_mid": 2.35,
+      "straddle_mid": 3.95,
+      "implied_move_pct": 20.64,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.08
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.12
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 4.39
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 3.64
+        }
+      ],
+      "realized_move_avg_pct": 2.81,
+      "realized_move_last_pct": 1.08,
+      "ratio_implied_to_avg_realized": 7.352,
+      "ratio_implied_to_last_realized": 19.113,
+      "score": -0.864,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "LYV",
+      "price": 138.6,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 140.0,
+      "call_mid": 6.1,
+      "put_mid": 6.9,
+      "straddle_mid": 13.0,
+      "implied_move_pct": 9.38,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.77
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.93
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.1
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.21
+        }
+      ],
+      "realized_move_avg_pct": 1.25,
+      "realized_move_last_pct": 2.77,
+      "ratio_implied_to_avg_realized": 7.489,
+      "ratio_implied_to_last_realized": 3.386,
+      "score": -0.866,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "GTES",
+      "price": 25.25,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 25.0,
+      "call_mid": 1.25,
+      "put_mid": 0.98,
+      "straddle_mid": 2.23,
+      "implied_move_pct": 8.81,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.57
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.52
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.87
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.73
+        }
+      ],
+      "realized_move_avg_pct": 1.17,
+      "realized_move_last_pct": 1.57,
+      "ratio_implied_to_avg_realized": 7.515,
+      "ratio_implied_to_last_realized": 5.613,
+      "score": -0.867,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "PSTG",
+      "price": 65.38,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 65.0,
+      "call_mid": 7.65,
+      "put_mid": 7.15,
+      "straddle_mid": 14.8,
+      "implied_move_pct": 22.64,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 2.98
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.24
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 4.1
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 2.53
+        }
+      ],
+      "realized_move_avg_pct": 2.96,
+      "realized_move_last_pct": 2.98,
+      "ratio_implied_to_avg_realized": 7.641,
+      "ratio_implied_to_last_realized": 7.596,
+      "score": -0.869,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "OC",
+      "price": 132.52,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 135.0,
+      "call_mid": 6.1,
+      "put_mid": 8.9,
+      "straddle_mid": 15.0,
+      "implied_move_pct": 11.32,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.11
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 4.3
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.88
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.6
+        }
+      ],
+      "realized_move_avg_pct": 1.47,
+      "realized_move_last_pct": 0.11,
+      "ratio_implied_to_avg_realized": 7.687,
+      "ratio_implied_to_last_realized": 102.9,
+      "score": -0.87,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "DASH",
+      "price": 184.46,
+      "earnings_date": "2026-02-18",
+      "days_to_earnings": 13,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 185.0,
+      "call_mid": 12.85,
+      "put_mid": 12.5,
+      "straddle_mid": 25.35,
+      "implied_move_pct": 13.74,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.6
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.45
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.19
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.73
+        }
+      ],
+      "realized_move_avg_pct": 1.74,
+      "realized_move_last_pct": 1.6,
+      "ratio_implied_to_avg_realized": 7.887,
+      "ratio_implied_to_last_realized": 8.589,
+      "score": -0.873,
       "recommendation": "PASS"
     },
     {
       "ticker": "UHS",
-      "price": 210.26,
+      "price": 214.02,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 210.0,
-      "call_mid": 11.0,
-      "put_mid": 9.75,
-      "straddle_mid": 20.75,
-      "implied_move_pct": 9.87,
+      "call_mid": 13.3,
+      "put_mid": 9.0,
+      "straddle_mid": 22.3,
+      "implied_move_pct": 10.42,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -2438,234 +2312,66 @@
       ],
       "realized_move_avg_pct": 1.23,
       "realized_move_last_pct": 0.45,
-      "ratio_implied_to_avg_realized": 7.991,
-      "ratio_implied_to_last_realized": 21.931,
-      "score": -0.875,
+      "ratio_implied_to_avg_realized": 8.437,
+      "ratio_implied_to_last_realized": 23.155,
+      "score": -0.881,
       "recommendation": "PASS"
     },
     {
-      "ticker": "AEP",
-      "price": 121.0,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "ticker": "MRVL",
+      "price": 71.25,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 120.0,
-      "call_mid": 2.88,
-      "put_mid": 2.15,
-      "straddle_mid": 5.03,
-      "implied_move_pct": 4.15,
+      "strike": 70.0,
+      "call_mid": 7.4,
+      "put_mid": 5.72,
+      "straddle_mid": 13.12,
+      "implied_move_pct": 18.42,
       "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 5.19
+        },
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.22
+          "realized_move_pct": 0.21
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 0.61
+          "realized_move_pct": 1.5
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.82
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.31
+          "realized_move_pct": 1.79
         }
       ],
-      "realized_move_avg_pct": 0.49,
-      "realized_move_last_pct": 0.22,
-      "ratio_implied_to_avg_realized": 8.475,
-      "ratio_implied_to_last_realized": 18.877,
+      "realized_move_avg_pct": 2.17,
+      "realized_move_last_pct": 5.19,
+      "ratio_implied_to_avg_realized": 8.479,
+      "ratio_implied_to_last_realized": 3.549,
       "score": -0.882,
       "recommendation": "PASS"
     },
     {
-      "ticker": "FANG",
-      "price": 165.25,
-      "earnings_date": "2026-02-23",
-      "days_to_earnings": 19,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 165.0,
-      "call_mid": 8.4,
-      "put_mid": 8.75,
-      "straddle_mid": 17.15,
-      "implied_move_pct": 10.38,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.31
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 2.04
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.62
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 1.8
-        }
-      ],
-      "realized_move_avg_pct": 1.19,
-      "realized_move_last_pct": 0.31,
-      "ratio_implied_to_avg_realized": 8.703,
-      "ratio_implied_to_last_realized": 33.478,
-      "score": -0.885,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "FUN",
-      "price": 18.41,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 17.5,
-      "call_mid": 1.88,
-      "put_mid": 0.95,
-      "straddle_mid": 2.83,
-      "implied_move_pct": 15.34,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.13
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 4.73
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.26
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.87
-        }
-      ],
-      "realized_move_avg_pct": 1.75,
-      "realized_move_last_pct": 0.13,
-      "ratio_implied_to_avg_realized": 8.781,
-      "ratio_implied_to_last_realized": 118.038,
-      "score": -0.886,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "ST",
-      "price": 36.33,
-      "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 37.5,
-      "call_mid": 1.05,
-      "put_mid": 2.27,
-      "straddle_mid": 3.33,
-      "implied_move_pct": 9.15,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.16
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.22
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.16
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.55
-        }
-      ],
-      "realized_move_avg_pct": 1.02,
-      "realized_move_last_pct": 0.16,
-      "ratio_implied_to_avg_realized": 8.951,
-      "ratio_implied_to_last_realized": 57.201,
-      "score": -0.888,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "EXPE",
-      "price": 232.37,
-      "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 230.0,
-      "call_mid": 16.93,
-      "put_mid": 14.05,
-      "straddle_mid": 30.98,
-      "implied_move_pct": 13.33,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.96
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.18
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.24
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.54
-        }
-      ],
-      "realized_move_avg_pct": 1.48,
-      "realized_move_last_pct": 1.96,
-      "ratio_implied_to_avg_realized": 9.007,
-      "ratio_implied_to_last_realized": 6.801,
-      "score": -0.889,
-      "recommendation": "PASS"
-    },
-    {
       "ticker": "JLL",
-      "price": 331.61,
+      "price": 333.64,
       "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
+      "days_to_earnings": 13,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 330.0,
-      "call_mid": 12.9,
-      "put_mid": 9.7,
-      "straddle_mid": 22.6,
-      "implied_move_pct": 6.82,
+      "call_mid": 12.85,
+      "put_mid": 9.3,
+      "straddle_mid": 22.15,
+      "implied_move_pct": 6.64,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -2690,66 +2396,192 @@
       ],
       "realized_move_avg_pct": 0.76,
       "realized_move_last_pct": 0.32,
-      "ratio_implied_to_avg_realized": 8.997,
-      "ratio_implied_to_last_realized": 21.298,
-      "score": -0.889,
+      "ratio_implied_to_avg_realized": 8.764,
+      "ratio_implied_to_last_realized": 20.747,
+      "score": -0.886,
       "recommendation": "PASS"
     },
     {
-      "ticker": "BWXT",
-      "price": 195.42,
+      "ticker": "FANG",
+      "price": 164.17,
       "earnings_date": "2026-02-23",
-      "days_to_earnings": 19,
+      "days_to_earnings": 18,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 195.0,
-      "call_mid": 14.9,
-      "put_mid": 12.5,
-      "straddle_mid": 27.4,
-      "implied_move_pct": 14.02,
+      "strike": 165.0,
+      "call_mid": 8.4,
+      "put_mid": 8.7,
+      "straddle_mid": 17.1,
+      "implied_move_pct": 10.42,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 1.52
+          "realized_move_pct": 0.31
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 2.56
+          "realized_move_pct": 2.04
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 1.87
+          "realized_move_pct": 0.62
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.08
+          "realized_move_pct": 1.8
         }
       ],
-      "realized_move_avg_pct": 1.51,
-      "realized_move_last_pct": 1.52,
-      "ratio_implied_to_avg_realized": 9.301,
-      "ratio_implied_to_last_realized": 9.224,
-      "score": -0.892,
+      "realized_move_avg_pct": 1.19,
+      "realized_move_last_pct": 0.31,
+      "ratio_implied_to_avg_realized": 8.735,
+      "ratio_implied_to_last_realized": 33.6,
+      "score": -0.886,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "EXPE",
+      "price": 235.22,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 240.0,
+      "call_mid": 13.12,
+      "put_mid": 17.7,
+      "straddle_mid": 30.82,
+      "implied_move_pct": 13.1,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.96
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.18
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.24
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.54
+        }
+      ],
+      "realized_move_avg_pct": 1.48,
+      "realized_move_last_pct": 1.96,
+      "ratio_implied_to_avg_realized": 8.855,
+      "ratio_implied_to_last_realized": 6.686,
+      "score": -0.887,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "MTZ",
+      "price": 237.74,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 240.0,
+      "call_mid": 17.3,
+      "put_mid": 19.0,
+      "straddle_mid": 36.3,
+      "implied_move_pct": 15.27,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.03
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.29
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.71
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 2.83
+        }
+      ],
+      "realized_move_avg_pct": 1.72,
+      "realized_move_last_pct": 1.03,
+      "ratio_implied_to_avg_realized": 8.903,
+      "ratio_implied_to_last_realized": 14.824,
+      "score": -0.888,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "ABNB",
+      "price": 121.69,
+      "earnings_date": "2026-02-12",
+      "days_to_earnings": 7,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 120.0,
+      "call_mid": 7.2,
+      "put_mid": 5.38,
+      "straddle_mid": 12.57,
+      "implied_move_pct": 10.33,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.74
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 2.32
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.44
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.05
+        }
+      ],
+      "realized_move_avg_pct": 1.14,
+      "realized_move_last_pct": 0.74,
+      "ratio_implied_to_avg_realized": 9.085,
+      "ratio_implied_to_last_realized": 13.964,
+      "score": -0.89,
       "recommendation": "PASS"
     },
     {
       "ticker": "ZM",
-      "price": 91.07,
+      "price": 91.21,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 90.0,
-      "call_mid": 6.95,
-      "put_mid": 5.3,
-      "straddle_mid": 12.25,
-      "implied_move_pct": 13.45,
+      "call_mid": 6.8,
+      "put_mid": 5.25,
+      "straddle_mid": 12.05,
+      "implied_move_pct": 13.21,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-12-31",
@@ -2774,66 +2606,66 @@
       ],
       "realized_move_avg_pct": 1.45,
       "realized_move_last_pct": 3.44,
-      "ratio_implied_to_avg_realized": 9.293,
-      "ratio_implied_to_last_realized": 3.91,
-      "score": -0.892,
+      "ratio_implied_to_avg_realized": 9.127,
+      "ratio_implied_to_last_realized": 3.84,
+      "score": -0.89,
       "recommendation": "PASS"
     },
     {
-      "ticker": "FLR",
-      "price": 46.17,
-      "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "ticker": "ADSK",
+      "price": 242.13,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 45.0,
-      "call_mid": 3.55,
-      "put_mid": 2.33,
-      "straddle_mid": 5.88,
-      "implied_move_pct": 12.72,
+      "strike": 240.0,
+      "call_mid": 16.75,
+      "put_mid": 13.85,
+      "straddle_mid": 30.6,
+      "implied_move_pct": 12.64,
       "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 3.14
+        },
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 1.88
+          "realized_move_pct": 0.61
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 1.87
+          "realized_move_pct": 0.68
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 1.48
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.1
+          "realized_move_pct": 1.07
         }
       ],
-      "realized_move_avg_pct": 1.33,
-      "realized_move_last_pct": 1.88,
-      "ratio_implied_to_avg_realized": 9.55,
-      "ratio_implied_to_last_realized": 6.768,
-      "score": -0.895,
+      "realized_move_avg_pct": 1.38,
+      "realized_move_last_pct": 3.14,
+      "ratio_implied_to_avg_realized": 9.191,
+      "ratio_implied_to_last_realized": 4.025,
+      "score": -0.891,
       "recommendation": "PASS"
     },
     {
       "ticker": "SNPS",
-      "price": 415.32,
+      "price": 413.69,
       "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
+      "days_to_earnings": 20,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 420.0,
-      "call_mid": 31.8,
-      "put_mid": 33.65,
-      "straddle_mid": 65.45,
-      "implied_move_pct": 15.76,
+      "strike": 410.0,
+      "call_mid": 34.3,
+      "put_mid": 30.15,
+      "straddle_mid": 64.45,
+      "implied_move_pct": 15.58,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-12-31",
@@ -2858,234 +2690,234 @@
       ],
       "realized_move_avg_pct": 1.66,
       "realized_move_last_pct": 2.28,
-      "ratio_implied_to_avg_realized": 9.508,
-      "ratio_implied_to_last_realized": 6.912,
-      "score": -0.895,
+      "ratio_implied_to_avg_realized": 9.399,
+      "ratio_implied_to_last_realized": 6.833,
+      "score": -0.894,
       "recommendation": "PASS"
     },
     {
-      "ticker": "GTY",
-      "price": 30.39,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
+      "ticker": "HRL",
+      "price": 25.19,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 25.0,
+      "call_mid": 1.23,
+      "put_mid": 0.98,
+      "straddle_mid": 2.2,
+      "implied_move_pct": 8.73,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 1.31
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.24
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.49
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.65
+        }
+      ],
+      "realized_move_avg_pct": 0.92,
+      "realized_move_last_pct": 1.31,
+      "ratio_implied_to_avg_realized": 9.467,
+      "ratio_implied_to_last_realized": 6.667,
+      "score": -0.894,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "INTU",
+      "price": 445.5,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 450.0,
+      "call_mid": 33.8,
+      "put_mid": 36.45,
+      "straddle_mid": 70.25,
+      "implied_move_pct": 15.77,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-12-31",
+          "hour": null,
+          "realized_move_pct": 4.98
+        },
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.5
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.02
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.03
+        }
+      ],
+      "realized_move_avg_pct": 1.63,
+      "realized_move_last_pct": 4.98,
+      "ratio_implied_to_avg_realized": 9.659,
+      "ratio_implied_to_last_realized": 3.166,
+      "score": -0.896,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "RYI",
+      "price": 30.08,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 30.0,
-      "call_mid": 1.6,
-      "put_mid": 1.9,
-      "straddle_mid": 3.5,
-      "implied_move_pct": 11.52,
+      "call_mid": 4.8,
+      "put_mid": 4.4,
+      "straddle_mid": 9.2,
+      "implied_move_pct": 30.59,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.75
+          "realized_move_pct": 2.93
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 1.34
+          "realized_move_pct": 4.36
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.8
+          "realized_move_pct": 1.26
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 1.83
+          "realized_move_pct": 3.84
         }
       ],
-      "realized_move_avg_pct": 1.18,
-      "realized_move_last_pct": 0.75,
-      "ratio_implied_to_avg_realized": 9.76,
-      "ratio_implied_to_last_realized": 15.356,
-      "score": -0.898,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "LCID",
-      "price": 10.59,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 10.0,
-      "call_mid": 1.59,
-      "put_mid": 1.24,
-      "straddle_mid": 2.83,
-      "implied_move_pct": 26.77,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 2.12
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 3.79
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 4.55
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.33
-        }
-      ],
-      "realized_move_avg_pct": 2.7,
-      "realized_move_last_pct": 2.12,
-      "ratio_implied_to_avg_realized": 9.924,
-      "ratio_implied_to_last_realized": 12.628,
+      "realized_move_avg_pct": 3.1,
+      "realized_move_last_pct": 2.93,
+      "ratio_implied_to_avg_realized": 9.874,
+      "ratio_implied_to_last_realized": 10.439,
       "score": -0.899,
       "recommendation": "PASS"
     },
     {
-      "ticker": "PLNT",
-      "price": 92.75,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "ticker": "BWXT",
+      "price": 187.8,
+      "earnings_date": "2026-02-23",
+      "days_to_earnings": 18,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 95.0,
-      "call_mid": 4.75,
-      "put_mid": 6.65,
-      "straddle_mid": 11.4,
-      "implied_move_pct": 12.29,
+      "strike": 190.0,
+      "call_mid": 12.9,
+      "put_mid": 15.1,
+      "straddle_mid": 28.0,
+      "implied_move_pct": 14.91,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.71
+          "realized_move_pct": 1.52
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 2.3
+          "realized_move_pct": 2.56
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.96
+          "realized_move_pct": 1.87
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.73
+          "realized_move_pct": 0.08
         }
       ],
-      "realized_move_avg_pct": 1.17,
-      "realized_move_last_pct": 0.71,
-      "ratio_implied_to_avg_realized": 10.461,
-      "ratio_implied_to_last_realized": 17.311,
-      "score": -0.904,
+      "realized_move_avg_pct": 1.51,
+      "realized_move_last_pct": 1.52,
+      "ratio_implied_to_avg_realized": 9.89,
+      "ratio_implied_to_last_realized": 9.809,
+      "score": -0.899,
       "recommendation": "PASS"
     },
     {
-      "ticker": "CHE",
-      "price": 448.82,
-      "earnings_date": "2026-02-25",
-      "days_to_earnings": 21,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 450.0,
-      "call_mid": 18.55,
-      "put_mid": 18.75,
-      "straddle_mid": 37.3,
-      "implied_move_pct": 8.31,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 1.59
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.62
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.53
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.35
-        }
-      ],
-      "realized_move_avg_pct": 0.77,
-      "realized_move_last_pct": 1.59,
-      "ratio_implied_to_avg_realized": 10.758,
-      "ratio_implied_to_last_realized": 5.227,
-      "score": -0.907,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "THC",
-      "price": 194.2,
-      "earnings_date": "2026-02-11",
+      "ticker": "PBF",
+      "price": 34.46,
+      "earnings_date": "2026-02-12",
       "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 195.0,
-      "call_mid": 8.55,
-      "put_mid": 9.0,
-      "straddle_mid": 17.55,
-      "implied_move_pct": 9.04,
+      "strike": 35.0,
+      "call_mid": 1.98,
+      "put_mid": 2.55,
+      "straddle_mid": 4.53,
+      "implied_move_pct": 13.13,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.84
+          "realized_move_pct": 0.73
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 0.81
+          "realized_move_pct": 2.77
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.82
+          "realized_move_pct": 0.89
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.8
+          "realized_move_pct": 0.83
         }
       ],
-      "realized_move_avg_pct": 0.82,
-      "realized_move_last_pct": 0.84,
-      "ratio_implied_to_avg_realized": 11.055,
-      "ratio_implied_to_last_realized": 10.758,
-      "score": -0.91,
+      "realized_move_avg_pct": 1.3,
+      "realized_move_last_pct": 0.73,
+      "ratio_implied_to_avg_realized": 10.062,
+      "ratio_implied_to_last_realized": 17.988,
+      "score": -0.901,
       "recommendation": "PASS"
     },
     {
       "ticker": "MOS",
-      "price": 28.63,
+      "price": 27.73,
       "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "days_to_earnings": 19,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 27.5,
-      "call_mid": 2.5,
-      "put_mid": 1.39,
-      "straddle_mid": 3.89,
-      "implied_move_pct": 13.59,
+      "call_mid": 1.94,
+      "put_mid": 1.69,
+      "straddle_mid": 3.62,
+      "implied_move_pct": 13.07,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3110,66 +2942,150 @@
       ],
       "realized_move_avg_pct": 1.22,
       "realized_move_last_pct": 2.48,
-      "ratio_implied_to_avg_realized": 11.114,
-      "ratio_implied_to_last_realized": 5.479,
-      "score": -0.91,
+      "ratio_implied_to_avg_realized": 10.693,
+      "ratio_implied_to_last_realized": 5.271,
+      "score": -0.906,
       "recommendation": "PASS"
     },
     {
-      "ticker": "GNRC",
-      "price": 174.81,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "ticker": "ACHC",
+      "price": 13.33,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 175.0,
-      "call_mid": 11.25,
-      "put_mid": 9.65,
-      "straddle_mid": 20.9,
-      "implied_move_pct": 11.96,
+      "strike": 12.5,
+      "call_mid": 1.95,
+      "put_mid": 1.07,
+      "straddle_mid": 3.03,
+      "implied_move_pct": 22.69,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.29
+          "realized_move_pct": 0.85
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 2.37
+          "realized_move_pct": 3.53
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.25
+          "realized_move_pct": 1.29
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 1.26
+          "realized_move_pct": 2.82
         }
       ],
-      "realized_move_avg_pct": 1.04,
-      "realized_move_last_pct": 0.29,
-      "ratio_implied_to_avg_realized": 11.468,
-      "ratio_implied_to_last_realized": 41.227,
-      "score": -0.913,
+      "realized_move_avg_pct": 2.12,
+      "realized_move_last_pct": 0.85,
+      "ratio_implied_to_avg_realized": 10.692,
+      "ratio_implied_to_last_realized": 26.698,
+      "score": -0.906,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "LCID",
+      "price": 10.05,
+      "earnings_date": "2026-02-24",
+      "days_to_earnings": 19,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 10.0,
+      "call_mid": 1.44,
+      "put_mid": 1.47,
+      "straddle_mid": 2.91,
+      "implied_move_pct": 28.91,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 2.12
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 3.79
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 4.55
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.33
+        }
+      ],
+      "realized_move_avg_pct": 2.7,
+      "realized_move_last_pct": 2.12,
+      "ratio_implied_to_avg_realized": 10.716,
+      "ratio_implied_to_last_realized": 13.635,
+      "score": -0.907,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "CHE",
+      "price": 451.87,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 450.0,
+      "call_mid": 20.95,
+      "put_mid": 17.25,
+      "straddle_mid": 38.2,
+      "implied_move_pct": 8.45,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 1.59
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.62
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.53
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.35
+        }
+      ],
+      "realized_move_avg_pct": 0.77,
+      "realized_move_last_pct": 1.59,
+      "ratio_implied_to_avg_realized": 10.943,
+      "ratio_implied_to_last_realized": 5.317,
+      "score": -0.909,
       "recommendation": "PASS"
     },
     {
       "ticker": "CDNS",
-      "price": 271.85,
+      "price": 272.27,
       "earnings_date": "2026-02-17",
-      "days_to_earnings": 13,
+      "days_to_earnings": 12,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 270.0,
-      "call_mid": 15.05,
-      "put_mid": 11.9,
-      "straddle_mid": 26.95,
-      "implied_move_pct": 9.91,
+      "call_mid": 13.7,
+      "put_mid": 12.05,
+      "straddle_mid": 25.75,
+      "implied_move_pct": 9.46,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3194,108 +3110,150 @@
       ],
       "realized_move_avg_pct": 0.83,
       "realized_move_last_pct": 0.2,
-      "ratio_implied_to_avg_realized": 11.98,
-      "ratio_implied_to_last_realized": 49.568,
-      "score": -0.917,
+      "ratio_implied_to_avg_realized": 11.429,
+      "ratio_implied_to_last_realized": 47.288,
+      "score": -0.913,
       "recommendation": "PASS"
     },
     {
-      "ticker": "CSCO",
-      "price": 83.14,
-      "earnings_date": "2026-02-11",
-      "days_to_earnings": 7,
-      "expiry": "2026-02-20",
-      "expiry_dte": 16,
-      "expiry_is_monthly": true,
-      "strike": 85.0,
-      "call_mid": 2.21,
-      "put_mid": 3.65,
-      "straddle_mid": 5.86,
-      "implied_move_pct": 7.04,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-12-31",
-          "hour": null,
-          "realized_move_pct": 1.29
-        },
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.48
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.4
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 0.15
-        }
-      ],
-      "realized_move_avg_pct": 0.58,
-      "realized_move_last_pct": 1.29,
-      "ratio_implied_to_avg_realized": 12.142,
-      "ratio_implied_to_last_realized": 5.459,
-      "score": -0.918,
-      "recommendation": "PASS"
-    },
-    {
-      "ticker": "CVI",
-      "price": 23.62,
-      "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "ticker": "CWT",
+      "price": 45.46,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
-      "strike": 22.5,
-      "call_mid": 2.58,
-      "put_mid": 1.38,
-      "straddle_mid": 3.95,
-      "implied_move_pct": 16.72,
+      "strike": 45.0,
+      "call_mid": 4.8,
+      "put_mid": 4.8,
+      "straddle_mid": 9.6,
+      "implied_move_pct": 21.12,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
           "hour": null,
-          "realized_move_pct": 0.25
+          "realized_move_pct": 2.92
         },
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 3.8
+          "realized_move_pct": 2.22
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.93
+          "realized_move_pct": 0.52
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.21
+          "realized_move_pct": 1.24
         }
       ],
-      "realized_move_avg_pct": 1.3,
-      "realized_move_last_pct": 0.25,
-      "ratio_implied_to_avg_realized": 12.889,
-      "ratio_implied_to_last_realized": 66.892,
+      "realized_move_avg_pct": 1.73,
+      "realized_move_last_pct": 2.92,
+      "ratio_implied_to_avg_realized": 12.242,
+      "ratio_implied_to_last_realized": 7.232,
+      "score": -0.918,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "STRA",
+      "price": 81.17,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 80.0,
+      "call_mid": 5.1,
+      "put_mid": 3.9,
+      "straddle_mid": 9.0,
+      "implied_move_pct": 11.09,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.3
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.13
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 1.02
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.13
+        }
+      ],
+      "realized_move_avg_pct": 0.9,
+      "realized_move_last_pct": 0.3,
+      "ratio_implied_to_avg_realized": 12.389,
+      "ratio_implied_to_last_realized": 36.959,
+      "score": -0.919,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "MNST",
+      "price": 82.36,
+      "earnings_date": "2026-02-26",
+      "days_to_earnings": 21,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 80.0,
+      "call_mid": 5.3,
+      "put_mid": 2.6,
+      "straddle_mid": 7.9,
+      "implied_move_pct": 9.59,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.18
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 1.44
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.89
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.48
+        }
+      ],
+      "realized_move_avg_pct": 0.75,
+      "realized_move_last_pct": 0.18,
+      "ratio_implied_to_avg_realized": 12.832,
+      "ratio_implied_to_last_realized": 53.289,
       "score": -0.922,
       "recommendation": "PASS"
     },
     {
       "ticker": "RGLD",
-      "price": 260.85,
+      "price": 256.24,
       "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
+      "days_to_earnings": 13,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 260.0,
-      "call_mid": 13.4,
-      "put_mid": 12.55,
-      "straddle_mid": 25.95,
-      "implied_move_pct": 9.95,
+      "call_mid": 10.9,
+      "put_mid": 12.75,
+      "straddle_mid": 23.65,
+      "implied_move_pct": 9.23,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3320,24 +3278,66 @@
       ],
       "realized_move_avg_pct": 0.72,
       "realized_move_last_pct": 0.24,
-      "ratio_implied_to_avg_realized": 13.914,
-      "ratio_implied_to_last_realized": 41.451,
-      "score": -0.928,
+      "ratio_implied_to_avg_realized": 12.909,
+      "ratio_implied_to_last_realized": 38.457,
+      "score": -0.923,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "EPR",
+      "price": 56.36,
+      "earnings_date": "2026-02-25",
+      "days_to_earnings": 20,
+      "expiry": "2026-03-20",
+      "expiry_dte": 43,
+      "expiry_is_monthly": true,
+      "strike": 55.0,
+      "call_mid": 2.5,
+      "put_mid": 1.6,
+      "straddle_mid": 4.1,
+      "implied_move_pct": 7.27,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-09-30",
+          "hour": null,
+          "realized_move_pct": 0.53
+        },
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.33
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.51
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 0.68
+        }
+      ],
+      "realized_move_avg_pct": 0.51,
+      "realized_move_last_pct": 0.53,
+      "ratio_implied_to_avg_realized": 14.194,
+      "ratio_implied_to_last_realized": 13.726,
+      "score": -0.93,
       "recommendation": "PASS"
     },
     {
       "ticker": "CSGP",
-      "price": 51.99,
+      "price": 51.6,
       "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "days_to_earnings": 19,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 50.0,
-      "call_mid": 5.15,
-      "put_mid": 2.83,
-      "straddle_mid": 7.98,
-      "implied_move_pct": 15.34,
+      "call_mid": 4.95,
+      "put_mid": 3.1,
+      "straddle_mid": 8.05,
+      "implied_move_pct": 15.6,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3362,24 +3362,24 @@
       ],
       "realized_move_avg_pct": 1.01,
       "realized_move_last_pct": 1.05,
-      "ratio_implied_to_avg_realized": 15.15,
-      "ratio_implied_to_last_realized": 14.609,
-      "score": -0.934,
+      "ratio_implied_to_avg_realized": 15.408,
+      "ratio_implied_to_last_realized": 14.858,
+      "score": -0.935,
       "recommendation": "PASS"
     },
     {
       "ticker": "LNC",
-      "price": 40.99,
+      "price": 39.81,
       "earnings_date": "2026-02-12",
-      "days_to_earnings": 8,
+      "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 40.0,
-      "call_mid": 2.27,
-      "put_mid": 1.2,
-      "straddle_mid": 3.48,
-      "implied_move_pct": 8.48,
+      "call_mid": 1.58,
+      "put_mid": 1.65,
+      "straddle_mid": 3.23,
+      "implied_move_pct": 8.1,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3404,24 +3404,24 @@
       ],
       "realized_move_avg_pct": 0.51,
       "realized_move_last_pct": 0.55,
-      "ratio_implied_to_avg_realized": 16.787,
-      "ratio_implied_to_last_realized": 15.414,
-      "score": -0.94,
+      "ratio_implied_to_avg_realized": 16.042,
+      "ratio_implied_to_last_realized": 14.729,
+      "score": -0.938,
       "recommendation": "PASS"
     },
     {
       "ticker": "VRSK",
-      "price": 189.0,
+      "price": 186.17,
       "earnings_date": "2026-02-18",
-      "days_to_earnings": 14,
+      "days_to_earnings": 13,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 190.0,
-      "call_mid": 9.5,
-      "put_mid": 8.75,
-      "straddle_mid": 18.25,
-      "implied_move_pct": 9.66,
+      "strike": 185.0,
+      "call_mid": 10.1,
+      "put_mid": 7.2,
+      "straddle_mid": 17.3,
+      "implied_move_pct": 9.29,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3446,24 +3446,24 @@
       ],
       "realized_move_avg_pct": 0.58,
       "realized_move_last_pct": 0.78,
-      "ratio_implied_to_avg_realized": 16.648,
-      "ratio_implied_to_last_realized": 12.38,
-      "score": -0.94,
+      "ratio_implied_to_avg_realized": 16.022,
+      "ratio_implied_to_last_realized": 11.914,
+      "score": -0.938,
       "recommendation": "PASS"
     },
     {
       "ticker": "SEM",
-      "price": 15.33,
+      "price": 15.36,
       "earnings_date": "2026-02-19",
-      "days_to_earnings": 15,
+      "days_to_earnings": 14,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
       "strike": 15.0,
-      "call_mid": 2.0,
-      "put_mid": 0.6,
-      "straddle_mid": 2.6,
-      "implied_move_pct": 16.96,
+      "call_mid": 1.6,
+      "put_mid": 0.5,
+      "straddle_mid": 2.1,
+      "implied_move_pct": 13.67,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3488,24 +3488,66 @@
       ],
       "realized_move_avg_pct": 0.65,
       "realized_move_last_pct": 0.62,
-      "ratio_implied_to_avg_realized": 26.093,
-      "ratio_implied_to_last_realized": 27.355,
-      "score": -0.962,
+      "ratio_implied_to_avg_realized": 21.034,
+      "ratio_implied_to_last_realized": 22.051,
+      "score": -0.952,
+      "recommendation": "PASS"
+    },
+    {
+      "ticker": "VRE",
+      "price": 15.59,
+      "earnings_date": "2026-02-19",
+      "days_to_earnings": 14,
+      "expiry": "2026-02-20",
+      "expiry_dte": 15,
+      "expiry_is_monthly": true,
+      "strike": 15.0,
+      "call_mid": 1.25,
+      "put_mid": 2.05,
+      "straddle_mid": 3.3,
+      "implied_move_pct": 21.17,
+      "historical_realized_moves": [
+        {
+          "earnings_date": "2025-06-30",
+          "hour": null,
+          "realized_move_pct": 0.87
+        },
+        {
+          "earnings_date": "2025-03-31",
+          "hour": null,
+          "realized_move_pct": 0.47
+        },
+        {
+          "earnings_date": "2024-12-31",
+          "hour": null,
+          "realized_move_pct": 1.08
+        },
+        {
+          "earnings_date": "2024-09-30",
+          "hour": null,
+          "realized_move_pct": 1.18
+        }
+      ],
+      "realized_move_avg_pct": 0.9,
+      "realized_move_last_pct": 0.87,
+      "ratio_implied_to_avg_realized": 23.519,
+      "ratio_implied_to_last_realized": 24.33,
+      "score": -0.957,
       "recommendation": "PASS"
     },
     {
       "ticker": "XHR",
-      "price": 15.28,
+      "price": 15.15,
       "earnings_date": "2026-02-24",
-      "days_to_earnings": 20,
+      "days_to_earnings": 19,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 15.0,
-      "call_mid": 2.9,
-      "put_mid": 2.65,
-      "straddle_mid": 5.55,
-      "implied_move_pct": 36.32,
+      "call_mid": 2.95,
+      "put_mid": 2.5,
+      "straddle_mid": 5.45,
+      "implied_move_pct": 35.97,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3530,66 +3572,24 @@
       ],
       "realized_move_avg_pct": 1.33,
       "realized_move_last_pct": 1.09,
-      "ratio_implied_to_avg_realized": 27.259,
-      "ratio_implied_to_last_realized": 33.323,
+      "ratio_implied_to_avg_realized": 26.997,
+      "ratio_implied_to_last_realized": 33.003,
       "score": -0.963,
       "recommendation": "PASS"
     },
     {
-      "ticker": "CNK",
-      "price": 25.53,
-      "earnings_date": "2026-02-20",
-      "days_to_earnings": 16,
-      "expiry": "2026-03-20",
-      "expiry_dte": 44,
-      "expiry_is_monthly": true,
-      "strike": 25.0,
-      "call_mid": 2.08,
-      "put_mid": 1.73,
-      "straddle_mid": 3.8,
-      "implied_move_pct": 14.88,
-      "historical_realized_moves": [
-        {
-          "earnings_date": "2025-09-30",
-          "hour": null,
-          "realized_move_pct": 0.0
-        },
-        {
-          "earnings_date": "2025-06-30",
-          "hour": null,
-          "realized_move_pct": 0.27
-        },
-        {
-          "earnings_date": "2025-03-31",
-          "hour": null,
-          "realized_move_pct": 1.41
-        },
-        {
-          "earnings_date": "2024-12-31",
-          "hour": null,
-          "realized_move_pct": 0.03
-        }
-      ],
-      "realized_move_avg_pct": 0.43,
-      "realized_move_last_pct": 0.0,
-      "ratio_implied_to_avg_realized": 34.817,
-      "ratio_implied_to_last_realized": null,
-      "score": -0.971,
-      "recommendation": "WATCH"
-    },
-    {
-      "ticker": "PDM",
-      "price": 8.5,
-      "earnings_date": "2026-02-11",
+      "ticker": "EXC",
+      "price": 43.9,
+      "earnings_date": "2026-02-12",
       "days_to_earnings": 7,
       "expiry": "2026-02-20",
-      "expiry_dte": 16,
+      "expiry_dte": 15,
       "expiry_is_monthly": true,
-      "strike": 7.5,
-      "call_mid": 2.8,
-      "put_mid": 0.75,
-      "straddle_mid": 3.55,
-      "implied_move_pct": 41.76,
+      "strike": 45.0,
+      "call_mid": 0.45,
+      "put_mid": 1.42,
+      "straddle_mid": 1.87,
+      "implied_move_pct": 4.27,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3599,39 +3599,39 @@
         {
           "earnings_date": "2025-06-30",
           "hour": null,
-          "realized_move_pct": 1.51
+          "realized_move_pct": 0.02
         },
         {
           "earnings_date": "2025-03-31",
           "hour": null,
-          "realized_move_pct": 0.68
+          "realized_move_pct": 0.35
         },
         {
           "earnings_date": "2024-12-31",
           "hour": null,
-          "realized_move_pct": 0.98
+          "realized_move_pct": 0.05
         }
       ],
-      "realized_move_avg_pct": 0.82,
+      "realized_move_avg_pct": 0.13,
       "realized_move_last_pct": 0.11,
-      "ratio_implied_to_avg_realized": 50.933,
-      "ratio_implied_to_last_realized": 379.679,
-      "score": -0.98,
+      "ratio_implied_to_avg_realized": 32.234,
+      "ratio_implied_to_last_realized": 38.828,
+      "score": -0.969,
       "recommendation": "PASS"
     },
     {
       "ticker": "BHF",
-      "price": 63.87,
+      "price": 63.88,
       "earnings_date": "2026-02-23",
-      "days_to_earnings": 19,
+      "days_to_earnings": 18,
       "expiry": "2026-03-20",
-      "expiry_dte": 44,
+      "expiry_dte": 43,
       "expiry_is_monthly": true,
       "strike": 65.0,
-      "call_mid": 1.75,
-      "put_mid": 4.0,
-      "straddle_mid": 5.75,
-      "implied_move_pct": 9.0,
+      "call_mid": 2.7,
+      "put_mid": 2.2,
+      "straddle_mid": 4.9,
+      "implied_move_pct": 7.67,
       "historical_realized_moves": [
         {
           "earnings_date": "2025-09-30",
@@ -3656,16 +3656,16 @@
       ],
       "realized_move_avg_pct": 0.17,
       "realized_move_last_pct": 0.23,
-      "ratio_implied_to_avg_realized": 54.562,
-      "ratio_implied_to_last_realized": 39.142,
-      "score": -0.982,
+      "ratio_implied_to_avg_realized": 46.489,
+      "ratio_implied_to_last_realized": 33.351,
+      "score": -0.978,
       "recommendation": "PASS"
     }
   ],
   "summary": {
     "total_opportunities": 87,
     "total_candidate": 0,
-    "total_watch": 1,
-    "total_pass": 86
+    "total_watch": 0,
+    "total_pass": 87
   }
 }
