@@ -1,6 +1,23 @@
 {
-  "timestamp": "2026-02-09T17:43:26Z",
-  "date": "2026-02-09",
+  "timestamp": "2026-02-10T16:44:22Z",
+  "date": "2026-02-10",
   "system": "S2",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "ES",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "ESH6",
+      "contract_month": "20260320",
+      "side": "short",
+      "qty": 1,
+      "avg_price": 349435.25,
+      "stop_price": 7166.75,
+      "units": 1,
+      "last_add_price": 6986.75,
+      "next_add_trigger": 6941.75,
+      "unrealized_pnl": null,
+      "asof": "2026-02-10"
+    }
+  ]
 }
