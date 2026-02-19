@@ -470,46 +470,7 @@ export default function MidCap400Results() {
                       </div>
                     </div>
 
-                    {(result.fwd_vol_avg || result.fwd_var_avg) && (
-                      <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
-                        <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-2">
-                          📊 Forward Volatility Metrics
-                        </h4>
-                        <div className="space-y-2 text-sm">
-                          {result.fwd_vol_avg && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Avg):</span>
-                              <span className="font-medium text-purple-700 dark:text-purple-300">
-                                {result.fwd_vol_avg.toFixed(2)}%
-                              </span>
-                            </div>
-                          )}
-                          {result.fwd_vol_call && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Call):</span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {result.fwd_vol_call.toFixed(2)}%
-                              </span>
-                            </div>
-                          )}
-                          {result.fwd_vol_put && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Fwd Vol (Put):</span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {result.fwd_vol_put.toFixed(2)}%
-                              </span>
-                            </div>
-                          )}
-                          {result.fwd_var_avg && (
-                            <div className="flex justify-between border-t border-purple-200 dark:border-purple-700 pt-2 mt-2">
-                              <span className="text-gray-600 dark:text-gray-400">Fwd Var (Avg):</span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {result.fwd_var_avg.toFixed(4)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                    {/* Purple bubble removed from category view */}
                     )}
                   </div>
                 )}
