@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-02-17T14:08:25.125649",
-  "date": "2026-02-17",
+  "timestamp": "2026-02-19T08:28:06.253583",
+  "date": "2026-02-19",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -12,63 +12,14 @@
     "Min IV Threshold: 40.0%",
     "Strategy: Adaptive - scan top 20% by IV as we go",
     "",
-    "Prefiltering tickers by underlying IV snapshot (fast)...",
-    "[WARNING] Prefilter produced no results; scanning full universe"
+    "Prefiltering tickers by underlying IV snapshot (fast)..."
   ],
-  "opportunities": [
-    {
-      "ticker": "HCC",
-      "price": 84.05,
-      "ma_200": null,
-      "above_ma_200": null,
-      "expiry1": "20260320",
-      "expiry2": "20260417",
-      "dte1": 30,
-      "dte2": 58,
-      "ff_call": 0.238,
-      "ff_put": null,
-      "ff_avg": 0.238,
-      "best_ff": 0.238,
-      "next_earnings": "2026-02-12",
-      "call_iv1": 58.57,
-      "call_iv2": 53.42,
-      "put_iv1": 58.57,
-      "put_iv2": null,
-      "avg_iv1": 58.57,
-      "avg_iv2": 53.42,
-      "fwd_var_call": 0.2237,
-      "fwd_var_put": null,
-      "fwd_var_avg": 0.2237,
-      "fwd_vol_call": 47.3,
-      "fwd_vol_put": null,
-      "fwd_vol_avg": 47.3,
-      "trade_details": {
-        "spread_type": "CALL",
-        "strike": 85.0,
-        "front_iv": 58.57,
-        "back_iv": 53.42,
-        "ff_display": 0.238,
-        "front_price": 5.645301329856896,
-        "back_price": 7.159276856354983,
-        "net_debit": 1.5139755264980863,
-        "net_debit_total": 151.39755264980863,
-        "price_source": "estimated",
-        "best_case": 60.55902105992346,
-        "typical_case": 30.27951052996173,
-        "adverse_case": -45.41926579494259,
-        "max_loss": -151.39755264980863,
-        "best_case_pct": 40.0,
-        "typical_case_pct": 20.0,
-        "adverse_case_pct": -30.0,
-        "max_loss_pct": -100.0
-      }
-    }
-  ],
+  "opportunities": [],
   "summary": {
-    "total_opportunities": 1,
+    "total_opportunities": 0,
     "tickers_scanned": 594,
-    "tickers_with_iv": 362,
-    "best_ff": 0.238,
-    "avg_ff": 0.238
+    "tickers_with_iv": 0,
+    "best_ff": 0,
+    "avg_ff": 0
   }
 }

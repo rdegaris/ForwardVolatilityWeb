@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-02-17T13:20:03.729596",
-  "date": "2026-02-17",
+  "timestamp": "2026-02-19T08:27:51.453907",
+  "date": "2026-02-19",
   "scan_type": "adaptive",
   "scan_log": [
     "================================================================================",
@@ -13,60 +13,12 @@
     "Strategy: Adaptive - scan top 25% by IV as we go",
     ""
   ],
-  "opportunities": [
-    {
-      "ticker": "BIIB",
-      "price": 195.62,
-      "ma_200": 149.62,
-      "above_ma_200": true,
-      "expiry1": "20260227",
-      "expiry2": "20260313",
-      "dte1": 9,
-      "dte2": 23,
-      "ff_call": 0.462,
-      "ff_put": 0.66,
-      "ff_avg": 0.553,
-      "best_ff": 0.66,
-      "next_earnings": "2026-02-06",
-      "call_iv1": 32.21,
-      "call_iv2": 26.48,
-      "put_iv1": 32.39,
-      "put_iv2": 25.34,
-      "avg_iv1": 32.3,
-      "avg_iv2": 25.91,
-      "fwd_var_call": 0.048523,
-      "fwd_var_put": 0.038077,
-      "fwd_var_avg": 0.043247,
-      "fwd_vol_call": 22.03,
-      "fwd_vol_put": 19.51,
-      "fwd_vol_avg": 20.8,
-      "trade_details": {
-        "spread_type": "PUT",
-        "strike": 195.0,
-        "front_iv": 32.39,
-        "back_iv": 25.34,
-        "ff_display": 0.66,
-        "front_price": 3.9797795529655096,
-        "back_price": 4.977340389615181,
-        "net_debit": 0.9975608366496713,
-        "net_debit_total": 99.75608366496714,
-        "price_source": "estimated",
-        "best_case": 39.90243346598685,
-        "typical_case": 19.951216732993426,
-        "adverse_case": -29.926825099490138,
-        "max_loss": -99.75608366496714,
-        "best_case_pct": 40.0,
-        "typical_case_pct": 20.0,
-        "adverse_case_pct": -30.0,
-        "max_loss_pct": -100.0
-      }
-    }
-  ],
+  "opportunities": [],
   "summary": {
-    "total_opportunities": 1,
+    "total_opportunities": 0,
     "tickers_scanned": 104,
-    "tickers_with_iv": 11,
-    "best_ff": 0.66,
-    "avg_ff": 0.66
+    "tickers_with_iv": 0,
+    "best_ff": 0,
+    "avg_ff": 0
   }
 }
