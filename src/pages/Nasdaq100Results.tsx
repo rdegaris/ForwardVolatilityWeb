@@ -469,9 +469,6 @@ export default function ScannerResults() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Purple bubble removed from category view */}
-                    )}
                   </div>
                 )}
               </div>
