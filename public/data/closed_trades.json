@@ -46,5 +46,18 @@
     "realizedPnL": -396,
     "strategy": "Earnings Crush Calendar",
     "notes": "QCOM earnings play - closed morning after earnings"
+  },
+  {
+    "id": "closed_nvda_200_feb26",
+    "symbol": "NVDA",
+    "strike": 200,
+    "quantity": 1,
+    "entryPrice": 5.45,
+    "exitPrice": 5.15,
+    "entryDate": "2026-02-25",
+    "closedDate": "2026-02-26",
+    "realizedPnL": -30,
+    "strategy": "Earnings Crush Calendar",
+    "notes": "NVDA earnings play - closed after earnings"
   }
 ]
