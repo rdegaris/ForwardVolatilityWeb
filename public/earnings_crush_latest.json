@@ -1,41 +1,41 @@
 {
-  "timestamp": "2026-03-09T07:33:44.461402",
-  "date": "2026-03-09",
+  "timestamp": "2026-03-10T09:59:01.699841",
+  "date": "2026-03-10",
   "total_scanned": 40,
   "earnings_found": 1,
   "opportunities": [
     {
       "ticker": "ADBE",
-      "price": 278.97,
+      "price": 275.01,
       "earnings_date": "2026-03-12",
-      "days_to_earnings": 3,
-      "iv": 93.1,
+      "days_to_earnings": 2,
+      "iv": 109.2,
       "option_type": "PUT",
       "trend_bias": "PUT",
-      "ema50": 291.71,
-      "price_vs_ema_pct": -4.46,
-      "expected_move": 23.95,
-      "expected_move_pct": 8.6,
+      "ema50": 291.72,
+      "price_vs_ema_pct": -5.74,
+      "expected_move": 27.2,
+      "expected_move_pct": 9.9,
       "recommendation": "RECOMMENDED",
       "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 74.9
+        "iv_slope_pct": 111.9
       },
-      "front_iv": 93.1,
-      "back_iv": 53.2,
+      "front_iv": 109.2,
+      "back_iv": 51.6,
       "suggested_trade": {
         "strike": 280.0,
         "option_type": "PUT",
         "sell_expiration": "2026-03-13",
         "buy_expiration": "2026-04-10",
-        "sell_dte": 4,
-        "buy_dte": 32,
-        "sell_price": 11.97,
-        "buy_price": 18.17,
-        "net_credit": -6.2
+        "sell_dte": 3,
+        "buy_dte": 31,
+        "sell_price": 13.6,
+        "buy_price": 18.62,
+        "net_credit": -5.03
       }
     }
   ],
@@ -43,7 +43,7 @@
     "total_recommended": 1,
     "total_consider": 0,
     "total_avoid": 0,
-    "avg_iv": 93.1,
-    "avg_expected_move": 8.6
+    "avg_iv": 109.2,
+    "avg_expected_move": 9.9
   }
 }
