@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { CalendarSpreadTrade, ScenarioAnalysis } from '../types/trade';
+import type { CalendarSpreadTrade, DirectionalTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { fetchJsonText } from '../lib/http';
 import LivePriceEstimator from '../components/LivePriceEstimator';
@@ -33,6 +33,9 @@ export default function TradeTracker() {
   
   // Closed trades state
   const [closedTrades, setClosedTrades] = useState<ClosedTrade[]>([]);
+
+  // Directional trades state
+  const [directionalTrades, setDirectionalTrades] = useState<DirectionalTrade[]>([]);
   
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
@@ -86,6 +89,24 @@ export default function TradeTracker() {
       }
     };
     loadClosedTrades();
+  }, []);
+
+  // Load directional trades from data file
+  useEffect(() => {
+    const loadDirectionalTrades = async () => {
+      try {
+        const { res, text } = await fetchJsonText('/data/directional_trades.json', { cache: 'no-store' });
+        if (res.ok) {
+          const fileTrades = JSON.parse(text);
+          if (Array.isArray(fileTrades)) {
+            setDirectionalTrades(fileTrades);
+          }
+        }
+      } catch (error) {
+        console.log('No directional trades file found or error loading:', error);
+      }
+    };
+    loadDirectionalTrades();
   }, []);
 
   // Save trades to localStorage whenever they change
@@ -800,6 +821,146 @@ export default function TradeTracker() {
           {/* Live Price Estimator */}
           <LivePriceEstimator trades={trades} />
         </>
+      )}
+
+      {/* Directional Option Trades */}
+      {directionalTrades.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+              <span>🎯</span> Directional Option Trades
+            </h2>
+          </div>
+
+          {/* Summary */}
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Open Positions</div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">{directionalTrades.length}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Contracts</div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                  {directionalTrades.reduce((sum, t) => sum + Math.abs(t.quantity), 0)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Cost</div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                  ${directionalTrades.reduce((sum, t) => sum + t.entryPrice * Math.abs(t.quantity) * 100, 0).toFixed(0)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total P&L</div>
+                {(() => {
+                  const totalPnl = directionalTrades.reduce((sum, t) => {
+                    if (t.unrealizedPnL !== undefined && t.unrealizedPnL !== null) return sum + t.unrealizedPnL;
+                    const pnl = t.quantity > 0
+                      ? (t.currentPrice - t.entryPrice) * Math.abs(t.quantity) * 100
+                      : (t.entryPrice - t.currentPrice) * Math.abs(t.quantity) * 100;
+                    return sum + pnl;
+                  }, 0);
+                  return (
+                    <div className={`text-xl font-bold ${totalPnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(0)}
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100 dark:bg-gray-700">
+                <tr className="border-b border-gray-300 dark:border-gray-600">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Position</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Qty</th>
+                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Expiration</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Entry</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Current</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Change</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Change %</th>
+                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">P&L</th>
+                </tr>
+              </thead>
+              <tbody>
+                {directionalTrades.map(trade => {
+                  const isLong = trade.quantity > 0;
+                  const qty = Math.abs(trade.quantity);
+                  const change = trade.currentPrice - trade.entryPrice;
+                  const changePct = trade.entryPrice > 0 ? (change / trade.entryPrice) * 100 : 0;
+                  const pnl = trade.unrealizedPnL !== undefined && trade.unrealizedPnL !== null
+                    ? trade.unrealizedPnL
+                    : isLong
+                      ? change * qty * 100
+                      : -change * qty * 100;
+                  const dte = calculateDTE(trade.expiration);
+
+                  return (
+                    <tr
+                      key={trade.id}
+                      className={`border-b border-gray-200 dark:border-gray-700 ${
+                        isLong
+                          ? 'bg-green-50 dark:bg-green-900/10 hover:bg-green-100 dark:hover:bg-green-900/20'
+                          : 'bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20'
+                      }`}
+                    >
+                      <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">
+                        <div className="flex items-center gap-2">
+                          <span className={`px-1.5 py-0.5 text-xs font-bold rounded ${isLong ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200' : 'bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200'}`}>
+                            {isLong ? 'LONG' : 'SHORT'}
+                          </span>
+                          <span>{trade.symbol} ${trade.strike} {trade.callOrPut}</span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                          Underlying: ${trade.underlyingCurrentPrice.toFixed(2)}
+                        </div>
+                      </td>
+                      <td className={`text-center py-3 px-3 font-semibold ${isLong ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {isLong ? '+' : ''}{trade.quantity}
+                      </td>
+                      <td className="text-center py-3 px-3">
+                        <div className="flex items-center justify-center gap-1">
+                          {dte <= 0 && <span className="text-red-600 dark:text-red-400 font-bold text-lg" title="Expired!">🔴</span>}
+                          {dte > 0 && dte <= 7 && <span className="text-yellow-600 dark:text-yellow-400 text-lg" title="Expires this week">⚠️</span>}
+                          <div>
+                            <div className={dte <= 0 ? 'text-red-600 dark:text-red-400 font-bold' : dte <= 7 ? 'text-yellow-600 dark:text-yellow-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}>
+                              {new Date(trade.expiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' })}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{dte}d</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                        ${trade.entryPrice.toFixed(2)}
+                      </td>
+                      <td className="text-right py-3 px-3 text-gray-900 dark:text-white font-medium">
+                        ${trade.currentPrice.toFixed(2)}
+                      </td>
+                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? change : -change) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {(isLong ? change : -change) >= 0 ? '+' : ''}{(isLong ? change : -change).toFixed(2)}
+                      </td>
+                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? changePct : -changePct) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {(isLong ? changePct : -changePct) >= 0 ? '+' : ''}{(isLong ? changePct : -changePct).toFixed(1)}%
+                      </td>
+                      <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {pnl >= 0 ? '+' : ''}${pnl.toFixed(0)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {directionalTrades[0]?.asOf && (
+            <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+              Last updated: {new Date(directionalTrades[0].asOf).toLocaleString()}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Recently Closed Trades */}

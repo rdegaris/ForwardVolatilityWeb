@@ -1,14 +1,49 @@
 {
-  "timestamp": "2026-03-16T09:29:51.866161",
-  "date": "2026-03-16",
+  "timestamp": "2026-03-17T09:46:01.433645",
+  "date": "2026-03-17",
   "total_scanned": 40,
-  "earnings_found": 0,
-  "opportunities": [],
+  "earnings_found": 1,
+  "opportunities": [
+    {
+      "ticker": "NFLX",
+      "price": 95.52,
+      "earnings_date": "2026-04-16",
+      "days_to_earnings": 30,
+      "iv": 39.6,
+      "option_type": "CALL",
+      "trend_bias": "CALL",
+      "ema50": 90.62,
+      "price_vs_ema_pct": 5.4,
+      "expected_move": 9.7,
+      "expected_move_pct": 10.2,
+      "recommendation": "AVOID",
+      "reason": "IV too low (39.6% < 50%); Too far from earnings (30 days > 7)",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": true,
+        "iv_slope_pct": 6.9
+      },
+      "front_iv": 39.6,
+      "back_iv": 37.1,
+      "suggested_trade": {
+        "strike": 95.0,
+        "option_type": "CALL",
+        "sell_expiration": "2026-04-17",
+        "buy_expiration": "2026-05-15",
+        "sell_dte": 31,
+        "buy_dte": 59,
+        "sell_price": 4.85,
+        "buy_price": 6.12,
+        "net_credit": -1.28
+      }
+    }
+  ],
   "summary": {
     "total_recommended": 0,
     "total_consider": 0,
-    "total_avoid": 0,
-    "avg_iv": 0,
-    "avg_expected_move": 0
+    "total_avoid": 1,
+    "avg_iv": 39.6,
+    "avg_expected_move": 10.2
   }
 }
