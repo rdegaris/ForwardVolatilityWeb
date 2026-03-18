@@ -1015,7 +1015,7 @@ export default function TradeTracker() {
                 </tr>
               </thead>
               <tbody>
-                {closedTrades.map(trade => {
+                {[...closedTrades].sort((a, b) => new Date(b.closedDate).getTime() - new Date(a.closedDate).getTime()).map(trade => {
                   const pnlPerContract = trade.exitPrice - trade.entryPrice;
                   const pnlPct = ((trade.exitPrice - trade.entryPrice) / trade.entryPrice) * 100;
                   const isWinner = trade.realizedPnL > 0;

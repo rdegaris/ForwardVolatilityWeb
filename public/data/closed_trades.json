@@ -68,31 +68,15 @@
     "symbol": "GLD",
     "strike": 440,
     "callOrPut": "PUT",
-    "quantity": 1,
+    "quantity": 3,
     "frontExpiration": "2026-04-17",
     "backExpiration": "2026-04-17",
     "entryPrice": 5.85,
-    "exitPrice": 9.25,
+    "exitPrice": 9.85,
     "entryDate": "2026-03-17",
     "closedDate": "2026-03-18",
-    "realizedPnL": 340,
+    "realizedPnL": 1200,
     "strategy": "Directional Put",
-    "notes": "GLD put - closed 1 of 3 contracts for +$340 profit"
-  },
-  {
-    "id": "closed_gld_440_put_mar18_b",
-    "symbol": "GLD",
-    "strike": 440,
-    "callOrPut": "PUT",
-    "quantity": 2,
-    "frontExpiration": "2026-04-17",
-    "backExpiration": "2026-04-17",
-    "entryPrice": 5.85,
-    "exitPrice": 9.25,
-    "entryDate": "2026-03-17",
-    "closedDate": "2026-03-18",
-    "realizedPnL": 680,
-    "strategy": "Directional Put",
-    "notes": "GLD put - closed remaining 2 contracts for +$680 profit"
+    "notes": "GLD put - closed all 3 contracts for +$1,200 profit"
   }
 ]
