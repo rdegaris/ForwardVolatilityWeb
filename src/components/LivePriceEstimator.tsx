@@ -8,6 +8,7 @@ import { useState, useCallback } from 'react';
 import type { CalendarSpreadTrade } from '../types/trade';
 import { fetchMultipleQuotes, formatMarketState, type YahooQuote } from '../lib/yahooFinance';
 import { estimateCalendarSpread, type CalendarSpreadEstimate, type CalendarSpreadOptions } from '../lib/optionPricing';
+import { fmt$ } from '../lib/formatCurrency';
 
 interface LiveEstimate {
   quote: YahooQuote;
@@ -200,7 +201,7 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
             <div>
               <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Current P&L (IB)</div>
               <div className={`text-xl font-bold ${currentPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                ${currentPnL.toFixed(2)}
+                {fmt$(currentPnL)}
               </div>
             </div>
             <div>
@@ -208,13 +209,13 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
                 Est. P&L {estimationMode === 'post-earnings' ? 'Tomorrow' : 'at Live Price'}
               </div>
               <div className={`text-xl font-bold ${currentPnL + pnlChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                ${(currentPnL + pnlChange).toFixed(2)}
+                {fmt$(currentPnL + pnlChange)}
               </div>
             </div>
             <div>
               <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Est. Change</div>
               <div className={`text-xl font-bold ${pnlChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                {pnlChange >= 0 ? '+' : ''}${pnlChange.toFixed(2)}
+                {fmt$(pnlChange, 2, true)}
               </div>
             </div>
             <div>
@@ -285,31 +286,31 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
                         </span>
                       </td>
                       <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                        ${ibPrice.toFixed(2)}
+                        {fmt$(ibPrice)}
                       </td>
                       <td className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">
-                        ${quote.displayPrice.toFixed(2)}
+                        {fmt$(quote.displayPrice)}
                       </td>
                       <td className={`text-right py-2 px-2 font-medium ${priceChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         <div>{priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}</div>
                         <div className="text-xs">({priceChangePct >= 0 ? '+' : ''}{priceChangePct.toFixed(1)}%)</div>
                       </td>
                       <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                        <div>${estimate.frontPrice.toFixed(2)}</div>
-                        <div className="text-xs text-gray-500">now ${trade.frontCurrentPrice.toFixed(2)}</div>
+                        <div>{fmt$(estimate.frontPrice)}</div>
+                        <div className="text-xs text-gray-500">now {fmt$(trade.frontCurrentPrice)}</div>
                       </td>
                       <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
-                        <div>${estimate.backPrice.toFixed(2)}</div>
-                        <div className="text-xs text-gray-500">now ${trade.backCurrentPrice.toFixed(2)}</div>
+                        <div>{fmt$(estimate.backPrice)}</div>
+                        <div className="text-xs text-gray-500">now {fmt$(trade.backCurrentPrice)}</div>
                       </td>
                       <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
-                        <div className="font-semibold">${estimate.spreadPrice.toFixed(2)}</div>
-                        <div className="text-xs text-gray-500">entry ${entrySpread.toFixed(2)}</div>
+                        <div className="font-semibold">{fmt$(estimate.spreadPrice)}</div>
+                        <div className="text-xs text-gray-500">entry {fmt$(entrySpread)}</div>
                       </td>
                       <td className={`text-right py-2 px-2 font-bold ${totalEstPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        <div>{totalEstPnL >= 0 ? '+' : ''}${totalEstPnL.toFixed(0)}</div>
+                        <div>{fmt$(totalEstPnL, 0, true)}</div>
                         <div className="text-xs font-normal text-gray-500">
-                          (${(totalEstPnL / trade.quantity).toFixed(0)}/contract × {trade.quantity})
+                          ({fmt$(totalEstPnL / trade.quantity, 0)}/contract × {trade.quantity})
                         </div>
                       </td>
                     </tr>
@@ -437,7 +438,7 @@ function ManualPriceEstimator({
               return (
                 <div key={symbol}>
                   <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {symbol} (IB: ${currentPrice.toFixed(2)})
+                    {symbol} (IB: {fmt$(currentPrice)})
                   </label>
                   <input
                     type="number"
@@ -466,7 +467,7 @@ function ManualPriceEstimator({
                   Estimated P&L {estimationMode === 'post-earnings' ? 'Tomorrow (from entry)' : 'at Price'}:
                 </div>
                 <div className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {totalPnL >= 0 ? '+' : ''}${totalPnL.toFixed(2)}
+                  {fmt$(totalPnL, 2, true)}
                 </div>
                 
                 <div className="mt-3 space-y-2">
@@ -479,23 +480,23 @@ function ManualPriceEstimator({
                       <div key={trade.id} className="text-sm border-t border-gray-200 dark:border-gray-600 pt-2">
                         <div className="flex justify-between mb-1">
                           <span className="font-medium text-gray-700 dark:text-gray-300">
-                            {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ ${manualPrices[trade.symbol].toFixed(2)}
+                            {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ {fmt$(manualPrices[trade.symbol])}
                           </span>
                           <span className={`font-bold ${tradePnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {tradePnL >= 0 ? '+' : ''}${tradePnL.toFixed(0)}
+                            {fmt$(tradePnL, 0, true)}
                             <span className="text-xs text-gray-500 ml-1 font-normal">
-                              (${(tradePnL / trade.quantity).toFixed(0)}/ct × {trade.quantity})
+                              ({fmt$(tradePnL / trade.quantity, 0)}/ct × {trade.quantity})
                             </span>
                           </span>
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400 pl-2 space-y-0.5">
-                          <div>Front: ${trade.frontCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.frontPrice.toFixed(2)}</span>
+                          <div>Front: {fmt$(trade.frontCurrentPrice)} → <span className="text-gray-700 dark:text-gray-300">{fmt$(estimate.frontPrice)}</span>
                             <span className="ml-2 text-gray-400">(IV: {(estimate.frontIVEstimated * 100).toFixed(0)}% → {(estimate.frontIVUsed * 100).toFixed(0)}%)</span>
                           </div>
-                          <div>Back: ${trade.backCurrentPrice.toFixed(2)} → <span className="text-gray-700 dark:text-gray-300">${estimate.backPrice.toFixed(2)}</span>
+                          <div>Back: {fmt$(trade.backCurrentPrice)} → <span className="text-gray-700 dark:text-gray-300">{fmt$(estimate.backPrice)}</span>
                             <span className="ml-2 text-gray-400">(IV: {(estimate.backIVEstimated * 100).toFixed(0)}% → {(estimate.backIVUsed * 100).toFixed(0)}%)</span>
                           </div>
-                          <div>Spread: ${entrySpread.toFixed(2)} → <span className="font-medium text-gray-700 dark:text-gray-300">${estimate.spreadPrice.toFixed(2)}</span></div>
+                          <div>Spread: {fmt$(entrySpread)} → <span className="font-medium text-gray-700 dark:text-gray-300">{fmt$(estimate.spreadPrice)}</span></div>
                         </div>
                       </div>
                     );

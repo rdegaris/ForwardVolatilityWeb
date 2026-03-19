@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchJson } from '../lib/http';
+import { fmt$ } from '../lib/formatCurrency';
 
 interface EarningsCrushTrade {
   ticker: string;
@@ -145,7 +146,7 @@ export default function EarningsCrush() {
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold font-mono">${trade.price.toFixed(2)}</div>
+                        <div className="text-2xl font-bold font-mono">{fmt$(trade.price)}</div>
                         <div className="text-sm text-gray-400">Current Price</div>
                       </div>
                     </div>
@@ -187,7 +188,7 @@ export default function EarningsCrush() {
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Expected Move $</div>
                         <div className="font-mono text-sm">
-                          ${trade.expected_move.toFixed(2)}
+                          {fmt$(trade.expected_move)}
                         </div>
                       </div>
                     </div>
@@ -230,7 +231,7 @@ export default function EarningsCrush() {
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-400">Strike:</span>
-                              <span className="font-mono font-bold">${trade.suggested_trade.strike.toFixed(0)}</span>
+                              <span className="font-mono font-bold">{fmt$(trade.suggested_trade.strike, 0)}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-400">Expiration:</span>
@@ -253,7 +254,7 @@ export default function EarningsCrush() {
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-400">Strike:</span>
-                              <span className="font-mono font-bold">${trade.suggested_trade.strike.toFixed(0)}</span>
+                              <span className="font-mono font-bold">{fmt$(trade.suggested_trade.strike, 0)}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-400">Expiration:</span>

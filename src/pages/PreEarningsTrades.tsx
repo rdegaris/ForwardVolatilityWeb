@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchJsonText } from '../lib/http';
+import { fmt$ } from '../lib/formatCurrency';
 
 type OpenStraddle = {
   ticker: string;
@@ -43,9 +44,7 @@ const API_BASE = '';
 
 function formatMoney(value: number | null | undefined) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
-  const sign = value < 0 ? '-' : '';
-  const abs = Math.abs(value);
-  return `${sign}$${abs.toFixed(2)}`;
+  return fmt$(value, 2, value < 0);
 }
 
 export default function PreEarningsTrades() {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { CalendarSpreadTrade, DirectionalTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { fetchJsonText } from '../lib/http';
+import { fmt$ } from '../lib/formatCurrency';
 import LivePriceEstimator from '../components/LivePriceEstimator';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
@@ -649,13 +650,13 @@ export default function TradeTracker() {
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total P&L</div>
                   <div className={`text-2xl font-bold ${trades.reduce((sum, t) => sum + calculatePnL(t), 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                    ${trades.reduce((sum, t) => sum + calculatePnL(t), 0).toFixed(2)}
+                    {fmt$(trades.reduce((sum, t) => sum + calculatePnL(t), 0))}
                   </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg P&L per Trade</div>
                   <div className={`text-2xl font-bold ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                    ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length).toFixed(2)}
+                    {fmt$(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length)}
                   </div>
                 </div>
               </div>
@@ -749,7 +750,7 @@ export default function TradeTracker() {
                           {totalPnL >= 0 ? '+' : ''}{(((backChange - frontChange) / (backEntry - frontEntry)) * 100).toFixed(2)}%
                         </td>
                         <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {totalPnL.toFixed(0)}
+                          {fmt$(totalPnL, 0)}
                         </td>
                       </tr>
                       
@@ -848,7 +849,7 @@ export default function TradeTracker() {
               <div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Cost</div>
                 <div className="text-xl font-bold text-gray-900 dark:text-white">
-                  ${directionalTrades.reduce((sum, t) => sum + t.entryPrice * Math.abs(t.quantity) * 100, 0).toFixed(0)}
+                  {fmt$(directionalTrades.reduce((sum, t) => sum + t.entryPrice * Math.abs(t.quantity) * 100, 0), 0)}
                 </div>
               </div>
               <div>
@@ -863,7 +864,7 @@ export default function TradeTracker() {
                   }, 0);
                   return (
                     <div className={`text-xl font-bold ${totalPnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(0)}
+                      {fmt$(totalPnl, 0, true)}
                     </div>
                   );
                 })()}
@@ -915,7 +916,7 @@ export default function TradeTracker() {
                           <span>{trade.symbol} ${trade.strike} {trade.callOrPut}</span>
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                          Underlying: ${trade.underlyingCurrentPrice.toFixed(2)}
+                          Underlying: {fmt$(trade.underlyingCurrentPrice)}
                         </div>
                       </td>
                       <td className={`text-center py-3 px-3 font-semibold ${isLong ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
@@ -934,10 +935,10 @@ export default function TradeTracker() {
                         </div>
                       </td>
                       <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
-                        ${trade.entryPrice.toFixed(2)}
+                        {fmt$(trade.entryPrice)}
                       </td>
                       <td className="text-right py-3 px-3 text-gray-900 dark:text-white font-medium">
-                        ${trade.currentPrice.toFixed(2)}
+                        {fmt$(trade.currentPrice)}
                       </td>
                       <td className={`text-right py-3 px-3 font-medium ${(isLong ? change : -change) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         {(isLong ? change : -change) >= 0 ? '+' : ''}{(isLong ? change : -change).toFixed(2)}
@@ -946,7 +947,7 @@ export default function TradeTracker() {
                         {(isLong ? changePct : -changePct) >= 0 ? '+' : ''}{(isLong ? changePct : -changePct).toFixed(1)}%
                       </td>
                       <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        {pnl >= 0 ? '+' : ''}${pnl.toFixed(0)}
+                        {fmt$(pnl, 0, true)}
                       </td>
                     </tr>
                   );
@@ -994,7 +995,7 @@ export default function TradeTracker() {
               <div>
                 <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Realized P&L</div>
                 <div className={`text-xl font-bold ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0).toFixed(2)}
+                  {fmt$(closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0))}
                 </div>
               </div>
             </div>
@@ -1057,14 +1058,14 @@ export default function TradeTracker() {
                         </span>
                       </td>
                       <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
-                        ${trade.entryPrice.toFixed(2)}
+                        {fmt$(trade.entryPrice)}
                       </td>
                       <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
-                        ${trade.exitPrice.toFixed(2)}
+                        {fmt$(trade.exitPrice)}
                       </td>
                       <td className="text-right py-3 px-3">
                         <div className={`font-bold ${isWinner ? 'text-green-600 dark:text-green-400' : isLoser ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-                          {trade.realizedPnL >= 0 ? '+' : ''}${trade.realizedPnL.toFixed(2)}
+                          {fmt$(trade.realizedPnL, 2, true)}
                         </div>
                         <div className={`text-xs ${isWinner ? 'text-green-500 dark:text-green-500' : isLoser ? 'text-red-500 dark:text-red-500' : 'text-gray-500'}`}>
                           {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
@@ -1110,7 +1111,7 @@ export default function TradeTracker() {
               <div className="text-right">
                 <div className="text-sm text-blue-100">P&L</div>
                 <div className={`text-3xl font-bold ${calculatePnL(selectedTrade) >= 0 ? 'text-green-300' : 'text-red-300'}`}>
-                  ${calculatePnL(selectedTrade).toFixed(2)}
+                  {fmt$(calculatePnL(selectedTrade))}
                 </div>
               </div>
             </div>
@@ -1143,10 +1144,10 @@ export default function TradeTracker() {
                         {scenario.priceChange}
                       </td>
                       <td className="text-right py-2 px-2 text-sm text-gray-900 dark:text-white">
-                        ${scenario.underlyingPrice.toFixed(2)}
+                        {fmt$(scenario.underlyingPrice)}
                       </td>
                       <td className={`text-right py-2 px-2 text-sm font-semibold ${scenario.pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        ${scenario.pnl.toFixed(2)}
+                        {fmt$(scenario.pnl)}
                       </td>
                       <td className="text-right py-2 px-2 text-sm text-gray-600 dark:text-gray-400">
                         {scenario.delta.toFixed(2)}
@@ -1183,16 +1184,16 @@ export default function TradeTracker() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
                   dataKey="price" 
-                  tickFormatter={(value) => `$${value.toFixed(0)}`}
+                  tickFormatter={(value) => fmt$(value, 0)}
                   stroke="#9CA3AF"
                 />
                 <YAxis 
-                  tickFormatter={(value) => `$${value.toFixed(0)}`}
+                  tickFormatter={(value) => fmt$(value, 0)}
                   stroke="#9CA3AF"
                 />
                 <Tooltip 
-                  formatter={(value: number) => [`$${value.toFixed(2)}`, 'P&L']}
-                  labelFormatter={(label) => `Price: $${parseFloat(label).toFixed(2)}`}
+                  formatter={(value: number) => [fmt$(value), 'P&L']}
+                  labelFormatter={(label) => `Price: ${fmt$(parseFloat(label))}`}
                   contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '0.5rem' }}
                   labelStyle={{ color: '#F3F4F6' }}
                 />

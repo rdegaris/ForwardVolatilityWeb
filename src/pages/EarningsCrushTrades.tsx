@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fmt$ } from '../lib/formatCurrency';
 
 interface EarningsCrushTrade {
   id: string;
@@ -357,7 +358,7 @@ export default function EarningsCrushTrades() {
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Open P&L</div>
             <div className={`text-2xl font-bold ${totalOpenPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              ${totalOpenPnL.toFixed(2)}
+              {fmt$(totalOpenPnL)}
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
@@ -367,7 +368,7 @@ export default function EarningsCrushTrades() {
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
             <div className="text-sm text-gray-400 mb-1">Realized P&L</div>
             <div className={`text-2xl font-bold ${totalClosedPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              ${totalClosedPnL.toFixed(2)}
+              {fmt$(totalClosedPnL)}
             </div>
           </div>
         </div>
@@ -417,10 +418,10 @@ export default function EarningsCrushTrades() {
                             {earningsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                         </td>
-                        <td className="text-right py-3 px-3 font-mono">${entryCost.toFixed(2)}</td>
-                        <td className="text-right py-3 px-3 font-mono">${currentValue.toFixed(2)}</td>
+                        <td className="text-right py-3 px-3 font-mono">{fmt$(entryCost)}</td>
+                        <td className="text-right py-3 px-3 font-mono">{fmt$(currentValue)}</td>
                         <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          ${pnl.toFixed(0)}
+                          {fmt$(pnl, 0)}
                         </td>
                         <td className="text-center py-3 px-3">
                           <div className="flex gap-2 justify-center">
@@ -483,7 +484,7 @@ export default function EarningsCrushTrades() {
                         {trade.closedDate ? new Date(trade.closedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '-'}
                       </td>
                       <td className={`text-right py-3 px-3 font-bold ${(trade.realizedPnL || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        ${(trade.realizedPnL || 0).toFixed(0)}
+                        {fmt$(trade.realizedPnL || 0, 0)}
                       </td>
                       <td className="py-3 px-3 text-gray-400 text-xs max-w-[200px] truncate">
                         {trade.closeNotes || '-'}
@@ -577,7 +578,7 @@ export default function EarningsCrushTrades() {
                     const totalPnL = backPnL - frontPnL;
                     return (
                       <div className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        ${totalPnL.toFixed(2)}
+                        {fmt$(totalPnL)}
                       </div>
                     );
                   })()}
