@@ -189,3 +189,61 @@ export function formatMarketState(state: YahooQuote['marketState'] | string): st
       return state;
   }
 }
+
+export interface OptionQuoteRequest {
+  id: string;
+  symbol: string;
+  strike: number;
+  expiration: string; // "2026-03-23"
+  type: 'CALL' | 'PUT';
+}
+
+export interface OptionQuote {
+  id: string;
+  symbol: string;
+  strike: number;
+  type: string;
+  expiration: string;
+  lastPrice: number;
+  bid: number;
+  ask: number;
+  mid: number;
+  volume: number;
+  openInterest: number;
+  impliedVolatility: number;
+  error?: string;
+}
+
+/**
+ * Fetch option quotes via the local quote server.
+ * Returns null if server is unavailable.
+ */
+export async function fetchOptionQuotes(
+  requests: OptionQuoteRequest[]
+): Promise<Map<string, OptionQuote> | null> {
+  try {
+    const response = await fetch(`${LOCAL_BRIDGE_URL}/api/option-quotes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requests),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (!data.ok || !data.options) return null;
+
+    const results = new Map<string, OptionQuote>();
+    for (const [id, opt] of Object.entries(data.options)) {
+      const o = opt as OptionQuote;
+      if (!o.error) {
+        results.set(id, o);
+      }
+    }
+    return results;
+  } catch {
+    console.log('[YahooFinance] Option quote server not available');
+    return null;
+  }
+}

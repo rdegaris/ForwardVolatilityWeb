@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { CalendarSpreadTrade, DirectionalTrade, ScenarioAnalysis } from '../types/trade';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { fetchJsonText } from '../lib/http';
 import { fmt$ } from '../lib/formatCurrency';
+import { fetchMultipleQuotes, fetchOptionQuotes, type OptionQuoteRequest } from '../lib/yahooFinance';
 import LivePriceEstimator from '../components/LivePriceEstimator';
 
 const TRADES_STORAGE_KEY = 'forward_vol_trades';
@@ -37,6 +38,9 @@ export default function TradeTracker() {
 
   // Directional trades state
   const [directionalTrades, setDirectionalTrades] = useState<DirectionalTrade[]>([]);
+  const [dirRefreshing, setDirRefreshing] = useState(false);
+  const [dirLastUpdate, setDirLastUpdate] = useState<Date | null>(null);
+  const [dirPriceSource, setDirPriceSource] = useState<string>('');
   
   const [showForm, setShowForm] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<CalendarSpreadTrade | null>(null);
@@ -109,6 +113,63 @@ export default function TradeTracker() {
     };
     loadDirectionalTrades();
   }, []);
+
+  // Refresh directional trade prices from Yahoo Finance
+  const refreshDirectionalPrices = useCallback(async () => {
+    if (directionalTrades.length === 0 || dirRefreshing) return;
+    setDirRefreshing(true);
+    setDirPriceSource('');
+
+    try {
+      // 1. Fetch underlying stock prices
+      const symbols = [...new Set(directionalTrades.map(t => t.symbol))];
+      const stockQuotes = await fetchMultipleQuotes(symbols);
+
+      // 2. Try to fetch option prices via quote server
+      const optionRequests: OptionQuoteRequest[] = directionalTrades.map(t => ({
+        id: t.id,
+        symbol: t.symbol,
+        strike: t.strike,
+        expiration: t.expiration,
+        type: t.callOrPut as 'CALL' | 'PUT',
+      }));
+      const optionQuotes = await fetchOptionQuotes(optionRequests);
+
+      // 3. Update trades with fresh prices
+      setDirectionalTrades(prev =>
+        prev.map(t => {
+          const updated = { ...t };
+
+          // Update underlying price
+          const sq = stockQuotes.get(t.symbol.toUpperCase());
+          if (sq) {
+            updated.underlyingCurrentPrice = sq.displayPrice;
+          }
+
+          // Update option price if available
+          const oq = optionQuotes?.get(t.id);
+          if (oq) {
+            const livePrice = oq.mid > 0 ? oq.mid : oq.lastPrice;
+            updated.currentPrice = livePrice;
+            const isLong = t.quantity > 0;
+            updated.unrealizedPnL = isLong
+              ? (livePrice - t.entryPrice) * Math.abs(t.quantity) * 100
+              : (t.entryPrice - livePrice) * Math.abs(t.quantity) * 100;
+          }
+
+          return updated;
+        })
+      );
+
+      setDirPriceSource(optionQuotes ? 'Yahoo (stock + options)' : 'Yahoo (stock only)');
+      setDirLastUpdate(new Date());
+    } catch (e) {
+      console.error('Error refreshing directional prices:', e);
+      setDirPriceSource('Error fetching prices');
+    } finally {
+      setDirRefreshing(false);
+    }
+  }, [directionalTrades, dirRefreshing]);
 
   // Save trades to localStorage whenever they change
   useEffect(() => {
@@ -827,10 +888,25 @@ export default function TradeTracker() {
       {/* Directional Option Trades */}
       {directionalTrades.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
+          <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
               <span>🎯</span> Directional Option Trades
             </h2>
+            <div className="flex items-center gap-3">
+              {dirLastUpdate && (
+                <span className="text-xs text-amber-100">
+                  {dirPriceSource} · {dirLastUpdate.toLocaleTimeString()}
+                </span>
+              )}
+              <button
+                onClick={refreshDirectionalPrices}
+                disabled={dirRefreshing}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors"
+              >
+                <span className={dirRefreshing ? 'animate-spin' : ''}>🔄</span>
+                {dirRefreshing ? 'Refreshing...' : 'Refresh Prices'}
+              </button>
+            </div>
           </div>
 
           {/* Summary */}
