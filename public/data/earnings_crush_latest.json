@@ -1,49 +1,117 @@
 {
-  "timestamp": "2026-03-20T09:13:32.474185",
-  "date": "2026-03-20",
+  "timestamp": "2026-03-23T08:22:48.434859",
+  "date": "2026-03-23",
   "total_scanned": 40,
-  "earnings_found": 1,
+  "earnings_found": 7,
   "opportunities": [
     {
       "ticker": "NFLX",
-      "price": 91.35,
+      "price": 93.2,
       "earnings_date": "2026-04-16",
-      "days_to_earnings": 27,
-      "iv": 43.6,
+      "days_to_earnings": 24,
+      "iv": 43.4,
       "option_type": "CALL",
       "trend_bias": "CALL",
-      "ema50": 90.75,
-      "price_vs_ema_pct": 0.67,
-      "expected_move": 10.5,
-      "expected_move_pct": 11.5,
+      "ema50": 90.88,
+      "price_vs_ema_pct": 2.54,
+      "expected_move": 7.05,
+      "expected_move_pct": 7.6,
       "recommendation": "AVOID",
-      "reason": "IV too low (43.6% < 50%); Too far from earnings (27 days > 7)",
+      "reason": "IV too low (43.4% < 50%); Too far from earnings (24 days > 7)",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": false,
         "ts_slope_positive": true,
-        "iv_slope_pct": 8.8
+        "iv_slope_pct": 12.1
       },
-      "front_iv": 43.6,
-      "back_iv": 40.1,
+      "front_iv": 43.4,
+      "back_iv": 38.7,
       "suggested_trade": {
-        "strike": 90.0,
+        "strike": 95.0,
         "option_type": "CALL",
         "sell_expiration": "2026-04-17",
         "buy_expiration": "2026-05-15",
-        "sell_dte": 28,
-        "buy_dte": 56,
-        "sell_price": 5.25,
-        "buy_price": 6.7,
-        "net_credit": -1.45
+        "sell_dte": 25,
+        "buy_dte": 53,
+        "sell_price": 3.52,
+        "buy_price": 4.9,
+        "net_credit": -1.38
+      }
+    },
+    {
+      "ticker": "SBUX",
+      "price": 94.87,
+      "earnings_date": "2026-04-20",
+      "days_to_earnings": 28,
+      "iv": 31.2,
+      "option_type": "CALL",
+      "trend_bias": "CALL",
+      "ema50": 94.62,
+      "price_vs_ema_pct": 0.3,
+      "expected_move": 6.35,
+      "expected_move_pct": 6.7,
+      "recommendation": "AVOID",
+      "reason": "Negative IV slope (back IV > front IV) - no crush opportunity",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": false,
+        "iv_slope_pct": -15.1
+      },
+      "front_iv": 31.2,
+      "back_iv": 36.8,
+      "suggested_trade": {
+        "strike": 95.0,
+        "option_type": "CALL",
+        "sell_expiration": "2026-04-17",
+        "buy_expiration": "2026-05-15",
+        "sell_dte": 25,
+        "buy_dte": 53,
+        "sell_price": 3.17,
+        "buy_price": 5.53,
+        "net_credit": -2.35
+      }
+    },
+    {
+      "ticker": "TSLA",
+      "price": 383.58,
+      "earnings_date": "2026-04-20",
+      "days_to_earnings": 28,
+      "iv": 41.3,
+      "option_type": "PUT",
+      "trend_bias": "PUT",
+      "ema50": 415.57,
+      "price_vs_ema_pct": -7.7,
+      "expected_move": 28.6,
+      "expected_move_pct": 7.5,
+      "recommendation": "AVOID",
+      "reason": "Negative IV slope (back IV > front IV) - no crush opportunity",
+      "criteria": {
+        "avg_volume": true,
+        "iv30_rv30": false,
+        "ts_slope_positive": false,
+        "iv_slope_pct": -7.3
+      },
+      "front_iv": 41.3,
+      "back_iv": 44.6,
+      "suggested_trade": {
+        "strike": 380.0,
+        "option_type": "PUT",
+        "sell_expiration": "2026-04-17",
+        "buy_expiration": "2026-05-15",
+        "sell_dte": 25,
+        "buy_dte": 53,
+        "sell_price": 14.3,
+        "buy_price": 23.1,
+        "net_credit": -8.8
       }
     }
   ],
   "summary": {
     "total_recommended": 0,
     "total_consider": 0,
-    "total_avoid": 1,
-    "avg_iv": 43.6,
-    "avg_expected_move": 11.5
+    "total_avoid": 3,
+    "avg_iv": 38.6,
+    "avg_expected_move": 7.3
   }
 }
