@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
+import ProtectedRoute from './components/ProtectedRoute';
+import { RegistrationProvider } from './lib/registrationContext';
 import Calculator from './pages/Calculator';
 import ScannerResults from './pages/ScannerResults';
 import Nasdaq100Results from './pages/Nasdaq100Results';
@@ -15,35 +17,41 @@ import TurtleOpenTrades from './pages/TurtleOpenTrades';
 import TurtleTriggers from './pages/TurtleTriggers';
 import TurtleSignals from './pages/TurtleSignals';
 import GrailTrade from './pages/GrailTrade';
+import Home from './pages/Home';
+import FundPerformance from './pages/FundPerformance';
+import Register from './pages/Register';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
 function App() {
   return (
     <Router>
+      <RegistrationProvider>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <Navigation />
           
           <Routes>
-            <Route path="/" element={<Navigate to="/trade-tracker" replace />} />
-            <Route path="/nasdaq100" element={<Nasdaq100Results />} />
-            <Route path="/midcap400" element={<MidCap400Results />} />
-            <Route path="/iv-rankings" element={<IVRankings />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/nasdaq100" element={<ProtectedRoute><Nasdaq100Results /></ProtectedRoute>} />
+            <Route path="/midcap400" element={<ProtectedRoute><MidCap400Results /></ProtectedRoute>} />
+            <Route path="/iv-rankings" element={<ProtectedRoute><IVRankings /></ProtectedRoute>} />
 
-            <Route path="/turtle" element={<TurtleSignals />} />
-            <Route path="/turtle/open-trades" element={<TurtleOpenTrades />} />
-            <Route path="/turtle/triggers" element={<TurtleTriggers />} />
+            <Route path="/turtle" element={<ProtectedRoute><TurtleSignals /></ProtectedRoute>} />
+            <Route path="/turtle/open-trades" element={<ProtectedRoute><TurtleOpenTrades /></ProtectedRoute>} />
+            <Route path="/turtle/triggers" element={<ProtectedRoute><TurtleTriggers /></ProtectedRoute>} />
 
-            <Route path="/grail" element={<GrailTrade />} />
+            <Route path="/grail" element={<ProtectedRoute><GrailTrade /></ProtectedRoute>} />
 
-            <Route path="/pre-earnings" element={<PreEarningsStraddles />} />
-            <Route path="/pre-earnings/open-trades" element={<PreEarningsTrades />} />
+            <Route path="/pre-earnings" element={<ProtectedRoute><PreEarningsStraddles /></ProtectedRoute>} />
+            <Route path="/pre-earnings/open-trades" element={<ProtectedRoute><PreEarningsTrades /></ProtectedRoute>} />
 
-            <Route path="/earnings-crush" element={<EarningsCrush />} />
-            <Route path="/earnings-crush/trades" element={<EarningsCrushTrades />} />
-            <Route path="/calculator" element={<Calculator />} />
-            <Route path="/trade-tracker" element={<TradeTracker />} />
+            <Route path="/earnings-crush" element={<ProtectedRoute><EarningsCrush /></ProtectedRoute>} />
+            <Route path="/earnings-crush/trades" element={<ProtectedRoute><EarningsCrushTrades /></ProtectedRoute>} />
+            <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
+            <Route path="/trade-tracker" element={<ProtectedRoute><TradeTracker /></ProtectedRoute>} />
+            <Route path="/fund" element={<FundPerformance />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
           
           <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
@@ -72,6 +80,7 @@ function App() {
           </div>
         </a>
       </div>
+      </RegistrationProvider>
     </Router>
   );
 }
