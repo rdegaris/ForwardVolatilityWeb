@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegistration } from '../lib/registrationContext';
+import { saveRegistration } from '../lib/dynamodb';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export default function Register() {
 
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', professional: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   /* If already registered, send straight to the fund page */
   if (isRegistered) {
@@ -15,15 +17,20 @@ export default function Register() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate submission — replace with a real endpoint
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    try {
+      await saveRegistration(form);
       register(form);
       navigate('/fund');
-    }, 1200);
+    } catch (err) {
+      console.error('Registration failed:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -119,6 +126,12 @@ export default function Register() {
                 <option value="no" className="text-slate-900">No — I'm an individual / retail trader</option>
                 <option value="student" className="text-slate-900">Student / learning about systematic trading</option>
               </select>
+
+              {error && (
+                <div className="mt-4 rounded-xl bg-rose-500/20 border border-rose-400/30 px-4 py-3 text-sm text-rose-100 text-center">
+                  {error}
+                </div>
+              )}
 
               <div className="mt-6 text-center">
                 <button
