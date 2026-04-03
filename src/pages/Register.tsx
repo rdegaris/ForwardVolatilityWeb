@@ -1,20 +1,49 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRegistration } from '../lib/registrationContext';
-import { saveRegistration } from '../lib/dynamodb';
+import { useAuth } from '../lib/authContext';
+import { apiRegister } from '../lib/api';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { isRegistered, register } = useRegistration();
+  const { isAuthenticated } = useAuth();
 
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', professional: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
-  /* If already registered, send straight to the fund page */
-  if (isRegistered) {
-    navigate('/fund', { replace: true });
+  if (isAuthenticated) {
+    navigate('/', { replace: true });
     return null;
+  }
+
+  if (submitted) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+        <div className="w-full max-w-lg">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-fuchsia-700 shadow-xl">
+            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+              <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
+              <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-fuchsia-400/10 blur-3xl" />
+            </div>
+            <div className="relative px-8 py-16 text-center">
+              <div className="text-5xl mb-6">📬</div>
+              <h1 className="text-3xl font-extrabold text-white">Check Your Email</h1>
+              <p className="mt-4 text-base text-indigo-100/90 max-w-md mx-auto leading-relaxed">
+                We've sent a welcome email to <span className="font-semibold text-white">{form.email}</span> with
+                a link to create your password. Click the link to complete your account setup.
+              </p>
+              <p className="mt-6 text-sm text-indigo-200/60">
+                Didn't get the email? Check your spam folder or{' '}
+                <button onClick={() => setSubmitted(false)} className="underline text-white hover:text-indigo-100">
+                  try again
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,12 +51,10 @@ export default function Register() {
     setLoading(true);
     setError(null);
     try {
-      await saveRegistration(form);
-      register(form);
-      navigate('/fund');
+      await apiRegister(form);
+      setSubmitted(true);
     } catch (err) {
-      console.error('Registration failed:', err);
-      setError('Something went wrong. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -163,9 +190,9 @@ export default function Register() {
 
         {/* Already have access? */}
         <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-          Already registered?{' '}
-          <Link to="/fund" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-            Go to Fund Profile →
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+            Log in →
           </Link>
         </p>
       </div>

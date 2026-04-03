@@ -1,15 +1,15 @@
 import { Navigate } from 'react-router-dom';
-import { useRegistration } from '../lib/registrationContext';
+import { useAuth } from '../lib/authContext';
 
 /**
- * Wraps a route element — if the user hasn't registered,
- * they are redirected to the /register page.
+ * Wraps a route element — if the user is not logged in,
+ * they are redirected to the /login page.
  */
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isRegistered } = useRegistration();
+  const { isAuthenticated } = useAuth();
 
-  if (!isRegistered) {
-    return <Navigate to="/register" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

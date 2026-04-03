@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
-import { RegistrationProvider } from './lib/registrationContext';
+import { AuthProvider } from './lib/authContext';
 import Calculator from './pages/Calculator';
 import ScannerResults from './pages/ScannerResults';
 import Nasdaq100Results from './pages/Nasdaq100Results';
@@ -20,13 +20,15 @@ import GrailTrade from './pages/GrailTrade';
 import Home from './pages/Home';
 import FundPerformance from './pages/FundPerformance';
 import Register from './pages/Register';
+import Login from './pages/Login';
+import CreatePassword from './pages/CreatePassword';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <RegistrationProvider>
+      <AuthProvider>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <Navigation />
@@ -52,6 +54,8 @@ function App() {
             <Route path="/trade-tracker" element={<ProtectedRoute><TradeTracker /></ProtectedRoute>} />
             <Route path="/fund" element={<FundPerformance />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/create-password" element={<CreatePassword />} />
           </Routes>
           
           <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
@@ -80,7 +84,7 @@ function App() {
           </div>
         </a>
       </div>
-      </RegistrationProvider>
+      </AuthProvider>
     </Router>
   );
 }

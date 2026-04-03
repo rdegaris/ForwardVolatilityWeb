@@ -1,0 +1,16 @@
+{
+  "name": "ozcta-auth-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Auth Lambda for OzCTA – register, set-password, login",
+  "scripts": {
+    "zip": "zip -r auth-lambda.zip handler.mjs node_modules package.json"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/client-ses": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

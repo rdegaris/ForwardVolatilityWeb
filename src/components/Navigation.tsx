@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/authContext';
 
 type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail';
 
@@ -156,6 +157,8 @@ function OzCtaMark({ className }: { className?: string }) {
 
 export default function Navigation() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
 
   const section = getSection(location.pathname);
   const accent = ACCENTS[section];
@@ -262,17 +265,26 @@ export default function Navigation() {
             >
               Home
             </Link>
-            <div className="text-sm text-slate-600 dark:text-slate-300">
-              Follow and DM me at{' '}
-              <a
-                href="https://x.com/OzCTA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-slate-900 dark:text-slate-100 hover:underline"
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-slate-600 dark:text-slate-300">
+                  Hi, <span className="font-semibold text-slate-900 dark:text-slate-100">{user?.firstName}</span>
+                </span>
+                <button
+                  onClick={() => { logout(); navigate('/login'); }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="px-3 py-1.5 rounded-lg text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
               >
-                @OzCTA
-              </a>
-            </div>
+                Log In
+              </Link>
+            )}
           </div>
         </div>
 
