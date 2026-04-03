@@ -222,8 +222,12 @@ async function handleLogin(body) {
 
 /* ── Lambda entry point ── */
 export async function handler(event) {
+  console.log('Full event:', JSON.stringify(event));
+
+  const method = event.httpMethod || event.requestContext?.http?.method || '';
+
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (method === 'OPTIONS') {
     return respond(200, {});
   }
 
@@ -232,20 +236,32 @@ export async function handler(event) {
     return respond(500, { error: 'Server configuration error' });
   }
 
-  const path = event.path || event.rawPath || '';
-  const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body || {};
+  const path = event.path || event.rawPath || event.resource || '';
+  let body = {};
+  try {
+    const rawBody = event.body || '{}';
+    const decoded = event.isBase64Encoded
+      ? Buffer.from(rawBody, 'base64').toString('utf-8')
+      : rawBody;
+    body = typeof decoded === 'string' ? JSON.parse(decoded) : decoded;
+  } catch (parseErr) {
+    console.error('Body parse error:', parseErr, 'raw body:', event.body);
+    return respond(400, { error: 'Invalid request body' });
+  }
+
+  console.log('Parsed - path:', path, 'method:', method);
 
   try {
-    if (path.endsWith('/register') && event.httpMethod === 'POST') {
+    if (path.includes('/register') && method === 'POST') {
       return await handleRegister(body);
     }
-    if (path.endsWith('/create-password') && event.httpMethod === 'POST') {
+    if (path.includes('/create-password') && method === 'POST') {
       return await handleCreatePassword(body);
     }
-    if (path.endsWith('/login') && event.httpMethod === 'POST') {
+    if (path.includes('/login') && method === 'POST') {
       return await handleLogin(body);
     }
-    return respond(404, { error: 'Not found' });
+    return respond(404, { error: 'Not found', debug: { path, method } });
   } catch (err) {
     console.error('Unhandled error:', err);
     return respond(500, { error: 'Internal server error' });
