@@ -188,13 +188,44 @@ export default function Navigation() {
             </Link>
 
             <div className="hidden sm:flex items-center gap-2">
+              {/* ── Futures ── */}
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1">Futures</span>
+              {(
+                [
+                  { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+                  { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
+                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
+              ).map((item) => {
+                const isSectionActive = section === item.key;
+                const a = ACCENTS[item.key];
+                return (
+                  <Link
+                    key={item.key}
+                    to={item.to}
+                    className={`relative px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                      isSectionActive ? a.topActiveText : `${a.topInactiveText} ${a.topHoverText}`
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={`h-2 w-2 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-35'}`} />
+                      {item.label}
+                    </span>
+                    {isSectionActive && (
+                      <span className={`absolute left-3 right-3 -bottom-[9px] h-[3px] rounded-full ${a.topActiveUnderline}`} />
+                    )}
+                  </Link>
+                );
+              })}
+
+              <div className="h-6 w-px bg-slate-300/60 dark:bg-slate-700/60 mx-1" />
+
+              {/* ── Options ── */}
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1">Options</span>
               {(
                 [
                   { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                   { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
-                  { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
-                  { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
               ).map((item) => {
                 const isSectionActive = section === item.key;
@@ -286,12 +317,11 @@ export default function Navigation() {
           </div>
 
           {/* Mobile top-level fallback */}
-          <div className="sm:hidden mt-3 flex flex-wrap gap-2">
+          <div className="sm:hidden mt-3 space-y-2">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Futures</div>
+            <div className="flex flex-wrap gap-2">
             {(
               [
-                { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
-                { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-                { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
                 { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                 { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
               ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
@@ -312,6 +342,33 @@ export default function Navigation() {
                 </Link>
               );
             })}
+            </div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Options</div>
+            <div className="flex flex-wrap gap-2">
+            {(
+              [
+                { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
+                { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
+                { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
+              ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
+            ).map((item) => {
+              const isSectionActive = section === item.key;
+              const a = ACCENTS[item.key];
+              return (
+                <Link
+                  key={item.key}
+                  to={item.to}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors border border-slate-200/60 dark:border-slate-800/60 ${
+                    isSectionActive
+                      ? `${a.subActivePill}`
+                      : `${a.topInactiveText} ${a.topHoverText} bg-white/60 dark:bg-slate-950/20`
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+            </div>
           </div>
         </div>
       </div>
