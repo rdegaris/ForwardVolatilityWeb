@@ -34,7 +34,7 @@ function App() {
           <Navigation />
           
           <Routes>
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/" element={<Home />} />
             <Route path="/nasdaq100" element={<ProtectedRoute><Nasdaq100Results /></ProtectedRoute>} />
             <Route path="/midcap400" element={<ProtectedRoute><MidCap400Results /></ProtectedRoute>} />
             <Route path="/iv-rankings" element={<ProtectedRoute><IVRankings /></ProtectedRoute>} />
