@@ -85,6 +85,8 @@ export default function Register() {
               Get the Full Picture!
             </h1>
             <p className="mt-4 text-base md:text-lg text-indigo-100/90 max-w-2xl mx-auto leading-relaxed">
+              Access our strategies, signals, and trade tracking — completely{' '}
+              <span className="font-extrabold text-white">FREE</span>.
               Register now to see detailed analysis of every strategy, and gain
               access to the complete OzCTA database where you can:
             </p>
