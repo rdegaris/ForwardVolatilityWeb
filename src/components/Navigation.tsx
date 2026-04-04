@@ -226,7 +226,7 @@ export default function Navigation() {
           <div className="flex items-center gap-6">
             <Link
               to="/"
-              aria-label="The OzCTA System"
+              aria-label="OzCTA"
               className="group inline-flex items-center gap-2 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800/40"
             >
               <span className="relative">
@@ -234,11 +234,11 @@ export default function Navigation() {
                 <span className="pointer-events-none absolute inset-0 rounded-[12px] ring-1 ring-white/25" />
               </span>
               <span className="leading-tight">
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  The
-                </span>
                 <span className="block text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
-                  OzCTA System
+                  OzCTA
+                </span>
+                <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                  Commodity Trading Advisor
                 </span>
               </span>
             </Link>
