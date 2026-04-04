@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 
@@ -155,6 +156,39 @@ function OzCtaMark({ className }: { className?: string }) {
   );
 }
 
+type TopGroup = 'futures' | 'options' | null;
+
+const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail'];
+const OPTIONS_KEYS: NavSectionKey[] = ['forward', 'earningsCrush', 'preEarnings'];
+
+function getActiveGroup(section: NavSectionKey): TopGroup {
+  if (FUTURES_KEYS.includes(section)) return 'futures';
+  if (OPTIONS_KEYS.includes(section)) return 'options';
+  return null;
+}
+
+function ExpandableItems({ 
+  show, children 
+}: { show: boolean; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (ref.current) setHeight(ref.current.scrollHeight);
+  }, [children]);
+
+  return (
+    <div
+      className="overflow-hidden transition-all duration-300 ease-in-out"
+      style={{ maxHeight: show ? height : 0, opacity: show ? 1 : 0 }}
+    >
+      <div ref={ref} className="flex items-center gap-1">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -162,8 +196,20 @@ export default function Navigation() {
 
   const section = getSection(location.pathname);
   const accent = ACCENTS[section];
+  const activeGroup = getActiveGroup(section);
+
+  const [expanded, setExpanded] = useState<TopGroup>(activeGroup);
+
+  // Sync expanded group when route changes
+  useEffect(() => {
+    setExpanded(activeGroup);
+  }, [activeGroup]);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const toggleGroup = (group: TopGroup) => {
+    setExpanded(prev => prev === group ? null : group);
+  };
 
   return (
     <nav className="bg-white/90 dark:bg-slate-900/60 shadow-md mb-8 rounded-xl overflow-hidden border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
@@ -190,67 +236,95 @@ export default function Navigation() {
               </span>
             </Link>
 
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-1.5">
               {/* ── Futures ── */}
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1">Futures</span>
-              {(
-                [
+              <button
+                onClick={() => toggleGroup('futures')}
+                className={`relative px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all duration-200 ${
+                  expanded === 'futures'
+                    ? 'bg-fuchsia-600/10 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300 ring-1 ring-fuchsia-500/30'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  Futures
+                  <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              </button>
+
+              <ExpandableItems show={expanded === 'futures'}>
+                {([
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                   { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
-                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
-              ).map((item) => {
-                const isSectionActive = section === item.key;
-                const a = ACCENTS[item.key];
-                return (
-                  <Link
-                    key={item.key}
-                    to={item.to}
-                    className={`relative px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                      isSectionActive ? a.topActiveText : `${a.topInactiveText} ${a.topHoverText}`
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-35'}`} />
-                      {item.label}
-                    </span>
-                    {isSectionActive && (
-                      <span className={`absolute left-3 right-3 -bottom-[9px] h-[3px] rounded-full ${a.topActiveUnderline}`} />
-                    )}
-                  </Link>
-                );
-              })}
+                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
+                  const isSectionActive = section === item.key;
+                  const a = ACCENTS[item.key];
+                  return (
+                    <Link
+                      key={item.key}
+                      to={item.to}
+                      className={`relative px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                        isSectionActive
+                          ? `${a.topActiveText} bg-white/80 dark:bg-slate-800/60 shadow-sm`
+                          : `text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30`
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span className={`h-1.5 w-1.5 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-30'}`} />
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </ExpandableItems>
 
-              <div className="h-6 w-px bg-slate-300/60 dark:bg-slate-700/60 mx-1" />
+              <div className="h-5 w-px bg-slate-200/60 dark:bg-slate-700/40 mx-1" />
 
               {/* ── Options ── */}
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mr-1">Options</span>
-              {(
-                [
+              <button
+                onClick={() => toggleGroup('options')}
+                className={`relative px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all duration-200 ${
+                  expanded === 'options'
+                    ? 'bg-indigo-600/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 ring-1 ring-indigo-500/30'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  Options
+                  <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              </button>
+
+              <ExpandableItems show={expanded === 'options'}>
+                {([
                   { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
                   { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
                   { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
-                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
-              ).map((item) => {
-                const isSectionActive = section === item.key;
-                const a = ACCENTS[item.key];
-                return (
-                  <Link
-                    key={item.key}
-                    to={item.to}
-                    className={`relative px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                      isSectionActive ? a.topActiveText : `${a.topInactiveText} ${a.topHoverText}`
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-35'}`} />
-                      {item.label}
-                    </span>
-                    {isSectionActive && (
-                      <span className={`absolute left-3 right-3 -bottom-[9px] h-[3px] rounded-full ${a.topActiveUnderline}`} />
-                    )}
-                  </Link>
-                );
-              })}
+                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
+                  const isSectionActive = section === item.key;
+                  const a = ACCENTS[item.key];
+                  return (
+                    <Link
+                      key={item.key}
+                      to={item.to}
+                      className={`relative px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                        isSectionActive
+                          ? `${a.topActiveText} bg-white/80 dark:bg-slate-800/60 shadow-sm`
+                          : `text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30`
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span className={`h-1.5 w-1.5 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-30'}`} />
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </ExpandableItems>
             </div>
           </div>
 
@@ -330,14 +404,24 @@ export default function Navigation() {
 
           {/* Mobile top-level fallback */}
           <div className="sm:hidden mt-3 space-y-2">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Futures</div>
-            <div className="flex flex-wrap gap-2">
-            {(
-              [
-                { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
-                { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
-              ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
-            ).map((item) => {
+            <button
+              onClick={() => toggleGroup('futures')}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
+                expanded === 'futures'
+                  ? 'bg-fuchsia-600/10 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              Futures
+              <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <ExpandableItems show={expanded === 'futures'}>
+            {([
+              { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+              { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
+            ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
               const a = ACCENTS[item.key];
               return (
@@ -354,16 +438,27 @@ export default function Navigation() {
                 </Link>
               );
             })}
-            </div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Options</div>
-            <div className="flex flex-wrap gap-2">
-            {(
-              [
-                { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
-                { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-                { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
-              ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>
-            ).map((item) => {
+            </ExpandableItems>
+
+            <button
+              onClick={() => toggleGroup('options')}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
+                expanded === 'options'
+                  ? 'bg-indigo-600/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              Options
+              <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <ExpandableItems show={expanded === 'options'}>
+            {([
+              { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
+              { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
+              { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
+            ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
               const a = ACCENTS[item.key];
               return (
@@ -380,7 +475,7 @@ export default function Navigation() {
                 </Link>
               );
             })}
-            </div>
+            </ExpandableItems>
           </div>
         </div>
       </div>
