@@ -269,6 +269,17 @@ export default function Home() {
               Futures strategies are fully managed — options trade ideas are provided as suggestions only.
               All trading involves risk; past performance is not indicative of future results.
             </p>
+            <p className="mt-4 text-lg font-semibold text-slate-700 dark:text-slate-200">
+              Access our strategies, signals, and trade tracking —{' '}
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent font-extrabold text-xl">
+                FREE
+              </span>
+              , yes{' '}
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent font-extrabold text-xl">
+                FREE
+              </span>
+              .
+            </p>
           </div>
 
           {/* Quick-nav strategy pills */}
