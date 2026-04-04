@@ -125,31 +125,31 @@ function OzCtaMark({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="ozcta-g" x1="6" y1="10" x2="42" y2="38" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#6366F1" />
-          <stop offset="0.5" stopColor="#14B8A6" />
+        <linearGradient id="ozcta-bg" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#4F46E5" />
+          <stop offset="0.45" stopColor="#7C3AED" />
           <stop offset="1" stopColor="#D946EF" />
         </linearGradient>
+        <linearGradient id="ozcta-line" x1="10" y1="32" x2="38" y2="16" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#34D399" />
+          <stop offset="1" stopColor="#FDE68A" />
+        </linearGradient>
       </defs>
-      <rect x="6" y="6" width="36" height="36" rx="10" fill="url(#ozcta-g)" />
-      <path
-        d="M16.5 28.5c0-5.6 4.6-10.2 10.2-10.2 2.2 0 4.2.6 5.9 1.7"
-        stroke="rgba(255,255,255,0.92)"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M31.5 19.5l3 3-3 3"
-        stroke="rgba(255,255,255,0.92)"
-        strokeWidth="3.2"
+      <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#ozcta-bg)" />
+      <rect x="2" y="2" width="44" height="44" rx="12" fill="white" opacity="0.06" />
+      <polyline
+        points="10,32 18,28 22,34 28,18 34,22 38,14"
+        stroke="url(#ozcta-line)"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M15.8 31.2h16.4"
-        stroke="rgba(255,255,255,0.85)"
-        strokeWidth="3.2"
+      <polyline
+        points="34,14 38,14 38,18"
+        stroke="#FDE68A"
+        strokeWidth="2.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
