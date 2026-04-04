@@ -260,15 +260,14 @@ export default function Home() {
           {/* Headline */}
           <div className="mt-6 max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.15]">
-              The{' '}
               <span className="bg-gradient-to-r from-indigo-600 via-teal-500 to-fuchsia-500 dark:from-indigo-400 dark:via-teal-400 dark:to-fuchsia-400 bg-clip-text text-transparent">
                 OzCTA
-              </span>{' '}
-              System
+              </span>
             </h1>
             <p className="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-              Your daily command center — forward-volatility calendars, earnings crush plays,
-              pre-earnings straddles, and trend-following signals, all in one place.
+              A registered Commodity Trading Advisor specialising in actively managed futures accounts.
+              Futures strategies are fully managed — options trade ideas are provided as suggestions only.
+              All trading involves risk; past performance is not indicative of future results.
             </p>
           </div>
 
