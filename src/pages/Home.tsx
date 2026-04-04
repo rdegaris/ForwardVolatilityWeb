@@ -265,7 +265,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              A registered Commodity Trading Advisor specialising in actively managed futures accounts.
+              A NFA (National Futures Association) registered Commodity Trading Advisor specialising in actively managed futures accounts.
               Futures strategies are fully managed — options trade ideas are provided as suggestions only.
               All trading involves risk; past performance is not indicative of future results.
             </p>
