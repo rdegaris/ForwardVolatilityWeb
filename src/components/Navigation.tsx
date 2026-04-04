@@ -80,12 +80,19 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
   },
 };
 
-function getSection(pathname: string): NavSectionKey {
+function getSection(pathname: string): NavSectionKey | null {
   if (pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
   if (pathname.startsWith('/pre-earnings')) return 'preEarnings';
   if (pathname.startsWith('/earnings-crush')) return 'earningsCrush';
-  return 'forward';
+  if (
+    pathname.startsWith('/nasdaq100') ||
+    pathname.startsWith('/midcap400') ||
+    pathname.startsWith('/iv-rankings') ||
+    pathname.startsWith('/calculator') ||
+    pathname.startsWith('/trade-tracker')
+  ) return 'forward';
+  return null;
 }
 
 type NavItem = { label: string; to: string };
@@ -161,9 +168,9 @@ type TopGroup = 'futures' | 'options' | null;
 const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail'];
 const OPTIONS_KEYS: NavSectionKey[] = ['forward', 'earningsCrush', 'preEarnings'];
 
-function getActiveGroup(section: NavSectionKey): TopGroup {
-  if (FUTURES_KEYS.includes(section)) return 'futures';
-  if (OPTIONS_KEYS.includes(section)) return 'options';
+function getActiveGroup(section: NavSectionKey | null): TopGroup {
+  if (section && FUTURES_KEYS.includes(section)) return 'futures';
+  if (section && OPTIONS_KEYS.includes(section)) return 'options';
   return null;
 }
 
@@ -195,7 +202,7 @@ export default function Navigation() {
   const { isAuthenticated, user, logout } = useAuth();
 
   const section = getSection(location.pathname);
-  const accent = ACCENTS[section];
+  const accent = section ? ACCENTS[section] : null;
   const activeGroup = getActiveGroup(section);
 
   const [expanded, setExpanded] = useState<TopGroup>(activeGroup);
@@ -247,7 +254,7 @@ export default function Navigation() {
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  Futures
+                  Futures Strategies
                   <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                   </svg>
@@ -292,7 +299,7 @@ export default function Navigation() {
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  Options
+                  Option Strategies
                   <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                   </svg>
@@ -363,6 +370,7 @@ export default function Navigation() {
         </div>
 
         {/* Sub Navigation (connected to active section via tint + dot rail) */}
+        {section && accent && (
         <div className={`px-4 py-3 border-t ${accent.subBarBorder} ${accent.subBarBg}`}>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
@@ -412,7 +420,7 @@ export default function Navigation() {
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
-              Futures
+              Futures Strategies
               <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
               </svg>
@@ -448,7 +456,7 @@ export default function Navigation() {
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
-              Options
+              Option Strategies
               <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
               </svg>
@@ -478,6 +486,7 @@ export default function Navigation() {
             </ExpandableItems>
           </div>
         </div>
+        )}
       </div>
     </nav>
   );
