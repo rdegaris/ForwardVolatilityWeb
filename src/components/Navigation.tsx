@@ -178,18 +178,18 @@ function ExpandableItems({
   show, children 
 }: { show: boolean; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    if (ref.current) setHeight(ref.current.scrollHeight);
+    if (ref.current) setWidth(ref.current.scrollWidth);
   }, [children]);
 
   return (
     <div
       className="overflow-hidden transition-all duration-300 ease-in-out"
-      style={{ maxHeight: show ? height : 0, opacity: show ? 1 : 0 }}
+      style={{ maxWidth: show ? width : 0, opacity: show ? 1 : 0 }}
     >
-      <div ref={ref} className="flex items-center gap-1">
+      <div ref={ref} className="flex items-center gap-1 whitespace-nowrap">
         {children}
       </div>
     </div>
