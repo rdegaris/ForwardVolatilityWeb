@@ -34,6 +34,10 @@ export function apiCreatePassword(data: {
   return request<AuthResponse>('/create-password', data);
 }
 
+export function apiForgotPassword(data: { email: string }) {
+  return request<{ message: string }>('/forgot-password', data);
+}
+
 export function apiLogin(data: { email: string; password: string }) {
   return request<AuthResponse>('/login', data);
 }

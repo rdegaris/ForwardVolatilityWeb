@@ -75,6 +75,12 @@ export default function Login() {
                 className="w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition"
               />
 
+              <div className="text-right -mt-1">
+                <Link to="/forgot-password" className="text-sm font-medium text-indigo-100/80 hover:text-white hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+
               {error && (
                 <div className="rounded-xl bg-rose-500/20 border border-rose-400/30 px-4 py-3 text-sm text-rose-100 text-center">
                   {error}

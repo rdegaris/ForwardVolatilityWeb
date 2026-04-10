@@ -22,6 +22,7 @@ import FundPerformance from './pages/FundPerformance';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import CreatePassword from './pages/CreatePassword';
+import ForgotPassword from './pages/ForgotPassword';
 import logo from './assets/IMG_5896.jpg';
 import './App.css';
 
@@ -55,6 +56,7 @@ function App() {
             <Route path="/fund" element={<FundPerformance />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/create-password" element={<CreatePassword />} />
           </Routes>
           
