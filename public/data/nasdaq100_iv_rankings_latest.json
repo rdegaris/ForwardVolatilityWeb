@@ -1,69 +1,61 @@
 {
-  "timestamp": "2026-05-05T08:07:03.695298",
-  "date": "2026-05-05",
+  "timestamp": "2026-05-19T08:37:27.918549",
+  "date": "2026-05-19",
   "universe": "NASDAQ 100",
-  "total_tickers": 8,
+  "total_tickers": 7,
   "rankings": [
     {
-      "ticker": "ADBE",
-      "price": 255.77,
-      "iv": 46.857814506430664,
-      "ma_200": 313.12989999999996,
-      "above_ma_200": false,
-      "universe": "NASDAQ 100"
-    },
-    {
-      "ticker": "AVGO",
-      "price": 425.68,
-      "iv": 44.131419929673996,
-      "ma_200": 341.44750000000005,
-      "above_ma_200": true,
-      "universe": "NASDAQ 100"
-    },
-    {
       "ticker": "TSLA",
-      "price": 392.65,
-      "iv": 42.822991882894534,
-      "ma_200": 403.17299999999994,
+      "price": 397.36,
+      "iv": 41.203407498277606,
+      "ma_200": 408.3776499999999,
       "above_ma_200": false,
       "universe": "NASDAQ 100"
     },
     {
-      "ticker": "NVDA",
-      "price": 197.43,
-      "iv": 36.17859094313666,
-      "ma_200": 184.10844999999998,
+      "ticker": "GOOG",
+      "price": 384.92,
+      "iv": 34.323964556943636,
+      "ma_200": 293.22985000000006,
       "above_ma_200": true,
       "universe": "NASDAQ 100"
     },
     {
-      "ticker": "NFLX",
-      "price": 89.05,
-      "iv": 32.113617573166536,
+      "ticker": "GOOGL",
+      "price": 388.09,
+      "iv": 34.08882490625389,
+      "ma_200": 293.3250999999999,
+      "above_ma_200": true,
+      "universe": "NASDAQ 100"
+    },
+    {
+      "ticker": "META",
+      "price": 604.35,
+      "iv": 29.818030934365115,
       "ma_200": null,
       "above_ma_200": null,
       "universe": "NASDAQ 100"
     },
     {
-      "ticker": "META",
-      "price": 602.38,
-      "iv": 30.440677316761654,
-      "ma_200": 677.3163500000003,
-      "above_ma_200": false,
-      "universe": "NASDAQ 100"
-    },
-    {
-      "ticker": "GOOGL",
-      "price": 387.62,
-      "iv": 30.388203153765815,
-      "ma_200": 283.144,
-      "above_ma_200": true,
-      "universe": "NASDAQ 100"
-    },
-    {
       "ticker": "MSFT",
-      "price": 411.3,
-      "iv": 28.222839785545133,
+      "price": 421.16,
+      "iv": 29.29258888194002,
+      "ma_200": null,
+      "above_ma_200": null,
+      "universe": "NASDAQ 100"
+    },
+    {
+      "ticker": "AMZN",
+      "price": 256.05,
+      "iv": 28.58261705865083,
+      "ma_200": null,
+      "above_ma_200": null,
+      "universe": "NASDAQ 100"
+    },
+    {
+      "ticker": "AAPL",
+      "price": 297.17,
+      "iv": 21.699440002221536,
       "ma_200": null,
       "above_ma_200": null,
       "universe": "NASDAQ 100"
