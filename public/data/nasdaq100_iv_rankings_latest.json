@@ -1,29 +1,37 @@
 {
-  "timestamp": "2026-05-20T08:05:58.922042",
-  "date": "2026-05-20",
+  "timestamp": "2026-05-21T09:34:55.144160",
+  "date": "2026-05-21",
   "universe": "NASDAQ 100",
-  "total_tickers": 3,
+  "total_tickers": 4,
   "rankings": [
     {
-      "ticker": "GOOG",
-      "price": 382.18,
-      "iv": 30.990439143373898,
-      "ma_200": 294.16260000000005,
-      "above_ma_200": true,
+      "ticker": "META",
+      "price": 601.04,
+      "iv": 27.7856681409445,
+      "ma_200": null,
+      "above_ma_200": null,
+      "universe": "NASDAQ 100"
+    },
+    {
+      "ticker": "AMZN",
+      "price": 265.12,
+      "iv": 27.511644135436043,
+      "ma_200": null,
+      "above_ma_200": null,
       "universe": "NASDAQ 100"
     },
     {
       "ticker": "MSFT",
-      "price": 415.65,
-      "iv": 28.80298337263558,
+      "price": 416.94,
+      "iv": 26.986005161290965,
       "ma_200": null,
       "above_ma_200": null,
       "universe": "NASDAQ 100"
     },
     {
       "ticker": "AAPL",
-      "price": 299.32,
-      "iv": 22.759333164711215,
+      "price": 303.72,
+      "iv": 20.598774013476376,
       "ma_200": null,
       "above_ma_200": null,
       "universe": "NASDAQ 100"
