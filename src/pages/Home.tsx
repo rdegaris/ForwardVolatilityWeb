@@ -97,6 +97,11 @@ function formatPct(value?: number | null, digits = 1) {
   return `${value.toFixed(digits)}%`;
 }
 
+function formatSignalPrice(value?: number | null, digits = 6) {
+  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  return Number(value.toFixed(digits)).toString();
+}
+
 function safeDateLabel(yyyymmdd?: string | null) {
   if (!yyyymmdd) return '—';
   try {
@@ -483,7 +488,7 @@ export default function Home() {
                           <span className="text-xs font-sans text-slate-500 dark:text-slate-400">{t.side.toUpperCase()}</span>
                         </div>
                         <div className="text-sm text-slate-600 dark:text-slate-300">
-                          Entry {t.entry_stop} · Stop {t.stop_loss}
+                          Entry {formatSignalPrice(t.entry_stop)} · Stop {formatSignalPrice(t.stop_loss)}
                         </div>
                         {t.blocked_reason ? (
                           <div className="text-xs text-rose-600 dark:text-rose-300">Blocked: {t.blocked_reason}</div>
