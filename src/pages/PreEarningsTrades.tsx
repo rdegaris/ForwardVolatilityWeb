@@ -237,7 +237,7 @@ export default function PreEarningsTrades() {
                       </div>
                       <div className="bg-white/5 rounded-lg p-3">
                         <div className="text-xs text-gray-400 mb-1">Cost / Straddle</div>
-                        <div className="font-mono text-sm">{s.cost_basis_per_straddle.toFixed(4)}</div>
+                        <div className="font-mono text-sm">{s.cost_basis_per_straddle.toFixed(2)}</div>
                       </div>
                     </div>
                   </div>

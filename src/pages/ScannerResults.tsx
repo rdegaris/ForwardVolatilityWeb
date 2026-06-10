@@ -504,7 +504,7 @@ export default function ScannerResults() {
                             <div className="flex justify-between border-t border-purple-200 dark:border-purple-700 pt-2 mt-2">
                               <span className="text-gray-600 dark:text-gray-400">Fwd Var (Avg):</span>
                               <span className="font-medium text-gray-900 dark:text-white">
-                                {result.fwd_var_avg.toFixed(4)}
+                                {result.fwd_var_avg.toFixed(2)}
                               </span>
                             </div>
                           )}

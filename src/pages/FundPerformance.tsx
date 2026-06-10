@@ -326,8 +326,8 @@ export default function FundPerformance() {
                     <LineChart data={equityCurve} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
                       <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} interval={Math.max(Math.floor(equityCurve.length / 8), 1)} angle={-30} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} domain={['auto','auto']} tickFormatter={(v: number) => `$${v.toLocaleString()}`} />
-                      <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number, name: string) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, name]} />
+                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} domain={['auto','auto']} tickFormatter={(v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} />
+                      <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number, name: string) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, name]} />
                       <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                       <ReferenceLine y={1000} stroke="#94a3b8" strokeDasharray="4 4" />
                       <Line type="monotone" dataKey="equity" name="OzCTA System" stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#6366f1' }} />
@@ -450,8 +450,8 @@ export default function FundPerformance() {
                     {equityCurve.map((p, i) => (
                       <tr key={i} className="border-b border-slate-100/80 dark:border-slate-800/40 hover:bg-slate-50/50 transition">
                         <td className="py-2 px-3 text-slate-700 dark:text-slate-300">{p.date}</td>
-                        <td className="py-2 px-3 text-right font-mono font-semibold text-indigo-700 dark:text-indigo-300">${p.equity.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                        <td className="py-2 px-3 text-right font-mono text-slate-600 dark:text-slate-400">${p.spx.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                        <td className="py-2 px-3 text-right font-mono font-semibold text-indigo-700 dark:text-indigo-300">${p.equity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td className="py-2 px-3 text-right font-mono text-slate-600 dark:text-slate-400">${p.spx.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                       </tr>
                     ))}
                   </tbody>
