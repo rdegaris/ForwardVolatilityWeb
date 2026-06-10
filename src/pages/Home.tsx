@@ -7,6 +7,7 @@ import type {
   TurtleSignalsPayload,
   TurtleSuggestedTradesPayload,
 } from '../types/turtle';
+import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } from '../types/odid';
 
 /* ------------------------------------------------------------------ */
 /*  Type declarations for each scanner feed                           */
@@ -152,6 +153,9 @@ export default function Home() {
   const [turtleOpen, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
   const [turtleSuggested, setTurtleSuggested] =
     useState<TurtleSuggestedTradesPayload | null>(null);
+  const [odidSignals, setOdidSignals] = useState<OdidSignalsPayload | null>(null);
+  const [odidAlerts, setOdidAlerts] = useState<OdidAlertsPayload | null>(null);
+  const [odidOpen, setOdidOpen] = useState<OdidOpenTradesPayload | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -170,9 +174,12 @@ export default function Home() {
           fetchJson<TurtleSuggestedTradesPayload>('/data/turtle_suggested_latest.json', {
             cache: 'no-store',
           }),
+          fetchJson<OdidSignalsPayload>('/data/odid_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<OdidAlertsPayload>('/data/odid_alerts_latest.json', { cache: 'no-store' }),
+          fetchJson<OdidOpenTradesPayload>('/data/odid_open_trades_latest.json', { cache: 'no-store' }),
         ]);
 
-        const [n100, m400, ec, pe, ts, to2, tSug] = results;
+        const [n100, m400, ec, pe, ts, to2, tSug, odSig, odAlrt, odOpen] = results;
         if (n100.status === 'fulfilled') setNasdaq100(n100.value);
         if (m400.status === 'fulfilled') setMidcap400(m400.value);
         if (ec.status === 'fulfilled') setEarningsCrush(ec.value);
@@ -180,6 +187,9 @@ export default function Home() {
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
+        if (odSig.status === 'fulfilled') setOdidSignals(odSig.value);
+        if (odAlrt.status === 'fulfilled') setOdidAlerts(odAlrt.value);
+        if (odOpen.status === 'fulfilled') setOdidOpen(odOpen.value);
       } finally {
         setLoading(false);
       }
@@ -207,6 +217,9 @@ export default function Home() {
 
   const turtleTriggered = turtleSignals?.triggered || [];
   const turtleTriggeredEligible = turtleTriggered.filter((t) => t.eligible !== false);
+  const odidTriggered = odidSignals?.triggered || [];
+  const odidAlertsCount = odidAlerts?.total_alerts ?? 0;
+  const odidOpenCount = odidOpen?.open_trades?.length ?? 0;
 
   const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -288,7 +301,7 @@ export default function Home() {
           </div>
 
           {/* Quick-nav strategy pills */}
-          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {([
               {
                 label: 'Forward Vol',
@@ -330,6 +343,14 @@ export default function Home() {
                 hover: 'hover:border-orange-300 dark:hover:border-orange-700',
                 text: 'text-orange-700 dark:text-orange-300',
               },
+              {
+                label: 'OD/ID Breakout',
+                desc: 'Range break alerts',
+                to: '/odid',
+                dot: 'bg-cyan-500',
+                hover: 'hover:border-cyan-300 dark:hover:border-cyan-700',
+                text: 'text-cyan-700 dark:text-cyan-300',
+              },
             ]).map((s) => (
               <Link
                 key={s.to}
@@ -348,7 +369,7 @@ export default function Home() {
           </div>
 
           {/* Summary stat bar */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-3">
             <StatCard
               label="Forward Vol Picks"
               value={forwardVolTop.length}
@@ -373,12 +394,18 @@ export default function Home() {
               sub={`${turtleTriggeredEligible.length} eligible`}
               accent="text-fuchsia-700 dark:text-fuchsia-300"
             />
+            <StatCard
+              label="OD/ID Alerts"
+              value={odidAlertsCount}
+              sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
+              accent="text-cyan-700 dark:text-cyan-300"
+            />
           </div>
         </div>
       </div>
 
       {/* ──────────────── STRATEGY DETAIL CARDS (Row 1) ──────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Forward Vol */}
         <div className="rounded-xl shadow-sm border border-indigo-200/60 dark:border-indigo-800/40 bg-gradient-to-br from-white/85 to-indigo-50/35 dark:from-slate-900/55 dark:to-indigo-950/15 backdrop-blur overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-indigo-200/60 dark:border-indigo-800/40 bg-indigo-50/60 dark:bg-indigo-950/25">
@@ -510,6 +537,62 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* OD/ID Breakout */}
+        <div className="rounded-xl shadow-sm border border-cyan-200/60 dark:border-cyan-800/40 bg-gradient-to-br from-white/85 to-cyan-50/30 dark:from-slate-900/55 dark:to-cyan-950/15 backdrop-blur overflow-hidden flex flex-col">
+          <div className="px-6 py-4 border-b border-cyan-200/60 dark:border-cyan-800/40 bg-cyan-50/60 dark:bg-cyan-950/25">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-200">
+                  <span className="h-2 w-2 rounded-full bg-cyan-500" />
+                  OD/ID Breakout
+                </div>
+                <div className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">Outside Day / Inside Day</div>
+              </div>
+              <div className="flex gap-2 flex-wrap justify-end">
+                <Link to="/odid" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-cyan-600 text-white hover:bg-cyan-700 transition">Monitor</Link>
+              </div>
+            </div>
+            <div className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+              Latest: {odidSignals?.date || odidAlerts?.date || odidOpen?.date || '—'}
+            </div>
+          </div>
+
+          <div className="p-6 flex-1">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <StatCard label="Alerts" value={odidAlertsCount} sub={`${odidSignals?.total_armed ?? 0} armed`} accent="text-cyan-700 dark:text-cyan-300" />
+              <StatCard label="Triggered" value={odidTriggered.length} sub={`${odidOpenCount} open positions`} accent="text-cyan-700 dark:text-cyan-300" />
+            </div>
+
+            {odidTriggered.length === 0 ? (
+              <p className="text-slate-500 dark:text-slate-400">No OD/ID close-confirmed breakouts today.</p>
+            ) : (
+              <div className="space-y-2">
+                {odidTriggered.slice(0, 4).map((t, i) => (
+                  <div key={`${t.symbol}-${i}`} className="bg-white/60 dark:bg-slate-950/20 rounded-lg p-4 border border-slate-200/60 dark:border-slate-800/50">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="font-mono font-bold text-slate-900 dark:text-slate-100">
+                          {t.symbol}{' '}
+                          <span className="text-xs font-sans text-slate-500 dark:text-slate-400">{t.side.toUpperCase()}</span>
+                        </div>
+                        <div className="text-sm text-slate-600 dark:text-slate-300">
+                          Entry {formatSignalPrice(t.entry_stop)} · Stop {formatSignalPrice(t.stop_loss)}
+                        </div>
+                        {t.blocked_reason ? (
+                          <div className="text-xs text-rose-600 dark:text-rose-300">Blocked: {t.blocked_reason}</div>
+                        ) : (
+                          <div className="text-xs text-emerald-600 dark:text-emerald-300">Eligible ✓</div>
+                        )}
+                      </div>
+                      <div className="text-right text-xs text-slate-500 dark:text-slate-400 shrink-0">{t.asof}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ──────────────── Row 2: Earnings strategies ──────────────── */}
@@ -638,6 +721,7 @@ export default function Home() {
             { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-700 dark:text-fuchsia-300' },
             { label: 'Trendorama Trades', to: '/turtle/open-trades', color: 'text-fuchsia-700 dark:text-fuchsia-300' },
             { label: 'Grail Trade', to: '/grail', color: 'text-orange-700 dark:text-orange-300' },
+            { label: 'OD/ID Breakout', to: '/odid', color: 'text-cyan-700 dark:text-cyan-300' },
           ]).map((link) => (
             <Link
               key={link.to}

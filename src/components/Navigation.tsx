@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 
-type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail';
+type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid';
 
 type AccentStyle = {
   topActiveText: string;
@@ -78,11 +78,24 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
     subHoverPill: 'hover:bg-orange-100/70 dark:hover:bg-orange-900/30',
     dot: 'bg-orange-500',
   },
+  odid: {
+    topActiveText: 'text-cyan-900 dark:text-cyan-100',
+    topInactiveText: 'text-slate-600 dark:text-slate-300',
+    topHoverText: 'hover:text-cyan-800 dark:hover:text-cyan-200',
+    topActiveUnderline: 'bg-cyan-500',
+    subBarBg: 'bg-cyan-50/70 dark:bg-cyan-950/25',
+    subBarBorder: 'border-cyan-200/70 dark:border-cyan-800/40',
+    subActivePill: 'bg-cyan-600 text-white',
+    subInactivePill: 'text-slate-700 dark:text-slate-200',
+    subHoverPill: 'hover:bg-cyan-100/70 dark:hover:bg-cyan-900/30',
+    dot: 'bg-cyan-500',
+  },
 };
 
 function getSection(pathname: string): NavSectionKey | null {
   if (pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
+  if (pathname.startsWith('/odid')) return 'odid';
   if (pathname.startsWith('/pre-earnings')) return 'preEarnings';
   if (pathname.startsWith('/earnings-crush')) return 'earningsCrush';
   if (
@@ -120,6 +133,9 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   ],
   grail: [
     { label: 'Signals', to: '/grail' },
+  ],
+  odid: [
+    { label: 'Signals', to: '/odid' },
   ],
 };
 
@@ -165,7 +181,7 @@ function OzCtaMark({ className }: { className?: string }) {
 
 type TopGroup = 'futures' | 'options' | null;
 
-const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail'];
+const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid'];
 const OPTIONS_KEYS: NavSectionKey[] = ['forward', 'earningsCrush', 'preEarnings'];
 
 function getActiveGroup(section: NavSectionKey | null): TopGroup {
@@ -265,6 +281,7 @@ export default function Navigation() {
                 {([
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                   { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
+                  { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
                   const isSectionActive = section === item.key;
                   const a = ACCENTS[item.key];
@@ -384,7 +401,9 @@ export default function Navigation() {
                       ? 'Earnings Ramp'
                       : section === 'grail'
                         ? 'Grail Trade'
-                        : 'Trendorama'}
+                        : section === 'odid'
+                          ? 'OD/ID Breakout'
+                          : 'Trendorama'}
               </span>
             </div>
 
@@ -429,6 +448,7 @@ export default function Navigation() {
             {([
               { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
               { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
+              { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
             ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
               const a = ACCENTS[item.key];
