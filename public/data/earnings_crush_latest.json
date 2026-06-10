@@ -1,117 +1,49 @@
 {
-  "timestamp": "2026-06-03T07:16:36.063668",
-  "date": "2026-06-03",
+  "timestamp": "2026-06-10T09:42:26.540599",
+  "date": "2026-06-10",
   "total_scanned": 40,
-  "earnings_found": 3,
+  "earnings_found": 1,
   "opportunities": [
     {
-      "ticker": "AVGO",
-      "price": 482.87,
-      "earnings_date": "2026-06-03",
-      "days_to_earnings": 0,
-      "iv": 145.1,
-      "option_type": "CALL",
-      "trend_bias": "CALL",
-      "ema50": 397.66,
-      "price_vs_ema_pct": 21.37,
-      "expected_move": 46.75,
-      "expected_move_pct": 9.7,
-      "recommendation": "RECOMMENDED",
-      "reason": "High IV, strong positive slope, close to earnings",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": true,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 126.7
-      },
-      "front_iv": 145.1,
-      "back_iv": 64.0,
-      "suggested_trade": {
-        "strike": 480.0,
-        "option_type": "CALL",
-        "sell_expiration": "2026-06-05",
-        "buy_expiration": "2026-07-02",
-        "sell_dte": 2,
-        "buy_dte": 29,
-        "sell_price": 23.38,
-        "buy_price": 36.38,
-        "net_credit": -13.0
-      }
-    },
-    {
-      "ticker": "CRWD",
-      "price": 752.33,
-      "earnings_date": "2026-06-03",
-      "days_to_earnings": 0,
-      "iv": 156.7,
-      "option_type": "CALL",
-      "trend_bias": "CALL",
-      "ema50": 543.64,
-      "price_vs_ema_pct": 38.39,
-      "expected_move": 75.25,
-      "expected_move_pct": 10.0,
-      "recommendation": "RECOMMENDED",
-      "reason": "High IV, strong positive slope, close to earnings",
-      "criteria": {
-        "avg_volume": true,
-        "iv30_rv30": true,
-        "ts_slope_positive": true,
-        "iv_slope_pct": 124.0
-      },
-      "front_iv": 156.7,
-      "back_iv": 69.9,
-      "suggested_trade": {
-        "strike": 750.0,
-        "option_type": "CALL",
-        "sell_expiration": "2026-06-05",
-        "buy_expiration": "2026-07-02",
-        "sell_dte": 2,
-        "buy_dte": 29,
-        "sell_price": 37.62,
-        "buy_price": 60.98,
-        "net_credit": -23.35
-      }
-    },
-    {
       "ticker": "ADBE",
-      "price": 254.15,
+      "price": 236.11,
       "earnings_date": "2026-06-11",
-      "days_to_earnings": 8,
-      "iv": 81.7,
-      "option_type": "CALL",
-      "trend_bias": "CALL",
-      "ema50": null,
-      "price_vs_ema_pct": 0,
-      "expected_move": 31.4,
-      "expected_move_pct": 12.4,
-      "recommendation": "AVOID",
-      "reason": "Too far from earnings (8 days > 7)",
+      "days_to_earnings": 1,
+      "iv": 148.7,
+      "option_type": "PUT",
+      "trend_bias": "PUT",
+      "ema50": 249.23,
+      "price_vs_ema_pct": -5.26,
+      "expected_move": 24.95,
+      "expected_move_pct": 10.6,
+      "recommendation": "RECOMMENDED",
+      "reason": "High IV, strong positive slope, close to earnings",
       "criteria": {
         "avg_volume": true,
         "iv30_rv30": true,
         "ts_slope_positive": true,
-        "iv_slope_pct": 48.6
+        "iv_slope_pct": 159.2
       },
-      "front_iv": 81.7,
-      "back_iv": 55.0,
+      "front_iv": 148.7,
+      "back_iv": 57.4,
       "suggested_trade": {
-        "strike": 250.0,
-        "option_type": "CALL",
+        "strike": 240.0,
+        "option_type": "PUT",
         "sell_expiration": "2026-06-12",
         "buy_expiration": "2026-07-10",
-        "sell_dte": 9,
-        "buy_dte": 37,
-        "sell_price": 15.7,
-        "buy_price": 20.35,
-        "net_credit": -4.65
+        "sell_dte": 2,
+        "buy_dte": 30,
+        "sell_price": 12.47,
+        "buy_price": 16.95,
+        "net_credit": -4.48
       }
     }
   ],
   "summary": {
-    "total_recommended": 2,
+    "total_recommended": 1,
     "total_consider": 0,
-    "total_avoid": 1,
-    "avg_iv": 127.8,
-    "avg_expected_move": 10.7
+    "total_avoid": 0,
+    "avg_iv": 148.7,
+    "avg_expected_move": 10.6
   }
 }
