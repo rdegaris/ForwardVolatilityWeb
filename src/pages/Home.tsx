@@ -245,28 +245,28 @@ export default function Home() {
           {/* Key Metrics Bar */}
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
-              label="Trendorama Triggers"
+              label="Trendorama"
               value={turtleTriggered.length}
               sub={`${turtleTriggeredEligible.length} eligible breakouts`}
               accent="text-fuchsia-400"
               badge="Donchian"
             />
             <StatCard
-              label="Bradman Cycle Signals"
+              label="Bradman Cycle"
               value={taylorSignals?.total_scanned ?? 0}
               sub={`${bradmanActionable.length} actionable setups`}
               accent="text-amber-400"
               badge="3-Day"
             />
             <StatCard
-              label="YouHaveChosenWisely Signals"
+              label="YouHaveChosenWisely"
               value={grailSignals?.total_triggered ?? 0}
               sub={`${grailTriggered.length} active setups`}
               accent="text-orange-400"
               badge="EMA Pullback"
             />
             <StatCard
-              label="Too Hot / Too Cold Alerts"
+              label="Too Hot / Too Cold"
               value={odidAlertsCount}
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
               accent="text-cyan-400"
