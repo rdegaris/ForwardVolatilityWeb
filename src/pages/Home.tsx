@@ -170,11 +170,11 @@ export default function Home() {
           </div>
 
           {/* Headline */}
-          <div className="mt-8 text-center max-w-4xl mx-auto">
+          <div className="mt-8 text-center max-w-5xl mx-auto">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-100 leading-tight">
               Oz<span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">CTA</span>
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
+            <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-300 font-medium whitespace-nowrap overflow-x-auto">
               National Futures Association (NFA) registered Commodity Trading Advisor specializing in actively managed futures.
             </p>
             <div className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-slate-950/60 px-5 py-2.5 border border-slate-800 text-sm font-semibold text-slate-200">
