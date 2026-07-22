@@ -127,19 +127,19 @@ export default function OdidBreakout() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-cyan-500">
-            OD/ID Breakout Monitor
+            Too Hot / Too Cold Monitor
           </h1>
           <p className="text-gray-300">
-            Outside Day / Inside Day breakout scanner for futures. Alerts are generated for confirmed close breakouts and near-level armed setups.
+            Too Hot / Too Cold breakout scanner for futures. Alerts are generated for confirmed close breakouts and near-level armed setups.
           </p>
 
           <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
             <div className="font-semibold text-gray-200 mb-1">Pattern logic</div>
             <ul className="space-y-1">
-              <li>Outside Day: higher high and lower low than the previous session.</li>
-              <li>Inside Day: next day is fully inside the Outside Day range.</li>
-              <li>Breakout confirmation: close above OD high (long) or below OD low (short).</li>
-              <li>Initial stop reference: opposite side of the Outside Day range.</li>
+              <li>Too Hot (Outside Day): higher high and lower low than the previous session.</li>
+              <li>Too Cold (Inside Day): next day is fully inside the previous range.</li>
+              <li>Breakout confirmation: close above high (long) or below low (short).</li>
+              <li>Initial stop reference: opposite side of the range.</li>
             </ul>
           </div>
 

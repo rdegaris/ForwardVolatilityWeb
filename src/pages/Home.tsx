@@ -191,7 +191,7 @@ export default function Home() {
                 text: 'text-fuchsia-300',
               },
               {
-                label: 'Taylor Cycle',
+                label: 'Bradman Cycle',
                 desc: '3-Day cycle setups',
                 to: '/taylor',
                 dot: 'bg-amber-500',
@@ -199,7 +199,7 @@ export default function Home() {
                 text: 'text-amber-300',
               },
               {
-                label: 'Grail Trade',
+                label: 'YouHaveChosenWisely',
                 desc: 'EMA pullbacks',
                 to: '/grail',
                 dot: 'bg-orange-500',
@@ -207,7 +207,7 @@ export default function Home() {
                 text: 'text-orange-300',
               },
               {
-                label: 'OD/ID Breakout',
+                label: 'Too Hot / Too Cold',
                 desc: 'Range break alerts',
                 to: '/odid',
                 dot: 'bg-cyan-500',
@@ -240,19 +240,19 @@ export default function Home() {
               accent="text-fuchsia-300"
             />
             <StatCard
-              label="Taylor Cycle Signals"
+              label="Bradman Cycle Signals"
               value={taylorSignals?.total_scanned ?? 0}
               sub={`${taylorActionable.length} actionable setups`}
               accent="text-amber-300"
             />
             <StatCard
-              label="Grail Signals"
+              label="YouHaveChosenWisely Signals"
               value={grailSignals?.total_triggered ?? 0}
               sub={`${grailTriggered.length} active setups`}
               accent="text-orange-300"
             />
             <StatCard
-              label="OD/ID Alerts"
+              label="Too Hot / Too Cold Alerts"
               value={odidAlertsCount}
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
               accent="text-cyan-300"
@@ -315,14 +315,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Taylor Cycle */}
+        {/* Bradman Cycle */}
         <div className="rounded-xl shadow-sm border border-amber-900/40 bg-gradient-to-br from-slate-900/80 to-amber-950/20 backdrop-blur overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-amber-900/40 bg-amber-950/30">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300">
                   <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  Taylor Trading Technique
+                  Bradman Trading Technique
                 </div>
                 <div className="mt-1 text-lg font-bold text-slate-100">3-Day Cycle Trade Recommendations</div>
               </div>
@@ -374,20 +374,20 @@ export default function Home() {
 
             <div className="mt-2">
               <Link to="/taylor" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">
-                Explore Taylor Book Levels →
+                Explore Bradman Book Levels →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Grail Trade */}
+        {/* YouHaveChosenWisely */}
         <div className="rounded-xl shadow-sm border border-orange-900/40 bg-gradient-to-br from-slate-900/80 to-orange-950/20 backdrop-blur overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-orange-900/40 bg-orange-950/30">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-300">
                   <span className="h-2 w-2 rounded-full bg-orange-500" />
-                  Grail Trade
+                  YouHaveChosenWisely
                 </div>
                 <div className="mt-1 text-lg font-bold text-slate-100">EMA Pullback Recommendations</div>
               </div>
@@ -406,13 +406,13 @@ export default function Home() {
               <StatCard label="Active Setups" value={grailSignals?.total_triggered ?? 0} sub="high-ADX trend pullbacks" accent="text-orange-300" />
             </div>
 
-            {/* Active Grail Trade Recommendations List */}
+            {/* Active YouHaveChosenWisely Trade Recommendations List */}
             <div className="space-y-2 mb-4">
               <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active Grail Recommendations:
+                Active YouHaveChosenWisely Recommendations:
               </div>
               {grailTriggered.length === 0 ? (
-                <p className="text-slate-400 text-xs italic">No active Grail pullback signals today.</p>
+                <p className="text-slate-400 text-xs italic">No active pullback signals today.</p>
               ) : (
                 grailTriggered.slice(0, 3).map((sig) => (
                   <div key={sig.symbol} className="bg-slate-950/40 rounded-lg p-3 border border-slate-800 flex items-center justify-between text-xs">
@@ -440,22 +440,22 @@ export default function Home() {
 
             <div className="mt-2">
               <Link to="/grail" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">
-                View Grail Signals →
+                View Signals →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* OD/ID Breakout */}
+        {/* Too Hot / Too Cold */}
         <div className="rounded-xl shadow-sm border border-cyan-900/40 bg-gradient-to-br from-slate-900/80 to-cyan-950/20 backdrop-blur overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-cyan-900/40 bg-cyan-950/30">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-300">
                   <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                  OD/ID Breakout
+                  Too Hot / Too Cold
                 </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">Outside Day / Inside Day</div>
+                <div className="mt-1 text-lg font-bold text-slate-100">Range Breakout Signals</div>
               </div>
               <div className="flex gap-2 flex-wrap justify-end">
                 <Link to="/odid" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-cyan-600 text-white hover:bg-cyan-700 transition">Monitor</Link>
@@ -473,7 +473,7 @@ export default function Home() {
             </div>
 
             {odidTriggered.length === 0 ? (
-              <p className="text-slate-400">No OD/ID close-confirmed breakouts today.</p>
+              <p className="text-slate-400">No Too Hot / Too Cold close-confirmed breakouts today.</p>
             ) : (
               <div className="space-y-2">
                 {odidTriggered.slice(0, 3).map((t, i) => (
@@ -505,9 +505,9 @@ export default function Home() {
           {[
             { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-300' },
             { label: 'Trendorama Trades', to: '/turtle/open-trades', color: 'text-fuchsia-300' },
-            { label: 'Taylor Cycle Signals', to: '/taylor', color: 'text-amber-300' },
-            { label: 'Grail Trade', to: '/grail', color: 'text-orange-300' },
-            { label: 'OD/ID Breakout', to: '/odid', color: 'text-cyan-300' },
+            { label: 'Bradman Cycle Signals', to: '/taylor', color: 'text-amber-300' },
+            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300' },
+            { label: 'Too Hot / Too Cold', to: '/odid', color: 'text-cyan-300' },
           ].map((link) => (
             <Link
               key={link.to}

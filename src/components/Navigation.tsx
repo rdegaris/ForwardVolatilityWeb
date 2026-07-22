@@ -292,9 +292,9 @@ export default function Navigation() {
               <ExpandableItems show={expanded === 'futures'}>
                 {([
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
-                  { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
-                  { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
-                  { key: 'taylor' as const, label: 'Taylor Cycle', to: '/taylor' },
+                  { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
+                  { key: 'odid' as const, label: 'Too Hot / Too Cold', to: '/odid' },
+                  { key: 'taylor' as const, label: 'Bradman Cycle', to: '/taylor' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
                   const isSectionActive = section === item.key;
                   const a = ACCENTS[item.key];
@@ -414,9 +414,9 @@ export default function Navigation() {
             <ExpandableItems show={expanded === 'futures'}>
             {([
               { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
-              { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
-              { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
-              { key: 'taylor' as const, label: 'Taylor Cycle', to: '/taylor' },
+              { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
+              { key: 'odid' as const, label: 'Too Hot / Too Cold', to: '/odid' },
+              { key: 'taylor' as const, label: 'Bradman Cycle', to: '/taylor' },
             ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
               const a = ACCENTS[item.key];

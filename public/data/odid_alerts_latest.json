@@ -1,20 +1,61 @@
 {
-  "timestamp": "2026-06-10T18:40:51Z",
-  "date": "2026-06-10",
-  "system": "odid",
-  "total_alerts": 1,
+  "timestamp": "2026-07-22T20:48:20.292549Z",
+  "date": "2026-07-22",
+  "total_alerts": 6,
   "alerts": [
     {
       "symbol": "ES",
-      "severity": "medium",
-      "type": "setup_armed",
-      "side": "short",
-      "asof": "2026-06-10",
-      "message": "OD/ID setup armed, 0.82% from SHORT breakout level 7247.2500",
-      "entry_stop": 7247.25,
-      "stop_loss": 7491.0,
-      "eligible": true,
-      "blocked_reason": null
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 7554.0,
+      "low_trigger": 7473.0,
+      "last_close": 7545.25,
+      "severity": "high"
+    },
+    {
+      "symbol": "NQ",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 29364.75,
+      "low_trigger": 28701.0,
+      "last_close": 29198.0,
+      "severity": "high"
+    },
+    {
+      "symbol": "RTY",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 2999.8,
+      "low_trigger": 2951.1001,
+      "last_close": 2972.3,
+      "severity": "high"
+    },
+    {
+      "symbol": "YM",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 52590.0,
+      "low_trigger": 52035.0,
+      "last_close": 52499.0,
+      "severity": "medium"
+    },
+    {
+      "symbol": "GC",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 4071.1001,
+      "low_trigger": 3999.7,
+      "last_close": 4139.2998,
+      "severity": "high"
+    },
+    {
+      "symbol": "NG",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-21",
+      "high_trigger": 2.906,
+      "low_trigger": 2.839,
+      "last_close": 2.944,
+      "severity": "medium"
     }
   ]
 }

@@ -57,7 +57,7 @@ export default function TaylorTrade() {
           <div className="absolute inset-0 rounded-full border-2 border-slate-700" />
           <div className="absolute inset-0 rounded-full border-2 border-t-amber-500 animate-spin" />
         </div>
-        <p className="text-slate-400 font-medium">Loading Taylor Cycle Signals…</p>
+        <p className="text-slate-400 font-medium">Loading Bradman Cycle Signals…</p>
       </div>
     );
   }
@@ -73,13 +73,13 @@ export default function TaylorTrade() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-400">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              Taylor Book Method · 3-Day Cycle
+              Bradman Book Method · 3-Day Cycle
             </div>
             <h1 className="mt-3 text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
-              Taylor Trading Technique
+              Bradman Trading Technique
             </h1>
             <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-              Classic futures 3-day cycle strategy developed by George Douglass Taylor in the 1950s. Identifies natural market rhythm: 
+              Classic futures 3-day cycle strategy. Identifies natural market rhythm: 
               <strong className="text-emerald-400 font-bold"> Buy Day</strong> (Support entry) → 
               <strong className="text-amber-400 font-bold"> Sell Day</strong> (Target exit) → 
               <strong className="text-rose-400 font-bold"> Sell Short Day</strong> (Resistance short entry).

@@ -91,15 +91,14 @@ export default function GrailTrade() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-500">
-            Holy Grail Trade
+            YouHaveChosenWisely
           </h1>
           <p className="text-gray-300">
-            From <em>Street Smarts</em> by Linda Raschke & Larry Connors. 
             ADX above {data.adx_threshold} indicates a strong trend; enter on pullback to 20 EMA.
           </p>
 
           <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
-            <div className="font-semibold text-gray-200 mb-1">How to trade the Holy Grail</div>
+            <div className="font-semibold text-gray-200 mb-1">How to trade YouHaveChosenWisely</div>
             <ul className="space-y-1">
               <li><strong>Long setup:</strong> ADX &gt; {data.adx_threshold}, +DI &gt; -DI (uptrend), price pulls back to 20 EMA.</li>
               <li><strong>Short setup:</strong> ADX &gt; {data.adx_threshold}, -DI &gt; +DI (downtrend), price rallies to 20 EMA.</li>
@@ -116,7 +115,7 @@ export default function GrailTrade() {
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">System</div>
-              <div className="text-xl font-bold text-amber-300">Holy Grail</div>
+              <div className="text-xl font-bold text-amber-300">YouHaveChosenWisely</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Triggered</div>

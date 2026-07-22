@@ -1,0 +1,36 @@
+name: Daily Futures Strategy Scan
+
+on:
+  schedule:
+    # Runs Monday through Friday at 22:00 UTC (5:00 PM EST / 2:00 PM PST)
+    - cron: '0 22 * * 1-5'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
+
+jobs:
+  scan_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Futures Strategy Scanner Suite
+        run: |
+          python scripts/daily_futures_scan.py
+
+      - name: Commit and Push Updated Signals
+        run: |
+          git config --global user.name "OzCTA Automation"
+          git config --global user.email "bot@ozcta.com"
+          git add public/data/*.json
+          if git diff --staged --quiet; then
+            echo "No signal changes today."
+          else
+            git commit -m "Auto-update daily futures signals [skip ci]"
+            git push origin main
+          fi
