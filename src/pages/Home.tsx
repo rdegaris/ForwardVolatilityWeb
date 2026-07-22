@@ -23,7 +23,7 @@ function formatSignalPrice(value?: number | null, digits = 2) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Reusable tiny components                                          */
+/*  Reusable StatCard                                                 */
 /* ------------------------------------------------------------------ */
 
 function StatCard({
@@ -31,23 +31,32 @@ function StatCard({
   value,
   sub,
   accent,
+  badge,
 }: {
   label: string;
   value: string | number;
   sub?: string;
   accent: string;
+  badge?: string;
 }) {
   return (
-    <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800 shadow-sm hover:shadow-md transition">
-      <div className="text-xs font-medium text-slate-400">{label}</div>
-      <div className={`mt-1 text-2xl font-bold ${accent}`}>{value}</div>
-      {sub && <div className="text-[11px] text-slate-400">{sub}</div>}
+    <div className="relative overflow-hidden rounded-2xl bg-slate-900/60 p-5 border border-slate-800/80 backdrop-blur-md shadow-lg hover:border-slate-700/80 transition-all duration-300 group">
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</div>
+        {badge && (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+            {badge}
+          </span>
+        )}
+      </div>
+      <div className={`mt-2 text-3xl font-black tracking-tight ${accent}`}>{value}</div>
+      {sub && <div className="mt-1 text-xs text-slate-400 font-medium">{sub}</div>}
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Homepage                                                          */
+/*  Homepage Dashboard                                                */
 /* ------------------------------------------------------------------ */
 
 export default function Home() {
@@ -97,13 +106,13 @@ export default function Home() {
   const odidAlertsCount = odidAlerts?.total_alerts ?? 0;
   const odidOpenCount = odidOpen?.open_trades?.length ?? 0;
 
-  // Filter top actionable Taylor signals (Buy Long / Sell Short)
-  const taylorActionable = useMemo(() => {
+  // Actionable Bradman signals
+  const bradmanActionable = useMemo(() => {
     if (!taylorSignals?.signals) return [];
     return taylorSignals.signals.filter((s) => s.action !== 'WATCH');
   }, [taylorSignals]);
 
-  // Filter top Grail signals
+  // Actionable YouHaveChosenWisely signals
   const grailTriggered = useMemo(() => {
     if (!grailSignals?.signals) return [];
     return grailSignals.signals.filter((s) => s.eligible !== false && s.side !== 'none');
@@ -125,255 +134,250 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-80 gap-4">
-        <div className="relative h-12 w-12">
-          <div className="absolute inset-0 rounded-full border-2 border-slate-700" />
-          <div className="absolute inset-0 rounded-full border-2 border-t-amber-500 animate-spin" />
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+        <div className="relative h-14 w-14">
+          <div className="absolute inset-0 rounded-full border-2 border-slate-800" />
+          <div className="absolute inset-0 rounded-full border-2 border-t-emerald-400 border-r-amber-400 animate-spin" />
         </div>
-        <p className="text-slate-400 font-medium">Loading dashboard…</p>
+        <p className="text-slate-400 font-medium tracking-wide">Initializing Quantitative Dashboard…</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* ──────────────── HERO ──────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-900/80 shadow-xl border border-slate-800 backdrop-blur">
+    <div className="space-y-10 bg-grid-pattern pb-12">
+      {/* ──────────────── HERO TERMINAL BANNER ──────────────── */}
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 shadow-2xl border border-slate-800/90 backdrop-blur-xl">
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
-          <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
-          <div className="absolute -bottom-24 left-1/2 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+          <div className="absolute top-1/2 -right-20 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
+          <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
         </div>
 
-        <div className="relative px-6 py-8 md:px-10 md:py-10">
-          {/* Top row: badge + date */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs font-semibold text-slate-300 shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Futures Dashboard
-              <span className="h-1 w-1 rounded-full bg-slate-600" />
-              {todayShort}
+        <div className="relative px-6 py-10 md:px-12 md:py-12">
+          {/* Top Status Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/60 pb-6">
+            <div className="inline-flex items-center gap-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-300 shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              SYSTEMATIC FUTURES DESK
+              <span className="text-slate-500">|</span>
+              <span className="font-mono text-slate-300">{todayShort}</span>
             </div>
-            <div className="text-sm text-slate-400">{todayStr}</div>
+            <div className="text-xs font-semibold tracking-wide text-slate-400">{todayStr}</div>
           </div>
 
           {/* Headline */}
-          <div className="mt-6 w-full text-center">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-100 leading-[1.15]">
+          <div className="mt-8 text-center max-w-4xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-100 leading-tight">
               Oz<span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">CTA</span>
             </h1>
-            <p className="mt-3 text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              A NFA (National Futures Association) registered Commodity Trading Advisor specialising in actively managed futures & currency accounts.
-              All trading involves risk; past performance is not indicative of future results.
+            <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
+              National Futures Association (NFA) registered Commodity Trading Advisor specializing in actively managed futures & FX strategies.
             </p>
-            <p className="mt-4 text-lg font-semibold text-slate-200">
-              Access our futures strategies, signals, and trade tracking —{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent font-extrabold text-xl">
-                FREE
+            <div className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-slate-950/60 px-5 py-2.5 border border-slate-800 text-sm font-semibold text-slate-200">
+              ⚡ Access our futures strategy signals, trade models, and daily scans —{' '}
+              <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent font-black tracking-wider text-base">
+                100% FREE
               </span>
-              , yes{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent font-extrabold text-xl">
-                FREE
-              </span>
-              .
-            </p>
+            </div>
           </div>
 
-          {/* Quick-nav strategy pills */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Quick-Nav Strategy Cards */}
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
                 label: 'Trendorama',
-                desc: 'Breakout signals',
+                desc: '55-Day Donchian Breakouts',
                 to: '/turtle',
                 dot: 'bg-fuchsia-500',
-                hover: 'hover:border-fuchsia-700',
+                border: 'hover:border-fuchsia-500/50 hover:shadow-fuchsia-500/10',
                 text: 'text-fuchsia-300',
+                bg: 'from-fuchsia-950/40 to-slate-900/40',
               },
               {
                 label: 'Bradman Cycle',
-                desc: '3-Day cycle setups',
+                desc: '3-Day Natural Rhythms',
                 to: '/taylor',
                 dot: 'bg-amber-500',
-                hover: 'hover:border-amber-700',
+                border: 'hover:border-amber-500/50 hover:shadow-amber-500/10',
                 text: 'text-amber-300',
+                bg: 'from-amber-950/40 to-slate-900/40',
               },
               {
                 label: 'YouHaveChosenWisely',
-                desc: 'EMA pullbacks',
+                desc: 'EMA Trend Pullbacks',
                 to: '/grail',
                 dot: 'bg-orange-500',
-                hover: 'hover:border-orange-700',
+                border: 'hover:border-orange-500/50 hover:shadow-orange-500/10',
                 text: 'text-orange-300',
+                bg: 'from-orange-950/40 to-slate-900/40',
               },
               {
                 label: 'Too Hot / Too Cold',
-                desc: 'Range break alerts',
+                desc: 'Range Breakout Confirmations',
                 to: '/odid',
                 dot: 'bg-cyan-500',
-                hover: 'hover:border-cyan-700',
+                border: 'hover:border-cyan-500/50 hover:shadow-cyan-500/10',
                 text: 'text-cyan-300',
+                bg: 'from-cyan-950/40 to-slate-900/40',
               },
             ].map((s) => (
               <Link
                 key={s.to}
                 to={s.to}
-                className={`group rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 shadow-sm hover:shadow-md transition-all ${s.hover}`}
+                className={`group rounded-2xl border border-slate-800 bg-gradient-to-br ${s.bg} p-4 shadow-lg transition-all duration-300 ${s.border}`}
               >
                 <div className="flex items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${s.dot}`} />
-                  <span className={`text-xs font-semibold uppercase tracking-wider ${s.text}`}>{s.label}</span>
+                  <span className={`text-xs font-extrabold uppercase tracking-wider ${s.text}`}>{s.label}</span>
                 </div>
-                <div className="mt-1 text-sm font-bold text-slate-100 group-hover:translate-x-0.5 transition-transform">
-                  {s.desc} →
+                <div className="mt-2 text-sm font-bold text-slate-100 group-hover:translate-x-1 transition-transform flex items-center justify-between">
+                  <span>{s.desc}</span>
+                  <span className="text-slate-400 group-hover:text-slate-100 transition-colors">→</span>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* Summary stat bar */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Key Metrics Bar */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               label="Trendorama Triggers"
               value={turtleTriggered.length}
-              sub={`${turtleTriggeredEligible.length} eligible`}
-              accent="text-fuchsia-300"
+              sub={`${turtleTriggeredEligible.length} eligible breakouts`}
+              accent="text-fuchsia-400"
+              badge="Donchian"
             />
             <StatCard
               label="Bradman Cycle Signals"
               value={taylorSignals?.total_scanned ?? 0}
-              sub={`${taylorActionable.length} actionable setups`}
-              accent="text-amber-300"
+              sub={`${bradmanActionable.length} actionable setups`}
+              accent="text-amber-400"
+              badge="3-Day"
             />
             <StatCard
               label="YouHaveChosenWisely Signals"
               value={grailSignals?.total_triggered ?? 0}
               sub={`${grailTriggered.length} active setups`}
-              accent="text-orange-300"
+              accent="text-orange-400"
+              badge="EMA Pullback"
             />
             <StatCard
               label="Too Hot / Too Cold Alerts"
               value={odidAlertsCount}
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
-              accent="text-cyan-300"
+              accent="text-cyan-400"
+              badge="Range Break"
             />
           </div>
         </div>
       </div>
 
-      {/* ──────────────── STRATEGY DETAIL CARDS ──────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* ──────────────── STRATEGY DETAIL GRID ──────────────── */}
+      <div className="grid lg:grid-cols-2 gap-8">
         {/* Trendorama */}
-        <div className="rounded-xl shadow-sm border border-fuchsia-900/40 bg-gradient-to-br from-slate-900/80 to-fuchsia-950/20 backdrop-blur overflow-hidden flex flex-col">
-          <div className="px-6 py-4 border-b border-fuchsia-900/40 bg-fuchsia-950/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-fuchsia-300">
-                  <span className="h-2 w-2 rounded-full bg-fuchsia-500" />
-                  Trendorama
-                </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">Breakout signals</div>
+        <div className="rounded-3xl shadow-xl border border-fuchsia-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-fuchsia-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-fuchsia">
+          <div className="px-6 py-5 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-fuchsia-300">
+                <span className="h-2.5 w-2.5 rounded-full bg-fuchsia-500" />
+                Trendorama
               </div>
-              <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/turtle" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-fuchsia-600 text-white hover:bg-fuchsia-700 transition">Signals</Link>
-                <Link to="/turtle/open-trades" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-slate-950/40 text-fuchsia-300 border border-fuchsia-800/40 hover:bg-fuchsia-900/30 transition">Trades</Link>
-              </div>
+              <div className="mt-1 text-xl font-bold text-slate-100">55-Day Donchian Breakout Signals</div>
             </div>
-            <div className="mt-1.5 text-sm text-slate-400">
-              Latest: {turtleSignals?.date || turtleOpen?.date || turtleSuggested?.date || '—'}
-            </div>
-          </div>
-
-          <div className="p-6 flex-1">
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <StatCard label="Triggered" value={turtleTriggered.length} sub={`${turtleTriggeredEligible.length} eligible`} accent="text-fuchsia-300" />
-              <StatCard label="Open Trades" value={turtleOpen?.open_trades?.length ?? 0} sub="front-month positions" accent="text-fuchsia-300" />
-            </div>
-
-            {turtleTriggered.length === 0 ? (
-              <p className="text-slate-400">No breakouts triggered on the latest bar.</p>
-            ) : (
-              <div className="space-y-2">
-                {turtleTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/40 rounded-lg p-4 border border-slate-800">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="font-mono font-bold text-slate-100">
-                          {t.symbol}{' '}
-                          <span className="text-xs font-sans text-slate-400">{t.side.toUpperCase()}</span>
-                        </div>
-                        <div className="text-sm text-slate-300">
-                          Entry {formatSignalPrice(t.entry_stop)} · Stop {formatSignalPrice(t.stop_loss)}
-                        </div>
-                      </div>
-                      <div className="text-right text-xs text-slate-400 shrink-0">{t.asof}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Bradman Cycle */}
-        <div className="rounded-xl shadow-sm border border-amber-900/40 bg-gradient-to-br from-slate-900/80 to-amber-950/20 backdrop-blur overflow-hidden flex flex-col">
-          <div className="px-6 py-4 border-b border-amber-900/40 bg-amber-950/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300">
-                  <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  Bradman Trading Technique
-                </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">3-Day Cycle Trade Recommendations</div>
-              </div>
-              <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/taylor" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">View All Signals</Link>
-              </div>
-            </div>
-            <div className="mt-1.5 text-sm text-slate-400">
-              Latest: {taylorSignals?.date || '—'}
+            <div className="flex gap-2">
+              <Link to="/turtle" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
+              <Link to="/turtle/open-trades" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-950/60 text-fuchsia-300 border border-fuchsia-800/50 hover:bg-fuchsia-900/40 transition">Trades</Link>
             </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <StatCard label="Buy Days" value={taylorSignals?.summary?.buy_day_count ?? 0} sub="Support entry" accent="text-emerald-400" />
-              <StatCard label="Sell Days" value={taylorSignals?.summary?.sell_day_count ?? 0} sub="Target exit" accent="text-amber-400" />
-              <StatCard label="Short Days" value={taylorSignals?.summary?.sell_short_day_count ?? 0} sub="Resistance entry" accent="text-rose-400" />
+            <div className="space-y-3 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Active Breakout Setups:
+              </div>
+              {turtleTriggered.length === 0 ? (
+                <p className="text-slate-400 text-sm italic">No breakouts triggered on the latest bar.</p>
+              ) : (
+                turtleTriggered.slice(0, 3).map((t, i) => (
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between">
+                    <div>
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                        <span>{t.symbol}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                          t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                        }`}>
+                          {t.side.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-300 mt-1 font-mono">
+                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
+                      </div>
+                    </div>
+                    <div className="text-right text-[11px] font-mono text-slate-400">{t.asof}</div>
+                  </div>
+                ))
+              )}
             </div>
 
-            {/* Active Trade Recommendations List */}
-            <div className="space-y-2 mb-4">
+            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Date: <strong className="text-slate-200">{turtleSignals?.date || '—'}</strong></span>
+              <Link to="/turtle" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
+                View Full Donchian Levels →
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Bradman Cycle */}
+        <div className="rounded-3xl shadow-xl border border-amber-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-amber-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-amber">
+          <div className="px-6 py-5 border-b border-amber-900/40 bg-amber-950/30 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-amber-300">
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                Bradman Trading Technique
+              </div>
+              <div className="mt-1 text-xl font-bold text-slate-100">3-Day Cycle Recommendations</div>
+            </div>
+            <Link to="/taylor" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-500 transition shadow-md">View All Signals</Link>
+          </div>
+
+          <div className="p-6 flex-1 flex flex-col justify-between">
+            <div className="space-y-3 mb-4">
               <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Active Cycle Recommendations:
               </div>
-              {(taylorActionable.length > 0 ? taylorActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
-                <div key={sig.symbol} className="bg-slate-950/40 rounded-lg p-3 border border-slate-800 flex items-center justify-between text-xs">
+              {(bradmanActionable.length > 0 ? bradmanActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
+                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
                   <div>
-                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2">
+                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                       <span>{sig.symbol}</span>
                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
-                        sig.action === 'BUY_LONG' ? 'bg-emerald-500/20 text-emerald-300' :
-                        sig.action === 'SELL_SHORT' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'
+                        sig.action === 'BUY_LONG' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                        sig.action === 'SELL_SHORT' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                       }`}>
                         {sig.action.replace('_', ' ')}
                       </span>
                     </div>
-                    <div className="text-slate-400 mt-1">
-                      Entry: <span className="font-mono font-bold text-slate-200">${formatSignalPrice(sig.entry_target)}</span> · 
-                      Target: <span className="font-mono font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span> · 
-                      Stop: <span className="font-mono font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                    <div className="text-slate-300 mt-1 font-mono">
+                      Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_target)}</span> · 
+                      Target: <span className="font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span> · 
+                      Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
                     </div>
                   </div>
-                  <div className="text-right font-mono text-slate-400 shrink-0">
+                  <div className="text-right font-mono text-amber-400 font-bold shrink-0">
                     Day {sig.cycle_day}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-2">
-              <Link to="/taylor" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">
+            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Date: <strong className="text-slate-200">{taylorSignals?.date || '—'}</strong></span>
+              <Link to="/taylor" className="font-semibold text-amber-300 hover:text-amber-200 transition">
                 Explore Bradman Book Levels →
               </Link>
             </div>
@@ -381,56 +385,43 @@ export default function Home() {
         </div>
 
         {/* YouHaveChosenWisely */}
-        <div className="rounded-xl shadow-sm border border-orange-900/40 bg-gradient-to-br from-slate-900/80 to-orange-950/20 backdrop-blur overflow-hidden flex flex-col">
-          <div className="px-6 py-4 border-b border-orange-900/40 bg-orange-950/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-300">
-                  <span className="h-2 w-2 rounded-full bg-orange-500" />
-                  YouHaveChosenWisely
-                </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">EMA Pullback Recommendations</div>
+        <div className="rounded-3xl shadow-xl border border-orange-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-orange-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-orange">
+          <div className="px-6 py-5 border-b border-orange-900/40 bg-orange-950/30 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-orange-300">
+                <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
+                YouHaveChosenWisely
               </div>
-              <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/grail" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">View All Signals</Link>
-              </div>
+              <div className="mt-1 text-xl font-bold text-slate-100">EMA Trend Pullback Signals</div>
             </div>
-            <div className="mt-1.5 text-sm text-slate-400">
-              Latest: {grailSignals?.date || '—'}
-            </div>
+            <Link to="/grail" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 text-white hover:bg-orange-500 transition shadow-md">View Signals</Link>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <StatCard label="Scanned" value={grailSignals?.total_scanned ?? 0} sub="futures contracts" accent="text-orange-300" />
-              <StatCard label="Active Setups" value={grailSignals?.total_triggered ?? 0} sub="high-ADX trend pullbacks" accent="text-orange-300" />
-            </div>
-
-            {/* Active YouHaveChosenWisely Trade Recommendations List */}
-            <div className="space-y-2 mb-4">
+            <div className="space-y-3 mb-4">
               <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active YouHaveChosenWisely Recommendations:
+                Active Pullback Recommendations:
               </div>
               {grailTriggered.length === 0 ? (
-                <p className="text-slate-400 text-xs italic">No active pullback signals today.</p>
+                <p className="text-slate-400 text-sm italic">No active EMA pullback signals today.</p>
               ) : (
                 grailTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/40 rounded-lg p-3 border border-slate-800 flex items-center justify-between text-xs">
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
                     <div>
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2">
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                         <span>{sig.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
-                          sig.side === 'long' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
+                          sig.side === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                         }`}>
                           {sig.side.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-slate-400 mt-1">
-                        Entry: <span className="font-mono font-bold text-slate-200">${formatSignalPrice(sig.entry_zone)}</span> · 
-                        Stop: <span className="font-mono font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                      <div className="text-slate-300 mt-1 font-mono">
+                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_zone)}</span> · 
+                        Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
                       </div>
                     </div>
-                    <div className="text-right text-[11px] text-orange-400 font-mono shrink-0">
+                    <div className="text-right text-xs text-orange-400 font-mono font-bold shrink-0">
                       ADX {sig.adx.toFixed(0)}
                     </div>
                   </div>
@@ -438,83 +429,84 @@ export default function Home() {
               )}
             </div>
 
-            <div className="mt-2">
-              <Link to="/grail" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">
-                View Signals →
+            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Date: <strong className="text-slate-200">{grailSignals?.date || '—'}</strong></span>
+              <Link to="/grail" className="font-semibold text-orange-300 hover:text-orange-200 transition">
+                View ADX & EMA Signals →
               </Link>
             </div>
           </div>
         </div>
 
         {/* Too Hot / Too Cold */}
-        <div className="rounded-xl shadow-sm border border-cyan-900/40 bg-gradient-to-br from-slate-900/80 to-cyan-950/20 backdrop-blur overflow-hidden flex flex-col">
-          <div className="px-6 py-4 border-b border-cyan-900/40 bg-cyan-950/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-300">
-                  <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                  Too Hot / Too Cold
-                </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">Range Breakout Signals</div>
+        <div className="rounded-3xl shadow-xl border border-cyan-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-cyan-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-cyan">
+          <div className="px-6 py-5 border-b border-cyan-900/40 bg-cyan-950/30 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
+                <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
+                Too Hot / Too Cold
               </div>
-              <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/odid" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-cyan-600 text-white hover:bg-cyan-700 transition">Monitor</Link>
-              </div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Range Breakout Monitor</div>
             </div>
-            <div className="mt-1.5 text-sm text-slate-400">
-              Latest: {odidSignals?.date || odidAlerts?.date || odidOpen?.date || '—'}
-            </div>
+            <Link to="/odid" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white hover:bg-cyan-500 transition shadow-md">Monitor</Link>
           </div>
 
-          <div className="p-6 flex-1">
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <StatCard label="Alerts" value={odidAlertsCount} sub={`${odidSignals?.total_armed ?? 0} armed`} accent="text-cyan-300" />
-              <StatCard label="Triggered" value={odidTriggered.length} sub={`${odidOpenCount} open positions`} accent="text-cyan-300" />
+          <div className="p-6 flex-1 flex flex-col justify-between">
+            <div className="space-y-3 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Confirmed Breakout Triggers:
+              </div>
+              {odidTriggered.length === 0 ? (
+                <p className="text-slate-400 text-sm italic">No close-confirmed range breakouts today.</p>
+              ) : (
+                odidTriggered.slice(0, 3).map((t, i) => (
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                        <span>{t.symbol}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                          t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                        }`}>
+                          {t.side.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="text-slate-300 mt-1 font-mono">
+                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
+                      </div>
+                    </div>
+                    <div className="text-right text-[11px] font-mono text-slate-400">{t.asof}</div>
+                  </div>
+                ))
+              )}
             </div>
 
-            {odidTriggered.length === 0 ? (
-              <p className="text-slate-400">No Too Hot / Too Cold close-confirmed breakouts today.</p>
-            ) : (
-              <div className="space-y-2">
-                {odidTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/40 rounded-lg p-4 border border-slate-800">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="font-mono font-bold text-slate-100">
-                          {t.symbol}{' '}
-                          <span className="text-xs font-sans text-slate-400">{t.side.toUpperCase()}</span>
-                        </div>
-                        <div className="text-sm text-slate-300">
-                          Entry {formatSignalPrice(t.entry_stop)} · Stop {formatSignalPrice(t.stop_loss)}
-                        </div>
-                      </div>
-                      <div className="text-right text-xs text-slate-400 shrink-0">{t.asof}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Date: <strong className="text-slate-200">{odidSignals?.date || '—'}</strong></span>
+              <Link to="/odid" className="font-semibold text-cyan-300 hover:text-cyan-200 transition">
+                Monitor Armed Setups →
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ──────────────── QUICK LINKS FOOTER ──────────────── */}
-      <div className="rounded-xl bg-slate-900/80 shadow-sm border border-slate-800 backdrop-blur p-6">
-        <h2 className="text-lg font-bold text-slate-100 mb-4">Quick Links</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="rounded-3xl bg-slate-900/80 p-8 border border-slate-800/90 backdrop-blur-xl shadow-xl">
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Access Navigation</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-300' },
-            { label: 'Trendorama Trades', to: '/turtle/open-trades', color: 'text-fuchsia-300' },
-            { label: 'Bradman Cycle Signals', to: '/taylor', color: 'text-amber-300' },
-            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300' },
-            { label: 'Too Hot / Too Cold', to: '/odid', color: 'text-cyan-300' },
+            { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
+            { label: 'Bradman Cycle Signals', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
+            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
+            { label: 'Too Hot / Too Cold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
+            { label: 'Open Positions Tracker', to: '/turtle/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
           ].map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`rounded-lg border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm font-semibold ${link.color} hover:shadow-md transition`}
+              className={`rounded-2xl border bg-slate-950/60 px-5 py-4 text-sm font-bold ${link.color} shadow-md transition-all duration-300 hover:translate-y-0.5`}
             >
-              {link.label}
+              {link.label} →
             </Link>
           ))}
         </div>
