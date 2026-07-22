@@ -18,6 +18,7 @@ import TurtleTriggers from './pages/TurtleTriggers';
 import TurtleSignals from './pages/TurtleSignals';
 import GrailTrade from './pages/GrailTrade';
 import OdidBreakout from './pages/OdidBreakout';
+import TaylorTrade from './pages/TaylorTrade';
 import Home from './pages/Home';
 import FundPerformance from './pages/FundPerformance';
 import Register from './pages/Register';
@@ -30,7 +31,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-8 px-4">
+      <div className="min-h-screen bg-slate-950 text-slate-100 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <Navigation />
           
@@ -46,6 +47,7 @@ function App() {
 
             <Route path="/grail" element={<ProtectedRoute><GrailTrade /></ProtectedRoute>} />
             <Route path="/odid" element={<ProtectedRoute><OdidBreakout /></ProtectedRoute>} />
+            <Route path="/taylor" element={<ProtectedRoute><TaylorTrade /></ProtectedRoute>} />
 
             <Route path="/pre-earnings" element={<ProtectedRoute><PreEarningsStraddles /></ProtectedRoute>} />
             <Route path="/pre-earnings/open-trades" element={<ProtectedRoute><PreEarningsTrades /></ProtectedRoute>} />
@@ -87,7 +89,7 @@ function App() {
           </a>
 
           <a
-            href="https://discord.gg/dZYZCeAbK"
+            href="https://discord.gg/W3G2TpJQvP"
             target="_blank"
             rel="noopener noreferrer"
             className="group"

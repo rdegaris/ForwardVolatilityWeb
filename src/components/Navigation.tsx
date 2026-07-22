@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 
-type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid';
+type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid' | 'taylor';
 
 type AccentStyle = {
   topActiveText: string;
@@ -90,9 +90,22 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
     subHoverPill: 'hover:bg-cyan-100/70 dark:hover:bg-cyan-900/30',
     dot: 'bg-cyan-500',
   },
+  taylor: {
+    topActiveText: 'text-amber-100',
+    topInactiveText: 'text-slate-300',
+    topHoverText: 'hover:text-amber-200',
+    topActiveUnderline: 'bg-amber-500',
+    subBarBg: 'bg-amber-950/25',
+    subBarBorder: 'border-amber-800/40',
+    subActivePill: 'bg-amber-600 text-white',
+    subInactivePill: 'text-slate-200',
+    subHoverPill: 'hover:bg-amber-900/30',
+    dot: 'bg-amber-500',
+  },
 };
 
 function getSection(pathname: string): NavSectionKey | null {
+  if (pathname.startsWith('/taylor')) return 'taylor';
   if (pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
   if (pathname.startsWith('/odid')) return 'odid';
@@ -137,56 +150,56 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   odid: [
     { label: 'Signals', to: '/odid' },
   ],
+  taylor: [
+    { label: 'Signals', to: '/taylor' },
+  ],
 };
 
 function OzCtaMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 48 48"
+      viewBox="0 0 64 64"
       aria-hidden="true"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="ozcta-bg" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#4F46E5" />
-          <stop offset="0.45" stopColor="#7C3AED" />
-          <stop offset="1" stopColor="#D946EF" />
+        <linearGradient id="ozcta-shield" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0F172A" />
+          <stop offset="0.5" stopColor="#1E1B4B" />
+          <stop offset="1" stopColor="#090D16" />
         </linearGradient>
-        <linearGradient id="ozcta-line" x1="10" y1="32" x2="38" y2="16" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#34D399" />
-          <stop offset="1" stopColor="#FDE68A" />
+        <linearGradient id="ozcta-glow" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#10B981" />
+          <stop offset="0.5" stopColor="#06B6D4" />
+          <stop offset="1" stopColor="#F59E0B" />
+        </linearGradient>
+        <linearGradient id="ozcta-gold" x1="12" y1="44" x2="48" y2="12" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F59E0B" />
+          <stop offset="0.5" stopColor="#10B981" />
+          <stop offset="1" stopColor="#38BDF8" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#ozcta-bg)" />
-      <rect x="2" y="2" width="44" height="44" rx="12" fill="white" opacity="0.06" />
-      <polyline
-        points="10,32 18,28 22,34 28,18 34,22 38,14"
-        stroke="url(#ozcta-line)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <polyline
-        points="34,14 38,14 38,18"
-        stroke="#FDE68A"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      
+      <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#ozcta-shield)" stroke="url(#ozcta-glow)" strokeWidth="1.5" strokeOpacity="0.4" />
+      <line x1="16" y1="18" x2="16" y2="46" stroke="#334155" strokeWidth="1" strokeDasharray="2 2" />
+      <line x1="48" y1="18" x2="48" y2="46" stroke="#334155" strokeWidth="1" strokeDasharray="2 2" />
+      <rect x="14" y="24" width="4" height="12" rx="1" fill="#10B981" opacity="0.6" />
+      <rect x="46" y="20" width="4" height="14" rx="1" fill="#F59E0B" opacity="0.6" />
+      <path d="M14 42 L24 34 L32 40 L46 18" stroke="url(#ozcta-gold)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M38 18 H46 V26" stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="46" cy="18" r="3.5" fill="#F59E0B" />
     </svg>
   );
 }
 
-type TopGroup = 'futures' | 'options' | null;
+type TopGroup = 'futures' | null;
 
 const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid'];
-const OPTIONS_KEYS: NavSectionKey[] = ['forward', 'earningsCrush', 'preEarnings'];
 
 function getActiveGroup(section: NavSectionKey | null): TopGroup {
   if (section && FUTURES_KEYS.includes(section)) return 'futures';
-  if (section && OPTIONS_KEYS.includes(section)) return 'options';
   return null;
 }
 
@@ -235,26 +248,25 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white/90 dark:bg-slate-900/60 shadow-md mb-8 rounded-xl overflow-hidden border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
+    <nav className="bg-slate-900/90 shadow-xl mb-8 rounded-xl overflow-hidden border border-slate-800/80 backdrop-blur">
       <div className="max-w-7xl mx-auto">
         {/* Top Level Navigation */}
-        <div className="flex items-center justify-between px-4 h-16 border-b border-slate-200/70 dark:border-slate-800/60">
+        <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800/80">
           <div className="flex items-center gap-6">
             <Link
               to="/"
               aria-label="OzCTA"
-              className="group inline-flex items-center gap-2 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-100/70 dark:hover:bg-slate-800/40"
+              className="group inline-flex items-center gap-2.5 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-800/50"
             >
               <span className="relative">
-                <OzCtaMark className="h-8 w-8 drop-shadow-sm" />
-                <span className="pointer-events-none absolute inset-0 rounded-[12px] ring-1 ring-white/25" />
+                <OzCtaMark className="h-9 w-9 drop-shadow-md transition-transform duration-300 group-hover:scale-105" />
               </span>
               <span className="leading-tight">
-                <span className="block text-lg font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
-                  OzCTA
+                <span className="block text-xl font-black tracking-tight text-slate-100">
+                  Oz<span className="bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">CTA</span>
                 </span>
-                <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
-                  Commodity Trading Advisor
+                <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                  Futures & Forex Advisor
                 </span>
               </span>
             </Link>
@@ -282,52 +294,7 @@ export default function Navigation() {
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                   { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
                   { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
-                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
-                  const isSectionActive = section === item.key;
-                  const a = ACCENTS[item.key];
-                  return (
-                    <Link
-                      key={item.key}
-                      to={item.to}
-                      className={`relative px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                        isSectionActive
-                          ? `${a.topActiveText} bg-white/80 dark:bg-slate-800/60 shadow-sm`
-                          : `text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30`
-                      }`}
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span className={`h-1.5 w-1.5 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-30'}`} />
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </ExpandableItems>
-
-              <div className="h-5 w-px bg-slate-200/60 dark:bg-slate-700/40 mx-1" />
-
-              {/* ── Options ── */}
-              <button
-                onClick={() => toggleGroup('options')}
-                className={`relative px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all duration-200 ${
-                  expanded === 'options'
-                    ? 'bg-indigo-600/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 ring-1 ring-indigo-500/30'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
-                }`}
-              >
-                <span className="flex items-center gap-2">
-                  Option Strategies
-                  <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                  </svg>
-                </span>
-              </button>
-
-              <ExpandableItems show={expanded === 'options'}>
-                {([
-                  { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
-                  { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-                  { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
+                  { key: 'taylor' as const, label: 'Taylor Cycle', to: '/taylor' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
                   const isSectionActive = section === item.key;
                   const a = ACCENTS[item.key];
@@ -449,43 +416,7 @@ export default function Navigation() {
               { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
               { key: 'grail' as const, label: 'Grail Trade', to: '/grail' },
               { key: 'odid' as const, label: 'OD/ID Breakout', to: '/odid' },
-            ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
-              const isSectionActive = section === item.key;
-              const a = ACCENTS[item.key];
-              return (
-                <Link
-                  key={item.key}
-                  to={item.to}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors border border-slate-200/60 dark:border-slate-800/60 ${
-                    isSectionActive
-                      ? `${a.subActivePill}`
-                      : `${a.topInactiveText} ${a.topHoverText} bg-white/60 dark:bg-slate-950/20`
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-            </ExpandableItems>
-
-            <button
-              onClick={() => toggleGroup('options')}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
-                expanded === 'options'
-                  ? 'bg-indigo-600/10 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
-                  : 'text-slate-500 dark:text-slate-400'
-              }`}
-            >
-              Option Strategies
-              <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'options' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <ExpandableItems show={expanded === 'options'}>
-            {([
-              { key: 'forward' as const, label: 'Forward Vol', to: '/trade-tracker' },
-              { key: 'earningsCrush' as const, label: 'Earnings Crush', to: '/earnings-crush' },
-              { key: 'preEarnings' as const, label: 'Earnings Ramp', to: '/pre-earnings' },
+              { key: 'taylor' as const, label: 'Taylor Cycle', to: '/taylor' },
             ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
               const a = ACCENTS[item.key];

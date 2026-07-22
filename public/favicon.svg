@@ -1,31 +1,27 @@
-<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4F46E5"/>
-      <stop offset="0.45" stop-color="#7C3AED"/>
-      <stop offset="1" stop-color="#D946EF"/>
+    <linearGradient id="ozcta-shield" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.5" stop-color="#1E1B4B"/>
+      <stop offset="1" stop-color="#090D16"/>
     </linearGradient>
-    <linearGradient id="line" x1="10" y1="32" x2="38" y2="16" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#34D399"/>
-      <stop offset="1" stop-color="#FDE68A"/>
+    <linearGradient id="ozcta-glow" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10B981"/>
+      <stop offset="0.5" stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="ozcta-gold" x1="12" y1="44" x2="48" y2="12" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F59E0B"/>
+      <stop offset="0.5" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#38BDF8"/>
     </linearGradient>
   </defs>
-  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#bg)"/>
-  <rect x="2" y="2" width="44" height="44" rx="12" fill="white" opacity="0.06"/>
-  <polyline
-    points="10,32 18,28 22,34 28,18 34,22 38,14"
-    stroke="url(#line)"
-    stroke-width="3.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-  <polyline
-    points="34,14 38,14 38,18"
-    stroke="#FDE68A"
-    stroke-width="3"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#ozcta-shield)" stroke="url(#ozcta-glow)" stroke-width="1.5" stroke-opacity="0.4"/>
+  <line x1="16" y1="18" x2="16" y2="46" stroke="#334155" stroke-width="1" stroke-dasharray="2 2"/>
+  <line x1="48" y1="18" x2="48" y2="46" stroke="#334155" stroke-width="1" stroke-dasharray="2 2"/>
+  <rect x="14" y="24" width="4" height="12" rx="1" fill="#10B981" opacity="0.6"/>
+  <rect x="46" y="20" width="4" height="14" rx="1" fill="#F59E0B" opacity="0.6"/>
+  <path d="M14 42 L24 34 L32 40 L46 18" stroke="url(#ozcta-gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 18 H46 V26" stroke="#38BDF8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="46" cy="18" r="3.5" fill="#F59E0B"/>
 </svg>
