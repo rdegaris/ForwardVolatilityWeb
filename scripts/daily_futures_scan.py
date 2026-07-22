@@ -339,7 +339,7 @@ def analyze_trendorama(bars: List[Bar], symbol: str) -> Tuple[dict, Optional[dic
             "entry_stop": round(long_entry, 4),
             "stop_loss": round(long_entry - 2 * N, 4),
             "eligible": True,
-            "notes": "55-day upside breakout hit on latest bar",
+            "notes": "Donchian upside breakout hit on latest bar",
         }
     elif short_trig:
         trig = {
@@ -350,7 +350,7 @@ def analyze_trendorama(bars: List[Bar], symbol: str) -> Tuple[dict, Optional[dic
             "entry_stop": round(short_entry, 4),
             "stop_loss": round(short_entry + 2 * N, 4),
             "eligible": True,
-            "notes": "55-day downside breakout hit on latest bar",
+            "notes": "Donchian downside breakout hit on latest bar",
         }
 
     return row, trig

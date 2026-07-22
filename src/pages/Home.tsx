@@ -190,7 +190,7 @@ export default function Home() {
             {[
               {
                 label: 'Trendorama',
-                desc: '55-Day Donchian Breakouts',
+                desc: 'Donchian Breakouts',
                 to: '/turtle',
                 dot: 'bg-fuchsia-500',
                 border: 'hover:border-fuchsia-500/50 hover:shadow-fuchsia-500/10',
@@ -286,7 +286,7 @@ export default function Home() {
                 <span className="h-2.5 w-2.5 rounded-full bg-fuchsia-500" />
                 Trendorama
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">55-Day Donchian Breakout Signals</div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Donchian Breakout Signals</div>
             </div>
             <div className="flex gap-2">
               <Link to="/turtle" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
