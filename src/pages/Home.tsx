@@ -263,7 +263,7 @@ export default function Home() {
               value={grailSignals?.total_triggered ?? 0}
               sub={`${grailTriggered.length} active setups`}
               accent="text-orange-400"
-              badge="EMA Pullback"
+              badge="EMA"
             />
             <StatCard
               label="TooHot TooCold"
