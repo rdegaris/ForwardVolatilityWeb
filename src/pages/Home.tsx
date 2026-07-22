@@ -216,7 +216,7 @@ export default function Home() {
                 bg: 'from-orange-950/40 to-slate-900/40',
               },
               {
-                label: 'TooHotTooCold',
+                label: 'TooHot TooCold',
                 desc: 'Range Breakout Confirmations',
                 to: '/odid',
                 dot: 'bg-cyan-500',
@@ -266,7 +266,7 @@ export default function Home() {
               badge="EMA Pullback"
             />
             <StatCard
-              label="TooHotTooCold"
+              label="TooHot TooCold"
               value={odidAlertsCount}
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
               accent="text-cyan-400"
@@ -438,13 +438,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* TooHotTooCold */}
+        {/* TooHot TooCold */}
         <div className="rounded-3xl shadow-xl border border-cyan-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-cyan-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-cyan">
           <div className="px-6 py-5 border-b border-cyan-900/40 bg-cyan-950/30 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
                 <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
-                TooHotTooCold
+                TooHot TooCold
               </div>
               <div className="mt-1 text-xl font-bold text-slate-100">Range Breakout Monitor</div>
             </div>
@@ -498,7 +498,7 @@ export default function Home() {
             { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
             { label: 'Bradman Cycle Signals', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
             { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
-            { label: 'TooHotTooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
+            { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
             { label: 'Open Positions Tracker', to: '/turtle/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
           ].map((link) => (
             <Link
