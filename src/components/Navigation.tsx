@@ -266,7 +266,7 @@ export default function Navigation() {
                   Oz<span className="bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">CTA</span>
                 </span>
                 <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                  Futures & Forex Advisor
+                  Commodity Trading Advisor
                 </span>
               </span>
             </Link>
