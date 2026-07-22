@@ -1,0 +1,34 @@
+{
+  "Comment": "Add SPF and DMARC records for ozcta.com SES email deliverability",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "ozcta.com.",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "\"google-site-verification=he84dWB9lAkd_fUW0UcwltOvnSMrVo0EqiMDbAGwQvA\""
+          },
+          {
+            "Value": "\"v=spf1 include:amazonses.com ~all\""
+          }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_dmarc.ozcta.com.",
+        "Type": "TXT",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "\"v=DMARC1; p=none;\""
+          }
+        ]
+      }
+    }
+  ]
+}

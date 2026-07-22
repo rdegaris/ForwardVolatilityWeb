@@ -9,111 +9,17 @@ import type {
 } from '../types/turtle';
 import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } from '../types/odid';
 import type { TaylorSignalsPayload } from '../types/taylor';
-
-/* ------------------------------------------------------------------ */
-/*  Type declarations for each scanner feed                           */
-/* ------------------------------------------------------------------ */
-
-type ForwardVolOpportunity = {
-  ticker: string;
-  price: number;
-  best_ff: number;
-  expiry1: string;
-  expiry2: string;
-  dte1: number;
-  dte2: number;
-  next_earnings?: string | null;
-  trade_details?: {
-    spread_type: string;
-    strike: number;
-    net_debit: number;
-    ff_display: number;
-    typical_case: number;
-    typical_case_pct: number;
-  };
-};
-
-type ForwardVolScan = {
-  date: string;
-  timestamp: string;
-  opportunities: ForwardVolOpportunity[];
-};
-
-type EarningsCrushOpportunity = {
-  ticker: string;
-  price: number;
-  earnings_date: string;
-  days_to_earnings: number;
-  iv: number;
-  expected_move_pct: number;
-  recommendation: string;
-  suggested_trade?: {
-    strike: number;
-    sell_expiration: string;
-    buy_expiration: string;
-    net_credit?: number;
-  };
-};
-
-type EarningsCrushScan = {
-  date: string;
-  timestamp: string;
-  total_scanned?: number;
-  opportunities: EarningsCrushOpportunity[];
-};
-
-type PreEarningsStraddleOpportunity = {
-  ticker: string;
-  price: number;
-  earnings_date: string;
-  days_to_earnings: number;
-  expiry: string;
-  expiry_dte: number;
-  expiry_is_monthly: boolean;
-  strike: number;
-  implied_move_pct: number;
-  recommendation: string;
-};
-
-type PreEarningsStraddlesScan = {
-  date: string;
-  timestamp: string;
-  universe_size: number;
-  earnings_found: number;
-  candidates_scanned: number;
-  opportunities: PreEarningsStraddleOpportunity[];
-  summary?: {
-    total_opportunities: number;
-    total_candidate: number;
-    total_watch: number;
-    total_pass: number;
-  };
-};
+import type { GrailSignalsPayload } from '../types/grail';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
 /* ------------------------------------------------------------------ */
 
-function formatPct(value?: number | null, digits = 1) {
+function formatSignalPrice(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
-  return `${value.toFixed(digits)}%`;
-}
-
-function formatSignalPrice(value?: number | null, digits = 6) {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
-  return Number(value.toFixed(digits)).toString();
-}
-
-function safeDateLabel(yyyymmdd?: string | null) {
-  if (!yyyymmdd) return '—';
-  try {
-    return new Date(yyyymmdd + 'T12:00:00').toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  } catch {
-    return yyyymmdd;
-  }
+  if (Math.abs(value) >= 1000) return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (Math.abs(value) < 2) return value.toFixed(4);
+  return value.toFixed(digits);
 }
 
 /* ------------------------------------------------------------------ */
@@ -132,10 +38,10 @@ function StatCard({
   accent: string;
 }) {
   return (
-    <div className="bg-white/60 dark:bg-slate-950/20 rounded-xl p-4 border border-slate-200/60 dark:border-slate-800/50 shadow-sm hover:shadow-md transition">
-      <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</div>
+    <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800 shadow-sm hover:shadow-md transition">
+      <div className="text-xs font-medium text-slate-400">{label}</div>
       <div className={`mt-1 text-2xl font-bold ${accent}`}>{value}</div>
-      {sub && <div className="text-[11px] text-slate-500 dark:text-slate-400">{sub}</div>}
+      {sub && <div className="text-[11px] text-slate-400">{sub}</div>}
     </div>
   );
 }
@@ -153,6 +59,7 @@ export default function Home() {
   const [odidAlerts, setOdidAlerts] = useState<OdidAlertsPayload | null>(null);
   const [odidOpen, setOdidOpen] = useState<OdidOpenTradesPayload | null>(null);
   const [taylorSignals, setTaylorSignals] = useState<TaylorSignalsPayload | null>(null);
+  const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -165,9 +72,10 @@ export default function Home() {
           fetchJson<OdidAlertsPayload>('/data/odid_alerts_latest.json', { cache: 'no-store' }),
           fetchJson<OdidOpenTradesPayload>('/data/odid_open_trades_latest.json', { cache: 'no-store' }),
           fetchJson<TaylorSignalsPayload>('/data/taylor_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<GrailSignalsPayload>('/data/grail_signals_latest.json', { cache: 'no-store' }),
         ]);
 
-        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay] = results;
+        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr] = results;
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
@@ -175,6 +83,7 @@ export default function Home() {
         if (odAlrt.status === 'fulfilled') setOdidAlerts(odAlrt.value);
         if (odOpen.status === 'fulfilled') setOdidOpen(odOpen.value);
         if (tay.status === 'fulfilled') setTaylorSignals(tay.value);
+        if (gr.status === 'fulfilled') setGrailSignals(gr.value);
       } finally {
         setLoading(false);
       }
@@ -187,6 +96,18 @@ export default function Home() {
   const odidTriggered = odidSignals?.triggered || [];
   const odidAlertsCount = odidAlerts?.total_alerts ?? 0;
   const odidOpenCount = odidOpen?.open_trades?.length ?? 0;
+
+  // Filter top actionable Taylor signals (Buy Long / Sell Short)
+  const taylorActionable = useMemo(() => {
+    if (!taylorSignals?.signals) return [];
+    return taylorSignals.signals.filter((s) => s.action !== 'WATCH');
+  }, [taylorSignals]);
+
+  // Filter top Grail signals
+  const grailTriggered = useMemo(() => {
+    if (!grailSignals?.signals) return [];
+    return grailSignals.signals.filter((s) => s.eligible !== false && s.side !== 'none');
+  }, [grailSignals]);
 
   const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -201,10 +122,6 @@ export default function Home() {
     day: 'numeric',
     timeZone: 'America/Los_Angeles',
   });
-
-  /* ------------------------------------------------------------------ */
-  /*  Render                                                            */
-  /* ------------------------------------------------------------------ */
 
   if (loading) {
     return (
@@ -274,6 +191,14 @@ export default function Home() {
                 text: 'text-fuchsia-300',
               },
               {
+                label: 'Taylor Cycle',
+                desc: '3-Day cycle setups',
+                to: '/taylor',
+                dot: 'bg-amber-500',
+                hover: 'hover:border-amber-700',
+                text: 'text-amber-300',
+              },
+              {
                 label: 'Grail Trade',
                 desc: 'EMA pullbacks',
                 to: '/grail',
@@ -288,14 +213,6 @@ export default function Home() {
                 dot: 'bg-cyan-500',
                 hover: 'hover:border-cyan-700',
                 text: 'text-cyan-300',
-              },
-              {
-                label: 'Taylor Cycle',
-                desc: '3-Day cycle setups',
-                to: '/taylor',
-                dot: 'bg-amber-500',
-                hover: 'hover:border-amber-700',
-                text: 'text-amber-300',
               },
             ].map((s) => (
               <Link
@@ -315,7 +232,7 @@ export default function Home() {
           </div>
 
           {/* Summary stat bar */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard
               label="Trendorama Triggers"
               value={turtleTriggered.length}
@@ -323,16 +240,22 @@ export default function Home() {
               accent="text-fuchsia-300"
             />
             <StatCard
+              label="Taylor Cycle Signals"
+              value={taylorSignals?.total_scanned ?? 0}
+              sub={`${taylorActionable.length} actionable setups`}
+              accent="text-amber-300"
+            />
+            <StatCard
+              label="Grail Signals"
+              value={grailSignals?.total_triggered ?? 0}
+              sub={`${grailTriggered.length} active setups`}
+              accent="text-orange-300"
+            />
+            <StatCard
               label="OD/ID Alerts"
               value={odidAlertsCount}
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
               accent="text-cyan-300"
-            />
-            <StatCard
-              label="Taylor Cycle Signals"
-              value={taylorSignals?.total_scanned ?? 0}
-              sub={`${taylorSignals?.summary?.buy_day_count ?? 0} Buy Days · ${taylorSignals?.summary?.sell_short_day_count ?? 0} Short Days`}
-              accent="text-amber-300"
             />
           </div>
         </div>
@@ -401,10 +324,10 @@ export default function Home() {
                   <span className="h-2 w-2 rounded-full bg-amber-500" />
                   Taylor Trading Technique
                 </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">3-Day Cycle Support/Resistance</div>
+                <div className="mt-1 text-lg font-bold text-slate-100">3-Day Cycle Trade Recommendations</div>
               </div>
               <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/taylor" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">View Signals</Link>
+                <Link to="/taylor" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">View All Signals</Link>
               </div>
             </div>
             <div className="mt-1.5 text-sm text-slate-400">
@@ -418,10 +341,38 @@ export default function Home() {
               <StatCard label="Sell Days" value={taylorSignals?.summary?.sell_day_count ?? 0} sub="Target exit" accent="text-amber-400" />
               <StatCard label="Short Days" value={taylorSignals?.summary?.sell_short_day_count ?? 0} sub="Resistance entry" accent="text-rose-400" />
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Calculates George Douglass Taylor's 3-day market cycle rhythm (*Buy Day* → *Sell Day* → *Sell Short Day*) with daily Buying & Selling Objective target levels for futures and commodities.
-            </p>
-            <div className="mt-4">
+
+            {/* Active Trade Recommendations List */}
+            <div className="space-y-2 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Active Cycle Recommendations:
+              </div>
+              {(taylorActionable.length > 0 ? taylorActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
+                <div key={sig.symbol} className="bg-slate-950/40 rounded-lg p-3 border border-slate-800 flex items-center justify-between text-xs">
+                  <div>
+                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2">
+                      <span>{sig.symbol}</span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
+                        sig.action === 'BUY_LONG' ? 'bg-emerald-500/20 text-emerald-300' :
+                        sig.action === 'SELL_SHORT' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'
+                      }`}>
+                        {sig.action.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div className="text-slate-400 mt-1">
+                      Entry: <span className="font-mono font-bold text-slate-200">${formatSignalPrice(sig.entry_target)}</span> · 
+                      Target: <span className="font-mono font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span> · 
+                      Stop: <span className="font-mono font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                    </div>
+                  </div>
+                  <div className="text-right font-mono text-slate-400 shrink-0">
+                    Day {sig.cycle_day}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-2">
               <Link to="/taylor" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition">
                 Explore Taylor Book Levels →
               </Link>
@@ -438,22 +389,56 @@ export default function Home() {
                   <span className="h-2 w-2 rounded-full bg-orange-500" />
                   Grail Trade
                 </div>
-                <div className="mt-1 text-lg font-bold text-slate-100">EMA pullbacks</div>
+                <div className="mt-1 text-lg font-bold text-slate-100">EMA Pullback Recommendations</div>
               </div>
               <div className="flex gap-2 flex-wrap justify-end">
-                <Link to="/grail" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">Signals</Link>
+                <Link to="/grail" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">View All Signals</Link>
               </div>
             </div>
             <div className="mt-1.5 text-sm text-slate-400">
-              Active futures trend setups
+              Latest: {grailSignals?.date || '—'}
             </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Monitors futures contracts pulling back to key exponential moving averages in high-ADX trending markets for high-probability continuation setups.
-            </p>
-            <div className="mt-6">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <StatCard label="Scanned" value={grailSignals?.total_scanned ?? 0} sub="futures contracts" accent="text-orange-300" />
+              <StatCard label="Active Setups" value={grailSignals?.total_triggered ?? 0} sub="high-ADX trend pullbacks" accent="text-orange-300" />
+            </div>
+
+            {/* Active Grail Trade Recommendations List */}
+            <div className="space-y-2 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Active Grail Recommendations:
+              </div>
+              {grailTriggered.length === 0 ? (
+                <p className="text-slate-400 text-xs italic">No active Grail pullback signals today.</p>
+              ) : (
+                grailTriggered.slice(0, 3).map((sig) => (
+                  <div key={sig.symbol} className="bg-slate-950/40 rounded-lg p-3 border border-slate-800 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2">
+                        <span>{sig.symbol}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
+                          sig.side === 'long' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
+                        }`}>
+                          {sig.side.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="text-slate-400 mt-1">
+                        Entry: <span className="font-mono font-bold text-slate-200">${formatSignalPrice(sig.entry_zone)}</span> · 
+                        Stop: <span className="font-mono font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                      </div>
+                    </div>
+                    <div className="text-right text-[11px] text-orange-400 font-mono shrink-0">
+                      ADX {sig.adx.toFixed(0)}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="mt-2">
               <Link to="/grail" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition">
                 View Grail Signals →
               </Link>
