@@ -175,7 +175,7 @@ export default function Home() {
               Oz<span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">CTA</span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
-              National Futures Association (NFA) registered Commodity Trading Advisor specializing in actively managed futures & FX strategies.
+              National Futures Association (NFA) registered Commodity Trading Advisor specializing in actively managed futures.
             </p>
             <div className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-slate-950/60 px-5 py-2.5 border border-slate-800 text-sm font-semibold text-slate-200">
               ⚡ Access our futures strategy signals, trade models, and daily scans —{' '}
