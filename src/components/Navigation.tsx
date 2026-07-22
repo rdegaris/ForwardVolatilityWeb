@@ -293,7 +293,7 @@ export default function Navigation() {
                 {([
                   { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
                   { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
-                  { key: 'odid' as const, label: 'Too Hot / Too Cold', to: '/odid' },
+                  { key: 'odid' as const, label: 'TooHotTooCold', to: '/odid' },
                   { key: 'taylor' as const, label: 'Bradman Cycle', to: '/taylor' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
                   const isSectionActive = section === item.key;
@@ -415,7 +415,7 @@ export default function Navigation() {
             {([
               { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
               { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
-              { key: 'odid' as const, label: 'Too Hot / Too Cold', to: '/odid' },
+              { key: 'odid' as const, label: 'TooHotTooCold', to: '/odid' },
               { key: 'taylor' as const, label: 'Bradman Cycle', to: '/taylor' },
             ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
               const isSectionActive = section === item.key;
