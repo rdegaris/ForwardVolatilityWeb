@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T16:09:58.842894Z",
+  "timestamp": "2026-07-23T22:20:38.746205Z",
   "date": "2026-07-23",
   "total_armed": 3,
   "triggered": [
@@ -23,12 +23,12 @@
     },
     {
       "symbol": "6J",
-      "side": "long",
+      "side": "short",
       "asof": "2026-07-23",
-      "entry_stop": 0.0062,
-      "stop_loss": 0.0061,
+      "entry_stop": 0.0061,
+      "stop_loss": 0.0062,
       "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
     }
   ]
 }
