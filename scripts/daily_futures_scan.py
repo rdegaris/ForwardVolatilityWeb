@@ -165,7 +165,7 @@ def compute_adx(bars: List[Bar], period: int = 14) -> Tuple[List[float], List[fl
     return adx, plus_di, minus_di
 
 # -------------------------------------------------------------------
-# Strategy 1: Bradman Trading Technique (3-Day Cycle)
+# Strategy 1: The Bradman (3-Day Cycle)
 # -------------------------------------------------------------------
 
 def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
