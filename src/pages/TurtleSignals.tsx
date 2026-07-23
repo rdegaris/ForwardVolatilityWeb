@@ -106,8 +106,7 @@ export default function TurtleSignals() {
             Trendorama (System 2) — Signals
           </h1>
           <p className="text-gray-300">
-            "Triggered Today" means the latest daily bar's high/low crossed the prior Donchian breakout entry level.
-            This is an entry signal only if you're flat and your rules allow a new position.
+            A systematic trend-following breakout model engineered to capture major commodity and currency market trends, tuned with customized backtested volatility parameters and risk-sizing filters.
           </p>
 
           <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">

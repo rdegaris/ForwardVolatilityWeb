@@ -130,18 +130,8 @@ export default function OdidBreakout() {
             TooHot TooCold Monitor
           </h1>
           <p className="text-gray-300">
-            TooHot TooCold breakout scanner for futures. Alerts are generated for confirmed close breakouts and near-level armed setups.
+            A systematic range-expansion breakout model that identifies volatility compression and expansion cycles, customized with backtested parameters across major futures markets to filter false breakouts and capture explosive trend moves.
           </p>
-
-          <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
-            <div className="font-semibold text-gray-200 mb-1">Pattern logic</div>
-            <ul className="space-y-1">
-              <li>Too Hot (Outside Day): higher high and lower low than the previous session.</li>
-              <li>Too Cold (Inside Day): next day is fully inside the previous range.</li>
-              <li>Breakout confirmation: close above high (long) or below low (short).</li>
-              <li>Initial stop reference: opposite side of the range.</li>
-            </ul>
-          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mt-6">
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">

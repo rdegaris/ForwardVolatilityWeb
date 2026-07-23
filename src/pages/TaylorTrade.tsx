@@ -79,10 +79,7 @@ export default function TaylorTrade() {
               The Bradman
             </h1>
             <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-              Classic futures 3-day cycle strategy. Identifies natural market rhythm: 
-              <strong className="text-emerald-400 font-bold"> Buy Day</strong> (Support entry) → 
-              <strong className="text-amber-400 font-bold"> Sell Day</strong> (Target exit) → 
-              <strong className="text-rose-400 font-bold"> Sell Short Day</strong> (Resistance short entry).
+              A systematic 3-day momentum and mean-reversion model. Customized across liquid commodity and financial futures markets using proprietary backtested parameters to identify high-probability cycle turning points and objective target levels.
             </p>
           </div>
           <div className="shrink-0 text-left md:text-right">

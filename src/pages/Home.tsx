@@ -190,7 +190,7 @@ export default function Home() {
             {[
               {
                 label: 'Trendorama',
-                desc: 'Donchian Breakouts',
+                desc: 'Systematic Trend Following',
                 to: '/turtle',
                 dot: 'bg-fuchsia-500',
                 border: 'hover:border-fuchsia-500/50 hover:shadow-fuchsia-500/10',
@@ -199,7 +199,7 @@ export default function Home() {
               },
               {
                 label: 'The Bradman',
-                desc: '3-Day Natural Rhythms',
+                desc: 'Momentum & Mean-Reversion',
                 to: '/taylor',
                 dot: 'bg-amber-500',
                 border: 'hover:border-amber-500/50 hover:shadow-amber-500/10',
@@ -208,7 +208,7 @@ export default function Home() {
               },
               {
                 label: 'YouHaveChosenWisely',
-                desc: 'EMA Trend Pullbacks',
+                desc: 'Trend Continuation Pullbacks',
                 to: '/grail',
                 dot: 'bg-orange-500',
                 border: 'hover:border-orange-500/50 hover:shadow-orange-500/10',
@@ -217,7 +217,7 @@ export default function Home() {
               },
               {
                 label: 'TooHot TooCold',
-                desc: 'Range Breakout Confirmations',
+                desc: 'Range Expansion Breakouts',
                 to: '/odid',
                 dot: 'bg-cyan-500',
                 border: 'hover:border-cyan-500/50 hover:shadow-cyan-500/10',
@@ -286,7 +286,7 @@ export default function Home() {
                 <span className="h-2.5 w-2.5 rounded-full bg-fuchsia-500" />
                 Trendorama
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Donchian Breakout Signals</div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Systematic Trend Following</div>
             </div>
             <div className="flex gap-2">
               <Link to="/turtle" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
@@ -326,13 +326,13 @@ export default function Home() {
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
               <span>Date: <strong className="text-slate-200">{turtleSignals?.date || '—'}</strong></span>
               <Link to="/turtle" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
-                View Full Donchian Levels →
+                View Full Signal Matrix →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Bradman Cycle */}
+        {/* The Bradman */}
         <div className="rounded-3xl shadow-xl border border-amber-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-amber-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-amber">
           <div className="px-6 py-5 border-b border-amber-900/40 bg-amber-950/30 flex items-center justify-between">
             <div>
@@ -340,7 +340,7 @@ export default function Home() {
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
                 The Bradman
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">3-Day Cycle Recommendations</div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Momentum & Mean-Reversion</div>
             </div>
             <Link to="/taylor" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-500 transition shadow-md">View All Signals</Link>
           </div>
@@ -392,7 +392,7 @@ export default function Home() {
                 <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
                 YouHaveChosenWisely
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">EMA Trend Pullback Signals</div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Trend Continuation Pullbacks</div>
             </div>
             <Link to="/grail" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 text-white hover:bg-orange-500 transition shadow-md">View Signals</Link>
           </div>
@@ -403,7 +403,7 @@ export default function Home() {
                 Active Pullback Recommendations:
               </div>
               {grailTriggered.length === 0 ? (
-                <p className="text-slate-400 text-sm italic">No active EMA pullback signals today.</p>
+                <p className="text-slate-400 text-sm italic">No active pullback signals today.</p>
               ) : (
                 grailTriggered.slice(0, 3).map((sig) => (
                   <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
@@ -432,7 +432,7 @@ export default function Home() {
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
               <span>Date: <strong className="text-slate-200">{grailSignals?.date || '—'}</strong></span>
               <Link to="/grail" className="font-semibold text-orange-300 hover:text-orange-200 transition">
-                View ADX & EMA Signals →
+                View Strategy Signals →
               </Link>
             </div>
           </div>
@@ -446,7 +446,7 @@ export default function Home() {
                 <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
                 TooHot TooCold
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Range Breakout Monitor</div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Range Expansion Breakouts</div>
             </div>
             <Link to="/odid" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white hover:bg-cyan-500 transition shadow-md">Monitor</Link>
           </div>

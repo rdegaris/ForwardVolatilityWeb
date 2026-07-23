@@ -94,19 +94,8 @@ export default function GrailTrade() {
             YouHaveChosenWisely
           </h1>
           <p className="text-gray-300">
-            ADX above {data.adx_threshold} indicates a strong trend; enter on pullback to 20 EMA.
+            A quantitative trend-continuation model designed to capture high-probability pullback entries during strong market moves, customized with optimized backtested trend-strength and moving average parameters.
           </p>
-
-          <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
-            <div className="font-semibold text-gray-200 mb-1">How to trade YouHaveChosenWisely</div>
-            <ul className="space-y-1">
-              <li><strong>Long setup:</strong> ADX &gt; {data.adx_threshold}, +DI &gt; -DI (uptrend), price pulls back to 20 EMA.</li>
-              <li><strong>Short setup:</strong> ADX &gt; {data.adx_threshold}, -DI &gt; +DI (downtrend), price rallies to 20 EMA.</li>
-              <li><strong>Entry:</strong> Buy/sell at the EMA touch zone.</li>
-              <li><strong>Stop:</strong> Below recent swing low (longs) or above swing high (shorts).</li>
-              <li><strong>Target:</strong> Retest of recent high (longs) or low (shorts).</li>
-            </ul>
-          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mt-6">
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
