@@ -1,60 +1,33 @@
 {
-  "timestamp": "2026-07-22T20:51:54.805369Z",
-  "date": "2026-07-22",
-  "total_alerts": 6,
+  "timestamp": "2026-07-23T15:42:45.444659Z",
+  "date": "2026-07-23",
+  "total_alerts": 3,
   "alerts": [
     {
-      "symbol": "ES",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 7554.0,
-      "low_trigger": 7473.0,
-      "last_close": 7546.0,
-      "severity": "high"
-    },
-    {
       "symbol": "NQ",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 29364.75,
-      "low_trigger": 28701.0,
-      "last_close": 29198.0,
-      "severity": "high"
-    },
-    {
-      "symbol": "RTY",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 2999.8,
-      "low_trigger": 2951.1001,
-      "last_close": 2971.8999,
-      "severity": "high"
-    },
-    {
-      "symbol": "YM",
       "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 52590.0,
-      "low_trigger": 52035.0,
-      "last_close": 52505.0,
+      "asof": "2026-07-22",
+      "high_trigger": 29342.25,
+      "low_trigger": 28952.0,
+      "last_close": 28482.25,
       "severity": "medium"
     },
     {
-      "symbol": "GC",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 4071.1001,
-      "low_trigger": 3999.7,
-      "last_close": 4139.2002,
-      "severity": "high"
+      "symbol": "RTY",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-22",
+      "high_trigger": 2998.7,
+      "low_trigger": 2965.5,
+      "last_close": 2935.6001,
+      "severity": "medium"
     },
     {
-      "symbol": "NG",
+      "symbol": "6J",
       "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-07-21",
-      "high_trigger": 2.906,
-      "low_trigger": 2.839,
-      "last_close": 2.943,
+      "asof": "2026-07-22",
+      "high_trigger": 0.0062,
+      "low_trigger": 0.0061,
+      "last_close": 0.0061,
       "severity": "medium"
     }
   ]

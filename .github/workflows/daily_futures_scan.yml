@@ -6,6 +6,9 @@ on:
     - cron: '0 22 * * 1-5'
   workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
 
+permissions:
+  contents: write
+
 jobs:
   scan_and_deploy:
     runs-on: ubuntu-latest
