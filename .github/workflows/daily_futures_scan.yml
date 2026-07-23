@@ -4,6 +4,8 @@ on:
   schedule:
     # Runs Monday through Friday at 22:00 UTC (5:00 PM EST / 2:00 PM PST)
     - cron: '0 22 * * 1-5'
+  push:
+    branches: [ main ]
   workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
 
 permissions:
