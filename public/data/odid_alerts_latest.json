@@ -1,16 +1,97 @@
 {
-  "timestamp": "2026-07-24T22:22:11.601719Z",
-  "date": "2026-07-24",
-  "total_alerts": 1,
+  "timestamp": "2026-07-27T22:22:25.376239Z",
+  "date": "2026-07-27",
+  "total_alerts": 10,
   "alerts": [
     {
+      "symbol": "ES",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 7496.5,
+      "low_trigger": 7431.5,
+      "last_close": 7448.5,
+      "severity": "medium"
+    },
+    {
+      "symbol": "RTY",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 2969.7,
+      "low_trigger": 2934.5,
+      "last_close": 2960.2,
+      "severity": "medium"
+    },
+    {
+      "symbol": "YM",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 52314.0,
+      "low_trigger": 51846.0,
+      "last_close": 52412.0,
+      "severity": "medium"
+    },
+    {
+      "symbol": "GC",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 4068.0,
+      "low_trigger": 4067.6001,
+      "last_close": 4079.1001,
+      "severity": "medium"
+    },
+    {
+      "symbol": "SI",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 58.656,
+      "low_trigger": 58.656,
+      "last_close": 58.695,
+      "severity": "medium"
+    },
+    {
+      "symbol": "CL",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 92.83,
+      "low_trigger": 87.68,
+      "last_close": 81.99,
+      "severity": "medium"
+    },
+    {
       "symbol": "6E",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-07-23",
-      "high_trigger": 1.1444,
-      "low_trigger": 1.1377,
-      "last_close": 1.1394,
-      "severity": "high"
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 1.1407,
+      "low_trigger": 1.1378,
+      "last_close": 1.1393,
+      "severity": "medium"
+    },
+    {
+      "symbol": "6J",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 0.0061,
+      "low_trigger": 0.0061,
+      "last_close": 0.0061,
+      "severity": "medium"
+    },
+    {
+      "symbol": "6B",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 1.3341,
+      "low_trigger": 1.3308,
+      "last_close": 1.3288,
+      "severity": "medium"
+    },
+    {
+      "symbol": "ZB",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-07-24",
+      "high_trigger": 110.125,
+      "low_trigger": 109.3438,
+      "last_close": 110.1875,
+      "severity": "medium"
     }
   ]
 }

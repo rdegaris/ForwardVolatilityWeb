@@ -1,6 +1,70 @@
 {
-  "timestamp": "2026-07-24T22:22:11.601715Z",
-  "date": "2026-07-24",
-  "total_armed": 1,
-  "triggered": []
+  "timestamp": "2026-07-27T22:22:25.376234Z",
+  "date": "2026-07-27",
+  "total_armed": 10,
+  "triggered": [
+    {
+      "symbol": "YM",
+      "side": "long",
+      "asof": "2026-07-27",
+      "entry_stop": 52314.0,
+      "stop_loss": 51846.0,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    },
+    {
+      "symbol": "GC",
+      "side": "long",
+      "asof": "2026-07-27",
+      "entry_stop": 4068.0,
+      "stop_loss": 4067.6001,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    },
+    {
+      "symbol": "SI",
+      "side": "long",
+      "asof": "2026-07-27",
+      "entry_stop": 58.656,
+      "stop_loss": 58.656,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    },
+    {
+      "symbol": "CL",
+      "side": "short",
+      "asof": "2026-07-27",
+      "entry_stop": 87.68,
+      "stop_loss": 92.83,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
+    },
+    {
+      "symbol": "6J",
+      "side": "long",
+      "asof": "2026-07-27",
+      "entry_stop": 0.0061,
+      "stop_loss": 0.0061,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    },
+    {
+      "symbol": "6B",
+      "side": "short",
+      "asof": "2026-07-27",
+      "entry_stop": 1.3308,
+      "stop_loss": 1.3341,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
+    },
+    {
+      "symbol": "ZB",
+      "side": "long",
+      "asof": "2026-07-27",
+      "entry_stop": 110.125,
+      "stop_loss": 109.3438,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    }
+  ]
 }
