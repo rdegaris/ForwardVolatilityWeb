@@ -114,7 +114,7 @@ const TABS: { key: TabKey; letter: string; label: string }[] = [
   { key: 'overview',    letter: 'A', label: 'Executive Summary' },
   { key: 'performance', letter: 'B', label: 'Growth of $1,000' },
   { key: 'returns',     letter: 'C', label: 'Monthly Returns' },
-  { key: 'about',       letter: 'D', label: 'Misc & Disclaimers' },
+  { key: 'about',       letter: 'D', label: 'Legal & Disclosures' },
 ];
 
 /* ================================================================== */
@@ -289,10 +289,13 @@ export default function FundPerformance() {
                 </h3>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {([
-                    { name: 'Forward Vol Calendars', pct: '35%', desc: 'Sell rich front-month IV, buy cheaper back-month — capitalise on the forward volatility factor.', dot: 'bg-indigo-500', border: 'border-indigo-200/60 dark:border-indigo-800/40' },
-                    { name: 'Earnings Crush',        pct: '20%', desc: 'Short-vol plays selling inflated pre-earnings IV via calendar spreads around announcement dates.',  dot: 'bg-teal-500',   border: 'border-teal-200/60 dark:border-teal-800/40' },
-                    { name: 'Earnings Ramp',         pct: '20%', desc: 'Long straddles entered 5-15 days before earnings, riding the IV expansion into the announcement.', dot: 'bg-amber-500',  border: 'border-amber-200/60 dark:border-amber-800/40' },
-                    { name: 'Trendorama',            pct: '25%', desc: 'Systematic trend-following using channel breakouts and ATR-based position sizing across equities.',  dot: 'bg-fuchsia-500', border: 'border-fuchsia-200/60 dark:border-fuchsia-800/40' },
+                    { name: 'Forward Vol Calendars', pct: '25%', desc: 'Sell rich front-month IV, buy cheaper back-month — capitalise on the forward volatility factor.', dot: 'bg-indigo-500', border: 'border-indigo-200/60 dark:border-indigo-800/40' },
+                    { name: 'Earnings Crush',        pct: '15%', desc: 'Short-vol plays selling inflated pre-earnings IV via calendar spreads around announcement dates.',  dot: 'bg-teal-500',   border: 'border-teal-200/60 dark:border-teal-800/40' },
+                    { name: 'Earnings Ramp',         pct: '15%', desc: 'Long straddles entered 5-15 days before earnings, riding the IV expansion into the announcement.', dot: 'bg-amber-500',  border: 'border-amber-200/60 dark:border-amber-800/40' },
+                    { name: 'Trendorama',            pct: '15%', desc: 'Systematic trend-following using channel breakouts and ATR-based position sizing across futures.',  dot: 'bg-fuchsia-500', border: 'border-fuchsia-200/60 dark:border-fuchsia-800/40' },
+                    { name: 'The Bradman',           pct: '15%', desc: '3-day momentum and mean-reversion cycle model applied to liquid commodity and financial futures.', dot: 'bg-amber-600', border: 'border-amber-200/60 dark:border-amber-800/40' },
+                    { name: 'YouHaveChosenWisely',   pct: '10%', desc: 'Trend-continuation pullback model targeting high-probability EMA re-touch entries in strong trends.', dot: 'bg-orange-500', border: 'border-orange-200/60 dark:border-orange-800/40' },
+                    { name: 'TooHot TooCold',        pct: '5%',  desc: 'Range-expansion breakout model identifying volatility compression and explosive expansion cycles.', dot: 'bg-cyan-500', border: 'border-cyan-200/60 dark:border-cyan-800/40' },
                   ]).map((s) => (
                     <div key={s.name} className={`rounded-xl border ${s.border} bg-white/60 dark:bg-slate-950/20 p-5`}>
                       <div className="flex items-center gap-2 mb-1">
@@ -330,7 +333,7 @@ export default function FundPerformance() {
                       <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number, name: string) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, name]} />
                       <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                       <ReferenceLine y={1000} stroke="#94a3b8" strokeDasharray="4 4" />
-                      <Line type="monotone" dataKey="equity" name="OzCTA System" stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#6366f1' }} />
+                      <Line type="monotone" dataKey="equity" name="OzCTA Multi-Strategy" stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#6366f1' }} />
                       <Line type="monotone" dataKey="spx" name="S&P 500" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="5 3" dot={false} activeDot={{ r: 3, fill: '#94a3b8' }} />
                     </LineChart>
                   </ResponsiveContainer>

@@ -30,17 +30,23 @@ export default function OdidBreakout() {
   useEffect(() => {
     (async () => {
       try {
-        const [s, a, o] = await Promise.all([
+        const [s, a] = await Promise.allSettled([
           fetchJson<OdidSignalsPayload>('/data/odid_signals_latest.json', { cache: 'no-store' }),
           fetchJson<OdidAlertsPayload>('/data/odid_alerts_latest.json', { cache: 'no-store' }),
-          fetchJson<OdidOpenTradesPayload>('/data/odid_open_trades_latest.json', { cache: 'no-store' }),
         ]);
-        setSignals(s);
-        setAlerts(a);
+        // Load open trades optionally — don't fail the whole page if it's missing
+        let o: OdidOpenTradesPayload | null = null;
+        try {
+          o = await fetchJson<OdidOpenTradesPayload>('/data/odid_open_trades_latest.json', { cache: 'no-store' });
+        } catch { /* open trades file is optional */ }
+        if (s.status === 'rejected') throw new Error(s.reason?.message || 'Failed to load signal data');
+        if (a.status === 'rejected') throw new Error(a.reason?.message || 'Failed to load alert data');
+        setSignals(s.value);
+        setAlerts(a.value);
         setOpenTrades(o);
         setLoading(false);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load OD/ID breakout data');
+        setError(err?.message || 'Failed to load TooHot TooCold data');
         setLoading(false);
       }
     })();
@@ -88,23 +94,21 @@ export default function OdidBreakout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+      <div className="text-white flex items-center justify-center py-24">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading OD/ID breakout monitor...</p>
+          <p className="text-gray-300">Loading TooHot TooCold monitor...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !signals || !alerts || !openTrades) {
+  if (error || !signals || !alerts) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+      <div className="text-white flex items-center justify-center py-24">
         <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ {error || 'No OD/ID data available'}</p>
-          <p className="text-gray-400 text-sm">
-            Run the daily scan to generate OD/ID signals, alerts, and open trades JSON.
-          </p>
+          <p className="text-red-400 mb-4">⚠️ {error || 'TooHot TooCold data is currently unavailable'}</p>
+          <p className="text-gray-400 text-sm">Signal data could not be loaded. Please check back shortly.</p>
         </div>
       </div>
     );
@@ -123,7 +127,7 @@ export default function OdidBreakout() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="space-y-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-cyan-500">
@@ -161,7 +165,7 @@ export default function OdidBreakout() {
           <h2 className="text-xl font-semibold text-gray-200 mb-3">Alerts</h2>
           {alertRows.length === 0 ? (
             <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No active OD/ID alerts.</div>
+              <div className="text-gray-300">No active TooHot TooCold alerts.</div>
             </div>
           ) : (
             <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
@@ -205,7 +209,7 @@ export default function OdidBreakout() {
           <h2 className="text-xl font-semibold text-gray-200 mb-3">Open Futures Positions</h2>
           {openRows.length === 0 ? (
             <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No OD/ID universe futures positions open in IB.</div>
+              <div className="text-gray-300">No open futures positions currently tracked.</div>
             </div>
           ) : (
             <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">

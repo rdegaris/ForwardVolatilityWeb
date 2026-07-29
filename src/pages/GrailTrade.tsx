@@ -26,7 +26,8 @@ export default function GrailTrade() {
   }, []);
 
   const triggeredRows = useMemo(() => {
-    const rows = data?.triggered ?? [];
+    // JSON stores all rows in signals[]; eligible=true rows are the triggered ones
+    const rows = data?.triggered?.length ? data.triggered : (data?.signals ?? []).filter(r => r.eligible);
     return [...rows].sort((a, b) => {
       const sym = a.symbol.localeCompare(b.symbol);
       if (sym !== 0) return sym;
@@ -53,10 +54,10 @@ export default function GrailTrade() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+      <div className="text-white flex items-center justify-center py-24">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading Grail Trade signals...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400 mx-auto mb-4"></div>
+          <p className="text-gray-300">Loading YouHaveChosenWisely signals...</p>
         </div>
       </div>
     );
@@ -64,12 +65,10 @@ export default function GrailTrade() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+      <div className="text-white flex items-center justify-center py-24">
         <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
-          <p className="text-gray-400 text-sm">
-            Run the daily scan to generate the Grail Trade JSON.
-          </p>
+          <p className="text-red-400 mb-4">⚠️ Signal data is currently unavailable</p>
+          <p className="text-gray-400 text-sm">YouHaveChosenWisely signal data could not be loaded. Please check back shortly.</p>
         </div>
       </div>
     );
@@ -87,7 +86,7 @@ export default function GrailTrade() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="space-y-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-500">
@@ -116,14 +115,14 @@ export default function GrailTrade() {
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{new Date(data.timestamp).toLocaleString()}</div>
+              <div className="text-xl font-bold text-gray-200">{new Date(data.timestamp).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</div>
             </div>
           </div>
         </div>
 
         {/* Triggered Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">🎯 Triggered Setups</h2>
+          <h2 className="text-xl font-semibold text-gray-200 mb-3">Triggered Setups</h2>
           {triggeredRows.length === 0 ? (
             <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
               <div className="text-gray-300">No markets have triggered today. Wait for price to reach EMA.</div>
@@ -177,7 +176,7 @@ export default function GrailTrade() {
 
         {/* Watching Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">👀 Watching (Strong ADX, Waiting for Pullback)</h2>
+          <h2 className="text-xl font-semibold text-gray-200 mb-3">Watching — Strong Trend, Waiting for Pullback</h2>
           {watchingRows.length === 0 ? (
             <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
               <div className="text-gray-300">No markets with strong ADX currently watching for pullback.</div>
@@ -229,7 +228,7 @@ export default function GrailTrade() {
 
         {/* All Signals Section */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">📊 All Scanned ({data.total_scanned})</h2>
+          <h2 className="text-xl font-semibold text-gray-200 mb-3">All Scanned ({data?.total_scanned ?? allRows.length})</h2>
           <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">

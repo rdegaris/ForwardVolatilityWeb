@@ -96,7 +96,7 @@ export default function Register() {
               {[
                 { icon: '📊', title: 'Performance Data', desc: 'Full returns, drawdowns & research reports' },
                 { icon: '🔔', title: 'Trade Signals', desc: 'Daily scanner alerts across all strategies' },
-                { icon: '📈', title: 'Watchlists & Trades', desc: 'Build watchlists & track open positions' },
+                { icon: '📈', title: 'Open Positions', desc: 'Track open futures trades and strategy exposure' },
               ].map((f) => (
                 <div
                   key={f.title}
@@ -115,6 +115,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
+                  autoComplete="given-name"
                   placeholder="First Name *"
                   value={form.firstName}
                   onChange={(e) => setForm({ ...form, firstName: e.target.value })}
@@ -123,6 +124,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
+                  autoComplete="family-name"
                   placeholder="Last Name *"
                   value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -131,6 +133,7 @@ export default function Register() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   placeholder="Email *"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -138,6 +141,7 @@ export default function Register() {
                 />
                 <input
                   type="tel"
+                  autoComplete="tel"
                   placeholder="Phone Number"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -183,7 +187,7 @@ export default function Register() {
               </div>
 
               <p className="mt-5 text-center text-xs text-indigo-200/50 max-w-md mx-auto">
-                By registering you agree to receive occasional updates from @OzCTA.
+                By registering you agree to receive occasional updates from OzCTA.
                 You may unsubscribe at any time. We respect your privacy.
               </p>
             </form>

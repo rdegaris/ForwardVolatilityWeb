@@ -106,6 +106,7 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
 
 function getSection(pathname: string): NavSectionKey | null {
   if (pathname.startsWith('/taylor')) return 'taylor';
+  if (pathname.startsWith('/trendorama')) return 'turtle';
   if (pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
   if (pathname.startsWith('/odid')) return 'odid';
@@ -140,9 +141,9 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
     { label: 'Open Trades', to: '/pre-earnings/open-trades' },
   ],
   turtle: [
-    { label: 'Signals', to: '/turtle' },
-    { label: 'Open Trades', to: '/turtle/open-trades' },
-    { label: 'Triggers Soon', to: '/turtle/triggers' },
+    { label: 'Signals', to: '/trendorama' },
+    { label: 'Open Trades', to: '/trendorama/open-trades' },
+    { label: 'Triggers Soon', to: '/trendorama/triggers' },
   ],
   grail: [
     { label: 'Signals', to: '/grail' },
@@ -196,7 +197,7 @@ function OzCtaMark({ className }: { className?: string }) {
 
 type TopGroup = 'futures' | null;
 
-const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid'];
+const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid', 'taylor'];
 
 function getActiveGroup(section: NavSectionKey | null): TopGroup {
   if (section && FUTURES_KEYS.includes(section)) return 'futures';
@@ -321,6 +322,16 @@ export default function Navigation() {
 
           <div className="hidden md:flex items-center gap-4">
             <Link
+              to="/"
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                location.pathname === '/'
+                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
+              }`}
+            >
+              Dashboard
+            </Link>
+            <Link
               to="/fund"
               className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
                 location.pathname === '/fund'
@@ -328,7 +339,7 @@ export default function Navigation() {
                   : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
               }`}
             >
-              Home
+              Performance
             </Link>
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
@@ -366,11 +377,13 @@ export default function Navigation() {
                     ? 'Earnings Crush'
                     : section === 'preEarnings'
                       ? 'Earnings Ramp'
-                      : section === 'grail'
-                        ? 'Grail Trade'
-                        : section === 'odid'
-                          ? 'OD/ID Breakout'
-                          : 'Trendorama'}
+                      : section === 'taylor'
+                        ? 'The Bradman'
+                        : section === 'grail'
+                          ? 'YouHaveChosenWisely'
+                          : section === 'odid'
+                            ? 'TooHot TooCold'
+                            : 'Trendorama'}
               </span>
             </div>
 

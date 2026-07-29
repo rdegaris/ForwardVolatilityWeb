@@ -62,6 +62,17 @@ export default function TaylorTrade() {
     );
   }
 
+  if (!data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-80 gap-4">
+        <div className="text-center">
+          <p className="text-rose-400 font-semibold mb-2">⚠ Signal data unavailable</p>
+          <p className="text-slate-400 text-sm">The Bradman signal data could not be loaded. Please check back shortly.</p>
+        </div>
+      </div>
+    );
+  }
+
   const summary = data?.summary || { buy_day_count: 0, sell_day_count: 0, sell_short_day_count: 0 };
 
   return (
@@ -125,7 +136,7 @@ export default function TaylorTrade() {
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
             }`}
           >
-            {tab === 'ALL' ? 'All Contracts' : tab.replace('_', ' ')}
+            {tab === 'ALL' ? 'All Contracts' : tab.replaceAll('_', ' ')}
           </button>
         ))}
       </div>
@@ -158,7 +169,7 @@ export default function TaylorTrade() {
                       <span className="text-xs font-medium text-slate-400">({fullName})</span>
                     </div>
                     <div className="mt-1 text-sm text-slate-300">
-                      Last Close: <span className="font-mono font-bold text-amber-400">${formatPrice(item.last_close)}</span>
+                      Last Close: <span className="font-mono font-bold text-amber-400">{formatPrice(item.close)}</span>
                     </div>
                   </div>
 
@@ -172,7 +183,7 @@ export default function TaylorTrade() {
                           : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                     }`}
                   >
-                    Day {item.cycle_day} · {item.cycle_phase.replace('_', ' ')}
+                    Day {item.cycle_day} · {item.cycle_phase.replaceAll('_', ' ')}
                   </div>
                 </div>
 
@@ -219,7 +230,7 @@ export default function TaylorTrade() {
                               : 'bg-slate-700 text-slate-200'
                       }`}
                     >
-                      {item.action.replace('_', ' ')}
+                      {item.action.replaceAll('_', ' ')}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-[11px] font-mono">

@@ -35,15 +35,15 @@ export default function TurtleSignals() {
   }, [data]);
 
   const allRows = useMemo(() => {
-    const rows = data?.rows ?? data?.signals ?? [];
+    const rows = data?.signals ?? [];
     return [...rows].sort((a, b) => a.symbol.localeCompare(b.symbol));
   }, [data]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+      <div className="text-white flex items-center justify-center py-24">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fuchsia-400 mx-auto mb-4"></div>
           <p className="text-gray-300">Loading Trendorama signals...</p>
         </div>
       </div>
@@ -99,11 +99,11 @@ export default function TurtleSignals() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="space-y-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
-            Trendorama (System 2) — Signals
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 to-fuchsia-500">
+            Trendorama — Signals
           </h1>
           <p className="text-gray-300">
             A systematic trend-following breakout model engineered to capture major commodity and currency market trends, tuned with customized backtested volatility parameters and risk-sizing filters.
@@ -113,7 +113,7 @@ export default function TurtleSignals() {
             <div className="font-semibold text-gray-200 mb-1">How to use this page</div>
             <ul className="space-y-1">
               <li>Use the <span className="font-mono">ENTRY</span> as your stop-entry reference (classic Trendorama: place for the next session).</li>
-              <li>Use the <span className="font-mono">STOP</span> as the protective stop-loss ($2N$ from entry), rounded to tick size.</li>
+              <li>Use the <span className="font-mono">STOP</span> as the protective stop-loss (2×N from entry), rounded to tick size.</li>
               <li>If price already ran far past entry, you may be late — consider skipping or using your execution rules.</li>
               <li>Check <span className="font-mono">Open Trades</span> before entering a duplicate position.</li>
             </ul>
