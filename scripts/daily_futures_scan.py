@@ -14,6 +14,7 @@ Exports updated JSON feeds directly to public/data/ with zero external pip depen
 import json
 import math
 import sys
+import time
 import urllib.request
 from dataclasses import asdict, dataclass
 from datetime import datetime, date
@@ -40,14 +41,6 @@ FUTURES_MAP = {
     "ZN": "ZN=F",   # 10-Yr T-Note Futures
 }
 
-CLUSTERS = {
-    "equities": {"ES", "NQ", "RTY", "YM"},
-    "metals": {"GC", "SI"},
-    "energies": {"CL", "NG"},
-    "fx": {"6E", "6J", "6B"},
-    "rates": {"ZB", "ZN"},
-}
-
 @dataclass
 class Bar:
     dt: str
@@ -58,37 +51,47 @@ class Bar:
     volume: float
 
 # -------------------------------------------------------------------
-# Fetcher (Yahoo Finance REST API - Zero Third Party Dependencies)
+# Fetcher (Yahoo Finance REST API - Robust Multi-Endpoint Retry)
 # -------------------------------------------------------------------
 
 def fetch_yahoo_bars(symbol: str, ticker: str) -> List[Bar]:
-    url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=2y&interval=1d"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        
-        result = data["chart"]["result"][0]
-        timestamps = result.get("timestamp", [])
-        quote = result["indicators"]["quote"][0]
-        opens = quote.get("open", [])
-        highs = quote.get("high", [])
-        lows = quote.get("low", [])
-        closes = quote.get("close", [])
-        volumes = quote.get("volume", [])
+    endpoints = [
+        f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=2y&interval=1d",
+        f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=2y&interval=1d",
+    ]
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-        bars: List[Bar] = []
-        for i in range(len(timestamps)):
-            ts = timestamps[i]
-            o, h, l, c, v = opens[i], highs[i], lows[i], closes[i], volumes[i]
-            if None in (ts, o, h, l, c):
+    for url in endpoints:
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                
+                result = data["chart"]["result"][0]
+                timestamps = result.get("timestamp", [])
+                quote = result["indicators"]["quote"][0]
+                opens = quote.get("open", [])
+                highs = quote.get("high", [])
+                lows = quote.get("low", [])
+                closes = quote.get("close", [])
+                volumes = quote.get("volume", [])
+
+                bars: List[Bar] = []
+                for i in range(len(timestamps)):
+                    ts = timestamps[i]
+                    o, h, l, c, v = opens[i], highs[i], lows[i], closes[i], volumes[i]
+                    if None in (ts, o, h, l, c):
+                        continue
+                    dt_str = datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d")
+                    bars.append(Bar(dt=dt_str, open=float(o), high=float(h), low=float(l), close=float(c), volume=float(v or 0)))
+                if bars:
+                    return bars
+            except Exception as e:
+                time.sleep(0.5)
                 continue
-            dt_str = datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d")
-            bars.append(Bar(dt=dt_str, open=float(o), high=float(h), low=float(l), close=float(c), volume=float(v or 0)))
-        return bars
-    except Exception as e:
-        print(f"  [ERROR] {symbol} ({ticker}): {e}")
-        return []
+    print(f"  [ERROR] {symbol} ({ticker}): Failed to fetch bars")
+    return []
 
 # -------------------------------------------------------------------
 # Indicator Utilities
@@ -457,6 +460,9 @@ def main():
             toohot_alerts.append(th_alert)
         if th_trig:
             toohot_trig.append(th_trig)
+
+    if not taylor_signals:
+        raise RuntimeError("ERROR: Failed to fetch daily market data for any futures symbols. Aborting signal update.")
 
     # -------------------------------------------------------------------
     # Write JSON Artifacts to public/data/
