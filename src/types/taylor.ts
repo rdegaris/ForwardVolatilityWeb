@@ -3,17 +3,19 @@ export type TaylorSignalItem = {
   asof: string;
   cycle_phase: 'BUY_DAY' | 'SELL_DAY' | 'SELL_SHORT_DAY';
   cycle_day: number;
-  last_close: number;
+  close: number;
   buying_objective: number;
   selling_objective: number;
   buying_pressure: number;
   selling_pressure: number;
+  high_resistance?: number;
+  low_support?: number;
   action: 'BUY_LONG' | 'SELL_EXIT' | 'SELL_SHORT' | 'WATCH';
   entry_target: number;
   profit_target: number;
   stop_loss: number;
-  eligible: boolean;
-  notes: string;
+  eligible?: boolean;
+  notes?: string;
 };
 
 export type TaylorSignalsPayload = {

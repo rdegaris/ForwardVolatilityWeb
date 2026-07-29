@@ -249,10 +249,11 @@ export default function TaylorTrade() {
                   </div>
                 </div>
 
-                {/* Strategy Notes */}
-                <p className="mt-3 text-xs text-slate-400 italic leading-relaxed">
-                  "{item.notes}"
-                </p>
+                {item.notes && (
+                  <p className="mt-3 text-xs text-slate-400 italic leading-relaxed">
+                    &ldquo;{item.notes}&rdquo;
+                  </p>
+                )}
               </div>
             </div>
           );
