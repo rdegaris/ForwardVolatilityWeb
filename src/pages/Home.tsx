@@ -191,7 +191,7 @@ export default function Home() {
               {
                 label: 'Trendorama',
                 desc: 'Systematic Trend Following',
-                to: '/turtle',
+                to: '/trendorama',
                 dot: 'bg-fuchsia-500',
                 border: 'hover:border-fuchsia-500/50 hover:shadow-fuchsia-500/10',
                 text: 'text-fuchsia-300',
@@ -289,8 +289,8 @@ export default function Home() {
               <div className="mt-1 text-xl font-bold text-slate-100">Systematic Trend Following</div>
             </div>
             <div className="flex gap-2">
-              <Link to="/turtle" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
-              <Link to="/turtle/open-trades" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-950/60 text-fuchsia-300 border border-fuchsia-800/50 hover:bg-fuchsia-900/40 transition">Trades</Link>
+              <Link to="/trendorama" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
+              <Link to="/trendorama/open-trades" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-950/60 text-fuchsia-300 border border-fuchsia-800/50 hover:bg-fuchsia-900/40 transition">Trades</Link>
             </div>
           </div>
 
@@ -325,7 +325,7 @@ export default function Home() {
 
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
               <span>Date: <strong className="text-slate-200">{turtleSignals?.date || '—'}</strong></span>
-              <Link to="/turtle" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
+              <Link to="/trendorama" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
                 View Full Signal Matrix →
               </Link>
             </div>
@@ -495,11 +495,11 @@ export default function Home() {
         <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Access Navigation</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { label: 'Trendorama Signals', to: '/turtle', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
+            { label: 'Trendorama Signals', to: '/trendorama', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
             { label: 'The Bradman', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
             { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
             { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
-            { label: 'Open Positions Tracker', to: '/turtle/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
+            { label: 'Open Positions Tracker', to: '/trendorama/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
           ].map((link) => (
             <Link
               key={link.to}

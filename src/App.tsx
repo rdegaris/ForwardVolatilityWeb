@@ -41,9 +41,11 @@ function App() {
             <Route path="/midcap400" element={<ProtectedRoute><MidCap400Results /></ProtectedRoute>} />
             <Route path="/iv-rankings" element={<ProtectedRoute><IVRankings /></ProtectedRoute>} />
 
+            <Route path="/trendorama" element={<ProtectedRoute><TurtleSignals /></ProtectedRoute>} />
+            <Route path="/trendorama/open-trades" element={<ProtectedRoute><TurtleOpenTrades /></ProtectedRoute>} />
+            <Route path="/trendorama/triggers" element={<ProtectedRoute><TurtleTriggers /></ProtectedRoute>} />
             <Route path="/turtle" element={<ProtectedRoute><TurtleSignals /></ProtectedRoute>} />
             <Route path="/turtle/open-trades" element={<ProtectedRoute><TurtleOpenTrades /></ProtectedRoute>} />
-            <Route path="/turtle/triggers" element={<ProtectedRoute><TurtleTriggers /></ProtectedRoute>} />
 
             <Route path="/grail" element={<ProtectedRoute><GrailTrade /></ProtectedRoute>} />
             <Route path="/odid" element={<ProtectedRoute><OdidBreakout /></ProtectedRoute>} />

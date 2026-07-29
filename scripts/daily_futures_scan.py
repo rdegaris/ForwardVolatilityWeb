@@ -502,6 +502,7 @@ def main():
         "system": "S2",
         "total_scanned": len(trendorama_rows),
         "triggered": trendorama_trig,
+        "signals": trendorama_rows,
         "rows": trendorama_rows,
     }
     (web_data_dir / "turtle_signals_latest.json").write_text(json.dumps(trend_payload, indent=2))

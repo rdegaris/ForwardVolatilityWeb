@@ -291,7 +291,7 @@ export default function Navigation() {
 
               <ExpandableItems show={expanded === 'futures'}>
                 {([
-                  { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+                  { key: 'turtle' as const, label: 'Trendorama', to: '/trendorama' },
                   { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
                   { key: 'odid' as const, label: 'TooHot TooCold', to: '/odid' },
                   { key: 'taylor' as const, label: 'The Bradman', to: '/taylor' },
@@ -413,7 +413,7 @@ export default function Navigation() {
             </button>
             <ExpandableItems show={expanded === 'futures'}>
             {([
-              { key: 'turtle' as const, label: 'Trendorama', to: '/turtle' },
+              { key: 'turtle' as const, label: 'Trendorama', to: '/trendorama' },
               { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
               { key: 'odid' as const, label: 'TooHot TooCold', to: '/odid' },
               { key: 'taylor' as const, label: 'The Bradman', to: '/taylor' },

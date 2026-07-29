@@ -1,11 +1,15 @@
 {
   "date": "2026-07-29",
+<<<<<<< HEAD
   "timestamp": "2026-07-29T15:32:45.273834Z",
+=======
+  "timestamp": "2026-07-29T17:28:22.595423Z",
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
   "total_scanned": 13,
   "summary": {
-    "buy_day_count": 8,
-    "sell_day_count": 4,
-    "sell_short_day_count": 1
+    "buy_day_count": 6,
+    "sell_day_count": 5,
+    "sell_short_day_count": 2
   },
   "signals": [
     {
@@ -14,16 +18,20 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
+<<<<<<< HEAD
       "close": 7401.5,
+=======
+      "close": 7422.75,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 48.25,
       "selling_pressure": 20.5,
-      "buying_objective": 7441.25,
+      "buying_objective": 7420.0,
       "selling_objective": 7480.5,
       "high_resistance": 7569.75,
-      "low_support": 7324.25,
-      "entry_target": 7417.125,
+      "low_support": 7303.0,
+      "entry_target": 7395.875,
       "profit_target": 7480.5,
-      "stop_loss": 7324.25
+      "stop_loss": 7303.0
     },
     {
       "symbol": "NQ",
@@ -31,16 +39,20 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
+<<<<<<< HEAD
       "close": 27568.25,
+=======
+      "close": 27719.75,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 318.5,
       "selling_pressure": 306.0,
-      "buying_objective": 27828.5,
+      "buying_objective": 27727.75,
       "selling_objective": 27872.25,
       "high_resistance": 28802.75,
-      "low_support": 26885.5,
-      "entry_target": 27669.25,
+      "low_support": 26784.75,
+      "entry_target": 27568.5,
       "profit_target": 27872.25,
-      "stop_loss": 26885.5
+      "stop_loss": 26784.75
     },
     {
       "symbol": "RTY",
@@ -48,16 +60,20 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
+<<<<<<< HEAD
       "close": 2926.199951171875,
+=======
+      "close": 2927.199951171875,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 31.1001,
       "selling_pressure": 3.8,
-      "buying_objective": 2951.4001,
+      "buying_objective": 2944.1001,
       "selling_objective": 2974.5,
       "high_resistance": 3013.2002,
-      "low_support": 2885.3999,
-      "entry_target": 2935.8501,
+      "low_support": 2878.0999,
+      "entry_target": 2928.55,
       "profit_target": 2974.5,
-      "stop_loss": 2885.3999
+      "stop_loss": 2878.0999
     },
     {
       "symbol": "YM",
@@ -65,16 +81,20 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
+<<<<<<< HEAD
       "close": 52083.0,
+=======
+      "close": 52201.0,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 654.0,
       "selling_pressure": 161.0,
-      "buying_objective": 52696.0,
+      "buying_objective": 52611.0,
       "selling_objective": 52872.0,
       "high_resistance": 53848.0,
-      "low_support": 51227.0,
-      "entry_target": 52369.0,
+      "low_support": 51142.0,
+      "entry_target": 52284.0,
       "profit_target": 52872.0,
-      "stop_loss": 51227.0
+      "stop_loss": 51142.0
     },
     {
       "symbol": "GC",
@@ -82,31 +102,38 @@
       "cycle_phase": "SELL_DAY",
       "cycle_day": 2,
       "action": "SELL_EXIT",
-      "close": 4066.0,
+      "close": 4104.89990234375,
       "buying_pressure": 10.6001,
       "selling_pressure": 0.0,
       "buying_objective": 4064.5,
-      "selling_objective": 4106.7002,
-      "high_resistance": 4117.3003,
+      "selling_objective": 4109.2998,
+      "high_resistance": 4119.8999,
       "low_support": 4043.2998,
-      "entry_target": 4106.7002,
-      "profit_target": 4117.3003,
+      "entry_target": 4109.2998,
+      "profit_target": 4119.8999,
       "stop_loss": 4053.8999
     },
     {
       "symbol": "SI",
       "asof": "2026-07-29",
+<<<<<<< HEAD
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
       "close": 57.165000915527344,
+=======
+      "cycle_phase": "SELL_DAY",
+      "cycle_day": 2,
+      "action": "SELL_EXIT",
+      "close": 58.310001373291016,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 0.0,
       "selling_pressure": 0.0,
       "buying_objective": 56.925,
       "selling_objective": 58.46,
       "high_resistance": 58.46,
       "low_support": 56.925,
-      "entry_target": 56.925,
+      "entry_target": 58.46,
       "profit_target": 58.46,
       "stop_loss": 56.925
     },
@@ -116,7 +143,11 @@
       "cycle_phase": "SELL_DAY",
       "cycle_day": 2,
       "action": "SELL_EXIT",
+<<<<<<< HEAD
       "close": 85.20999908447266,
+=======
+      "close": 84.72000122070312,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 1.48,
       "selling_pressure": 3.17,
       "buying_objective": 81.4,
@@ -133,6 +164,7 @@
       "cycle_phase": "SELL_DAY",
       "cycle_day": 2,
       "action": "SELL_EXIT",
+<<<<<<< HEAD
       "close": 2.7309999465942383,
       "buying_pressure": 0.027,
       "selling_pressure": 0.099,
@@ -142,6 +174,17 @@
       "low_support": 2.54,
       "entry_target": 2.732,
       "profit_target": 2.858,
+=======
+      "close": 2.7330000400543213,
+      "buying_pressure": 0.027,
+      "selling_pressure": 0.099,
+      "buying_objective": 2.693,
+      "selling_objective": 2.636,
+      "high_resistance": 2.861,
+      "low_support": 2.54,
+      "entry_target": 2.735,
+      "profit_target": 2.861,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "stop_loss": 2.666
     },
     {
@@ -150,7 +193,11 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
+<<<<<<< HEAD
       "close": 1.1402499675750732,
+=======
+      "close": 1.1412999629974365,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 0.0032,
       "selling_pressure": 0.0017,
       "buying_objective": 1.143,
@@ -181,19 +228,26 @@
     {
       "symbol": "6B",
       "asof": "2026-07-29",
+<<<<<<< HEAD
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
       "close": 1.3285000324249268,
+=======
+      "cycle_phase": "SELL_SHORT_DAY",
+      "cycle_day": 3,
+      "action": "SELL_SHORT",
+      "close": 1.3295999765396118,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 0.0008,
       "selling_pressure": 0.0021,
       "buying_objective": 1.3288,
       "selling_objective": 1.3289,
       "high_resistance": 1.3339,
       "low_support": 1.3251,
-      "entry_target": 1.3284,
-      "profit_target": 1.3289,
-      "stop_loss": 1.3251
+      "entry_target": 1.3299,
+      "profit_target": 1.3288,
+      "stop_loss": 1.3339
     },
     {
       "symbol": "ZB",
@@ -201,16 +255,20 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
+<<<<<<< HEAD
       "close": 110.4375,
+=======
+      "close": 110.3125,
+>>>>>>> c067e2b (Rename route /turtle to /trendorama and fix Total Scanned count fallback)
       "buying_pressure": 0.6875,
       "selling_pressure": 0.1875,
-      "buying_objective": 111.0625,
+      "buying_objective": 110.875,
       "selling_objective": 110.625,
       "high_resistance": 111.6875,
-      "low_support": 109.5,
-      "entry_target": 110.7188,
+      "low_support": 109.3125,
+      "entry_target": 110.5312,
       "profit_target": 110.625,
-      "stop_loss": 109.5
+      "stop_loss": 109.3125
     },
     {
       "symbol": "ZN",
@@ -218,16 +276,16 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 108.546875,
+      "close": 108.453125,
       "buying_pressure": 0.3281,
       "selling_pressure": 0.125,
-      "buying_objective": 108.8281,
+      "buying_objective": 108.75,
       "selling_objective": 108.6562,
       "high_resistance": 109.2344,
-      "low_support": 108.0469,
-      "entry_target": 108.6641,
+      "low_support": 107.9688,
+      "entry_target": 108.5859,
       "profit_target": 108.6562,
-      "stop_loss": 108.0469
+      "stop_loss": 107.9688
     }
   ]
 }

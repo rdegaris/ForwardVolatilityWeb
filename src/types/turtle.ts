@@ -132,8 +132,10 @@ export interface TurtleSignalsPayload {
   timestamp: string;
   date: string;
   system: 'S2' | string;
+  total_scanned?: number;
   configs_dir?: string;
   duration?: string;
-  signals: TurtleSignalRow[];
+  signals?: TurtleSignalRow[];
+  rows?: TurtleSignalRow[];
   triggered: TurtleTriggeredSignal[];
 }

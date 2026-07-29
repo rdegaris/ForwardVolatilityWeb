@@ -35,7 +35,7 @@ export default function TurtleSignals() {
   }, [data]);
 
   const allRows = useMemo(() => {
-    const rows = data?.signals ?? [];
+    const rows = data?.rows ?? data?.signals ?? [];
     return [...rows].sort((a, b) => a.symbol.localeCompare(b.symbol));
   }, [data]);
 
@@ -125,8 +125,8 @@ export default function TurtleSignals() {
               <div className="text-xl font-bold">{data.date}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">System</div>
-              <div className="text-xl font-bold text-indigo-300">{data.system}</div>
+              <div className="text-gray-400">Total Scanned</div>
+              <div className="text-xl font-bold text-indigo-300">{data.total_scanned ?? total}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Triggered</div>
@@ -134,7 +134,7 @@ export default function TurtleSignals() {
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{new Date(data.timestamp).toLocaleString()}</div>
+              <div className="text-xl font-bold text-gray-200">{data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
             </div>
           </div>
         </div>
