@@ -94,8 +94,8 @@ export default function TaylorTrade() {
             </p>
           </div>
           <div className="shrink-0 text-left md:text-right">
-            <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Latest Cycle Date</div>
-            <div className="text-2xl font-extrabold text-amber-400">{data?.date || '—'}</div>
+            <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Today's Signals</div>
+            <div className="text-2xl font-extrabold text-amber-400">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</div>
           </div>
         </div>
 

@@ -324,7 +324,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
-              <span>Date: <strong className="text-slate-200">{turtleSignals?.date || '—'}</strong></span>
+              <span>Today's Signals: <strong className="text-slate-200">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
               <Link to="/trendorama" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
                 View Full Signal Matrix →
               </Link>
@@ -376,7 +376,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
-              <span>Date: <strong className="text-slate-200">{taylorSignals?.date || '—'}</strong></span>
+              <span>Today's Signals: <strong className="text-slate-200">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
               <Link to="/taylor" className="font-semibold text-amber-300 hover:text-amber-200 transition">
                 Explore The Bradman Levels →
               </Link>
@@ -430,7 +430,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
-              <span>Date: <strong className="text-slate-200">{grailSignals?.date || '—'}</strong></span>
+              <span>Today's Signals: <strong className="text-slate-200">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
               <Link to="/grail" className="font-semibold text-orange-300 hover:text-orange-200 transition">
                 View Strategy Signals →
               </Link>
@@ -481,7 +481,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
-              <span>Date: <strong className="text-slate-200">{odidSignals?.date || '—'}</strong></span>
+              <span>Today's Signals: <strong className="text-slate-200">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
               <Link to="/odid" className="font-semibold text-cyan-300 hover:text-cyan-200 transition">
                 Monitor Armed Setups →
               </Link>

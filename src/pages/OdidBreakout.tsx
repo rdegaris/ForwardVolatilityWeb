@@ -139,8 +139,8 @@ export default function OdidBreakout() {
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mt-6">
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Scan Date</div>
-              <div className="text-xl font-bold">{signals.date}</div>
+              <div className="text-gray-400">Today's Signals</div>
+              <div className="text-xl font-bold">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
               <div className="text-gray-400">Triggered</div>
