@@ -10,6 +10,7 @@ import type {
 import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } from '../types/odid';
 import type { TaylorSignalsPayload } from '../types/taylor';
 import type { GrailSignalsPayload } from '../types/grail';
+import type { LindaSignalsPayload } from '../types/linda';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -69,6 +70,7 @@ export default function Home() {
   const [odidOpen, setOdidOpen] = useState<OdidOpenTradesPayload | null>(null);
   const [taylorSignals, setTaylorSignals] = useState<TaylorSignalsPayload | null>(null);
   const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
+  const [lindaSignals, setLindaSignals] = useState<LindaSignalsPayload | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -82,9 +84,10 @@ export default function Home() {
           fetchJson<OdidOpenTradesPayload>('/data/odid_open_trades_latest.json', { cache: 'no-store' }),
           fetchJson<TaylorSignalsPayload>('/data/taylor_signals_latest.json', { cache: 'no-store' }),
           fetchJson<GrailSignalsPayload>('/data/grail_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<LindaSignalsPayload>('/data/linda_signals_latest.json', { cache: 'no-store' }),
         ]);
 
-        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr] = results;
+        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin] = results;
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
@@ -93,6 +96,7 @@ export default function Home() {
         if (odOpen.status === 'fulfilled') setOdidOpen(odOpen.value);
         if (tay.status === 'fulfilled') setTaylorSignals(tay.value);
         if (gr.status === 'fulfilled') setGrailSignals(gr.value);
+        if (lin.status === 'fulfilled') setLindaSignals(lin.value);
       } finally {
         setLoading(false);
       }
@@ -117,6 +121,12 @@ export default function Home() {
     if (!grailSignals?.signals) return [];
     return grailSignals.signals.filter((s) => s.eligible !== false && s.side !== 'none');
   }, [grailSignals]);
+
+  // The Linda triggered
+  const lindaTriggered = useMemo(() => {
+    if (!lindaSignals?.signals) return [];
+    return lindaSignals.signals.filter(s => s.triggered);
+  }, [lindaSignals]);
 
   const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -272,12 +282,19 @@ export default function Home() {
               accent="text-cyan-400"
               badge="Range Break"
             />
+            <StatCard
+              label="The Linda"
+              value={lindaTriggered.length}
+              sub={`of ${lindaSignals?.total_scanned ?? 0} scanned mean-revert today`}
+              accent="text-rose-400"
+              badge="Mean Rev"
+            />
           </div>
         </div>
       </div>
 
       {/* ──────────────── STRATEGY DETAIL GRID ──────────────── */}
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
         {/* Trendorama */}
         <div className="rounded-3xl shadow-xl border border-fuchsia-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-fuchsia-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-fuchsia">
           <div className="px-6 py-5 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex items-center justify-between">
@@ -499,6 +516,7 @@ export default function Home() {
             { label: 'The Bradman', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
             { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
             { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
+            { label: 'The Linda', to: '/linda', color: 'text-rose-300 border-rose-900/40 hover:border-rose-600' },
             { label: 'Open Positions Tracker', to: '/trendorama/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
           ].map((link) => (
             <Link
@@ -511,6 +529,63 @@ export default function Home() {
           ))}
         </div>
       </div>
-    </div>
+
+        {/* The Linda */}
+        <div className="rounded-3xl shadow-xl border border-rose-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-rose-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-rose">
+          <div className="px-6 py-5 border-b border-rose-900/40 bg-rose-950/30 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-rose-300">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
+                The Linda
+              </div>
+              <div className="mt-1 text-xl font-bold text-slate-100">Next-Day Mean Reversion</div>
+            </div>
+            <Link to="/linda" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 transition shadow-md">View Signals</Link>
+          </div>
+
+          <div className="p-6 flex-1 flex flex-col justify-between">
+            <div className="space-y-3 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Active Reversion Setups:
+              </div>
+              {lindaTriggered.length === 0 ? (
+                <p className="text-slate-400 text-sm italic">No trend day / no-EMA-touch setups today.</p>
+              ) : (
+                lindaTriggered.slice(0, 3).map((sig) => (
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                        <span>{sig.symbol}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
+                          sig.direction === 'FADE_UP'
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                            : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        }`}>
+                          {sig.direction === 'FADE_UP' ? 'Fade Up' : 'Fade Down'}
+                        </span>
+                      </div>
+                      <div className="text-slate-300 mt-1 font-mono">
+                        Target: <span className="font-bold text-rose-300">{sig.target?.toFixed(2) ?? '—'}</span> ·
+                        Stop: <span className="font-bold text-slate-400">{sig.stop?.toFixed(2) ?? '—'}</span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-xs text-slate-500">EMA Gap</div>
+                      <div className="font-mono font-bold text-amber-400">{sig.gap_pct?.toFixed(1)}%</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>Today's Signals: <strong className="text-slate-200">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
+              <Link to="/linda" className="font-semibold text-rose-300 hover:text-rose-200 transition">
+                View The Linda Setups →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
   );
 }

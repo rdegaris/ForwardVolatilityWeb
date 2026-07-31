@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 
-type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid' | 'taylor';
+type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid' | 'taylor' | 'linda';
 
 type AccentStyle = {
   topActiveText: string;
@@ -102,10 +102,23 @@ const ACCENTS: Record<NavSectionKey, AccentStyle> = {
     subHoverPill: 'hover:bg-amber-900/30',
     dot: 'bg-amber-500',
   },
+  linda: {
+    topActiveText: 'text-rose-100',
+    topInactiveText: 'text-slate-300',
+    topHoverText: 'hover:text-rose-200',
+    topActiveUnderline: 'bg-rose-500',
+    subBarBg: 'bg-rose-950/25',
+    subBarBorder: 'border-rose-800/40',
+    subActivePill: 'bg-rose-600 text-white',
+    subInactivePill: 'text-slate-200',
+    subHoverPill: 'hover:bg-rose-900/30',
+    dot: 'bg-rose-500',
+  },
 };
 
 function getSection(pathname: string): NavSectionKey | null {
   if (pathname.startsWith('/taylor')) return 'taylor';
+  if (pathname.startsWith('/linda')) return 'linda';
   if (pathname.startsWith('/trendorama')) return 'turtle';
   if (pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
@@ -153,6 +166,9 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   ],
   taylor: [
     { label: 'Signals', to: '/taylor' },
+  ],
+  linda: [
+    { label: 'Signals', to: '/linda' },
   ],
 };
 
@@ -296,6 +312,7 @@ export default function Navigation() {
                   { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
                   { key: 'odid' as const, label: 'TooHot TooCold', to: '/odid' },
                   { key: 'taylor' as const, label: 'The Bradman', to: '/taylor' },
+                  { key: 'linda' as const, label: 'The Linda', to: '/linda' },
                 ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
                   const isSectionActive = section === item.key;
                   const a = ACCENTS[item.key];

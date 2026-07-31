@@ -7,6 +7,7 @@ Calculates signals for:
   2. Bradman Trading Technique (3-Day Cycle & Objective Levels)
   3. YouHaveChosenWisely (20 EMA Pullback + 14 ADX Filter)
   4. Too Hot / Too Cold (Outside Day / Inside Day Breakout Alerts)
+  5. The Linda (Trend Day No-EMA-Touch Mean Reversion)
 
 Exports updated JSON feeds directly to public/data/ with zero external pip dependencies.
 """
@@ -409,6 +410,160 @@ def analyze_toohot_toocold(bars: List[Bar], symbol: str) -> Tuple[Optional[dict]
     return alert, triggered
 
 # -------------------------------------------------------------------
+# Strategy 5: The Linda (Trend Day / No EMA Touch / Mean Reversion)
+# -------------------------------------------------------------------
+# Linda Raschke concept: on a trend day, if price never pulls back to
+# touch the 15-min EMA during the pit session, it will revert to the
+# mean the next day. We approximate using daily bars + 20-period EMA.
+#
+# Trend Day conditions:
+#   - Day range >= 1.25x 20-day ATR (unusually large range)
+#   - Close in top 25% of range (bullish thrust) or bottom 25% (bearish)
+#
+# No-EMA-touch condition:
+#   - Bullish thrust: day's LOW stayed ABOVE the 20-day EMA
+#   - Bearish thrust: day's HIGH stayed BELOW the 20-day EMA
+#
+# Signal: fade the close, target = EMA20, stop = 1xATR beyond extreme
+# -------------------------------------------------------------------
+
+def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
+    if len(bars) < 25:
+        return None
+
+    closes = [b.close for b in bars]
+    emas = compute_ema(closes, 20)
+    atrs = compute_atr(bars, 20)
+
+    b0 = bars[-1]           # Most recent completed day
+    ema = emas[-1]
+    atr = atrs[-1]
+
+    if ema <= 0 or atr <= 0:
+        return None
+
+    day_range = b0.high - b0.low
+    if day_range <= 0:
+        return None
+
+    range_vs_atr = day_range / atr
+    is_large_range = range_vs_atr >= 1.25
+
+    # Where did price close within the day's range? (0=low, 1=high)
+    trend_strength = (b0.close - b0.low) / day_range
+
+    is_bullish_thrust = trend_strength >= 0.75   # Close in top 25%
+    is_bearish_thrust = trend_strength <= 0.25   # Close in bottom 25%
+
+    is_trend_day = is_large_range and (is_bullish_thrust or is_bearish_thrust)
+
+    if not is_trend_day:
+        return {
+            "symbol": symbol,
+            "asof": b0.dt,
+            "direction": None,
+            "close": round(b0.close, 4),
+            "ema20": round(ema, 4),
+            "gap_pct": round(abs(b0.close - ema) / ema * 100, 2),
+            "day_range": round(day_range, 4),
+            "atr20": round(atr, 4),
+            "range_vs_atr": round(range_vs_atr, 2),
+            "trend_strength": round(trend_strength, 3),
+            "entry": None,
+            "target": round(ema, 4),
+            "stop": None,
+            "triggered": False,
+            "reason": f"Not a trend day (range {range_vs_atr:.2f}x ATR, close at {trend_strength*100:.0f}% of range)",
+        }
+
+    gap_pct = abs(b0.close - ema) / ema * 100
+
+    if is_bullish_thrust:
+        # Price closed near high — did it ever touch the EMA?
+        ema_touched = b0.low <= ema  # Low came down to EMA level
+        if ema_touched:
+            return {
+                "symbol": symbol,
+                "asof": b0.dt,
+                "direction": "FADE_UP",
+                "close": round(b0.close, 4),
+                "ema20": round(ema, 4),
+                "gap_pct": round(gap_pct, 2),
+                "day_range": round(day_range, 4),
+                "atr20": round(atr, 4),
+                "range_vs_atr": round(range_vs_atr, 2),
+                "trend_strength": round(trend_strength, 3),
+                "entry": None,
+                "target": round(ema, 4),
+                "stop": None,
+                "triggered": False,
+                "reason": f"Bullish trend day but LOW touched EMA — condition not met",
+            }
+        # Bullish trend day, low stayed above EMA: FADE_UP signal
+        entry = round(b0.close, 4)  # Sell near prior close / open
+        target = round(ema, 4)
+        stop = round(b0.high + atr, 4)
+        return {
+            "symbol": symbol,
+            "asof": b0.dt,
+            "direction": "FADE_UP",
+            "close": round(b0.close, 4),
+            "ema20": round(ema, 4),
+            "gap_pct": round(gap_pct, 2),
+            "day_range": round(day_range, 4),
+            "atr20": round(atr, 4),
+            "range_vs_atr": round(range_vs_atr, 2),
+            "trend_strength": round(trend_strength, 3),
+            "entry": entry,
+            "target": target,
+            "stop": stop,
+            "triggered": True,
+            "reason": f"Bullish trend day ({range_vs_atr:.2f}x ATR), low stayed {round((b0.low - ema)/ema*100, 2)}% above EMA — fade the close, target EMA",
+        }
+    else:
+        # Bearish thrust: close near low — did price ever touch EMA?
+        ema_touched = b0.high >= ema
+        if ema_touched:
+            return {
+                "symbol": symbol,
+                "asof": b0.dt,
+                "direction": "FADE_DOWN",
+                "close": round(b0.close, 4),
+                "ema20": round(ema, 4),
+                "gap_pct": round(gap_pct, 2),
+                "day_range": round(day_range, 4),
+                "atr20": round(atr, 4),
+                "range_vs_atr": round(range_vs_atr, 2),
+                "trend_strength": round(trend_strength, 3),
+                "entry": None,
+                "target": round(ema, 4),
+                "stop": None,
+                "triggered": False,
+                "reason": f"Bearish trend day but HIGH touched EMA — condition not met",
+            }
+        # Bearish trend day, high stayed below EMA: FADE_DOWN signal
+        entry = round(b0.close, 4)  # Buy near prior close / open
+        target = round(ema, 4)
+        stop = round(b0.low - atr, 4)
+        return {
+            "symbol": symbol,
+            "asof": b0.dt,
+            "direction": "FADE_DOWN",
+            "close": round(b0.close, 4),
+            "ema20": round(ema, 4),
+            "gap_pct": round(gap_pct, 2),
+            "day_range": round(day_range, 4),
+            "atr20": round(atr, 4),
+            "range_vs_atr": round(range_vs_atr, 2),
+            "trend_strength": round(trend_strength, 3),
+            "entry": entry,
+            "target": target,
+            "stop": stop,
+            "triggered": True,
+            "reason": f"Bearish trend day ({range_vs_atr:.2f}x ATR), high stayed {round((ema - b0.high)/ema*100, 2)}% below EMA — fade the close, target EMA",
+        }
+
+# -------------------------------------------------------------------
 # Main Scan Pipeline
 # -------------------------------------------------------------------
 
@@ -424,6 +579,8 @@ def main():
     trendorama_trig = []
     toohot_alerts = []
     toohot_trig = []
+    linda_signals = []
+    linda_triggered = []
 
     latest_date = datetime.utcnow().strftime("%Y-%m-%d")
 
@@ -460,6 +617,13 @@ def main():
             toohot_alerts.append(th_alert)
         if th_trig:
             toohot_trig.append(th_trig)
+
+        # 5. The Linda
+        linda_sig = analyze_linda(bars, symbol)
+        if linda_sig:
+            linda_signals.append(linda_sig)
+            if linda_sig["triggered"]:
+                linda_triggered.append(linda_sig)
 
     if not taylor_signals:
         raise RuntimeError("ERROR: Failed to fetch daily market data for any futures symbols. Aborting signal update.")
@@ -522,6 +686,20 @@ def main():
     }
     (web_data_dir / "odid_signals_latest.json").write_text(json.dumps(odid_sig_payload, indent=2))
     (web_data_dir / "odid_alerts_latest.json").write_text(json.dumps(odid_alrt_payload, indent=2))
+
+    # 5. The Linda JSON
+    linda_payload = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "date": latest_date,
+        "system": "TheLinda",
+        "atr_period": 20,
+        "ema_period": 20,
+        "trend_day_atr_multiple": 1.25,
+        "total_scanned": len(linda_signals),
+        "total_triggered": len(linda_triggered),
+        "signals": linda_signals,
+    }
+    (web_data_dir / "linda_signals_latest.json").write_text(json.dumps(linda_payload, indent=2))
 
     print(f"=== SUCCESSFULLY UPDATED ALL FUTURES SIGNAL FEEDS FOR {latest_date} ===")
 

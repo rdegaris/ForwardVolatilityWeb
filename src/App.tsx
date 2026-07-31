@@ -19,6 +19,7 @@ import TurtleSignals from './pages/TurtleSignals';
 import GrailTrade from './pages/GrailTrade';
 import OdidBreakout from './pages/OdidBreakout';
 import TaylorTrade from './pages/TaylorTrade';
+import LindaTrade from './pages/LindaTrade';
 import Home from './pages/Home';
 import FundPerformance from './pages/FundPerformance';
 import Register from './pages/Register';
@@ -50,6 +51,7 @@ function App() {
             <Route path="/grail" element={<ProtectedRoute><GrailTrade /></ProtectedRoute>} />
             <Route path="/odid" element={<ProtectedRoute><OdidBreakout /></ProtectedRoute>} />
             <Route path="/taylor" element={<ProtectedRoute><TaylorTrade /></ProtectedRoute>} />
+            <Route path="/linda" element={<ProtectedRoute><LindaTrade /></ProtectedRoute>} />
 
             <Route path="/pre-earnings" element={<ProtectedRoute><PreEarningsStraddles /></ProtectedRoute>} />
             <Route path="/pre-earnings/open-trades" element={<ProtectedRoute><PreEarningsTrades /></ProtectedRoute>} />
