@@ -94,6 +94,35 @@ def fetch_yahoo_bars(symbol: str, ticker: str) -> List[Bar]:
     print(f"  [ERROR] {symbol} ({ticker}): Failed to fetch bars")
     return []
 
+def fetch_yahoo_15m_bars(symbol: str, ticker: str) -> List[dict]:
+    url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=15m"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        result = data["chart"]["result"][0]
+        timestamps = result.get("timestamp", [])
+        quote = result["indicators"]["quote"][0]
+        opens, highs, lows, closes = quote.get("open", []), quote.get("high", []), quote.get("low", []), quote.get("close", [])
+        
+        bars = []
+        for i in range(len(timestamps)):
+            ts = timestamps[i]
+            o, h, l, c = opens[i], highs[i], lows[i], closes[i]
+            if None in (ts, o, h, l, c): continue
+            dt_obj = datetime.utcfromtimestamp(ts)
+            bars.append({
+                "ts": ts,
+                "dt": dt_obj.strftime("%Y-%m-%d"),
+                "time": dt_obj.strftime("%H:%M"),
+                "open": float(o), "high": float(h), "low": float(l), "close": float(c)
+            })
+        return bars
+    except Exception as e:
+        print(f"  [ERROR] {symbol} ({ticker}): Failed to fetch 15m bars: {e}")
+        return []
+
 # -------------------------------------------------------------------
 # Indicator Utilities
 # -------------------------------------------------------------------
@@ -427,148 +456,157 @@ def analyze_toohot_toocold(bars: List[Bar], symbol: str) -> Tuple[Optional[dict]
 # Signal: fade the close, target = EMA20, stop = 1xATR beyond extreme
 # -------------------------------------------------------------------
 
-def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
-    if len(bars) < 25:
+def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) -> Optional[dict]:
+    if len(daily_bars) < 25 or not intraday_15m:
         return None
 
-    closes = [b.close for b in bars]
-    emas = compute_ema(closes, 20)
-    atrs = compute_atr(bars, 20)
+    # Calculate 15m 20-period EMA across all 15m bars
+    mult = 2.0 / 21.0
+    ema = None
+    for b in intraday_15m:
+        c = b["close"]
+        ema = c if ema is None else (c - ema) * mult + ema
+        b["ema"] = ema
 
-    # Use bars[-2] = yesterday's COMPLETED session.
-    # bars[-1] may be today's live/partial bar and will fail trend-day
-    # detection since the day isn't finished yet.
-    b0 = bars[-2]           # Yesterday's completed session (the trend day candidate)
-    ema = emas[-2]          # EMA as of yesterday's close
-    atr = atrs[-2]          # ATR as of yesterday's close
+    # Group 15m bars by UTC date
+    by_date = {}
+    for b in intraday_15m:
+        by_date.setdefault(b["dt"], []).append(b)
 
-    if ema <= 0 or atr <= 0:
+    dates = sorted(list(by_date.keys()))
+    if len(dates) < 2:
         return None
 
-    day_range = b0.high - b0.low
-    if day_range <= 0:
+    # Use yesterday's completed date (second to last date in dates if today is active)
+    # E.g. if dates ends in today (2026-07-31), yesterday is dates[-2]
+    today_utc = datetime.utcnow().strftime("%Y-%m-%d")
+    target_date = dates[-2] if dates[-1] == today_utc else dates[-1]
+
+    rth_bars = [b for b in by_date.get(target_date, []) if "13:30" <= b["time"] <= "20:00"]
+    if not rth_bars:
+        return None
+
+    # Calculate 20-day ATR from daily bars for stop sizing
+    atrs = compute_atr(daily_bars, 20)
+    atr = atrs[-2] if len(atrs) >= 2 else atrs[-1]
+
+    day_open = rth_bars[0]["open"]
+    day_close = rth_bars[-1]["close"]
+    day_high = max(b["high"] for b in rth_bars)
+    day_low = min(b["low"] for b in rth_bars)
+    day_range = day_high - day_low
+
+    if day_range <= 0 or atr <= 0:
         return None
 
     range_vs_atr = day_range / atr
-    is_large_range = range_vs_atr >= 1.25
+    trend_strength = (day_close - day_low) / day_range
 
-    # Where did price close within the day's range? (0=low, 1=high)
-    trend_strength = (b0.close - b0.low) / day_range
-
-    is_bullish_thrust = trend_strength >= 0.75   # Close in top 25%
-    is_bearish_thrust = trend_strength <= 0.25   # Close in bottom 25%
+    is_bullish_thrust = trend_strength >= 0.75
+    is_bearish_thrust = trend_strength <= 0.25
+    is_large_range = range_vs_atr >= 0.70  # Pit session range relative to 24h ATR
 
     is_trend_day = is_large_range and (is_bullish_thrust or is_bearish_thrust)
+    last_15m_ema = rth_bars[-1]["ema"]
+    gap_pct = abs(day_close - last_15m_ema) / last_15m_ema * 100
 
     if not is_trend_day:
         return {
             "symbol": symbol,
-            "asof": b0.dt,
+            "asof": target_date,
             "direction": None,
-            "close": round(b0.close, 4),
-            "ema20": round(ema, 4),
-            "gap_pct": round(abs(b0.close - ema) / ema * 100, 2),
+            "close": round(day_close, 4),
+            "ema20": round(last_15m_ema, 4),
+            "gap_pct": round(gap_pct, 2),
             "day_range": round(day_range, 4),
             "atr20": round(atr, 4),
             "range_vs_atr": round(range_vs_atr, 2),
             "trend_strength": round(trend_strength, 3),
             "entry": None,
-            "target": round(ema, 4),
+            "target": round(last_15m_ema, 4),
             "stop": None,
             "triggered": False,
-            "reason": f"Not a trend day (range {range_vs_atr:.2f}x ATR, close at {trend_strength*100:.0f}% of range)",
+            "reason": f"Not a trend day (RTH range {range_vs_atr:.2f}x ATR, close at {trend_strength*100:.0f}% of range)",
         }
 
-    gap_pct = abs(b0.close - ema) / ema * 100
+    # True Linda Raschke Pit Session 15m EMA No-Touch test
+    bull_no_touch = all(b["low"] > b["ema"] for b in rth_bars)
+    bear_no_touch = all(b["high"] < b["ema"] for b in rth_bars)
 
     if is_bullish_thrust:
-        # The pit session 'no EMA touch' condition means:
-        # price opened above the EMA, ran to the upside all day, and the close
-        # is still above the EMA — the mean was never revisited during the session.
-        # If open was BELOW the EMA, that was a gap-up through the mean (different setup).
-        ema_touched = b0.open <= ema  # Opened at or below EMA = mean was crossed
-        if ema_touched:
+        if bull_no_touch:
             return {
                 "symbol": symbol,
-                "asof": b0.dt,
+                "asof": target_date,
                 "direction": "FADE_UP",
-                "close": round(b0.close, 4),
-                "ema20": round(ema, 4),
+                "close": round(day_close, 4),
+                "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
                 "day_range": round(day_range, 4),
                 "atr20": round(atr, 4),
                 "range_vs_atr": round(range_vs_atr, 2),
                 "trend_strength": round(trend_strength, 3),
-                "entry": None,
-                "target": round(ema, 4),
-                "stop": None,
-                "triggered": False,
-                "reason": f"Bullish trend day but opened below/at EMA ({b0.open:.2f} vs EMA {ema:.2f}) — gap-up through mean, not a clean no-touch signal",
+                "entry": round(day_close, 4),
+                "target": round(last_15m_ema, 4),
+                "stop": round(day_high + atr, 4),
+                "triggered": True,
+                "reason": f"Bullish trend day (close at {trend_strength*100:.0f}% of range), 15m low NEVER touched 15m EMA during pit session — fade setup targeting 15m EMA ({last_15m_ema:.2f})",
             }
-        # Bullish trend day, low stayed above EMA: FADE_UP signal
-        entry = round(b0.close, 4)  # Sell near prior close / open
-        target = round(ema, 4)
-        stop = round(b0.high + atr, 4)
-        return {
-            "symbol": symbol,
-            "asof": b0.dt,
-            "direction": "FADE_UP",
-            "close": round(b0.close, 4),
-            "ema20": round(ema, 4),
-            "gap_pct": round(gap_pct, 2),
-            "day_range": round(day_range, 4),
-            "atr20": round(atr, 4),
-            "range_vs_atr": round(range_vs_atr, 2),
-            "trend_strength": round(trend_strength, 3),
-            "entry": entry,
-            "target": target,
-            "stop": stop,
-            "triggered": True,
-            "reason": f"Bullish trend day ({range_vs_atr:.2f}x ATR), low stayed {round((b0.low - ema)/ema*100, 2)}% above EMA — fade the close, target EMA",
-        }
-    else:
-        # Bearish thrust: opened below EMA, ran down hard all day, close near low.
-        # If open was ABOVE the EMA, that's a gap-down through the mean (different setup).
-        ema_touched = b0.open >= ema  # Opened at or above EMA = mean was crossed
-        if ema_touched:
+        else:
             return {
                 "symbol": symbol,
-                "asof": b0.dt,
-                "direction": "FADE_DOWN",
-                "close": round(b0.close, 4),
-                "ema20": round(ema, 4),
+                "asof": target_date,
+                "direction": "FADE_UP",
+                "close": round(day_close, 4),
+                "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
                 "day_range": round(day_range, 4),
                 "atr20": round(atr, 4),
                 "range_vs_atr": round(range_vs_atr, 2),
                 "trend_strength": round(trend_strength, 3),
                 "entry": None,
-                "target": round(ema, 4),
+                "target": round(last_15m_ema, 4),
                 "stop": None,
                 "triggered": False,
-                "reason": f"Bearish trend day but opened above/at EMA ({b0.open:.2f} vs EMA {ema:.2f}) — gap-down through mean, not a clean no-touch signal",
+                "reason": f"Bullish trend day, but 15m EMA was touched during RTH pit session",
             }
-        # Bearish trend day, high stayed below EMA: FADE_DOWN signal
-        entry = round(b0.close, 4)  # Buy near prior close / open
-        target = round(ema, 4)
-        stop = round(b0.low - atr, 4)
-        return {
-            "symbol": symbol,
-            "asof": b0.dt,
-            "direction": "FADE_DOWN",
-            "close": round(b0.close, 4),
-            "ema20": round(ema, 4),
-            "gap_pct": round(gap_pct, 2),
-            "day_range": round(day_range, 4),
-            "atr20": round(atr, 4),
-            "range_vs_atr": round(range_vs_atr, 2),
-            "trend_strength": round(trend_strength, 3),
-            "entry": entry,
-            "target": target,
-            "stop": stop,
-            "triggered": True,
-            "reason": f"Bearish trend day ({range_vs_atr:.2f}x ATR), high stayed {round((ema - b0.high)/ema*100, 2)}% below EMA — fade the close, target EMA",
-        }
+    else:
+        if bear_no_touch:
+            return {
+                "symbol": symbol,
+                "asof": target_date,
+                "direction": "FADE_DOWN",
+                "close": round(day_close, 4),
+                "ema20": round(last_15m_ema, 4),
+                "gap_pct": round(gap_pct, 2),
+                "day_range": round(day_range, 4),
+                "atr20": round(atr, 4),
+                "range_vs_atr": round(range_vs_atr, 2),
+                "trend_strength": round(trend_strength, 3),
+                "entry": round(day_close, 4),
+                "target": round(last_15m_ema, 4),
+                "stop": round(day_low - atr, 4),
+                "triggered": True,
+                "reason": f"Bearish trend day (close at {trend_strength*100:.0f}% of range), 15m high NEVER touched 15m EMA during pit session — fade setup targeting 15m EMA ({last_15m_ema:.2f})",
+            }
+        else:
+            return {
+                "symbol": symbol,
+                "asof": target_date,
+                "direction": "FADE_DOWN",
+                "close": round(day_close, 4),
+                "ema20": round(last_15m_ema, 4),
+                "gap_pct": round(gap_pct, 2),
+                "day_range": round(day_range, 4),
+                "atr20": round(atr, 4),
+                "range_vs_atr": round(range_vs_atr, 2),
+                "trend_strength": round(trend_strength, 3),
+                "entry": None,
+                "target": round(last_15m_ema, 4),
+                "stop": None,
+                "triggered": False,
+                "reason": f"Bearish trend day, but 15m EMA was touched during RTH pit session",
+            }
 
 # -------------------------------------------------------------------
 # Main Scan Pipeline
@@ -625,8 +663,9 @@ def main():
         if th_trig:
             toohot_trig.append(th_trig)
 
-        # 5. The Linda
-        linda_sig = analyze_linda(bars, symbol)
+        # 5. The Linda (Intraday 15m EMA pit session scanner)
+        bars_15m = fetch_yahoo_15m_bars(symbol, ticker)
+        linda_sig = analyze_linda(bars, bars_15m, symbol)
         if linda_sig:
             linda_signals.append(linda_sig)
             if linda_sig["triggered"]:
