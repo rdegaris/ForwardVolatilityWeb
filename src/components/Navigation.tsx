@@ -348,16 +348,6 @@ export default function Navigation() {
             >
               Dashboard
             </Link>
-            <Link
-              to="/fund"
-              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                location.pathname === '/fund'
-                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
-              }`}
-            >
-              Performance
-            </Link>
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <span className="text-sm text-slate-600 dark:text-slate-300">
