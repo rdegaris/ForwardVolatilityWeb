@@ -435,9 +435,12 @@ def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
     emas = compute_ema(closes, 20)
     atrs = compute_atr(bars, 20)
 
-    b0 = bars[-1]           # Most recent completed day
-    ema = emas[-1]
-    atr = atrs[-1]
+    # Use bars[-2] = yesterday's COMPLETED session.
+    # bars[-1] may be today's live/partial bar and will fail trend-day
+    # detection since the day isn't finished yet.
+    b0 = bars[-2]           # Yesterday's completed session (the trend day candidate)
+    ema = emas[-2]          # EMA as of yesterday's close
+    atr = atrs[-2]          # ATR as of yesterday's close
 
     if ema <= 0 or atr <= 0:
         return None
@@ -479,8 +482,11 @@ def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
     gap_pct = abs(b0.close - ema) / ema * 100
 
     if is_bullish_thrust:
-        # Price closed near high — did it ever touch the EMA?
-        ema_touched = b0.low <= ema  # Low came down to EMA level
+        # The pit session 'no EMA touch' condition means:
+        # price opened above the EMA, ran to the upside all day, and the close
+        # is still above the EMA — the mean was never revisited during the session.
+        # If open was BELOW the EMA, that was a gap-up through the mean (different setup).
+        ema_touched = b0.open <= ema  # Opened at or below EMA = mean was crossed
         if ema_touched:
             return {
                 "symbol": symbol,
@@ -497,7 +503,7 @@ def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
                 "target": round(ema, 4),
                 "stop": None,
                 "triggered": False,
-                "reason": f"Bullish trend day but LOW touched EMA — condition not met",
+                "reason": f"Bullish trend day but opened below/at EMA ({b0.open:.2f} vs EMA {ema:.2f}) — gap-up through mean, not a clean no-touch signal",
             }
         # Bullish trend day, low stayed above EMA: FADE_UP signal
         entry = round(b0.close, 4)  # Sell near prior close / open
@@ -521,8 +527,9 @@ def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
             "reason": f"Bullish trend day ({range_vs_atr:.2f}x ATR), low stayed {round((b0.low - ema)/ema*100, 2)}% above EMA — fade the close, target EMA",
         }
     else:
-        # Bearish thrust: close near low — did price ever touch EMA?
-        ema_touched = b0.high >= ema
+        # Bearish thrust: opened below EMA, ran down hard all day, close near low.
+        # If open was ABOVE the EMA, that's a gap-down through the mean (different setup).
+        ema_touched = b0.open >= ema  # Opened at or above EMA = mean was crossed
         if ema_touched:
             return {
                 "symbol": symbol,
@@ -539,7 +546,7 @@ def analyze_linda(bars: List[Bar], symbol: str) -> Optional[dict]:
                 "target": round(ema, 4),
                 "stop": None,
                 "triggered": False,
-                "reason": f"Bearish trend day but HIGH touched EMA — condition not met",
+                "reason": f"Bearish trend day but opened above/at EMA ({b0.open:.2f} vs EMA {ema:.2f}) — gap-down through mean, not a clean no-touch signal",
             }
         # Bearish trend day, high stayed below EMA: FADE_DOWN signal
         entry = round(b0.close, 4)  # Buy near prior close / open
