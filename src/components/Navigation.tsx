@@ -266,7 +266,7 @@ export default function Navigation() {
 
   return (
     <nav className="bg-slate-900/90 shadow-xl mb-8 rounded-xl overflow-hidden border border-slate-800/80 backdrop-blur">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1720px] mx-auto">
         {/* Top Level Navigation */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800/80">
           <div className="flex items-center gap-6">

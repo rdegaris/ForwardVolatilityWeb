@@ -253,7 +253,7 @@ export default function Home() {
           </div>
 
           {/* Key Metrics Bar */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <StatCard
               label="Trendorama"
               value={turtleTriggered.length}
@@ -294,7 +294,7 @@ export default function Home() {
       </div>
 
       {/* ──────────────── STRATEGY DETAIL GRID ──────────────── */}
-      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
         {/* Trendorama */}
         <div className="rounded-3xl shadow-xl border border-fuchsia-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-fuchsia-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-fuchsia">
           <div className="px-6 py-5 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex items-center justify-between">
@@ -505,31 +505,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* ──────────────── QUICK LINKS FOOTER ──────────────── */}
-      <div className="rounded-3xl bg-slate-900/80 p-8 border border-slate-800/90 backdrop-blur-xl shadow-xl">
-        <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Access Navigation</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {[
-            { label: 'Trendorama Signals', to: '/trendorama', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
-            { label: 'The Bradman', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
-            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
-            { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
-            { label: 'The Linda', to: '/linda', color: 'text-rose-300 border-rose-900/40 hover:border-rose-600' },
-            { label: 'Open Positions Tracker', to: '/trendorama/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
-          ].map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`rounded-2xl border bg-slate-950/60 px-5 py-4 text-sm font-bold ${link.color} shadow-md transition-all duration-300 hover:translate-y-0.5`}
-            >
-              {link.label} →
-            </Link>
-          ))}
-        </div>
-      </div>
-
         {/* The Linda */}
         <div className="rounded-3xl shadow-xl border border-rose-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-rose-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-rose">
           <div className="px-6 py-5 border-b border-rose-900/40 bg-rose-950/30 flex items-center justify-between">
@@ -587,5 +562,29 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* ──────────────── QUICK LINKS FOOTER ──────────────── */}
+      <div className="rounded-3xl bg-slate-900/80 p-8 border border-slate-800/90 backdrop-blur-xl shadow-xl">
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Access Navigation</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          {[
+            { label: 'Trendorama Signals', to: '/trendorama', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
+            { label: 'The Bradman', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
+            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
+            { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
+            { label: 'The Linda', to: '/linda', color: 'text-rose-300 border-rose-900/40 hover:border-rose-600' },
+            { label: 'Open Positions Tracker', to: '/trendorama/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
+          ].map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`rounded-2xl border bg-slate-950/60 px-5 py-4 text-sm font-bold ${link.color} shadow-md transition-all duration-300 hover:translate-y-0.5`}
+            >
+              {link.label} →
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
