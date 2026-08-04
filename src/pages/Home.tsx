@@ -297,17 +297,18 @@ export default function Home() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
         {/* Trendorama */}
         <div className="rounded-3xl shadow-xl border border-fuchsia-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-fuchsia-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-fuchsia">
-          <div className="px-6 py-5 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-fuchsia-300">
-                <span className="h-2.5 w-2.5 rounded-full bg-fuchsia-500" />
-                Trendorama
+          <div className="px-5 py-4 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex flex-col justify-between h-[105px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-fuchsia-300 truncate">
+                <span className="h-2 w-2 rounded-full bg-fuchsia-500 shrink-0" />
+                <span>Trendorama</span>
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Systematic Trend Following</div>
+              <Link to="/trendorama" className="px-3 py-1 rounded-lg text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-sm whitespace-nowrap shrink-0">
+                Signals
+              </Link>
             </div>
-            <div className="flex gap-2">
-              <Link to="/trendorama" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-md">Signals</Link>
-              <Link to="/trendorama/open-trades" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-950/60 text-fuchsia-300 border border-fuchsia-800/50 hover:bg-fuchsia-900/40 transition">Trades</Link>
+            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
+              Systematic Trend Following
             </div>
           </div>
 
@@ -351,15 +352,19 @@ export default function Home() {
 
         {/* The Bradman */}
         <div className="rounded-3xl shadow-xl border border-amber-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-amber-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-amber">
-          <div className="px-6 py-5 border-b border-amber-900/40 bg-amber-950/30 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-amber-300">
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                The Bradman
+          <div className="px-5 py-4 border-b border-amber-900/40 bg-amber-950/30 flex flex-col justify-between h-[105px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-amber-300 truncate">
+                <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                <span>The Bradman</span>
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Momentum & Mean-Reversion</div>
+              <Link to="/taylor" className="px-3 py-1 rounded-lg text-xs font-bold bg-amber-600 text-white hover:bg-amber-500 transition shadow-sm whitespace-nowrap shrink-0">
+                Signals
+              </Link>
             </div>
-            <Link to="/taylor" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-500 transition shadow-md">View All Signals</Link>
+            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
+              Momentum & Mean-Reversion
+            </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
@@ -403,15 +408,19 @@ export default function Home() {
 
         {/* YouHaveChosenWisely */}
         <div className="rounded-3xl shadow-xl border border-orange-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-orange-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-orange">
-          <div className="px-6 py-5 border-b border-orange-900/40 bg-orange-950/30 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-orange-300">
-                <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
-                YouHaveChosenWisely
+          <div className="px-5 py-4 border-b border-orange-900/40 bg-orange-950/30 flex flex-col justify-between h-[105px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-orange-300 truncate">
+                <span className="h-2 w-2 rounded-full bg-orange-500 shrink-0" />
+                <span className="truncate">YouHaveChosenWisely</span>
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Trend Continuation Pullbacks</div>
+              <Link to="/grail" className="px-3 py-1 rounded-lg text-xs font-bold bg-orange-600 text-white hover:bg-orange-500 transition shadow-sm whitespace-nowrap shrink-0">
+                Signals
+              </Link>
             </div>
-            <Link to="/grail" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 text-white hover:bg-orange-500 transition shadow-md">View Signals</Link>
+            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
+              Trend Continuation Pullbacks
+            </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
@@ -457,15 +466,19 @@ export default function Home() {
 
         {/* TooHot TooCold */}
         <div className="rounded-3xl shadow-xl border border-cyan-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-cyan-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-cyan">
-          <div className="px-6 py-5 border-b border-cyan-900/40 bg-cyan-950/30 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300">
-                <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
-                TooHot TooCold
+          <div className="px-5 py-4 border-b border-cyan-900/40 bg-cyan-950/30 flex flex-col justify-between h-[105px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300 truncate">
+                <span className="h-2 w-2 rounded-full bg-cyan-500 shrink-0" />
+                <span>TooHot TooCold</span>
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Range Expansion Breakouts</div>
+              <Link to="/odid" className="px-3 py-1 rounded-lg text-xs font-bold bg-cyan-600 text-white hover:bg-cyan-500 transition shadow-sm whitespace-nowrap shrink-0">
+                Monitor
+              </Link>
             </div>
-            <Link to="/odid" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white hover:bg-cyan-500 transition shadow-md">Monitor</Link>
+            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
+              Range Expansion Breakouts
+            </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
@@ -507,15 +520,19 @@ export default function Home() {
         </div>
         {/* The Linda */}
         <div className="rounded-3xl shadow-xl border border-rose-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-rose-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-rose">
-          <div className="px-6 py-5 border-b border-rose-900/40 bg-rose-950/30 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-rose-300">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-                The Linda
+          <div className="px-5 py-4 border-b border-rose-900/40 bg-rose-950/30 flex flex-col justify-between h-[105px]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-rose-300 truncate">
+                <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
+                <span>The Linda</span>
               </div>
-              <div className="mt-1 text-xl font-bold text-slate-100">Next-Day Mean Reversion</div>
+              <Link to="/linda" className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 transition shadow-sm whitespace-nowrap shrink-0">
+                Signals
+              </Link>
             </div>
-            <Link to="/linda" className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 transition shadow-md">View Signals</Link>
+            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
+              Next-Day Mean Reversion
+            </div>
           </div>
 
           <div className="p-6 flex-1 flex flex-col justify-between">
