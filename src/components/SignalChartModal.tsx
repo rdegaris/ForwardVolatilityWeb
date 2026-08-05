@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES, LBR_STUDIES_OVERRIDES } from '../lib/tradingview';
+import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES, LBR_STUDIES_OVERRIDES, STRATEGY_INTERVALS } from '../lib/tradingview';
 
 export interface SignalChartModalProps {
   isOpen: boolean;
@@ -38,11 +38,9 @@ function PricePill({
       ? value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
       : value.toFixed(4);
   return (
-    <div className={`flex flex-col items-center rounded-xl px-4 py-3 ${color}`}>
-      <span className="text-[10px] font-semibold uppercase tracking-widest opacity-70 mb-0.5">
-        {label}
-      </span>
-      <span className="font-mono font-black text-lg leading-none">{formatted}</span>
+    <div className="flex flex-col items-center bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-2 min-w-[100px]">
+      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">{label}</span>
+      <span className={`font-mono font-bold text-base ${color}`}>${formatted}</span>
     </div>
   );
 }
@@ -52,7 +50,7 @@ export default function SignalChartModal({
   onClose,
   symbol,
   strategy,
-  interval = 'D',
+  interval,
   signalLabel,
   direction,
   entryPrice,
@@ -67,6 +65,12 @@ export default function SignalChartModal({
 
   const tvSymbol = TV_SYMBOLS[symbol] ?? 'SPY';
   const cmeSymbol = CME_FUTURES_SYMBOLS[symbol] ?? symbol;
+
+  const effectiveInterval =
+    interval ||
+    STRATEGY_INTERVALS[strategy?.toLowerCase()?.replaceAll(/\s+/g, '_')] ||
+    STRATEGY_INTERVALS[strategy?.toLowerCase()] ||
+    'D';
 
   // Determine direction styling
   const isBullish =
@@ -92,7 +96,7 @@ export default function SignalChartModal({
         width: '100%',
         height: '100%',
         symbol: tvSymbol,
-        interval,
+        interval: effectiveInterval,
         timezone: 'America/New_York',
         theme: 'dark',
         style: '1',           // candlestick
@@ -129,7 +133,7 @@ export default function SignalChartModal({
     return () => {
       if (containerRef.current) containerRef.current.innerHTML = '';
     };
-  }, [isOpen, tvSymbol, interval]);
+  }, [isOpen, tvSymbol, effectiveInterval]);
 
   // Close on Escape
   useEffect(() => {
@@ -166,6 +170,9 @@ export default function SignalChartModal({
                 {signalLabel}
               </span>
             )}
+            <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono font-bold border border-slate-700">
+              {effectiveInterval === '15' ? '15m Pit Session' : effectiveInterval === '1' ? '1m' : effectiveInterval === '30' ? '30m' : effectiveInterval === '60' || effectiveInterval === '1H' ? '1h' : 'Daily (1D)'}
+            </span>
             <span className="text-slate-500 text-xs font-mono">Mapped: {tvSymbol}</span>
           </div>
           <div className="flex items-center gap-3">

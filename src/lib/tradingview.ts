@@ -39,14 +39,20 @@ export const CME_FUTURES_SYMBOLS: Record<string, string> = {
 
 /**
  * Default chart interval per strategy.
- * Linda uses 15m for pit session EMA; Trendorama uses Daily.
+ * The Linda uses 15m (15-minute pit session EMA); all other swing models use Daily ('D').
  */
 export const STRATEGY_INTERVALS: Record<string, string> = {
-  linda:     '15',   // 15-minute — pit session EMA is the key indicator
-  grail:     'D',    // Daily — ADX and 20 EMA pullback on daily bars
-  taylor:    'D',    // Daily — 3-day cycle uses daily bars
-  trendorama:'D',    // Daily — 55-day Donchian breakout
-  odid:      'D',    // Daily — outside/inside day patterns
+  linda:                '15',   // 15-minute — pit session EMA mean-reversion
+  the_linda:            '15',
+  grail:                'D',    // Daily — ADX and 20 EMA pullback
+  youhavechosenwisely:  'D',
+  taylor:               'D',    // Daily — 3-day cycle
+  bradman:              'D',
+  the_bradman:          'D',
+  trendorama:           'D',    // Daily — 55-day Donchian breakout
+  turtle:               'D',
+  odid:                 'D',    // Daily — outside/inside day breakouts
+  toohottoocold:        'D',
 };
 
 /**
