@@ -1,11 +1,11 @@
 {
   "date": "2026-08-05",
-  "timestamp": "2026-08-05T16:27:02.347971Z",
+  "timestamp": "2026-08-05T21:54:23.911022Z",
   "total_scanned": 13,
   "summary": {
-    "buy_day_count": 6,
+    "buy_day_count": 5,
     "sell_day_count": 1,
-    "sell_short_day_count": 6
+    "sell_short_day_count": 7
   },
   "signals": [
     {
@@ -14,16 +14,16 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 7761.25,
+      "close": 7758.75,
       "buying_pressure": 136.5,
       "selling_pressure": 20.5,
-      "buying_objective": 7887.0,
+      "buying_objective": 7882.25,
       "selling_objective": 7799.75,
       "high_resistance": 7977.25,
-      "low_support": 7593.5,
-      "entry_target": 7818.75,
+      "low_support": 7588.75,
+      "entry_target": 7814.0,
       "profit_target": 7799.75,
-      "stop_loss": 7593.5
+      "stop_loss": 7588.75
     },
     {
       "symbol": "NQ",
@@ -31,16 +31,16 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 29749.75,
+      "close": 29600.25,
       "buying_pressure": 1031.75,
       "selling_pressure": 93.0,
-      "buying_objective": 30733.75,
+      "buying_objective": 30562.5,
       "selling_objective": 29981.0,
       "high_resistance": 31198.75,
-      "low_support": 28577.25,
-      "entry_target": 30217.875,
+      "low_support": 28406.0,
+      "entry_target": 30046.625,
       "profit_target": 29981.0,
-      "stop_loss": 28577.25
+      "stop_loss": 28406.0
     },
     {
       "symbol": "RTY",
@@ -48,16 +48,16 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 3034.89990234375,
+      "close": 3028.0,
       "buying_pressure": 58.5999,
       "selling_pressure": 7.1001,
-      "buying_objective": 3086.9998,
+      "buying_objective": 3081.8999,
       "selling_objective": 3051.2,
       "high_resistance": 3124.0,
-      "low_support": 2962.7,
-      "entry_target": 3057.6998,
+      "low_support": 2957.6001,
+      "entry_target": 3052.6,
       "profit_target": 3051.2,
-      "stop_loss": 2962.7
+      "stop_loss": 2957.6001
     },
     {
       "symbol": "YM",
@@ -65,7 +65,7 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 54673.0,
+      "close": 54555.0,
       "buying_pressure": 1001.0,
       "selling_pressure": 155.0,
       "buying_objective": 55343.0,
@@ -82,16 +82,16 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 4295.2001953125,
+      "close": 4308.0,
       "buying_pressure": 46.5999,
       "selling_pressure": 0.0,
       "buying_objective": 4168.2,
-      "selling_objective": 4325.5,
-      "high_resistance": 4372.0999,
+      "selling_objective": 4328.2002,
+      "high_resistance": 4374.8,
       "low_support": 4075.0002,
-      "entry_target": 4325.5,
+      "entry_target": 4328.2002,
       "profit_target": 4168.2,
-      "stop_loss": 4372.0999
+      "stop_loss": 4374.8
     },
     {
       "symbol": "SI",
@@ -99,7 +99,7 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 62.13999938964844,
+      "close": 62.255001068115234,
       "buying_pressure": 1.956,
       "selling_pressure": 0.0,
       "buying_objective": 61.576,
@@ -116,7 +116,7 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 75.66000366210938,
+      "close": 75.08000183105469,
       "buying_pressure": 0.66,
       "selling_pressure": 6.56,
       "buying_objective": 74.9,
@@ -133,7 +133,7 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 2.677999973297119,
+      "close": 2.6700000762939453,
       "buying_pressure": 0.023,
       "selling_pressure": 0.104,
       "buying_objective": 2.683,
@@ -150,16 +150,16 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 1.1565500497817993,
+      "close": 1.1571999788284302,
       "buying_pressure": 0.0029,
       "selling_pressure": 0.0001,
       "buying_objective": 1.1574,
-      "selling_objective": 1.1574,
-      "high_resistance": 1.1605,
+      "selling_objective": 1.1577,
+      "high_resistance": 1.1608,
       "low_support": 1.1515,
-      "entry_target": 1.1575,
+      "entry_target": 1.1577,
       "profit_target": 1.1574,
-      "stop_loss": 1.1605
+      "stop_loss": 1.1608
     },
     {
       "symbol": "6J",
@@ -167,7 +167,7 @@
       "cycle_phase": "SELL_DAY",
       "cycle_day": 2,
       "action": "SELL_EXIT",
-      "close": 0.00636299978941679,
+      "close": 0.006361499894410372,
       "buying_pressure": 0.0,
       "selling_pressure": 0.0,
       "buying_objective": 0.0064,
@@ -184,7 +184,7 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 1.346500039100647,
+      "close": 1.3468999862670898,
       "buying_pressure": 0.0031,
       "selling_pressure": 0.0002,
       "buying_objective": 1.3475,
@@ -201,7 +201,7 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 109.84375,
+      "close": 110.0,
       "buying_pressure": 1.125,
       "selling_pressure": 0.2812,
       "buying_objective": 110.9062,
@@ -215,10 +215,10 @@
     {
       "symbol": "ZN",
       "asof": "2026-08-05",
-      "cycle_phase": "BUY_DAY",
-      "cycle_day": 1,
-      "action": "BUY_LONG",
-      "close": 108.734375,
+      "cycle_phase": "SELL_SHORT_DAY",
+      "cycle_day": 3,
+      "action": "SELL_SHORT",
+      "close": 108.90625,
       "buying_pressure": 0.5781,
       "selling_pressure": 0.0781,
       "buying_objective": 109.2812,
@@ -226,8 +226,8 @@
       "high_resistance": 109.6875,
       "low_support": 108.0469,
       "entry_target": 108.9922,
-      "profit_target": 108.9531,
-      "stop_loss": 108.0469
+      "profit_target": 109.2812,
+      "stop_loss": 109.6875
     }
   ]
 }
