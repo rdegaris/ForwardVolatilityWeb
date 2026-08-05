@@ -56,23 +56,30 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
  */
 export const LBR_STUDIES = [
   'MAExp@tv-basicstudies',
-  'KeltnerChannels@tv-basicstudies',
+  'Keltner Channels@tv-basicstudies',
   'MACD@tv-basicstudies',
 ];
 
 export const LBR_STUDIES_OVERRIDES = {
+  // 20 EMA
   "moving average exponential.length": 20,
   "moving average exponential.plot.color": "#60a5fa",
   "moving average exponential.plot.linewidth": 2,
 
+  // Keltner Channels (20 EMA, 2.5 ATR)
   "keltner channels.length": 20,
   "keltner channels.mult": 2.5,
   "keltner channels.use exp": true,
+  "keltner channels.bands style": "ATR",
   "keltner channels.upper.color": "#818cf8",
   "keltner channels.lower.color": "#818cf8",
   "keltner channels.middle.color": "#60a5fa",
 
+  // LBR 3/10 MACD (3, 10, 16)
   "macd.fast length": 3,
   "macd.slow length": 10,
   "macd.signal length": 16,
+  "macd.signalLength": 16,
+  "macd.signal_length": 16,
+  "macd.signal_smoothing": 16,
 };
