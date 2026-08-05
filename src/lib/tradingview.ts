@@ -55,18 +55,9 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
  * Loaded in ALL instances across ALL strategies as the baseline chart setup.
  */
 export const LBR_STUDIES = [
-  {
-    name: "Moving Average Exponential",
-    inputs: { length: 20 }
-  },
-  {
-    name: "Keltner Channels",
-    inputs: { length: 20, mult: 2.5 }
-  },
-  {
-    name: "MACD",
-    inputs: { fast_length: 3, slow_length: 10, signal_length: 16 }
-  }
+  'MAExp@tv-basicstudies',
+  'KeltnerChannels@tv-basicstudies',
+  'MACD@tv-basicstudies',
 ];
 
 export const LBR_STUDIES_OVERRIDES = {
