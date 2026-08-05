@@ -337,9 +337,9 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No breakouts triggered on the latest bar.</p>
               ) : (
                 turtleTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2">
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm mb-1.5">
                         <span>{t.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
                           t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
@@ -347,8 +347,9 @@ export default function Home() {
                           {t.side.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-300 mt-1 font-mono">
-                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
+                      <div className="text-xs text-slate-300 font-mono space-y-0.5">
+                        <div>Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span></div>
+                        <div>Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span></div>
                       </div>
                     </div>
                     <button
@@ -361,7 +362,7 @@ export default function Home() {
                         entryPrice: t.entry_stop,
                         stopPrice: t.stop_loss,
                       })}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1 mt-0.5"
                       title="View Interactive Chart"
                     >
                       📈 Chart
@@ -402,9 +403,9 @@ export default function Home() {
                 Active Cycle Recommendations:
               </div>
               {(bradmanActionable.length > 0 ? bradmanActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
-                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-start justify-between gap-2 text-xs">
                   <div className="flex-1 min-w-0">
-                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm mb-1.5">
                       <span>{sig.symbol}</span>
                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
                         sig.action === 'BUY_LONG' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
@@ -413,10 +414,10 @@ export default function Home() {
                         {sig.action.replace('_', ' ')}
                       </span>
                     </div>
-                    <div className="text-slate-300 mt-1 font-mono">
-                      Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_target)}</span> · 
-                      Target: <span className="font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span> · 
-                      Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                    <div className="text-slate-300 font-mono space-y-0.5">
+                      <div>Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_target)}</span></div>
+                      <div>Target: <span className="font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span></div>
+                      <div>Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span></div>
                     </div>
                   </div>
                   <button
@@ -430,7 +431,7 @@ export default function Home() {
                       targetPrice: sig.profit_target,
                       stopPrice: sig.stop_loss,
                     })}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1 mt-0.5"
                     title="View Interactive Chart"
                   >
                     📈 Chart
@@ -473,9 +474,9 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No active pullback signals today.</p>
               ) : (
                 grailTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-start justify-between gap-2 text-xs">
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm mb-1.5">
                         <span>{sig.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
                           sig.side === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
@@ -483,9 +484,9 @@ export default function Home() {
                           {sig.side.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-slate-300 mt-1 font-mono">
-                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_zone)}</span> · 
-                        Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
+                      <div className="text-slate-300 font-mono space-y-0.5">
+                        <div>Entry: <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_zone)}</span></div>
+                        <div>Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span></div>
                       </div>
                     </div>
                     <button
@@ -499,7 +500,7 @@ export default function Home() {
                         targetPrice: sig.target,
                         stopPrice: sig.stop_loss,
                       })}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1 mt-0.5"
                       title="View Interactive Chart"
                     >
                       📈 Chart
@@ -543,9 +544,9 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No close-confirmed range breakouts today.</p>
               ) : (
                 odidTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-start justify-between gap-2 text-xs">
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm mb-1.5">
                         <span>{t.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
                           t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
@@ -553,8 +554,9 @@ export default function Home() {
                           {t.side.toUpperCase()}
                         </span>
                       </div>
-                      <div className="text-slate-300 mt-1 font-mono">
-                        Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
+                      <div className="text-slate-300 font-mono space-y-0.5">
+                        <div>Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span></div>
+                        <div>Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span></div>
                       </div>
                     </div>
                     <button
@@ -567,7 +569,7 @@ export default function Home() {
                         entryPrice: t.entry_stop,
                         stopPrice: t.stop_loss,
                       })}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1 mt-0.5"
                       title="View Interactive Chart"
                     >
                       📈 Chart
@@ -610,9 +612,9 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No trend day / no-EMA-touch setups today.</p>
               ) : (
                 lindaTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-start justify-between gap-2 text-xs">
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
+                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm mb-1.5">
                         <span>{sig.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
                           sig.direction === 'FADE_UP'
@@ -622,9 +624,9 @@ export default function Home() {
                           {sig.direction === 'FADE_UP' ? 'Fade Up' : 'Fade Down'}
                         </span>
                       </div>
-                      <div className="text-slate-300 mt-1 font-mono">
-                        Target: <span className="font-bold text-rose-300">{sig.target?.toFixed(2) ?? '—'}</span> ·
-                        Stop: <span className="font-bold text-slate-400">{sig.stop?.toFixed(2) ?? '—'}</span>
+                      <div className="text-slate-300 font-mono space-y-0.5">
+                        <div>Target: <span className="font-bold text-rose-300">${sig.target?.toFixed(2) ?? '—'}</span></div>
+                        <div>Stop: <span className="font-bold text-slate-400">${sig.stop?.toFixed(2) ?? '—'}</span></div>
                       </div>
                     </div>
                     <button
@@ -638,7 +640,7 @@ export default function Home() {
                         targetPrice: sig.target,
                         stopPrice: sig.stop,
                       })}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1 mt-0.5"
                       title="View Interactive Chart"
                     >
                       📈 Chart
