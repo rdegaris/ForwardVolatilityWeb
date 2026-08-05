@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getTodayDatePacific } from '../lib/dateUtils';
 import { fetchJson } from '../lib/http';
@@ -11,6 +11,7 @@ import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } fro
 import type { TaylorSignalsPayload } from '../types/taylor';
 import type { GrailSignalsPayload } from '../types/grail';
 import type { LindaSignalsPayload } from '../types/linda';
+import SignalChartModal from '../components/SignalChartModal';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -29,23 +30,26 @@ function formatSignalPrice(value?: number | null, digits = 2) {
 
 function StatCard({
   label,
+  title,
   value,
   sub,
   accent,
   badge,
 }: {
-  label: string;
-  value: string | number;
-  sub?: string;
+  label?: string;
+  title?: string;
+  value: React.ReactNode;
+  sub?: React.ReactNode;
   accent: string;
   badge?: string;
 }) {
+  const cardTitle = label || title || '';
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-slate-900/60 p-5 border border-slate-800/80 backdrop-blur-md shadow-lg hover:border-slate-700/80 transition-all duration-300 group">
-      <div className="flex items-center justify-between gap-2">
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</div>
+    <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-slate-700">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{cardTitle}</span>
         {badge && (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+          <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 border border-slate-700">
             {badge}
           </span>
         )}
@@ -71,6 +75,18 @@ export default function Home() {
   const [taylorSignals, setTaylorSignals] = useState<TaylorSignalsPayload | null>(null);
   const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
   const [lindaSignals, setLindaSignals] = useState<LindaSignalsPayload | null>(null);
+  const [chartItem, setChartItem] = useState<{
+    symbol: string;
+    strategy: string;
+    interval?: string;
+    signalLabel?: string;
+    direction?: 'long' | 'short' | 'fade_up' | 'fade_down' | null;
+    entryPrice?: number | null;
+    stopPrice?: number | null;
+    targetPrice?: number | null;
+  } | null>(null);
+
+  const closeChart = useCallback(() => setChartItem(null), []);
 
   useEffect(() => {
     const load = async () => {
@@ -321,8 +337,8 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No breakouts triggered on the latest bar.</p>
               ) : (
                 turtleTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between">
-                    <div>
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2">
+                    <div className="flex-1 min-w-0">
                       <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                         <span>{t.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
@@ -335,7 +351,21 @@ export default function Home() {
                         Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
                       </div>
                     </div>
-                    <div className="text-right text-[11px] font-mono text-slate-400">{t.asof}</div>
+                    <button
+                      onClick={() => setChartItem({
+                        symbol: t.symbol,
+                        strategy: 'trendorama',
+                        interval: 'D',
+                        signalLabel: `TRENDORAMA — ${t.side.toUpperCase()}`,
+                        direction: t.side.toLowerCase() === 'long' ? 'long' : 'short',
+                        entryPrice: t.entry_stop,
+                        stopPrice: t.stop_loss,
+                      })}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      title="View Interactive Chart"
+                    >
+                      📈 Chart
+                    </button>
                   </div>
                 ))
               )}
@@ -372,8 +402,8 @@ export default function Home() {
                 Active Cycle Recommendations:
               </div>
               {(bradmanActionable.length > 0 ? bradmanActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
-                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
-                  <div>
+                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                  <div className="flex-1 min-w-0">
                     <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                       <span>{sig.symbol}</span>
                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
@@ -389,9 +419,22 @@ export default function Home() {
                       Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
                     </div>
                   </div>
-                  <div className="text-right font-mono text-amber-400 font-bold shrink-0">
-                    Day {sig.cycle_day}
-                  </div>
+                  <button
+                    onClick={() => setChartItem({
+                      symbol: sig.symbol,
+                      strategy: 'taylor',
+                      interval: 'D',
+                      signalLabel: `BRADMAN — ${sig.action.replaceAll('_', ' ')}`,
+                      direction: sig.action === 'BUY_LONG' ? 'long' : sig.action === 'SELL_SHORT' ? 'short' : null,
+                      entryPrice: sig.entry_target,
+                      targetPrice: sig.profit_target,
+                      stopPrice: sig.stop_loss,
+                    })}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                    title="View Interactive Chart"
+                  >
+                    📈 Chart
+                  </button>
                 </div>
               ))}
             </div>
@@ -430,8 +473,8 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No active pullback signals today.</p>
               ) : (
                 grailTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
-                    <div>
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                    <div className="flex-1 min-w-0">
                       <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                         <span>{sig.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
@@ -445,9 +488,22 @@ export default function Home() {
                         Stop: <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
                       </div>
                     </div>
-                    <div className="text-right text-xs text-orange-400 font-mono font-bold shrink-0">
-                      ADX {sig.adx.toFixed(0)}
-                    </div>
+                    <button
+                      onClick={() => setChartItem({
+                        symbol: sig.symbol,
+                        strategy: 'grail',
+                        interval: 'D',
+                        signalLabel: `GRAIL — ${sig.side.toUpperCase()}`,
+                        direction: sig.side === 'long' ? 'long' : 'short',
+                        entryPrice: sig.entry_zone ?? sig.ema20,
+                        targetPrice: sig.target,
+                        stopPrice: sig.stop_loss,
+                      })}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      title="View Interactive Chart"
+                    >
+                      📈 Chart
+                    </button>
                   </div>
                 ))
               )}
@@ -487,8 +543,8 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No close-confirmed range breakouts today.</p>
               ) : (
                 odidTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
-                    <div>
+                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                    <div className="flex-1 min-w-0">
                       <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                         <span>{t.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
@@ -501,7 +557,21 @@ export default function Home() {
                         Entry: <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span> · Stop: <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
                       </div>
                     </div>
-                    <div className="text-right text-[11px] font-mono text-slate-400">{t.asof}</div>
+                    <button
+                      onClick={() => setChartItem({
+                        symbol: t.symbol,
+                        strategy: 'odid',
+                        interval: 'D',
+                        signalLabel: `TOOHOT TOCOLD — ${t.side.toUpperCase()}`,
+                        direction: t.side.toLowerCase() === 'long' ? 'long' : 'short',
+                        entryPrice: t.entry_stop,
+                        stopPrice: t.stop_loss,
+                      })}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      title="View Interactive Chart"
+                    >
+                      📈 Chart
+                    </button>
                   </div>
                 ))
               )}
@@ -540,8 +610,8 @@ export default function Home() {
                 <p className="text-slate-400 text-sm italic">No trend day / no-EMA-touch setups today.</p>
               ) : (
                 lindaTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 flex items-center justify-between text-xs">
-                    <div>
+                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                    <div className="flex-1 min-w-0">
                       <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
                         <span>{sig.symbol}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black ${
@@ -557,10 +627,22 @@ export default function Home() {
                         Stop: <span className="font-bold text-slate-400">{sig.stop?.toFixed(2) ?? '—'}</span>
                       </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-xs text-slate-500">EMA Gap</div>
-                      <div className="font-mono font-bold text-amber-400">{sig.gap_pct?.toFixed(1)}%</div>
-                    </div>
+                    <button
+                      onClick={() => setChartItem({
+                        symbol: sig.symbol,
+                        strategy: 'linda',
+                        interval: '15',
+                        signalLabel: sig.direction === 'FADE_UP' ? 'FADE UP — SELL' : 'FADE DOWN — BUY',
+                        direction: sig.direction === 'FADE_UP' ? 'fade_up' : 'fade_down',
+                        entryPrice: sig.close,
+                        targetPrice: sig.target,
+                        stopPrice: sig.stop,
+                      })}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
+                      title="View Interactive Chart"
+                    >
+                      📈 Chart
+                    </button>
                   </div>
                 ))
               )}
@@ -597,6 +679,22 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* Interactive Chart Modal */}
+      {chartItem && (
+        <SignalChartModal
+          isOpen={!!chartItem}
+          onClose={closeChart}
+          symbol={chartItem.symbol}
+          strategy={chartItem.strategy}
+          interval={chartItem.interval ?? 'D'}
+          signalLabel={chartItem.signalLabel}
+          direction={chartItem.direction}
+          entryPrice={chartItem.entryPrice}
+          targetPrice={chartItem.targetPrice}
+          stopPrice={chartItem.stopPrice}
+        />
+      )}
     </div>
   );
 }
