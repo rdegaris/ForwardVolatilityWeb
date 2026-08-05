@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES } from '../lib/tradingview';
+import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES, LBR_STUDIES_OVERRIDES } from '../lib/tradingview';
 
 export interface SignalChartModalProps {
   isOpen: boolean;
@@ -103,11 +103,8 @@ export default function SignalChartModal({
         hide_top_toolbar: false,
         allow_symbol_change: false,
         save_image: false,
-        studies: LBR_STUDIES.map((s) => s.id),
-        studies_overrides: LBR_STUDIES.reduce(
-          (acc, s) => ({ ...acc, ...s.overrides }),
-          {}
-        ),
+        studies: LBR_STUDIES,
+        studies_overrides: LBR_STUDIES_OVERRIDES,
         overrides: {
           'paneProperties.background': '#0f172a',
           'paneProperties.vertGridProperties.color': '#1e293b',

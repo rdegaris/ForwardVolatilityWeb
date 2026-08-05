@@ -50,27 +50,38 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
 };
 
 /**
- * LBR indicator studies for TradingView widget.
- * Matches her documented setup: Keltner(20, 2.5), EMA(20), MACD(3,10,16).
+ * LBR Baseline Indicators for TradingView widget.
+ * Exact LBR specs: Keltner Channels (20, 2.5), EMA (20), LBR 3/10 MACD (3, 10, 16).
+ * Loaded in ALL instances across ALL strategies as the baseline chart setup.
  */
 export const LBR_STUDIES = [
   {
-    id: 'MAExp@tv-basicstudies',
-    inputs: { length: 20 },
-    overrides: { 'plot.color': '#60a5fa', 'plot.linewidth': 2 }, // blue-400
+    name: "Moving Average Exponential",
+    inputs: { length: 20 }
   },
   {
-    id: 'KeltnerChannels@tv-basicstudies',
-    inputs: { length: 20, mult: 2.5 },
-    overrides: {
-      'upper.color': '#818cf8',   // indigo-400
-      'lower.color': '#818cf8',
-      'middle.color': '#60a5fa', // blue-400
-    },
+    name: "Keltner Channels",
+    inputs: { length: 20, mult: 2.5 }
   },
   {
-    id: 'MACD@tv-basicstudies',
-    inputs: { fast_length: 3, slow_length: 10, signal_smoothing: 16 },
-    overrides: {},
-  },
+    name: "MACD",
+    inputs: { fast_length: 3, slow_length: 10, signal_length: 16 }
+  }
 ];
+
+export const LBR_STUDIES_OVERRIDES = {
+  "moving average exponential.length": 20,
+  "moving average exponential.plot.color": "#60a5fa",
+  "moving average exponential.plot.linewidth": 2,
+
+  "keltner channels.length": 20,
+  "keltner channels.mult": 2.5,
+  "keltner channels.use exp": true,
+  "keltner channels.upper.color": "#818cf8",
+  "keltner channels.lower.color": "#818cf8",
+  "keltner channels.middle.color": "#60a5fa",
+
+  "macd.fast length": 3,
+  "macd.slow length": 10,
+  "macd.signal length": 16,
+};
