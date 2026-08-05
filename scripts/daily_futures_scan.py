@@ -282,7 +282,7 @@ def analyze_wisely(bars: List[Bar], symbol: str) -> Optional[dict]:
     dist_pct = abs(b0.close - last_ema) / last_ema * 100
 
     is_uptrend = last_pdi > last_mdi
-    adx_strong = last_adx >= 25.0
+    adx_strong = last_adx >= 30.0
     near_ema = dist_pct <= 2.5
 
     side = "none"
@@ -290,7 +290,7 @@ def analyze_wisely(bars: List[Bar], symbol: str) -> Optional[dict]:
     entry_zone = round(last_ema, 4)
     stop_loss = None
     target = None
-    reason = "ADX below 25 threshold"
+    reason = "ADX below 30 threshold (LBR Holy Grail spec)"
 
     if adx_strong:
         if is_uptrend:
@@ -697,7 +697,7 @@ def main():
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "date": latest_date,
         "system": "YouHaveChosenWisely",
-        "adx_threshold": 25.0,
+        "adx_threshold": 30.0,
         "total_scanned": len(wisely_signals),
         "total_triggered": len(wisely_triggered),
         "signals": wisely_signals,
