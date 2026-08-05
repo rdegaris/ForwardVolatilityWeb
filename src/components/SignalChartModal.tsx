@@ -153,11 +153,10 @@ export default function SignalChartModal({
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-5xl bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col"
-        style={{ maxHeight: '90vh' }}>
+      <div className="relative z-10 w-full max-w-[1400px] h-[92vh] bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/80 backdrop-blur">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/80 backdrop-blur shrink-0">
           <div className="flex items-center gap-3">
             <span className="font-mono font-black text-2xl text-white">{symbol}</span>
             {signalLabel && (
@@ -169,7 +168,7 @@ export default function SignalChartModal({
                 {signalLabel}
               </span>
             )}
-            <span className="text-slate-500 text-sm">{tvSymbol}</span>
+            <span className="text-slate-500 text-sm font-mono">{tvSymbol}</span>
           </div>
           <div className="flex items-center gap-3">
             {signalDate && (
@@ -186,11 +185,11 @@ export default function SignalChartModal({
         </div>
 
         {/* Chart */}
-        <div ref={containerRef} className="flex-1 min-h-0" style={{ height: '480px' }} />
+        <div ref={containerRef} className="flex-1 w-full min-h-[500px]" />
 
         {/* Signal details strip */}
         {(entryPrice != null || stopPrice != null || targetPrice != null || extraRows.length > 0) && (
-          <div className="border-t border-slate-700 bg-slate-900 px-6 py-4">
+          <div className="border-t border-slate-700 bg-slate-900 px-6 py-4 shrink-0">
             <div className="flex flex-wrap items-center gap-3">
               {/* Price pills */}
               <PricePill

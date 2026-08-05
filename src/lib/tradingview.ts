@@ -3,19 +3,19 @@
  * Uses continuous front-month contracts (1!) for all symbols.
  */
 export const TV_SYMBOLS: Record<string, string> = {
-  ES:  'ES1!',
-  NQ:  'NQ1!',
-  RTY: 'RTY1!',
-  YM:  'YM1!',
-  GC:  'GC1!',
-  SI:  'SI1!',
-  CL:  'CL1!',
-  NG:  'NG1!',
-  '6E': '6E1!',
-  '6J': '6J1!',
-  '6B': '6B1!',
-  ZB:  'ZB1!',
-  ZN:  'ZN1!',
+  ES:  'TVC:SPX',
+  NQ:  'TVC:NDX',
+  RTY: 'TVC:RUT',
+  YM:  'TVC:DJI',
+  GC:  'TVC:GOLD',
+  SI:  'TVC:SILVER',
+  CL:  'TVC:USOIL',
+  NG:  'TVC:NATGAS',
+  '6E': 'FX:EURUSD',
+  '6J': 'FX:USDJPY',
+  '6B': 'FX:GBPUSD',
+  ZB:  'TVC:US30Y',
+  ZN:  'TVC:US10Y',
 };
 
 /**
