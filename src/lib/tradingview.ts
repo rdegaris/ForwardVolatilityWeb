@@ -56,7 +56,8 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
  */
 export const LBR_STUDIES = [
   'MAExp@tv-basicstudies',
-  'Keltner Channels@tv-basicstudies',
+  'KeltnerChannels@tv-basicstudies',
+  'STD;Keltner_Channels',
   'MACD@tv-basicstudies',
 ];
 
@@ -74,6 +75,12 @@ export const LBR_STUDIES_OVERRIDES = {
   "keltner channels.upper.color": "#818cf8",
   "keltner channels.lower.color": "#818cf8",
   "keltner channels.middle.color": "#60a5fa",
+
+  "keltnerchannels.length": 20,
+  "keltnerchannels.mult": 2.5,
+
+  "std;keltner_channels.length": 20,
+  "std;keltner_channels.mult": 2.5,
 
   // LBR 3/10 MACD (3, 10, 16)
   "macd.fast length": 3,
