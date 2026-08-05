@@ -188,35 +188,50 @@ export default function LindaTrade() {
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
-        <div className="rounded-2xl border border-rose-900/50 bg-gradient-to-br from-slate-900 via-slate-900/90 to-rose-950/30 p-6 mb-8">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
+        <div className="rounded-2xl border border-rose-900/50 bg-gradient-to-br from-slate-900 via-slate-900/90 to-rose-950/30 p-6 md:p-8 mb-8 backdrop-blur shadow-xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-rose-900/30 pb-4 mb-5">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
                 <span className="text-xs font-extrabold uppercase tracking-widest text-rose-400">Mean Reversion</span>
               </div>
-              <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-300 to-pink-400">
+              <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rose-300 to-pink-400">
                 The Linda
               </h1>
-              <p className="text-gray-300 mt-2 max-w-2xl leading-relaxed">
-                A next-day mean-reversion model inspired by Linda Bradford Raschke's research.
-                On a trend day where price closes at an extreme without ever touching the EMA,
-                a reversion to the mean is highly probable the following session.
-              </p>
-              <div className="mt-4 rounded-xl bg-rose-950/30 border border-rose-500/20 px-4 py-3 text-sm text-rose-200/80 max-w-xl">
-                <strong className="text-rose-300">How to use:</strong>
-                <ul className="mt-1 space-y-1 list-disc list-inside text-xs text-slate-300 leading-relaxed">
-                  <li><span className="font-semibold text-rose-300">FADE UP</span> = yesterday was a bullish trend day; low never touched EMA → sell/short near the open, target the EMA</li>
-                  <li><span className="font-semibold text-emerald-300">FADE DOWN</span> = yesterday was a bearish trend day; high never touched EMA → buy near the open, target the EMA</li>
-                  <li>Stop = 1× ATR beyond the prior day's extreme</li>
-                  <li>Range/ATR ≥ 1.25× and close in top/bottom 25% of range = trend day qualifier</li>
-                </ul>
-              </div>
             </div>
             <div className="shrink-0 text-left md:text-right">
               <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Today's Signals</div>
               <div className="text-2xl font-extrabold text-rose-400">
                 {new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm md:text-base leading-relaxed w-full mb-5">
+            A next-day mean-reversion model inspired by Linda Bradford Raschke's research. On a trend day where price closes at an extreme without ever touching the EMA, a reversion to the mean is highly probable the following session.
+          </p>
+
+          <div className="rounded-xl bg-rose-950/40 border border-rose-500/20 p-5 text-sm w-full">
+            <div className="font-bold text-rose-300 mb-3 flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-rose-500/20 text-xs font-black uppercase tracking-wider text-rose-300">Guide</span>
+              How to use:
+            </div>
+            <div className="grid md:grid-cols-2 gap-3 text-xs text-slate-300 leading-relaxed">
+              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-rose-500/20">
+                <span className="font-bold text-rose-300 block text-xs uppercase mb-1">FADE UP — SELL / SHORT</span>
+                Yesterday was a bullish trend day; low never touched EMA → sell/short near the open, target pullback to EMA.
+              </div>
+              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-emerald-500/20">
+                <span className="font-bold text-emerald-300 block text-xs uppercase mb-1">FADE DOWN — BUY / LONG</span>
+                Yesterday was a bearish trend day; high never touched EMA → buy near the open, target rally to EMA.
+              </div>
+              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                <span className="font-bold text-slate-200 block text-xs uppercase mb-1">Protective Stop-Loss</span>
+                Place protective stop-loss 1× ATR beyond the prior day's price extreme (high for shorts, low for longs).
+              </div>
+              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                <span className="font-bold text-slate-200 block text-xs uppercase mb-1">Trend Day Qualifier</span>
+                Daily Range/ATR ≥ 1.25× and Close in top/bottom 25% of range without touching 20-period 15m EMA.
               </div>
             </div>
           </div>
