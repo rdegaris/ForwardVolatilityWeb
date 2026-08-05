@@ -1,6 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TaylorSignalsPayload, TaylorSignalItem } from '../types/taylor';
+import SignalChartModal from '../components/SignalChartModal';
 
 const SYMBOL_NAMES: Record<string, string> = {
   ES: 'E-mini S&P 500',
@@ -29,6 +30,10 @@ export default function TaylorTrade() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<TaylorSignalsPayload | null>(null);
   const [filter, setFilter] = useState<'ALL' | 'BUY_DAY' | 'SELL_DAY' | 'SELL_SHORT_DAY'>('ALL');
+  const [chartItem, setChartItem] = useState<TaylorSignalItem | null>(null);
+
+  const openChart = useCallback((item: TaylorSignalItem) => setChartItem(item), []);
+  const closeChart = useCallback(() => setChartItem(null), []);
 
   useEffect(() => {
     async function loadData() {
@@ -255,10 +260,44 @@ export default function TaylorTrade() {
                   </p>
                 )}
               </div>
+
+              {/* View Chart Button */}
+              <button
+                onClick={() => openChart(item)}
+                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+                  bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
+                  text-slate-300 hover:text-white transition-all duration-150 group"
+              >
+                <svg className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                </svg>
+                View Daily Chart
+              </button>
             </div>
           );
         })}
       </div>
+
+      {/* Chart Modal */}
+      {chartItem && (
+        <SignalChartModal
+          isOpen={!!chartItem}
+          onClose={closeChart}
+          symbol={chartItem.symbol}
+          strategy="taylor"
+          interval="D"
+          signalLabel={`BRADMAN — ${chartItem.cycle_phase.replaceAll('_', ' ')}`}
+          direction={chartItem.action === 'BUY_LONG' ? 'long' : chartItem.action === 'SELL_SHORT' ? 'short' : null}
+          entryPrice={chartItem.entry_target}
+          targetPrice={chartItem.profit_target}
+          stopPrice={chartItem.stop_loss}
+          extraRows={[
+            { label: 'Cycle Day', value: `Day ${chartItem.cycle_day}` },
+            { label: 'Buy Objective', value: `$${formatPrice(chartItem.buying_objective)}` },
+            { label: 'Sell Objective', value: `$${formatPrice(chartItem.selling_objective)}` }
+          ]}
+        />
+      )}
     </div>
   );
 }

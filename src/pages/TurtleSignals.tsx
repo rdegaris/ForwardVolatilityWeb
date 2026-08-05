@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TurtleSignalRow, TurtleSignalsPayload, TurtleTriggeredSignal } from '../types/turtle';
+import SignalChartModal from '../components/SignalChartModal';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -11,6 +12,17 @@ export default function TurtleSignals() {
   const [data, setData] = useState<TurtleSignalsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartItem, setChartItem] = useState<{
+    symbol: string;
+    side?: 'long' | 'short' | null;
+    entry?: number | null;
+    stop?: number | null;
+    close?: number | null;
+    n?: number | null;
+    qty?: number | null;
+  } | null>(null);
+
+  const closeChart = useCallback(() => setChartItem(null), []);
 
   useEffect(() => {
     (async () => {
@@ -162,6 +174,7 @@ export default function TurtleSignals() {
                       <th className="px-4 py-3 text-right">N</th>
                       <th className="px-4 py-3 text-left">Asof</th>
                       <th className="px-4 py-3 text-left">Notes</th>
+                      <th className="px-4 py-3 text-center">Chart</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -174,13 +187,29 @@ export default function TurtleSignals() {
                         <td className={`px-4 py-3 font-semibold ${triggeredSideColor(r)}`}>{r.side.toUpperCase()}</td>
                         <td className={`px-4 py-3 font-semibold ${eligibleColor(r)}`}>{eligibleText(r)}</td>
                         <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 6)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 4)}</td>
+                        <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
                         <td className="px-4 py-3 text-right font-mono">{r.unit_qty}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.N, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.N, 4)}</td>
                         <td className="px-4 py-3 text-gray-300 font-mono">{r.asof}</td>
                         <td className="px-4 py-3 text-gray-300">{r.blocked_reason ? `${r.notes || ''} (${r.blocked_reason})` : r.notes || '—'}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => setChartItem({
+                              symbol: r.symbol,
+                              side: r.side,
+                              entry: r.entry_stop,
+                              stop: r.stop_loss,
+                              close: r.last_close,
+                              n: r.N,
+                              qty: r.unit_qty
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            Chart 📈
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -205,6 +234,7 @@ export default function TurtleSignals() {
                     <th className="px-4 py-3 text-right">Long STOP</th>
                     <th className="px-4 py-3 text-right">Short STOP</th>
                     <th className="px-4 py-3 text-right">Unit Qty</th>
+                    <th className="px-4 py-3 text-center">Chart</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -215,12 +245,28 @@ export default function TurtleSignals() {
                     >
                       <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
                       <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>{sideText(r)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_entry, 6)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_entry, 6)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_stop_loss, 6)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_stop_loss, 6)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_entry, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_entry, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.long_stop_loss, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.short_stop_loss, 4)}</td>
                       <td className="px-4 py-3 text-right font-mono">{r.unit_qty ?? '—'}</td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => setChartItem({
+                            symbol: r.symbol,
+                            side: r.long_triggered ? 'long' : r.short_triggered ? 'short' : null,
+                            entry: r.long_triggered ? r.long_entry : r.short_triggered ? r.short_entry : null,
+                            stop: r.long_triggered ? r.long_stop_loss : r.short_triggered ? r.short_stop_loss : null,
+                            close: r.last_close,
+                            n: r.N,
+                            qty: r.unit_qty
+                          })}
+                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                        >
+                          Chart 📈
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -228,6 +274,27 @@ export default function TurtleSignals() {
             </div>
           </div>
         </div>
+
+        {/* Chart Modal */}
+        {chartItem && (
+          <SignalChartModal
+            isOpen={!!chartItem}
+            onClose={closeChart}
+            symbol={chartItem.symbol}
+            strategy="trendorama"
+            interval="D"
+            signalLabel={chartItem.side ? `TRENDORAMA — ${chartItem.side.toUpperCase()}` : 'TRENDORAMA 55-DAY'}
+            direction={chartItem.side === 'long' ? 'long' : chartItem.side === 'short' ? 'short' : null}
+            entryPrice={chartItem.entry}
+            stopPrice={chartItem.stop}
+            extraRows={[
+              { label: 'Prior Close', value: formatNum(chartItem.close, 4) },
+              { label: 'N (ATR 20)', value: formatNum(chartItem.n, 4) },
+              { label: 'Unit Qty', value: chartItem.qty != null ? `${chartItem.qty}` : '—' }
+            ]}
+          />
+        )}
+
       </div>
     </div>
   );

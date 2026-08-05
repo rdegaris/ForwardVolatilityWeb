@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import type { LindaSignalsPayload, LindaSignalRow } from '../types/linda';
+import SignalChartModal from '../components/SignalChartModal';
 
 async function fetchJson<T>(url: string, opts?: RequestInit): Promise<T> {
   const res = await fetch(url, opts);
@@ -34,7 +35,7 @@ function TrendBar({ value }: { value: number }) {
   );
 }
 
-function SignalCard({ sig }: { sig: LindaSignalRow }) {
+function SignalCard({ sig, onChartClick }: { sig: LindaSignalRow; onChartClick: (sig: LindaSignalRow) => void }) {
   const isFadeUp = sig.direction === 'FADE_UP';
   const isFadeDown = sig.direction === 'FADE_DOWN';
   const fullName = FULL_NAMES[sig.symbol] ?? sig.symbol;
@@ -102,6 +103,19 @@ function SignalCard({ sig }: { sig: LindaSignalRow }) {
 
       {/* Reason */}
       <p className="text-xs text-slate-400 italic leading-relaxed">{sig.reason}</p>
+
+      {/* View Chart CTA */}
+      <button
+        onClick={() => onChartClick(sig)}
+        className="mt-1 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
+          bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
+          text-slate-300 hover:text-white transition-all duration-150 group"
+      >
+        <svg className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+        </svg>
+        View 15-Min Chart
+      </button>
     </div>
   );
 }
@@ -110,6 +124,9 @@ export default function LindaTrade() {
   const [data, setData] = useState<LindaSignalsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartSig, setChartSig] = useState<LindaSignalRow | null>(null);
+  const openChart = useCallback((sig: LindaSignalRow) => setChartSig(sig), []);
+  const closeChart = useCallback(() => setChartSig(null), []);
 
   useEffect(() => {
     (async () => {
@@ -234,7 +251,7 @@ export default function LindaTrade() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {triggeredRows.map(sig => <SignalCard key={sig.symbol} sig={sig} />)}
+              {triggeredRows.map(sig => <SignalCard key={sig.symbol} sig={sig} onChartClick={openChart} />)}
             </div>
           )}
         </div>
@@ -245,21 +262,31 @@ export default function LindaTrade() {
             <h2 className="text-xl font-semibold text-gray-200 mb-3">Near Miss — Trend Day, EMA Was Touched</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {watchingRows.map(sig => (
-                <div key={sig.symbol} className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 flex items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-slate-200">{sig.symbol}</span>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-700/60 text-slate-400 border border-slate-600/40">
-                        {sig.direction === 'FADE_UP' ? 'Bullish Thrust' : 'Bearish Thrust'}
-                      </span>
+                <div key={sig.symbol} className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 flex flex-col justify-between gap-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-slate-200">{sig.symbol}</span>
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-700/60 text-slate-400 border border-slate-600/40">
+                          {sig.direction === 'FADE_UP' ? 'Bullish Thrust' : 'Bearish Thrust'}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-500 mt-0.5">{FULL_NAMES[sig.symbol] ?? sig.symbol}</div>
+                      <div className="text-xs text-slate-400 mt-1 italic">{sig.reason}</div>
                     </div>
-                    <div className="text-xs text-slate-500 mt-0.5">{FULL_NAMES[sig.symbol] ?? sig.symbol}</div>
-                    <div className="text-xs text-slate-400 mt-1 italic">{sig.reason}</div>
+                    <div className="text-right shrink-0">
+                      <div className="text-xs text-slate-500">EMA Gap</div>
+                      <div className="font-mono font-bold text-slate-300">{fmt(sig.gap_pct)}%</div>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-xs text-slate-500">EMA Gap</div>
-                    <div className="font-mono font-bold text-slate-300">{fmt(sig.gap_pct)}%</div>
-                  </div>
+                  <button
+                    onClick={() => openChart(sig)}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold
+                      bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
+                      text-slate-300 hover:text-white transition-all duration-150"
+                  >
+                    📊 View 15-Min Chart
+                  </button>
                 </div>
               ))}
             </div>
@@ -284,6 +311,7 @@ export default function LindaTrade() {
                     <th className="px-4 py-3 text-right">Target</th>
                     <th className="px-4 py-3 text-right">Stop</th>
                     <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-center">Chart</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -328,6 +356,14 @@ export default function LindaTrade() {
                           <span className="text-xs text-slate-500">Watch</span>
                         )}
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => openChart(sig)}
+                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                        >
+                          Chart 📈
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -335,6 +371,28 @@ export default function LindaTrade() {
             </div>
           </div>
         </div>
+
+        {/* Chart Modal */}
+        {chartSig && (
+          <SignalChartModal
+            isOpen={!!chartSig}
+            onClose={closeChart}
+            symbol={chartSig.symbol}
+            strategy="linda"
+            interval="15"
+            signalLabel={chartSig.direction === 'FADE_UP' ? 'FADE UP — SELL' : chartSig.direction === 'FADE_DOWN' ? 'FADE DOWN — BUY' : 'THE LINDA'}
+            direction={chartSig.direction === 'FADE_UP' ? 'fade_up' : chartSig.direction === 'FADE_DOWN' ? 'fade_down' : null}
+            entryPrice={chartSig.close}
+            targetPrice={chartSig.target}
+            stopPrice={chartSig.stop}
+            signalDate={data?.date}
+            extraRows={[
+              { label: 'EMA Gap', value: `${fmt(chartSig.gap_pct)}%`, highlight: chartSig.gap_pct >= 2 },
+              { label: 'Range / ATR', value: `${fmt(chartSig.range_vs_atr)}×` },
+              { label: '20 EMA Target', value: fmt(chartSig.target, 4) }
+            ]}
+          />
+        )}
 
       </div>
     </div>

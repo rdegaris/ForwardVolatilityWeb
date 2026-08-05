@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type {
   OdidAlert,
@@ -9,6 +9,7 @@ import type {
   OdidSignalsPayload,
   OdidTriggeredSignal,
 } from '../types/odid';
+import SignalChartModal from '../components/SignalChartModal';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -26,6 +27,17 @@ export default function OdidBreakout() {
   const [openTrades, setOpenTrades] = useState<OdidOpenTradesPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartItem, setChartItem] = useState<{
+    symbol: string;
+    side?: 'long' | 'short' | null;
+    entry?: number | null;
+    stop?: number | null;
+    target?: number | null;
+    upLvl?: number | null;
+    dnLvl?: number | null;
+  } | null>(null);
+
+  const closeChart = useCallback(() => setChartItem(null), []);
 
   useEffect(() => {
     (async () => {
@@ -181,6 +193,7 @@ export default function OdidBreakout() {
                       <th className="px-4 py-3 text-right">Stop</th>
                       <th className="px-4 py-3 text-left">Status</th>
                       <th className="px-4 py-3 text-left">Message</th>
+                      <th className="px-4 py-3 text-center">Chart</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -190,12 +203,25 @@ export default function OdidBreakout() {
                         <td className={`px-4 py-3 font-semibold ${severityColor(r.severity)}`}>{r.severity.toUpperCase()}</td>
                         <td className="px-4 py-3 text-gray-200">{r.type}</td>
                         <td className={`px-4 py-3 font-semibold ${sideColor(r.side)}`}>{r.side ? r.side.toUpperCase() : '—'}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 6)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss, 6)}</td>
+                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 4)}</td>
+                        <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
                         <td className="px-4 py-3 text-gray-200">
                           {r.eligible === false ? `Blocked (${r.blocked_reason || 'rule'})` : 'Eligible'}
                         </td>
                         <td className="px-4 py-3 text-gray-300">{r.message}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => setChartItem({
+                              symbol: r.symbol,
+                              side: r.side === 'long' ? 'long' : r.side === 'short' ? 'short' : null,
+                              entry: r.entry_stop,
+                              stop: r.stop_loss
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            Chart 📈
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -223,6 +249,7 @@ export default function OdidBreakout() {
                       <th className="px-4 py-3 text-right">Qty</th>
                       <th className="px-4 py-3 text-right">Net Qty</th>
                       <th className="px-4 py-3 text-right">Avg Price</th>
+                      <th className="px-4 py-3 text-center">Chart</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -234,6 +261,18 @@ export default function OdidBreakout() {
                         <td className="px-4 py-3 text-right font-mono">{r.qty}</td>
                         <td className="px-4 py-3 text-right font-mono">{r.net_qty}</td>
                         <td className="px-4 py-3 text-right font-mono">{formatNum(r.avg_price, 4)}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => setChartItem({
+                              symbol: r.symbol,
+                              side: r.side === 'long' ? 'long' : r.side === 'short' ? 'short' : null,
+                              entry: r.avg_price
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            Chart 📈
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -262,6 +301,7 @@ export default function OdidBreakout() {
                         <th className="px-4 py-3 text-right">Entry</th>
                         <th className="px-4 py-3 text-right">Stop</th>
                         <th className="px-4 py-3 text-left">Status</th>
+                        <th className="px-4 py-3 text-center">Chart</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -269,11 +309,24 @@ export default function OdidBreakout() {
                         <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
                           <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
                           <td className={`px-4 py-3 font-semibold ${sideColor(r.side)}`}>{r.side.toUpperCase()}</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 6)}</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss, 6)}</td>
+                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
+                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 4)}</td>
+                          <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
                           <td className="px-4 py-3 text-gray-200">
                             {r.eligible === false ? `Blocked (${r.blocked_reason || 'rule'})` : 'Eligible'}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => setChartItem({
+                                symbol: r.symbol,
+                                side: r.side === 'long' ? 'long' : r.side === 'short' ? 'short' : null,
+                                entry: r.entry_stop,
+                                stop: r.stop_loss
+                              })}
+                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                            >
+                              Chart 📈
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -302,17 +355,30 @@ export default function OdidBreakout() {
                         <th className="px-4 py-3 text-right">Dn Lvl</th>
                         <th className="px-4 py-3 text-right">Up Dist</th>
                         <th className="px-4 py-3 text-right">Dn Dist</th>
+                        <th className="px-4 py-3 text-center">Chart</th>
                       </tr>
                     </thead>
                     <tbody>
                       {armedRows.map((r: OdidSignalRow, idx: number) => (
                         <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
                           <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
-                          <td className="px-4 py-3 text-right font-mono text-emerald-200">{formatNum(r.armed_breakout_up, 6)}</td>
-                          <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.armed_breakout_down, 6)}</td>
+                          <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
+                          <td className="px-4 py-3 text-right font-mono text-emerald-200">{formatNum(r.armed_breakout_up, 4)}</td>
+                          <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.armed_breakout_down, 4)}</td>
                           <td className="px-4 py-3 text-right font-mono">{formatPct(r.distance_to_up_pct, 2)}</td>
                           <td className="px-4 py-3 text-right font-mono">{formatPct(r.distance_to_down_pct, 2)}</td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => setChartItem({
+                                symbol: r.symbol,
+                                upLvl: r.armed_breakout_up,
+                                dnLvl: r.armed_breakout_down
+                              })}
+                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                            >
+                              Chart 📈
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -336,6 +402,7 @@ export default function OdidBreakout() {
                     <th className="px-4 py-3 text-left">Armed</th>
                     <th className="px-4 py-3 text-left">Breakout</th>
                     <th className="px-4 py-3 text-left">Open Pos</th>
+                    <th className="px-4 py-3 text-center">Chart</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -343,13 +410,26 @@ export default function OdidBreakout() {
                     <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
                       <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
                       <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 6)}</td>
+                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
                       <td className="px-4 py-3 text-gray-200">{r.odid_setup_armed ? 'YES' : '—'}</td>
                       <td className={`px-4 py-3 font-semibold ${sideColor(r.breakout_side)}`}>
                         {r.breakout_confirmed && r.breakout_side ? r.breakout_side.toUpperCase() : '—'}
                       </td>
                       <td className="px-4 py-3 text-gray-200">
                         {r.has_open_position ? `YES (${r.open_position_qty || 0})` : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => setChartItem({
+                            symbol: r.symbol,
+                            side: r.breakout_confirmed && r.breakout_side === 'long' ? 'long' : r.breakout_confirmed && r.breakout_side === 'short' ? 'short' : null,
+                            upLvl: r.armed_breakout_up,
+                            dnLvl: r.armed_breakout_down
+                          })}
+                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                        >
+                          Chart 📈
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -358,6 +438,26 @@ export default function OdidBreakout() {
             </div>
           </div>
         </div>
+
+        {/* Chart Modal */}
+        {chartItem && (
+          <SignalChartModal
+            isOpen={!!chartItem}
+            onClose={closeChart}
+            symbol={chartItem.symbol}
+            strategy="odid"
+            interval="D"
+            signalLabel={chartItem.side ? `TOOHOT TOCOLD — ${chartItem.side.toUpperCase()}` : 'TOOHOT TOCOLD'}
+            direction={chartItem.side === 'long' ? 'long' : chartItem.side === 'short' ? 'short' : null}
+            entryPrice={chartItem.entry}
+            stopPrice={chartItem.stop}
+            extraRows={[
+              ...(chartItem.upLvl ? [{ label: 'Breakout Up Level', value: formatNum(chartItem.upLvl, 4) }] : []),
+              ...(chartItem.dnLvl ? [{ label: 'Breakout Down Level', value: formatNum(chartItem.dnLvl, 4) }] : []),
+            ]}
+          />
+        )}
+
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { GrailSignalRow, GrailSignalsPayload } from '../types/grail';
+import SignalChartModal from '../components/SignalChartModal';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -11,6 +12,10 @@ export default function GrailTrade() {
   const [data, setData] = useState<GrailSignalsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartRow, setChartRow] = useState<GrailSignalRow | null>(null);
+
+  const openChart = useCallback((row: GrailSignalRow) => setChartRow(row), []);
+  const closeChart = useCallback(() => setChartRow(null), []);
 
   useEffect(() => {
     (async () => {
@@ -145,6 +150,7 @@ export default function GrailTrade() {
                       <th className="px-4 py-3 text-right">Stop</th>
                       <th className="px-4 py-3 text-right">Target</th>
                       <th className="px-4 py-3 text-left">Reason</th>
+                      <th className="px-4 py-3 text-center">Chart</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -165,6 +171,14 @@ export default function GrailTrade() {
                         <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
                         <td className="px-4 py-3 text-right font-mono text-emerald-200">{formatNum(r.target, 4)}</td>
                         <td className="px-4 py-3 text-gray-300 text-xs">{r.reason}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => openChart(r)}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            Chart 📈
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -197,6 +211,7 @@ export default function GrailTrade() {
                       <th className="px-4 py-3 text-right">+DI</th>
                       <th className="px-4 py-3 text-right">-DI</th>
                       <th className="px-4 py-3 text-left">Status</th>
+                      <th className="px-4 py-3 text-center">Chart</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -217,6 +232,14 @@ export default function GrailTrade() {
                         <td className="px-4 py-3 text-right font-mono text-emerald-300">{formatNum(r.plus_di, 1)}</td>
                         <td className="px-4 py-3 text-right font-mono text-rose-300">{formatNum(r.minus_di, 1)}</td>
                         <td className="px-4 py-3 text-gray-400 text-xs">{r.reason}</td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => openChart(r)}
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            Chart 📈
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -243,6 +266,7 @@ export default function GrailTrade() {
                     <th className="px-4 py-3 text-right">+DI</th>
                     <th className="px-4 py-3 text-right">-DI</th>
                     <th className="px-4 py-3 text-left">Reason</th>
+                    <th className="px-4 py-3 text-center">Chart</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -264,6 +288,14 @@ export default function GrailTrade() {
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.plus_di, 1)}</td>
                       <td className="px-4 py-3 text-right font-mono">{formatNum(r.minus_di, 1)}</td>
                       <td className="px-4 py-3 text-gray-400 text-xs">{r.reason}</td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => openChart(r)}
+                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                        >
+                          Chart 📈
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -271,6 +303,29 @@ export default function GrailTrade() {
             </div>
           </div>
         </div>
+
+        {/* Chart Modal */}
+        {chartRow && (
+          <SignalChartModal
+            isOpen={!!chartRow}
+            onClose={closeChart}
+            symbol={chartRow.symbol}
+            strategy="grail"
+            interval="D"
+            signalLabel={chartRow.side ? `GRAIL — ${chartRow.side.toUpperCase()}` : 'HOLY GRAIL'}
+            direction={chartRow.side === 'long' ? 'long' : chartRow.side === 'short' ? 'short' : null}
+            entryPrice={chartRow.entry_zone ?? chartRow.ema20}
+            targetPrice={chartRow.target}
+            stopPrice={chartRow.stop_loss}
+            signalDate={data?.date}
+            extraRows={[
+              { label: 'ADX (14)', value: formatNum(chartRow.adx, 1), highlight: chartRow.adx >= (data?.adx_threshold ?? 30) },
+              { label: '+DI / -DI', value: `${formatNum(chartRow.plus_di, 1)} / ${formatNum(chartRow.minus_di, 1)}` },
+              { label: 'EMA (20)', value: formatNum(chartRow.ema20, 4) }
+            ]}
+          />
+        )}
+
       </div>
     </div>
   );
