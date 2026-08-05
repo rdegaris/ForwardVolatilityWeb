@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { TV_SYMBOLS, LBR_STUDIES } from '../lib/tradingview';
+import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES } from '../lib/tradingview';
 
 export interface SignalChartModalProps {
   isOpen: boolean;
@@ -65,7 +65,8 @@ export default function SignalChartModal({
   const widgetRef = useRef<any>(null);
   const chartId = useRef(`tv_${symbol}_${strategy}_${Math.random().toString(36).slice(2)}`);
 
-  const tvSymbol = TV_SYMBOLS[symbol] ?? `${symbol}1!`;
+  const tvSymbol = TV_SYMBOLS[symbol] ?? 'SPY';
+  const cmeSymbol = CME_FUTURES_SYMBOLS[symbol] ?? symbol;
 
   // Determine direction styling
   const isBullish =
@@ -168,9 +169,17 @@ export default function SignalChartModal({
                 {signalLabel}
               </span>
             )}
-            <span className="text-slate-500 text-sm font-mono">{tvSymbol}</span>
+            <span className="text-slate-500 text-xs font-mono">Mapped: {tvSymbol}</span>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href={`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(cmeSymbol)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 transition-colors flex items-center gap-1.5"
+            >
+              Open {cmeSymbol} on TradingView ↗
+            </a>
             {signalDate && (
               <span className="text-xs text-slate-500">As of {signalDate}</span>
             )}

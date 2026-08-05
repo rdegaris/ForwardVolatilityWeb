@@ -3,19 +3,38 @@
  * Uses continuous front-month contracts (1!) for all symbols.
  */
 export const TV_SYMBOLS: Record<string, string> = {
-  ES:  'TVC:SPX',
-  NQ:  'TVC:NDX',
-  RTY: 'TVC:RUT',
-  YM:  'TVC:DJI',
-  GC:  'TVC:GOLD',
-  SI:  'TVC:SILVER',
-  CL:  'TVC:USOIL',
-  NG:  'TVC:NATGAS',
+  ES:  'SPY',
+  NQ:  'QQQ',
+  RTY: 'IWM',
+  YM:  'DIA',
+  GC:  'GLD',
+  SI:  'SLV',
+  CL:  'USO',
+  NG:  'UNG',
   '6E': 'FX:EURUSD',
   '6J': 'FX:USDJPY',
   '6B': 'FX:GBPUSD',
-  ZB:  'TVC:US30Y',
-  ZN:  'TVC:US10Y',
+  ZB:  'TLT',
+  ZN:  'IEF',
+};
+
+/**
+ * CME futures continuous symbols for direct TradingView.com external links.
+ */
+export const CME_FUTURES_SYMBOLS: Record<string, string> = {
+  ES:  'CME:ES1!',
+  NQ:  'CME:NQ1!',
+  RTY: 'CME:RTY1!',
+  YM:  'CBOT:YM1!',
+  GC:  'COMEX:GC1!',
+  SI:  'COMEX:SI1!',
+  CL:  'NYMEX:CL1!',
+  NG:  'NYMEX:NG1!',
+  '6E': 'CME:6E1!',
+  '6J': 'CME:6J1!',
+  '6B': 'CME:6B1!',
+  ZB:  'CBOT:ZB1!',
+  ZN:  'CBOT:ZN1!',
 };
 
 /**
