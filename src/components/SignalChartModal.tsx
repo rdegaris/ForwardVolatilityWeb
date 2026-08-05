@@ -203,57 +203,86 @@ export default function SignalChartModal({
         {/* Signal details strip */}
         {(entryPrice != null || stopPrice != null || targetPrice != null || extraRows.length > 0) && (
           <div className="border-t border-slate-700 bg-slate-900 px-6 py-4 shrink-0">
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Price pills */}
-              <PricePill
-                label="Entry"
-                value={entryPrice}
-                color="bg-slate-800 text-slate-100 border border-slate-600"
-              />
-              <PricePill
-                label="Target"
-                value={targetPrice}
-                color={`bg-slate-800 border ${isBullish ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300'}`}
-              />
-              <PricePill
-                label="Stop"
-                value={stopPrice}
-                color="bg-slate-800 border border-amber-500/30 text-amber-300"
-              />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Price pills */}
+                <PricePill
+                  label="Entry"
+                  value={entryPrice}
+                  color="bg-slate-800 text-slate-100 border border-slate-600"
+                />
+                <PricePill
+                  label="Target"
+                  value={targetPrice}
+                  color={`bg-slate-800 border ${isBullish ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300'}`}
+                />
+                <PricePill
+                  label="Stop"
+                  value={stopPrice}
+                  color="bg-slate-800 border border-amber-500/30 text-amber-300"
+                />
 
-              {/* Risk/Reward */}
-              {entryPrice != null && stopPrice != null && targetPrice != null && (
-                <div className="flex flex-col items-center rounded-xl px-4 py-3 bg-indigo-950/50 border border-indigo-500/20">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-indigo-400 mb-0.5">
-                    R:R
-                  </span>
-                  <span className="font-mono font-black text-lg text-indigo-300">
-                    {Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
-                      Math.abs((entryPrice ?? stopPrice) - stopPrice) > 0
-                      ? (
-                          Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
-                          Math.abs((entryPrice ?? stopPrice) - stopPrice)
-                        ).toFixed(1)
-                      : '—'}
-                    :1
-                  </span>
-                </div>
-              )}
+                {/* Risk/Reward */}
+                {entryPrice != null && stopPrice != null && targetPrice != null && (
+                  <div className="flex flex-col items-center rounded-xl px-4 py-2 bg-indigo-950/50 border border-indigo-500/20 min-w-[90px]">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-0.5">
+                      R:R
+                    </span>
+                    <span className="font-mono font-bold text-base text-indigo-300">
+                      {Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
+                        Math.abs((entryPrice ?? stopPrice) - stopPrice) > 0
+                        ? (
+                            Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
+                            Math.abs((entryPrice ?? stopPrice) - stopPrice)
+                          ).toFixed(1)
+                        : '—'}
+                      :1
+                    </span>
+                  </div>
+                )}
 
-              {/* Extra metadata rows */}
-              {extraRows.map((row) => (
-                <div
-                  key={row.label}
-                  className="flex flex-col items-center rounded-xl px-4 py-3 bg-slate-800 border border-slate-700"
-                >
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-0.5">
-                    {row.label}
-                  </span>
-                  <span className={`font-mono font-bold text-sm ${row.highlight ? dirColor : 'text-slate-300'}`}>
-                    {row.value}
-                  </span>
+                {/* Extra metadata rows */}
+                {extraRows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex flex-col items-center rounded-xl px-4 py-2 bg-slate-800 border border-slate-700 min-w-[90px]"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
+                      {row.label}
+                    </span>
+                    <span className={`font-mono font-bold text-base ${row.highlight ? dirColor : 'text-slate-300'}`}>
+                      {row.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Discord / X Support Callout Box */}
+              <div className="flex items-center gap-3 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-300 shadow-inner">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-semibold text-slate-200">Have questions about this setup?</span>
                 </div>
-              ))}
+                <div className="flex items-center gap-2 font-bold">
+                  <a
+                    href="https://discord.gg/ozcta"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/40 border border-indigo-500/30 transition-colors flex items-center gap-1.5"
+                  >
+                    💬 Discord Channel
+                  </a>
+                  <span className="text-slate-600">·</span>
+                  <a
+                    href="https://x.com/LindaRaschke"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-sky-600/20 text-sky-300 hover:bg-sky-600/40 border border-sky-500/30 transition-colors flex items-center gap-1.5"
+                  >
+                    𝕏 Contact on X
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* LBR indicator reminder */}
