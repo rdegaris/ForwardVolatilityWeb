@@ -65,7 +65,7 @@ export default function SignalChartModal({
   const widgetRef = useRef<any>(null);
   const chartId = useRef(`tv_${symbol}_${strategy}_${Math.random().toString(36).slice(2)}`);
 
-  const tvSymbol = TV_SYMBOLS[symbol] ?? `CME:${symbol}1!`;
+  const tvSymbol = TV_SYMBOLS[symbol] ?? `${symbol}1!`;
 
   // Determine direction styling
   const isBullish =
