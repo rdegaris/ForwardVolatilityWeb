@@ -2,9 +2,10 @@ name: Daily Futures Strategy Scan
 
 on:
   schedule:
-    # Runs Monday through Friday at 21:30 UTC (5:30 PM ET / 2:30 PM PT)
-    # This gives ~1 hour after the 4:30 PM ET futures close for data to settle
+    # Run 1: 21:30 UTC (5:30 PM ET / 2:30 PM PT) - initial post-close scan
     - cron: '30 21 * * 1-5'
+    # Run 2: 00:30 UTC Tue-Sat (8:30 PM ET Mon-Fri) - catches finalized settlement bars from Yahoo Finance
+    - cron: '30 0 * * 2-6'
   workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
 
 permissions:
