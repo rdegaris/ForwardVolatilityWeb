@@ -40,5 +40,7 @@ jobs:
             echo "No signal changes today — skipping commit."
           else
             git commit -m "Auto-update daily futures signals [skip ci]"
+            git pull --rebase origin main
             git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
           fi
+
