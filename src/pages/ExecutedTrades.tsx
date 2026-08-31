@@ -170,6 +170,28 @@ export default function ExecutedTrades() {
     });
   }, [trades, selectedStrategy, selectedStatus, searchQuery]);
 
+  const biggestWinners = useMemo(() => {
+    return [...trades]
+      .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
+      .sort((a, b) => {
+        const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
+        const pnlB = b.status === 'OPEN' ? b.unrealized_pnl : b.realized_pnl;
+        return pnlB - pnlA;
+      })
+      .slice(0, 5);
+  }, [trades]);
+
+  const biggestLosers = useMemo(() => {
+    return [...trades]
+      .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) < 0)
+      .sort((a, b) => {
+        const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
+        const pnlB = b.status === 'OPEN' ? b.unrealized_pnl : b.realized_pnl;
+        return pnlA - pnlB;
+      })
+      .slice(0, 5);
+  }, [trades]);
+
   const handleEditSave = () => {
     if (!editingTrade) return;
     const updated = trades.map((t) => {
@@ -426,6 +448,101 @@ export default function ExecutedTrades() {
               }
             )}
           </div>
+        </div>
+      </div>
+
+      {/* ──────────────── BIGGEST WINNERS & LOSERS ──────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Top Winners */}
+        <div className="rounded-3xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-900/80 to-slate-950/90 p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-emerald-900/30 pb-3">
+            <span className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-emerald-300">
+              <span className="text-base">🏆</span> Top Profit Winners
+            </span>
+            <span className="text-xs font-bold text-emerald-400">
+              Top {biggestWinners.length} Trades
+            </span>
+          </div>
+
+          {biggestWinners.length === 0 ? (
+            <p className="text-xs text-slate-500 italic py-4 text-center">No winning trades recorded yet.</p>
+          ) : (
+            <div className="space-y-2.5">
+              {biggestWinners.map((t) => {
+                const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                return (
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 transition hover:border-emerald-500/40"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
+                          <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
+                            {t.side.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-slate-400">{t.strategy} · {t.entry_date}</div>
+                      </div>
+                    </div>
+                    <div className="text-right font-mono">
+                      <div className="font-black text-emerald-400 text-sm">+{fmt$(pnl)}</div>
+                      <div className="text-[10px] text-emerald-300 font-semibold">
+                        {t.return_pct > 0 ? `+${t.return_pct.toFixed(1)}%` : `${t.return_pct.toFixed(1)}%`}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Top Losers */}
+        <div className="rounded-3xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-900/80 to-slate-950/90 p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-rose-900/30 pb-3">
+            <span className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-rose-300">
+              <span className="text-base">⚠️</span> Top Drawdown / Losers
+            </span>
+            <span className="text-xs font-bold text-rose-400">
+              Top {biggestLosers.length} Trades
+            </span>
+          </div>
+
+          {biggestLosers.length === 0 ? (
+            <p className="text-xs text-slate-500 italic py-4 text-center">No drawdown trades recorded.</p>
+          ) : (
+            <div className="space-y-2.5">
+              {biggestLosers.map((t) => {
+                const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                return (
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 transition hover:border-rose-500/40"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
+                          <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
+                            {t.side.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-slate-400">{t.strategy} · {t.entry_date}</div>
+                      </div>
+                    </div>
+                    <div className="text-right font-mono">
+                      <div className="font-black text-rose-400 text-sm">{fmt$(pnl)}</div>
+                      <div className="text-[10px] text-rose-300 font-semibold">
+                        {t.return_pct.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

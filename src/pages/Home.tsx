@@ -151,6 +151,31 @@ export default function Home() {
     return lindaSignals.signals.filter(s => s.triggered);
   }, [lindaSignals]);
 
+  // Biggest Winners & Losers
+  const biggestWinners = useMemo(() => {
+    if (!paperPerformance?.recent_trades) return [];
+    return [...paperPerformance.recent_trades]
+      .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
+      .sort((a, b) => {
+        const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
+        const pnlB = b.status === 'OPEN' ? b.unrealized_pnl : b.realized_pnl;
+        return pnlB - pnlA;
+      })
+      .slice(0, 4);
+  }, [paperPerformance]);
+
+  const biggestLosers = useMemo(() => {
+    if (!paperPerformance?.recent_trades) return [];
+    return [...paperPerformance.recent_trades]
+      .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) < 0)
+      .sort((a, b) => {
+        const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
+        const pnlB = b.status === 'OPEN' ? b.unrealized_pnl : b.realized_pnl;
+        return pnlA - pnlB;
+      })
+      .slice(0, 4);
+  }, [paperPerformance]);
+
   const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -755,13 +780,104 @@ export default function Home() {
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Paper Trades</div>
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Trades</div>
             <div className="mt-1 text-2xl font-black text-slate-200 font-mono">
               {paperPerformance?.total_trades ?? 0}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               {paperPerformance?.closed_trades_count ?? 0} completed
             </div>
+          </div>
+        </div>
+
+        {/* ── BIGGEST WINNERS & LOSERS ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Top Winners */}
+          <div className="rounded-2xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
+            <div className="flex items-center justify-between border-b border-emerald-900/30 pb-3">
+              <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-300">
+                <span>🏆</span> Top Winners
+              </span>
+              <span className="text-[11px] font-bold text-emerald-400">
+                {biggestWinners.length} Top Performing
+              </span>
+            </div>
+
+            {biggestWinners.length === 0 ? (
+              <p className="text-xs text-slate-500 italic py-2">No winning trades recorded yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {biggestWinners.map((t) => {
+                  const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3.5 py-2.5 transition hover:border-emerald-500/40"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</div>
+                        <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
+                          {t.side.toUpperCase()}
+                        </span>
+                        <span className="text-[11px] text-slate-400 hidden sm:inline truncate max-w-[110px]">
+                          {t.strategy}
+                        </span>
+                      </div>
+                      <div className="text-right font-mono">
+                        <div className="font-black text-emerald-400 text-sm">+{fmt$(pnl)}</div>
+                        <div className="text-[10px] text-emerald-300 font-semibold">
+                          {t.return_pct > 0 ? `+${t.return_pct.toFixed(1)}%` : `${t.return_pct.toFixed(1)}%`}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Top Losers */}
+          <div className="rounded-2xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
+            <div className="flex items-center justify-between border-b border-rose-900/30 pb-3">
+              <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-rose-300">
+                <span>⚠️</span> Top Drawdowns / Losers
+              </span>
+              <span className="text-[11px] font-bold text-rose-400">
+                {biggestLosers.length} Trailing Trades
+              </span>
+            </div>
+
+            {biggestLosers.length === 0 ? (
+              <p className="text-xs text-slate-500 italic py-2">No drawdown trades recorded.</p>
+            ) : (
+              <div className="space-y-2">
+                {biggestLosers.map((t) => {
+                  const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between rounded-xl border border-rose-500/20 bg-rose-500/5 px-3.5 py-2.5 transition hover:border-rose-500/40"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</div>
+                        <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
+                          {t.side.toUpperCase()}
+                        </span>
+                        <span className="text-[11px] text-slate-400 hidden sm:inline truncate max-w-[110px]">
+                          {t.strategy}
+                        </span>
+                      </div>
+                      <div className="text-right font-mono">
+                        <div className="font-black text-rose-400 text-sm">{fmt$(pnl)}</div>
+                        <div className="text-[10px] text-rose-300 font-semibold">
+                          {t.return_pct.toFixed(1)}%
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
