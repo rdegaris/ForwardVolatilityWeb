@@ -157,18 +157,23 @@ const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
     { label: 'Signals', to: '/trendorama' },
     { label: 'Open Trades', to: '/trendorama/open-trades' },
     { label: 'Triggers Soon', to: '/trendorama/triggers' },
+    { label: 'Executed Trades', to: '/executed-trades' },
   ],
   grail: [
     { label: 'Signals', to: '/grail' },
+    { label: 'Executed Trades', to: '/executed-trades' },
   ],
   odid: [
     { label: 'Signals', to: '/odid' },
+    { label: 'Executed Trades', to: '/executed-trades' },
   ],
   taylor: [
     { label: 'Signals', to: '/taylor' },
+    { label: 'Executed Trades', to: '/executed-trades' },
   ],
   linda: [
     { label: 'Signals', to: '/linda' },
+    { label: 'Executed Trades', to: '/executed-trades' },
   ],
 };
 
@@ -337,7 +342,18 @@ export default function Navigation() {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              to="/executed-trades"
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 ${
+                location.pathname === '/executed-trades'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                  : 'text-emerald-400 hover:bg-emerald-500/10'
+              }`}
+            >
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              Executed Trades
+            </Link>
             <Link
               to="/"
               className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${

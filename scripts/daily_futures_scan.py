@@ -626,6 +626,7 @@ def main():
     toohot_trig = []
     linda_signals = []
     linda_triggered = []
+    bars_by_symbol: Dict[str, List[Bar]] = {}
 
     latest_date = datetime.utcnow().strftime("%Y-%m-%d")
 
@@ -635,6 +636,7 @@ def main():
         if not bars:
             continue
 
+        bars_by_symbol[symbol] = bars
         latest_date = bars[-1].dt
 
         # 1. Bradman Cycle
@@ -747,7 +749,249 @@ def main():
     }
     (web_data_dir / "linda_signals_latest.json").write_text(json.dumps(linda_payload, indent=2))
 
+    # 6. Update Paper Trades & Performance Ledger
+    update_standalone_paper_trades(web_data_dir, bars_by_symbol, latest_date)
+
     print(f"=== SUCCESSFULLY UPDATED ALL FUTURES SIGNAL FEEDS FOR {latest_date} ===")
+
+
+def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Bar]], latest_date: str):
+    point_values = {
+        "ES": 50.0, "NQ": 20.0, "RTY": 50.0, "YM": 5.0, "GC": 100.0,
+        "SI": 5000.0, "CL": 1000.0, "NG": 10000.0, "6E": 125000.0,
+        "6B": 62500.0, "6J": 12500000.0, "ZB": 1000.0, "ZN": 1000.0
+    }
+    symbol_names = {
+        "ES": "E-mini S&P 500", "NQ": "E-mini Nasdaq 100", "RTY": "E-mini Russell 2000",
+        "YM": "E-mini Dow Jones", "GC": "Gold Futures", "SI": "Silver Futures",
+        "CL": "Crude Oil Futures", "NG": "Natural Gas Futures", "6E": "Euro FX Futures",
+        "6B": "British Pound Futures", "6J": "Japanese Yen Futures",
+        "ZB": "30-Year T-Bond Futures", "ZN": "10-Year T-Note Futures"
+    }
+
+    trades_file = data_dir / "executed_trades.json"
+    trades = []
+    if trades_file.exists():
+        try:
+            trades = json.loads(trades_file.read_text(encoding="utf-8"))
+        except Exception:
+            trades = []
+
+    existing_keys = {
+        (t.get("entry_date"), t.get("symbol"), t.get("strategy"), t.get("side"))
+        for t in trades
+    }
+
+    # Ingest from generated JSON files
+    for strat, filename in [
+        ("Trendorama", "turtle_signals_latest.json"),
+        ("YouHaveChosenWisely", "grail_signals_latest.json"),
+        ("The Bradman", "taylor_signals_latest.json"),
+        ("TooHot TooCold", "odid_signals_latest.json"),
+        ("The Linda", "linda_signals_latest.json")
+    ]:
+        p = data_dir / filename
+        if not p.exists():
+            continue
+        try:
+            payload = json.loads(p.read_text(encoding="utf-8"))
+            asof = payload.get("date", latest_date)
+            items = payload.get("triggered", []) or payload.get("signals", [])
+            for sig in items:
+                sym = sig.get("symbol")
+                if not sym:
+                    continue
+                side = sig.get("side") or ("long" if "BUY" in str(sig.get("cycle_phase", "")) else "short" if "SELL" in str(sig.get("cycle_phase", "")) else None)
+                if not side or side not in ("long", "short"):
+                    continue
+                if sig.get("eligible") is False:
+                    continue
+                key = (asof, sym, strat, side)
+                if key not in existing_keys:
+                    entry = float(sig.get("entry_stop") or sig.get("entry_zone") or sig.get("last_close") or sig.get("close") or 0.0)
+                    stop = float(sig.get("stop_loss") or sig.get("stop") or (entry * 0.985 if side == "long" else entry * 1.015))
+                    target = float(sig.get("target") or sig.get("objective_target") or (entry + 2 * abs(entry - stop) if side == "long" else entry - 2 * abs(entry - stop)))
+                    pt_val = point_values.get(sym, 1.0)
+                    trade_id = f"pt_{sym}_{strat[:4]}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{len(trades)+1}"
+                    trades.append({
+                        "id": trade_id,
+                        "symbol": sym,
+                        "symbol_name": symbol_names.get(sym, sym),
+                        "strategy": strat,
+                        "side": side,
+                        "entry_date": asof,
+                        "entry_price": round(entry, 4),
+                        "qty": 1,
+                        "stop_loss": round(stop, 4),
+                        "profit_target": round(target, 4),
+                        "point_value": pt_val,
+                        "status": "OPEN",
+                        "current_price": round(entry, 4),
+                        "unrealized_pnl": 0.0,
+                        "realized_pnl": 0.0,
+                        "return_pct": 0.0,
+                        "duration_days": 0,
+                        "initial_risk": round(abs(entry - stop) * pt_val, 2),
+                        "created_at": datetime.utcnow().isoformat(),
+                        "updated_at": datetime.utcnow().isoformat()
+                    })
+                    existing_keys.add(key)
+        except Exception as e:
+            print(f"  [PAPER TRADES] Error parsing {filename}: {e}")
+
+    # Evaluate daily stops and targets
+    now_dt = datetime.utcnow()
+    for t in trades:
+        sym = t.get("symbol", "")
+        pt_val = float(t.get("point_value", 1.0))
+        side = t.get("side", "long")
+        entry = float(t.get("entry_price", 0.0))
+        stop = float(t.get("stop_loss", 0.0))
+        target = float(t.get("profit_target", 0.0)) if t.get("profit_target") is not None else None
+
+        try:
+            e_dt = datetime.strptime(str(t.get("entry_date", latest_date))[:10], "%Y-%m-%d")
+            t["duration_days"] = max(0, (now_dt - e_dt).days)
+        except Exception:
+            t["duration_days"] = 0
+
+        if t.get("status") == "OPEN" and sym in daily_bars and daily_bars[sym]:
+            last_bar = daily_bars[sym][-1]
+            high = last_bar.high
+            low = last_bar.low
+            close = last_bar.close
+            t["current_price"] = round(close, 4)
+
+            if side == "long":
+                if stop > 0 and low <= stop:
+                    t["status"] = "STOPPED_OUT"
+                    t["exit_price"] = round(stop, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((stop - entry) * pt_val, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((stop - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                elif target and high >= target:
+                    t["status"] = "HIT_TARGET"
+                    t["exit_price"] = round(target, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((target - entry) * pt_val, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((target - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                else:
+                    t["unrealized_pnl"] = round((close - entry) * pt_val, 2)
+                    t["return_pct"] = round(((close - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            elif side == "short":
+                if stop > 0 and high >= stop:
+                    t["status"] = "STOPPED_OUT"
+                    t["exit_price"] = round(stop, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((entry - stop) * pt_val, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((entry - stop) / entry) * 100, 2) if entry > 0 else 0.0
+                elif target and low <= target:
+                    t["status"] = "HIT_TARGET"
+                    t["exit_price"] = round(target, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((entry - target) * pt_val, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((entry - target) / entry) * 100, 2) if entry > 0 else 0.0
+                else:
+                    t["unrealized_pnl"] = round((entry - close) * pt_val, 2)
+                    t["return_pct"] = round(((entry - close) / entry) * 100, 2) if entry > 0 else 0.0
+
+            t["updated_at"] = datetime.utcnow().isoformat()
+
+    # Calculate summary metrics
+    closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED")]
+    open_trades = [t for t in trades if t.get("status") == "OPEN"]
+    tot_realized = sum(float(t.get("realized_pnl", 0.0)) for t in closed_trades)
+    tot_unrealized = sum(float(t.get("unrealized_pnl", 0.0)) for t in open_trades)
+    net_pnl = tot_realized + tot_unrealized
+    wins = [t for t in closed_trades if float(t.get("realized_pnl", 0.0)) > 0]
+    losses = [t for t in closed_trades if float(t.get("realized_pnl", 0.0)) < 0]
+    win_dollars = sum(float(t.get("realized_pnl", 0.0)) for t in wins)
+    loss_dollars = abs(sum(float(t.get("realized_pnl", 0.0)) for t in losses))
+    win_rate = (len(wins) / len(closed_trades) * 100) if closed_trades else (
+        (len([t for t in open_trades if float(t.get("unrealized_pnl", 0.0)) > 0]) / len(open_trades) * 100) if open_trades else 0.0
+    )
+    profit_factor = (win_dollars / loss_dollars) if loss_dollars > 0 else (99.9 if win_dollars > 0 else 1.0)
+
+    # Strategy breakdown
+    strat_breakdown = {}
+    for t in trades:
+        st = t.get("strategy", "Unknown")
+        if st not in strat_breakdown:
+            strat_breakdown[st] = {
+                "strategy": st, "total_trades": 0, "open_trades": 0, "closed_trades": 0,
+                "wins": 0, "losses": 0, "realized_pnl": 0.0, "unrealized_pnl": 0.0,
+                "net_pnl": 0.0, "win_rate_pct": 0.0
+            }
+        sb = strat_breakdown[st]
+        sb["total_trades"] += 1
+        if t.get("status") == "OPEN":
+            sb["open_trades"] += 1
+            sb["unrealized_pnl"] += float(t.get("unrealized_pnl", 0.0))
+        else:
+            sb["closed_trades"] += 1
+            rp = float(t.get("realized_pnl", 0.0))
+            sb["realized_pnl"] += rp
+            if rp > 0: sb["wins"] += 1
+            elif rp < 0: sb["losses"] += 1
+
+    for sb in strat_breakdown.values():
+        sb["net_pnl"] = round(sb["realized_pnl"] + sb["unrealized_pnl"], 2)
+        sb["realized_pnl"] = round(sb["realized_pnl"], 2)
+        sb["unrealized_pnl"] = round(sb["unrealized_pnl"], 2)
+        cl = sb["closed_trades"]
+        sb["win_rate_pct"] = round((sb["wins"] / cl * 100), 1) if cl > 0 else 0.0
+
+    # Equity Curve
+    sorted_trades = sorted(trades, key=lambda x: x.get("entry_date", ""))
+    dates = sorted(list(set(t.get("entry_date", "") for t in sorted_trades if t.get("entry_date"))))
+    eq_curve = []
+    running_eq = 100000.0
+    cum_pnl = 0.0
+    peak_eq = running_eq
+    max_dd = 0.0
+    for d in dates:
+        d_trades = [t for t in trades if t.get("entry_date") == d or t.get("exit_date") == d]
+        d_pnl = sum(float(t.get("realized_pnl", 0.0)) if t.get("exit_date") == d else float(t.get("unrealized_pnl", 0.0)) for t in d_trades)
+        cum_pnl += d_pnl
+        c_eq = running_eq + cum_pnl
+        if c_eq > peak_eq: peak_eq = c_eq
+        dd = ((peak_eq - c_eq) / peak_eq * 100) if peak_eq > 0 else 0.0
+        if dd > max_dd: max_dd = dd
+        eq_curve.append({
+            "date": d, "cum_pnl": round(cum_pnl, 2), "equity": round(c_eq, 2), "drawdown_pct": round(dd, 2)
+        })
+
+    perf_payload = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "date": latest_date,
+        "total_trades": len(trades),
+        "open_trades_count": len(open_trades),
+        "closed_trades_count": len(closed_trades),
+        "winning_trades": len(wins),
+        "losing_trades": len(losses),
+        "win_rate_pct": round(win_rate, 1),
+        "total_realized_pnl": round(tot_realized, 2),
+        "total_unrealized_pnl": round(tot_unrealized, 2),
+        "net_pnl": round(net_pnl, 2),
+        "profit_factor": round(profit_factor, 2),
+        "max_drawdown_pct": round(max_dd, 2),
+        "avg_win": round(win_dollars / len(wins), 2) if wins else 0.0,
+        "avg_loss": round(loss_dollars / len(losses), 2) if losses else 0.0,
+        "strategy_breakdown": strat_breakdown,
+        "equity_curve": eq_curve,
+        "recent_trades": sorted(trades, key=lambda x: (x.get("updated_at", ""), x.get("entry_date", "")), reverse=True)[:20]
+    }
+
+    trades_file.write_text(json.dumps(trades, indent=2), encoding="utf-8")
+    (data_dir / "paper_trades_latest.json").write_text(json.dumps({"timestamp": datetime.utcnow().isoformat() + "Z", "date": latest_date, "trades": trades}, indent=2), encoding="utf-8")
+    (data_dir / "paper_trade_performance.json").write_text(json.dumps(perf_payload, indent=2), encoding="utf-8")
+    print(f"  [PAPER TRADES] Updated {len(trades)} executed trades (Net PnL: ${net_pnl:,.2f})")
+
 
 if __name__ == "__main__":
     main()
+

@@ -21,6 +21,7 @@ import OdidBreakout from './pages/OdidBreakout';
 import TaylorTrade from './pages/TaylorTrade';
 import LindaTrade from './pages/LindaTrade';
 import Home from './pages/Home';
+import ExecutedTrades from './pages/ExecutedTrades';
 import FundPerformance from './pages/FundPerformance';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -38,6 +39,8 @@ function App() {
           
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/executed-trades" element={<ProtectedRoute><ExecutedTrades /></ProtectedRoute>} />
+            <Route path="/paper-trades" element={<ProtectedRoute><ExecutedTrades /></ProtectedRoute>} />
             <Route path="/nasdaq100" element={<ProtectedRoute><Nasdaq100Results /></ProtectedRoute>} />
             <Route path="/midcap400" element={<ProtectedRoute><MidCap400Results /></ProtectedRoute>} />
             <Route path="/iv-rankings" element={<ProtectedRoute><IVRankings /></ProtectedRoute>} />

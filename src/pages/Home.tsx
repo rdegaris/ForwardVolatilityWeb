@@ -11,17 +11,21 @@ import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } fro
 import type { TaylorSignalsPayload } from '../types/taylor';
 import type { GrailSignalsPayload } from '../types/grail';
 import type { LindaSignalsPayload } from '../types/linda';
+import type { PaperTradePerformancePayload } from '../types/paperTrade';
+import { fmt$ } from '../lib/formatCurrency';
 import SignalChartModal from '../components/SignalChartModal';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
 /* ------------------------------------------------------------------ */
 
-function formatSignalPrice(value?: number | null, digits = 2) {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
-  if (Math.abs(value) >= 1000) return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  if (Math.abs(value) < 2) return value.toFixed(4);
-  return value.toFixed(digits);
+function formatSignalPrice(value?: number | string | null, digits = 2) {
+  if (value === null || value === undefined || value === '') return '—';
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (Number.isNaN(num)) return '—';
+  if (Math.abs(num) >= 1000) return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (Math.abs(num) < 2) return num.toFixed(4);
+  return num.toFixed(digits);
 }
 
 /* ------------------------------------------------------------------ */
@@ -75,6 +79,7 @@ export default function Home() {
   const [taylorSignals, setTaylorSignals] = useState<TaylorSignalsPayload | null>(null);
   const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
   const [lindaSignals, setLindaSignals] = useState<LindaSignalsPayload | null>(null);
+  const [paperPerformance, setPaperPerformance] = useState<PaperTradePerformancePayload | null>(null);
   const [chartItem, setChartItem] = useState<{
     symbol: string;
     strategy: string;
@@ -101,9 +106,10 @@ export default function Home() {
           fetchJson<TaylorSignalsPayload>('/data/taylor_signals_latest.json', { cache: 'no-store' }),
           fetchJson<GrailSignalsPayload>('/data/grail_signals_latest.json', { cache: 'no-store' }),
           fetchJson<LindaSignalsPayload>('/data/linda_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<PaperTradePerformancePayload>('/data/paper_trade_performance.json', { cache: 'no-store' }),
         ]);
 
-        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin] = results;
+        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin, pp] = results;
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
@@ -113,6 +119,7 @@ export default function Home() {
         if (tay.status === 'fulfilled') setTaylorSignals(tay.value);
         if (gr.status === 'fulfilled') setGrailSignals(gr.value);
         if (lin.status === 'fulfilled') setLindaSignals(lin.value);
+        if (pp.status === 'fulfilled') setPaperPerformance(pp.value);
       } finally {
         setLoading(false);
       }
@@ -677,6 +684,185 @@ export default function Home() {
                 View The Linda Setups →
               </Link>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ──────────────── PAPER TRADING PERFORMANCE & RUNNING LOG ──────────────── */}
+      <div className="rounded-3xl border border-slate-800/90 bg-slate-900/90 p-6 md:p-8 shadow-2xl backdrop-blur-xl space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Live Signal Execution Log
+            </div>
+            <h2 className="mt-2 text-2xl md:text-3xl font-black text-slate-100 tracking-tight">
+              Paper Trading Performance
+            </h2>
+            <p className="mt-1 text-xs text-slate-400">
+              Running ledger of automatically executed futures signals with active stops & profit targets
+            </p>
+          </div>
+
+          <Link
+            to="/executed-trades"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap self-start md:self-auto"
+          >
+            View Executed Trades Desk →
+          </Link>
+        </div>
+
+        {/* Paper Trading Summary Metrics */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Net Dollar P&L</div>
+            <div className={`mt-1 text-2xl font-black font-mono ${(paperPerformance?.net_pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {fmt$(paperPerformance?.net_pnl ?? 0)}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              Realized: {fmt$(paperPerformance?.total_realized_pnl ?? 0)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Win Rate</div>
+            <div className="mt-1 text-2xl font-black text-amber-400 font-mono">
+              {(paperPerformance?.win_rate_pct ?? 0).toFixed(1)}%
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              {paperPerformance?.winning_trades ?? 0} Wins / {paperPerformance?.losing_trades ?? 0} Losses
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Profit Factor</div>
+            <div className="mt-1 text-2xl font-black text-cyan-300 font-mono">
+              {(paperPerformance?.profit_factor ?? 0) > 50 ? '> 50' : (paperPerformance?.profit_factor ?? 0).toFixed(2)}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              Avg Win: {fmt$(paperPerformance?.avg_win ?? 0)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Open Positions</div>
+            <div className="mt-1 text-2xl font-black text-indigo-300 font-mono">
+              {paperPerformance?.open_trades_count ?? 0}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              Unrealized: {fmt$(paperPerformance?.total_unrealized_pnl ?? 0)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Paper Trades</div>
+            <div className="mt-1 text-2xl font-black text-slate-200 font-mono">
+              {paperPerformance?.total_trades ?? 0}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              {paperPerformance?.closed_trades_count ?? 0} completed
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Executed Signals Table */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-300">
+              Recent Trade Executions & Status
+            </span>
+            <Link to="/executed-trades" className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition">
+              Full Ledger ({paperPerformance?.total_trades ?? 0}) →
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="border-b border-slate-800/80 bg-slate-950/90 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <tr>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Symbol</th>
+                  <th className="px-4 py-3">Strategy</th>
+                  <th className="px-4 py-3">Side</th>
+                  <th className="px-4 py-3 text-right">Entry</th>
+                  <th className="px-4 py-3 text-right">Current / Exit</th>
+                  <th className="px-4 py-3 text-right">Stop Loss</th>
+                  <th className="px-4 py-3 text-right">Target</th>
+                  <th className="px-4 py-3 text-right">P&L ($)</th>
+                  <th className="px-4 py-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60 font-medium">
+                {(!paperPerformance?.recent_trades || paperPerformance.recent_trades.length === 0) ? (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-8 text-center text-slate-500">
+                      No executed paper trades recorded yet. Run the scanner to populate paper trades automatically.
+                    </td>
+                  </tr>
+                ) : (
+                  paperPerformance.recent_trades.slice(0, 8).map((t) => {
+                    const isOpen = t.status === 'OPEN';
+                    const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
+                    return (
+                      <tr key={t.id} className="transition-colors hover:bg-slate-800/40">
+                        <td className="px-4 py-3 font-mono text-slate-400">{t.entry_date}</td>
+                        <td className="px-4 py-3 font-mono font-bold text-slate-100">{t.symbol}</td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex rounded-md bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700">
+                            {t.strategy}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-extrabold uppercase ${
+                            t.side === 'long' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
+                          }`}>
+                            {t.side.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-slate-200">
+                          {formatSignalPrice(t.entry_price)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-slate-100 font-semibold">
+                          {formatSignalPrice(isOpen ? t.current_price : t.exit_price)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-rose-300">
+                          {formatSignalPrice(t.stop_loss)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-emerald-300">
+                          {formatSignalPrice(t.profit_target)}
+                        </td>
+                        <td className={`px-4 py-3 text-right font-mono font-black ${displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {fmt$(displayPnl)}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {t.status === 'OPEN' && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20">
+                              <span className="h-1 w-1 rounded-full bg-blue-400 animate-pulse" />
+                              OPEN
+                            </span>
+                          )}
+                          {t.status === 'HIT_TARGET' && (
+                            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-300 border border-emerald-500/30">
+                              🎯 TARGET HIT
+                            </span>
+                          )}
+                          {t.status === 'STOPPED_OUT' && (
+                            <span className="inline-flex items-center rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-extrabold text-rose-300 border border-rose-500/30">
+                              🛑 STOPPED
+                            </span>
+                          )}
+                          {t.status === 'MANUALLY_CLOSED' && (
+                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300">
+                              CLOSED
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
