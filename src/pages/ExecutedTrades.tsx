@@ -171,7 +171,8 @@ export default function ExecutedTrades() {
   }, [trades, selectedStrategy, selectedStatus, searchQuery]);
 
   const biggestWinners = useMemo(() => {
-    return [...trades]
+    const pool = selectedStrategy === 'ALL' ? trades : trades.filter((t) => t.strategy === selectedStrategy);
+    return [...pool]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
       .sort((a, b) => {
         const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
@@ -179,10 +180,11 @@ export default function ExecutedTrades() {
         return pnlB - pnlA;
       })
       .slice(0, 5);
-  }, [trades]);
+  }, [trades, selectedStrategy]);
 
   const biggestLosers = useMemo(() => {
-    return [...trades]
+    const pool = selectedStrategy === 'ALL' ? trades : trades.filter((t) => t.strategy === selectedStrategy);
+    return [...pool]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) < 0)
       .sort((a, b) => {
         const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
@@ -190,7 +192,44 @@ export default function ExecutedTrades() {
         return pnlA - pnlB;
       })
       .slice(0, 5);
-  }, [trades]);
+  }, [trades, selectedStrategy]);
+
+  const activeMetrics = useMemo(() => {
+    if (!performance) return null;
+    if (selectedStrategy === 'ALL') {
+      return {
+        netPnl: performance.net_pnl,
+        realizedPnl: performance.total_realized_pnl,
+        unrealizedPnl: performance.total_unrealized_pnl,
+        winRate: performance.win_rate_pct,
+        wins: performance.winning_trades,
+        losses: performance.losing_trades,
+        profitFactor: performance.profit_factor,
+        openCount: performance.open_trades_count,
+        totalTrades: performance.total_trades,
+        closedCount: performance.closed_trades_count,
+        avgWin: performance.avg_win,
+        maxDrawdown: performance.max_drawdown_pct,
+      };
+    }
+    const stat = performance.strategy_breakdown?.[selectedStrategy];
+    const sWins = stat?.wins ?? 0;
+    const sLosses = stat?.losses ?? 0;
+    return {
+      netPnl: stat?.net_pnl ?? 0,
+      realizedPnl: stat?.realized_pnl ?? 0,
+      unrealizedPnl: stat?.unrealized_pnl ?? 0,
+      winRate: stat?.win_rate_pct ?? 0,
+      wins: sWins,
+      losses: sLosses,
+      profitFactor: sLosses > 0 ? (sWins / sLosses) : (sWins > 0 ? 99.9 : 1.0),
+      openCount: stat?.open_trades ?? 0,
+      totalTrades: stat?.total_trades ?? 0,
+      closedCount: stat?.closed_trades ?? 0,
+      avgWin: performance.avg_win,
+      maxDrawdown: performance.max_drawdown_pct,
+    };
+  }, [performance, selectedStrategy]);
 
   const handleEditSave = () => {
     if (!editingTrade) return;
@@ -240,18 +279,18 @@ export default function ExecutedTrades() {
           <div className="absolute inset-0 rounded-full border-2 border-slate-800" />
           <div className="absolute inset-0 rounded-full border-2 border-t-emerald-400 border-r-amber-400 animate-spin" />
         </div>
-        <p className="text-slate-400 font-medium">Loading Executed Paper Trades & Performance Log…</p>
+        <p className="text-slate-400 font-medium">Loading Executed Trades & Performance Log…</p>
       </div>
     );
   }
 
-  const netPnl = performance?.net_pnl ?? 0;
-  const realizedPnl = performance?.total_realized_pnl ?? 0;
-  const unrealizedPnl = performance?.total_unrealized_pnl ?? 0;
-  const winRate = performance?.win_rate_pct ?? 0;
-  const profitFactor = performance?.profit_factor ?? 0;
-  const openCount = performance?.open_trades_count ?? 0;
-  const closedCount = performance?.closed_trades_count ?? 0;
+  const netPnl = activeMetrics?.netPnl ?? 0;
+  const realizedPnl = activeMetrics?.realizedPnl ?? 0;
+  const unrealizedPnl = activeMetrics?.unrealizedPnl ?? 0;
+  const winRate = activeMetrics?.winRate ?? 0;
+  const profitFactor = activeMetrics?.profitFactor ?? 0;
+  const openCount = activeMetrics?.openCount ?? 0;
+  const closedCount = activeMetrics?.closedCount ?? 0;
 
   return (
     <div className="space-y-10 pb-16">
@@ -264,7 +303,7 @@ export default function ExecutedTrades() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-400">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Automated Signal Paper Trading
+              Systematic Strategy Execution
             </div>
             <h1 className="mt-3 text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
               Executed Trades & Performance Tracker
@@ -287,8 +326,37 @@ export default function ExecutedTrades() {
           </div>
         </div>
 
+        {/* ── STRATEGY TOGGLE PILLS ── */}
+        <div className="mt-8 flex flex-wrap items-center gap-2 border-t border-slate-800/80 pt-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2">Filter by Strategy:</span>
+          {[
+            { id: 'ALL', label: 'All Strategies', dot: 'bg-emerald-400' },
+            { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
+            { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
+            { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
+            { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
+            { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
+          ].map((strat) => {
+            const isSelected = selectedStrategy === strat.id;
+            return (
+              <button
+                key={strat.id}
+                onClick={() => setSelectedStrategy(strat.id)}
+                className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+                  isSelected
+                    ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
+                    : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
+                {strat.label}
+              </button>
+            );
+          })}
+        </div>
+
         {/* ── KPI STATS ── */}
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard
             title="Net Total P&L"
             value={fmt$(netPnl)}
@@ -305,13 +373,13 @@ export default function ExecutedTrades() {
           <StatCard
             title="Win Rate"
             value={`${winRate.toFixed(1)}%`}
-            sub={`${performance?.winning_trades ?? 0}W / ${performance?.losing_trades ?? 0}L`}
+            sub={`${activeMetrics?.wins ?? 0}W / ${activeMetrics?.losses ?? 0}L`}
             accent="text-amber-400"
           />
           <StatCard
             title="Profit Factor"
             value={profitFactor > 50 ? '> 50' : profitFactor.toFixed(2)}
-            sub={`Avg Win: ${fmt$(performance?.avg_win ?? 0)}`}
+            sub={`Avg Win: ${fmt$(activeMetrics?.avgWin ?? 0)}`}
             accent="text-cyan-300"
           />
           <StatCard
@@ -322,7 +390,7 @@ export default function ExecutedTrades() {
           />
           <StatCard
             title="Max Drawdown"
-            value={`${(performance?.max_drawdown_pct ?? 0).toFixed(1)}%`}
+            value={`${(activeMetrics?.maxDrawdown ?? 0).toFixed(1)}%`}
             sub="Peak to trough"
             accent="text-slate-300"
           />
@@ -336,10 +404,10 @@ export default function ExecutedTrades() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-black text-slate-100 tracking-tight">
-                Cumulative Paper Equity Curve ($)
+                Cumulative Equity Curve ($)
               </h2>
               <p className="text-xs text-slate-400">
-                Running net dollar performance from executed signals
+                Running net dollar performance from executed signals {selectedStrategy !== 'ALL' && `(${selectedStrategy})`}
               </p>
             </div>
             <div className="text-sm font-black font-mono text-emerald-400">
@@ -555,7 +623,7 @@ export default function ExecutedTrades() {
               Executed Signals Ledger
             </h2>
             <p className="text-xs text-slate-400">
-              Showing {filteredTrades.length} of {trades.length} recorded paper trades
+              Showing {filteredTrades.length} of {trades.length} recorded executed trades
             </p>
           </div>
 
@@ -621,7 +689,7 @@ export default function ExecutedTrades() {
               {filteredTrades.length === 0 ? (
                 <tr>
                   <td colSpan={12} className="px-5 py-12 text-center text-slate-500">
-                    No executed paper trades match the selected filters.
+                    No executed trades match the selected filters.
                   </td>
                 </tr>
               ) : (

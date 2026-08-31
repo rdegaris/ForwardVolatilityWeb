@@ -151,10 +151,54 @@ export default function Home() {
     return lindaSignals.signals.filter(s => s.triggered);
   }, [lindaSignals]);
 
-  // Biggest Winners & Losers
-  const biggestWinners = useMemo(() => {
+  const [selectedPerfStrategy, setSelectedPerfStrategy] = useState<string>('ALL');
+
+  // Filtered Trades for Performance Section
+  const perfTrades = useMemo(() => {
     if (!paperPerformance?.recent_trades) return [];
-    return [...paperPerformance.recent_trades]
+    if (selectedPerfStrategy === 'ALL') return paperPerformance.recent_trades;
+    return paperPerformance.recent_trades.filter((t) => t.strategy === selectedPerfStrategy);
+  }, [paperPerformance, selectedPerfStrategy]);
+
+  // Strategy Specific Metrics
+  const activeMetrics = useMemo(() => {
+    if (!paperPerformance) return null;
+    if (selectedPerfStrategy === 'ALL') {
+      return {
+        netPnl: paperPerformance.net_pnl,
+        realizedPnl: paperPerformance.total_realized_pnl,
+        unrealizedPnl: paperPerformance.total_unrealized_pnl,
+        winRate: paperPerformance.win_rate_pct,
+        wins: paperPerformance.winning_trades,
+        losses: paperPerformance.losing_trades,
+        profitFactor: paperPerformance.profit_factor,
+        openCount: paperPerformance.open_trades_count,
+        totalTrades: paperPerformance.total_trades,
+        closedCount: paperPerformance.closed_trades_count,
+        avgWin: paperPerformance.avg_win,
+      };
+    }
+    const stat = paperPerformance.strategy_breakdown?.[selectedPerfStrategy];
+    const sWins = stat?.wins ?? 0;
+    const sLosses = stat?.losses ?? 0;
+    return {
+      netPnl: stat?.net_pnl ?? 0,
+      realizedPnl: stat?.realized_pnl ?? 0,
+      unrealizedPnl: stat?.unrealized_pnl ?? 0,
+      winRate: stat?.win_rate_pct ?? 0,
+      wins: sWins,
+      losses: sLosses,
+      profitFactor: sLosses > 0 ? (sWins / sLosses) : (sWins > 0 ? 99.9 : 1.0),
+      openCount: stat?.open_trades ?? 0,
+      totalTrades: stat?.total_trades ?? 0,
+      closedCount: stat?.closed_trades ?? 0,
+      avgWin: paperPerformance.avg_win,
+    };
+  }, [paperPerformance, selectedPerfStrategy]);
+
+  // Biggest Winners & Losers for Selected Strategy
+  const biggestWinners = useMemo(() => {
+    return [...perfTrades]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
       .sort((a, b) => {
         const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
@@ -162,11 +206,10 @@ export default function Home() {
         return pnlB - pnlA;
       })
       .slice(0, 4);
-  }, [paperPerformance]);
+  }, [perfTrades]);
 
   const biggestLosers = useMemo(() => {
-    if (!paperPerformance?.recent_trades) return [];
-    return [...paperPerformance.recent_trades]
+    return [...perfTrades]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) < 0)
       .sort((a, b) => {
         const pnlA = a.status === 'OPEN' ? a.unrealized_pnl : a.realized_pnl;
@@ -174,7 +217,7 @@ export default function Home() {
         return pnlA - pnlB;
       })
       .slice(0, 4);
-  }, [paperPerformance]);
+  }, [perfTrades]);
 
   const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -713,79 +756,110 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ──────────────── PAPER TRADING PERFORMANCE & RUNNING LOG ──────────────── */}
+      {/* ──────────────── SYSTEMATIC TRADING PERFORMANCE & RUNNING LOG ──────────────── */}
       <div className="rounded-3xl border border-slate-800/90 bg-slate-900/90 p-6 md:p-8 shadow-2xl backdrop-blur-xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Live Signal Execution Log
             </div>
             <h2 className="mt-2 text-2xl md:text-3xl font-black text-slate-100 tracking-tight">
-              Paper Trading Performance
+              Trading Performance
             </h2>
             <p className="mt-1 text-xs text-slate-400">
-              Running ledger of automatically executed futures signals with active stops & profit targets
+              Running ledger of systematically executed futures strategy signals with active stops & profit targets
             </p>
           </div>
 
-          <Link
-            to="/executed-trades"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap self-start md:self-auto"
-          >
-            View Executed Trades Desk →
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/executed-trades"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap"
+            >
+              View Executed Trades Desk →
+            </Link>
+          </div>
         </div>
 
-        {/* Paper Trading Summary Metrics */}
+        {/* ── STRATEGY PERFORMANCE TOGGLE ── */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-800/60 pb-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2">Filter by Strategy:</span>
+          {[
+            { id: 'ALL', label: 'All Strategies', dot: 'bg-emerald-400' },
+            { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
+            { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
+            { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
+            { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
+            { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
+          ].map((strat) => {
+            const isSelected = selectedPerfStrategy === strat.id;
+            return (
+              <button
+                key={strat.id}
+                onClick={() => setSelectedPerfStrategy(strat.id)}
+                className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+                  isSelected
+                    ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
+                    : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
+                {strat.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Summary Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Net Dollar P&L</div>
-            <div className={`mt-1 text-2xl font-black font-mono ${(paperPerformance?.net_pnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {fmt$(paperPerformance?.net_pnl ?? 0)}
+            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.netPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {fmt$(activeMetrics?.netPnl ?? 0)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Realized: {fmt$(paperPerformance?.total_realized_pnl ?? 0)}
+              Realized: {fmt$(activeMetrics?.realizedPnl ?? 0)}
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Win Rate</div>
             <div className="mt-1 text-2xl font-black text-amber-400 font-mono">
-              {(paperPerformance?.win_rate_pct ?? 0).toFixed(1)}%
+              {(activeMetrics?.winRate ?? 0).toFixed(1)}%
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {paperPerformance?.winning_trades ?? 0} Wins / {paperPerformance?.losing_trades ?? 0} Losses
+              {activeMetrics?.wins ?? 0} Wins / {activeMetrics?.losses ?? 0} Losses
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Profit Factor</div>
             <div className="mt-1 text-2xl font-black text-cyan-300 font-mono">
-              {(paperPerformance?.profit_factor ?? 0) > 50 ? '> 50' : (paperPerformance?.profit_factor ?? 0).toFixed(2)}
+              {(activeMetrics?.profitFactor ?? 0) > 50 ? '> 50' : (activeMetrics?.profitFactor ?? 0).toFixed(2)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Avg Win: {fmt$(paperPerformance?.avg_win ?? 0)}
+              Avg Win: {fmt$(activeMetrics?.avgWin ?? 0)}
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Open Positions</div>
             <div className="mt-1 text-2xl font-black text-indigo-300 font-mono">
-              {paperPerformance?.open_trades_count ?? 0}
+              {activeMetrics?.openCount ?? 0}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Unrealized: {fmt$(paperPerformance?.total_unrealized_pnl ?? 0)}
+              Unrealized: {fmt$(activeMetrics?.unrealizedPnl ?? 0)}
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Trades</div>
             <div className="mt-1 text-2xl font-black text-slate-200 font-mono">
-              {paperPerformance?.total_trades ?? 0}
+              {activeMetrics?.totalTrades ?? 0}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {paperPerformance?.closed_trades_count ?? 0} completed
+              {activeMetrics?.closedCount ?? 0} completed
             </div>
           </div>
         </div>
@@ -796,7 +870,7 @@ export default function Home() {
           <div className="rounded-2xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
             <div className="flex items-center justify-between border-b border-emerald-900/30 pb-3">
               <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-300">
-                <span>🏆</span> Top Winners
+                <span>🏆</span> Top Winners {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
               </span>
               <span className="text-[11px] font-bold text-emerald-400">
                 {biggestWinners.length} Top Performing
@@ -804,7 +878,7 @@ export default function Home() {
             </div>
 
             {biggestWinners.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-2">No winning trades recorded yet.</p>
+              <p className="text-xs text-slate-500 italic py-2">No winning trades recorded for this selection.</p>
             ) : (
               <div className="space-y-2">
                 {biggestWinners.map((t) => {
@@ -840,7 +914,7 @@ export default function Home() {
           <div className="rounded-2xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
             <div className="flex items-center justify-between border-b border-rose-900/30 pb-3">
               <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-rose-300">
-                <span>⚠️</span> Top Drawdowns / Losers
+                <span>⚠️</span> Top Drawdowns / Losers {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
               </span>
               <span className="text-[11px] font-bold text-rose-400">
                 {biggestLosers.length} Trailing Trades
@@ -848,7 +922,7 @@ export default function Home() {
             </div>
 
             {biggestLosers.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-2">No drawdown trades recorded.</p>
+              <p className="text-xs text-slate-500 italic py-2">No drawdown trades recorded for this selection.</p>
             ) : (
               <div className="space-y-2">
                 {biggestLosers.map((t) => {
@@ -885,10 +959,10 @@ export default function Home() {
         <div className="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
           <div className="px-5 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
             <span className="text-xs font-black uppercase tracking-wider text-slate-300">
-              Recent Trade Executions & Status
+              Recent Trade Executions & Status {selectedPerfStrategy !== 'ALL' && `· ${selectedPerfStrategy}`}
             </span>
             <Link to="/executed-trades" className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition">
-              Full Ledger ({paperPerformance?.total_trades ?? 0}) →
+              Full Ledger ({activeMetrics?.totalTrades ?? 0}) →
             </Link>
           </div>
 
@@ -909,14 +983,14 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 font-medium">
-                {(!paperPerformance?.recent_trades || paperPerformance.recent_trades.length === 0) ? (
+                {(!perfTrades || perfTrades.length === 0) ? (
                   <tr>
                     <td colSpan={10} className="px-4 py-8 text-center text-slate-500">
-                      No executed paper trades recorded yet. Run the scanner to populate paper trades automatically.
+                      No executed trades recorded for this selection.
                     </td>
                   </tr>
                 ) : (
-                  paperPerformance.recent_trades.slice(0, 8).map((t) => {
+                  perfTrades.slice(0, 8).map((t) => {
                     const isOpen = t.status === 'OPEN';
                     const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
                     return (

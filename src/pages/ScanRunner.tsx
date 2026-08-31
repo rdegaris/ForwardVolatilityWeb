@@ -105,7 +105,7 @@ export default function ScanRunner() {
               On-Demand Scanner Runner
             </h1>
             <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-              Manually trigger full futures market scans, recalculate Trendorama, The Bradman, YouHaveChosenWisely, TooHot TooCold, and The Linda signals, and update the paper trading ledger & stops.
+              Manually trigger full futures market scans, recalculate Trendorama, The Bradman, YouHaveChosenWisely, TooHot TooCold, and The Linda signals, and update the execution ledger & stops.
             </p>
           </div>
 
