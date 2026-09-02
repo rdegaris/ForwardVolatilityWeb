@@ -773,6 +773,14 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-right">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                Starting Capital
+              </div>
+              <div className="text-sm font-black text-slate-100 font-mono">
+                $1,000,000 <span className="text-[10px] text-emerald-400/80 font-normal">(2% Risk / Trade)</span>
+              </div>
+            </div>
             <Link
               to="/executed-trades"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap"

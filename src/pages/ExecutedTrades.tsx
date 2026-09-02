@@ -355,16 +355,42 @@ export default function ExecutedTrades() {
             <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
               Real-time systematic execution ledger for all triggered OzCTA futures strategy signals. Tracks contract multiplier points, dynamic risk stops, objective profit targets, and running P&L.
             </p>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2.5">
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+                <span className="text-slate-400 font-semibold">Starting Capital:</span> $1,000,000
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
+                <span className="text-slate-400 font-semibold">Risk Budget:</span> 2.0% / Trade ($20,000 Heat)
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
+                <span className="text-slate-400 font-semibold">Portfolio Limit:</span> Max 8 Open Positions (16% Heat)
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                Starting Capital
+              </div>
+              <div className="mt-1 text-xl font-black text-slate-100 font-mono">
+                $1,000,000
+              </div>
+              <div className="text-[10px] text-emerald-400/80 font-semibold">
+                $20,000 (2.0%) Max Heat / Trade
+              </div>
+            </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-right">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 System Status
               </div>
-              <div className="mt-1 flex items-center gap-2 text-sm font-bold text-emerald-400">
+              <div className="mt-1 flex items-center justify-end gap-2 text-sm font-bold text-emerald-400">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 Active Monitoring
+              </div>
+              <div className="text-[10px] text-slate-500 font-semibold">
+                Institutional Risk Engine
               </div>
             </div>
           </div>
