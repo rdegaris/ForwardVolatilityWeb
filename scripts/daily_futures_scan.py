@@ -1047,15 +1047,18 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 })
                 trade_id_seq += 1
 
-            # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA + ADX > 30)
+            # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA + 14 ADX > 25/30)
             emas = compute_ema([b.close for b in bars], 20)
-            adxs = compute_adx(bars, 14)
-            if len(emas) >= 20 and len(adxs) >= 28:
-                ema20 = emas[-1]
-                adx = adxs[-1]
-                dist_pct = abs(b0.close - ema20) / ema20 * 100
-                if adx >= 30.0 and dist_pct <= 2.5 and can_open_trade(sym):
-                    side = "long" if b0.close > ema20 else "short"
+            adx_list, pdi_list, mdi_list = compute_adx(bars, 14)
+            if len(emas) >= 20 and len(adx_list) >= 28:
+                last_ema = emas[-1]
+                last_adx = adx_list[-1]
+                last_pdi = pdi_list[-1]
+                last_mdi = mdi_list[-1]
+                dist_pct = abs(b0.close - last_ema) / last_ema * 100
+                is_uptrend = last_pdi > last_mdi
+                if last_adx >= 25.0 and dist_pct <= 2.5 and can_open_trade(sym):
+                    side = "long" if is_uptrend else "short"
                     entry_p = b0.close
                     stop_p = entry_p - 1.5 * atr if side == "long" else entry_p + 1.5 * atr
                     target_p = entry_p + 2.5 * atr if side == "long" else entry_p - 2.5 * atr
@@ -1111,6 +1114,54 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                         "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
                     })
                     trade_id_seq += 1
+
+            # Strategy 5: The Linda (Trend Day No-Touch Fade at Opening Bell)
+            emas20 = compute_ema([b.close for b in bars[:-1]], 20)
+            if len(emas20) >= 20:
+                ema20_prev = emas20[-1]
+                b1_range = b1.high - b1.low
+                atr_prev = atrs[-2] if len(atrs) >= 2 else atr
+                if b1_range > 0 and atr_prev > 0 and (b1_range / atr_prev) >= 0.70:
+                    trend_strength = (b1.close - b1.low) / b1_range
+                    is_bull_thrust = trend_strength >= 0.75 and b1.low > ema20_prev
+                    is_bear_thrust = trend_strength <= 0.25 and b1.high < ema20_prev
+                    
+                    if (is_bull_thrust or is_bear_thrust) and can_open_trade(sym):
+                        side = "short" if is_bull_thrust else "long"
+                        entry_p = b0.open  # Opening bell entry
+                        target_p = ema20_prev  # Mean reversion to EMA20
+                        stop_p = (b1.high + atr_prev) if is_bull_thrust else (b1.low - atr_prev)
+                        risk_d = abs(entry_p - stop_p) * pt_val
+                        qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                        
+                        # Evaluate same-day exit on b0
+                        is_stopped = (side == "long" and b0.low <= stop_p) or (side == "short" and b0.high >= stop_p)
+                        hit_target = (side == "long" and b0.high >= target_p) or (side == "short" and b0.low <= target_p)
+                        
+                        if is_stopped:
+                            stat = "STOPPED_OUT"
+                            exit_p = stop_p
+                        elif hit_target:
+                            stat = "HIT_TARGET"
+                            exit_p = target_p
+                        else:
+                            stat = "EOD_EXIT"
+                            exit_p = b0.close
+                            
+                        pnl = (exit_p - entry_p if side == "long" else entry_p - exit_p) * pt_val * qty
+                        
+                        trades.append({
+                            "id": f"pt_{sym}_Linda_{cur_date.replace('-','')}_{trade_id_seq}",
+                            "symbol": sym, "symbol_name": sym_name, "strategy": "The Linda", "side": side,
+                            "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
+                            "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
+                            "point_value": pt_val, "status": stat, "exit_date": cur_date, "exit_price": round(exit_p, 4),
+                            "current_price": round(b0.close, 4), "unrealized_pnl": 0.0, "realized_pnl": round(pnl, 2),
+                            "return_pct": round(((exit_p - entry_p) / entry_p) * 100, 2) if entry_p > 0 else 0.0,
+                            "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                            "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                        })
+                        trade_id_seq += 1
 
     # Calculate summary metrics
     closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT", "EOD_EXIT")]
