@@ -539,6 +539,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "symbol": symbol,
                 "asof": target_date,
                 "direction": "FADE_UP",
+                "side": "short",
                 "close": round(day_close, 4),
                 "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
@@ -557,6 +558,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "symbol": symbol,
                 "asof": target_date,
                 "direction": "FADE_UP",
+                "side": "short",
                 "close": round(day_close, 4),
                 "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
@@ -576,6 +578,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "symbol": symbol,
                 "asof": target_date,
                 "direction": "FADE_DOWN",
+                "side": "long",
                 "close": round(day_close, 4),
                 "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
@@ -594,6 +597,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "symbol": symbol,
                 "asof": target_date,
                 "direction": "FADE_DOWN",
+                "side": "long",
                 "close": round(day_close, 4),
                 "ema20": round(last_15m_ema, 4),
                 "gap_pct": round(gap_pct, 2),
@@ -937,7 +941,37 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             hit_target = (side == "long" and target and target > 0 and high >= target) or \
                          (side == "short" and target and target > 0 and low <= target)
 
-            # 3. Trendorama Donchian 20 Trailing Exit
+            # 3. The Linda: Same-Day Mean Reversion with Mandatory EOD Exit
+            if strat == "The Linda":
+                if is_stopped:
+                    t["status"] = "STOPPED_OUT"
+                    exit_price = stop
+                    t["exit_price"] = round(exit_price, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                elif hit_target:
+                    t["status"] = "HIT_TARGET"
+                    exit_price = target
+                    t["exit_price"] = round(exit_price, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                else:
+                    # Mandatory Same-Day End of Day (EOD) Exit
+                    t["status"] = "EOD_EXIT"
+                    exit_price = close
+                    t["exit_price"] = round(exit_price, 4)
+                    t["exit_date"] = last_bar.dt
+                    t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                    t["unrealized_pnl"] = 0.0
+                    t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                t["updated_at"] = datetime.utcnow().isoformat()
+                continue
+
+            # 4. Trendorama Donchian 20 Trailing Exit
             donchian_exit = False
             if strat == "Trendorama":
                 if side == "long" and low <= donchian_low_20:
@@ -945,16 +979,16 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 elif side == "short" and high >= donchian_high_20:
                     donchian_exit = True
 
-            # 4. Strategy Time Exits
+            # 5. Strategy Time Exits
             time_exit = False
             if strat == "The Bradman" and duration >= 3:
                 time_exit = True
             elif strat == "TooHot TooCold" and duration >= 4:
                 time_exit = True
-            elif strat in ("YouHaveChosenWisely", "The Linda") and duration >= 5:
+            elif strat == "YouHaveChosenWisely" and duration >= 5:
                 time_exit = True
 
-            # 5. Holy Grail EMA Exit
+            # 6. Holy Grail EMA Exit
             ema_exit = False
             if strat == "YouHaveChosenWisely":
                 if side == "long" and close < ema20:
@@ -1009,7 +1043,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             t["updated_at"] = datetime.utcnow().isoformat()
 
     # Calculate summary metrics
-    closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT")]
+    closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT", "EOD_EXIT")]
     open_trades = [t for t in trades if t.get("status") == "OPEN"]
     tot_realized = sum(float(t.get("realized_pnl", 0.0)) for t in closed_trades)
     tot_unrealized = sum(float(t.get("unrealized_pnl", 0.0)) for t in open_trades)

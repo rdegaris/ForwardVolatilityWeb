@@ -777,6 +777,7 @@ export default function ExecutedTrades() {
               <option value="DONCHIAN_EXIT">Donchian Exit</option>
               <option value="TIME_EXIT">Time / Cycle Exit</option>
               <option value="EMA_EXIT">EMA Cross Exit</option>
+              <option value="EOD_EXIT">EOD Exit (The Linda)</option>
             </select>
           </div>
         </div>
@@ -927,6 +928,11 @@ export default function ExecutedTrades() {
                         {t.status === 'EMA_EXIT' && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-teal-300 border border-teal-500/30">
                             📉 EMA EXIT
+                          </span>
+                        )}
+                        {t.status === 'EOD_EXIT' && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                            🌅 EOD EXIT
                           </span>
                         )}
                         {t.status === 'MANUALLY_CLOSED' && (
