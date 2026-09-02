@@ -1,25 +1,16 @@
 {
-  "timestamp": "2026-09-01T16:52:44.696042Z",
-  "date": "2026-09-01",
-  "total_armed": 3,
+  "timestamp": "2026-09-02T15:28:01.577804Z",
+  "date": "2026-09-02",
+  "total_armed": 1,
   "triggered": [
     {
-      "symbol": "6J",
+      "symbol": "NQ",
       "side": "short",
-      "asof": "2026-09-01",
-      "entry_stop": 0.0062,
-      "stop_loss": 0.0063,
+      "asof": "2026-09-02",
+      "entry_stop": 29002.0,
+      "stop_loss": 29571.25,
       "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
-    },
-    {
-      "symbol": "6B",
-      "side": "short",
-      "asof": "2026-09-01",
-      "entry_stop": 1.3528,
-      "stop_loss": 1.3566,
-      "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
+      "notes": "Confirmed TOO_HOT (OUTSIDE_DAY) downside breakout"
     }
   ]
 }
