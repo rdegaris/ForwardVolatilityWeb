@@ -196,13 +196,10 @@ export default function ExecutedTrades() {
       if (selectedStatus === 'OPEN' && t.status !== 'OPEN') return false;
       if (selectedStatus === 'CLOSED' && t.status === 'OPEN') return false;
       if (
-        selectedStatus === 'HIT_TARGET' &&
-        t.status !== 'HIT_TARGET'
-      )
-        return false;
-      if (
-        selectedStatus === 'STOPPED_OUT' &&
-        t.status !== 'STOPPED_OUT'
+        selectedStatus !== 'ALL' &&
+        selectedStatus !== 'OPEN' &&
+        selectedStatus !== 'CLOSED' &&
+        t.status !== selectedStatus
       )
         return false;
       if (searchQuery) {
@@ -777,6 +774,9 @@ export default function ExecutedTrades() {
               <option value="CLOSED">Closed Only</option>
               <option value="HIT_TARGET">Hit Target</option>
               <option value="STOPPED_OUT">Stopped Out</option>
+              <option value="DONCHIAN_EXIT">Donchian Exit</option>
+              <option value="TIME_EXIT">Time / Cycle Exit</option>
+              <option value="EMA_EXIT">EMA Cross Exit</option>
             </select>
           </div>
         </div>
@@ -912,6 +912,21 @@ export default function ExecutedTrades() {
                         {t.status === 'STOPPED_OUT' && (
                           <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-rose-300 border border-rose-500/30">
                             🛑 STOPPED
+                          </span>
+                        )}
+                        {t.status === 'DONCHIAN_EXIT' && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-indigo-300 border border-indigo-500/30">
+                            🌊 DONCHIAN
+                          </span>
+                        )}
+                        {t.status === 'TIME_EXIT' && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-300 border border-amber-500/30">
+                            ⏳ TIME EXIT
+                          </span>
+                        )}
+                        {t.status === 'EMA_EXIT' && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-teal-300 border border-teal-500/30">
+                            📉 EMA EXIT
                           </span>
                         )}
                         {t.status === 'MANUALLY_CLOSED' && (

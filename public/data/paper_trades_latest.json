@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-02T15:28:01.632376Z",
+  "timestamp": "2026-09-02T16:12:42.143771Z",
   "date": "2026-09-02",
   "trades": [
     {
@@ -15,14 +15,14 @@
       "profit_target": 105.954,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 107.375,
-      "unrealized_pnl": 9688.0,
+      "current_price": 107.3906,
+      "unrealized_pnl": 9375.5,
       "realized_pnl": 0.0,
-      "return_pct": 0.45,
+      "return_pct": 0.43,
       "duration_days": 1,
       "initial_risk": 19054.0,
       "created_at": "2026-09-01T16:52:44.705591",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.138752"
     },
     {
       "id": "pt_6E_YouH_20260901165244_2",
@@ -36,15 +36,17 @@
       "stop_loss": 1.1456,
       "profit_target": 1.1722,
       "point_value": 125000.0,
-      "status": "OPEN",
+      "status": "EMA_EXIT",
       "current_price": 1.1597,
-      "unrealized_pnl": -481.27,
-      "realized_pnl": 0.0,
+      "unrealized_pnl": 0.0,
+      "realized_pnl": -549.95,
       "return_pct": -0.03,
       "duration_days": 1,
       "initial_risk": 19937.5,
       "created_at": "2026-09-01T16:52:44.713619",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.138752",
+      "exit_price": 1.1597,
+      "exit_date": "2026-09-02"
     },
     {
       "id": "pt_6J_YouH_20260901165244_3",
@@ -60,13 +62,13 @@
       "point_value": 12500000.0,
       "status": "OPEN",
       "current_price": 0.0063,
-      "unrealized_pnl": 1500.01,
+      "unrealized_pnl": 375.0,
       "realized_pnl": 0.0,
-      "return_pct": 0.13,
+      "return_pct": 0.03,
       "duration_days": 1,
       "initial_risk": 18750.0,
       "created_at": "2026-09-01T16:52:44.713619",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.138752"
     },
     {
       "id": "pt_ES_The _20260901165244_4",
@@ -81,14 +83,14 @@
       "profit_target": 7761.25,
       "point_value": 50.0,
       "status": "OPEN",
-      "current_price": 7683.25,
-      "unrealized_pnl": 10950.0,
+      "current_price": 7683.75,
+      "unrealized_pnl": 11100.0,
       "realized_pnl": 0.0,
       "return_pct": 0.48,
       "duration_days": 1,
       "initial_risk": 17175.0,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.139756"
     },
     {
       "id": "pt_NQ_The _20260901165244_5",
@@ -103,14 +105,14 @@
       "profit_target": 29921.75,
       "point_value": 20.0,
       "status": "OPEN",
-      "current_price": 29172.25,
-      "unrealized_pnl": 800.0,
+      "current_price": 29179.75,
+      "unrealized_pnl": 1100.0,
       "realized_pnl": 0.0,
-      "return_pct": 0.07,
+      "return_pct": 0.09,
       "duration_days": 1,
       "initial_risk": 15390.0,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.139756"
     },
     {
       "id": "pt_RTY_The _20260901165244_6",
@@ -125,14 +127,14 @@
       "profit_target": 3008.9999,
       "point_value": 50.0,
       "status": "OPEN",
-      "current_price": 2947.5,
-      "unrealized_pnl": 9135.0,
+      "current_price": 2949.3,
+      "unrealized_pnl": 9945.02,
       "realized_pnl": 0.0,
-      "return_pct": 0.69,
+      "return_pct": 0.75,
       "duration_days": 1,
       "initial_risk": 18404.98,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.139756"
     },
     {
       "id": "pt_YM_The _20260901165244_7",
@@ -147,14 +149,14 @@
       "profit_target": 53971.0,
       "point_value": 5.0,
       "status": "OPEN",
-      "current_price": 53144.0,
-      "unrealized_pnl": 10465.0,
+      "current_price": 53108.0,
+      "unrealized_pnl": 9205.0,
       "realized_pnl": 0.0,
-      "return_pct": 0.57,
+      "return_pct": 0.5,
       "duration_days": 1,
       "initial_risk": 19705.0,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.139756"
     },
     {
       "id": "pt_GC_The _20260901165244_8",
@@ -169,14 +171,14 @@
       "profit_target": 4570.6992,
       "point_value": 100.0,
       "status": "OPEN",
-      "current_price": 4417.3999,
-      "unrealized_pnl": 3020.02,
+      "current_price": 4421.1001,
+      "unrealized_pnl": 3760.06,
       "realized_pnl": 0.0,
-      "return_pct": 0.34,
+      "return_pct": 0.43,
       "duration_days": 1,
       "initial_risk": 16839.94,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.140261"
     },
     {
       "id": "pt_SI_The _20260901165244_9",
@@ -191,14 +193,14 @@
       "profit_target": 69.63,
       "point_value": 5000.0,
       "status": "OPEN",
-      "current_price": 65.555,
-      "unrealized_pnl": 75.0,
+      "current_price": 65.705,
+      "unrealized_pnl": 825.01,
       "realized_pnl": 0.0,
-      "return_pct": 0.02,
+      "return_pct": 0.25,
       "duration_days": 1,
       "initial_risk": 10225.0,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.140261"
     },
     {
       "id": "pt_CL_The _20260901165244_10",
@@ -213,14 +215,14 @@
       "profit_target": 83.12,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 90.71,
-      "unrealized_pnl": -7499.99,
+      "current_price": 90.6,
+      "unrealized_pnl": -6839.99,
       "realized_pnl": 0.0,
-      "return_pct": -1.4,
+      "return_pct": -1.27,
       "duration_days": 1,
       "initial_risk": 19020.01,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.140261"
     },
     {
       "id": "pt_NG_The _20260901165244_11",
@@ -235,14 +237,14 @@
       "profit_target": 3.231,
       "point_value": 10000.0,
       "status": "OPEN",
-      "current_price": 2.968,
-      "unrealized_pnl": 8039.99,
+      "current_price": 2.961,
+      "unrealized_pnl": 7200.0,
       "realized_pnl": 0.0,
-      "return_pct": 2.31,
+      "return_pct": 2.07,
       "duration_days": 1,
       "initial_risk": 19800.0,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630374"
+      "updated_at": "2026-09-02T16:12:42.140760"
     },
     {
       "id": "pt_6E_The _20260901165244_12",
@@ -258,13 +260,13 @@
       "point_value": 125000.0,
       "status": "OPEN",
       "current_price": 1.1597,
-      "unrealized_pnl": 1031.19,
+      "unrealized_pnl": 825.15,
       "realized_pnl": 0.0,
       "return_pct": 0.02,
       "duration_days": 1,
       "initial_risk": 19593.97,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.140760"
     },
     {
       "id": "pt_6J_The _20260901165244_13",
@@ -280,13 +282,13 @@
       "point_value": 12500000.0,
       "status": "OPEN",
       "current_price": 0.0063,
-      "unrealized_pnl": 3100.03,
+      "unrealized_pnl": 775.01,
       "realized_pnl": 0.0,
-      "return_pct": 0.13,
+      "return_pct": 0.03,
       "duration_days": 1,
       "initial_risk": 19956.25,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.140760"
     },
     {
       "id": "pt_6B_The _20260901165244_14",
@@ -325,14 +327,14 @@
       "profit_target": 111.3439,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 108.2188,
-      "unrealized_pnl": -3250.65,
+      "current_price": 108.2812,
+      "unrealized_pnl": -2438.15,
       "realized_pnl": 0.0,
-      "return_pct": -0.23,
+      "return_pct": -0.17,
       "duration_days": 1,
       "initial_risk": 18688.15,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.140760"
     },
     {
       "id": "pt_ZN_The _20260901165244_16",
@@ -347,14 +349,14 @@
       "profit_target": 108.4531,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 107.375,
-      "unrealized_pnl": -4485.4,
+      "current_price": 107.3906,
+      "unrealized_pnl": -3844.77,
       "realized_pnl": 0.0,
-      "return_pct": -0.1,
+      "return_pct": -0.09,
       "duration_days": 1,
       "initial_risk": 19859.38,
       "created_at": "2026-09-01T16:52:44.720149",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.140760"
     },
     {
       "id": "pt_6J_TooH_20260901165244_17",
@@ -400,7 +402,7 @@
       "duration_days": 1,
       "initial_risk": 19950.0,
       "created_at": "2026-09-01T16:52:44.725449",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_ZB_Tren_20260902152801_19",
@@ -415,14 +417,14 @@
       "profit_target": 104.0808,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 108.2188,
-      "unrealized_pnl": -3125.5,
+      "current_price": 108.2812,
+      "unrealized_pnl": -3750.5,
       "realized_pnl": 0.0,
-      "return_pct": -0.29,
+      "return_pct": -0.35,
       "duration_days": 0,
       "initial_risk": 19127.0,
       "created_at": "2026-09-02T15:28:01.598839",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_ZN_Tren_20260902152801_20",
@@ -437,14 +439,14 @@
       "profit_target": 105.7668,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 107.375,
-      "unrealized_pnl": 5250.0,
+      "current_price": 107.3906,
+      "unrealized_pnl": 4921.88,
       "realized_pnl": 0.0,
-      "return_pct": 0.23,
+      "return_pct": 0.22,
       "duration_days": 0,
       "initial_risk": 19511.1,
       "created_at": "2026-09-02T15:28:01.598839",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_6J_YouH_20260902152801_21",
@@ -460,13 +462,13 @@
       "point_value": 12500000.0,
       "status": "OPEN",
       "current_price": 0.0063,
-      "unrealized_pnl": 1500.01,
+      "unrealized_pnl": 375.0,
       "realized_pnl": 0.0,
-      "return_pct": 0.13,
+      "return_pct": 0.03,
       "duration_days": 0,
       "initial_risk": 18750.0,
       "created_at": "2026-09-02T15:28:01.607345",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_ES_The _20260902152801_22",
@@ -625,14 +627,14 @@
       "profit_target": 77.87,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 90.71,
-      "unrealized_pnl": 0.0,
+      "current_price": 90.6,
+      "unrealized_pnl": 330.0,
       "realized_pnl": 0.0,
-      "return_pct": 0.0,
+      "return_pct": 0.12,
       "duration_days": 0,
       "initial_risk": 19260.0,
       "created_at": "2026-09-02T15:28:01.613845",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_NG_The _20260902152801_29",
@@ -726,7 +728,7 @@
       "duration_days": 0,
       "initial_risk": 19500.14,
       "created_at": "2026-09-02T15:28:01.613845",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_ZB_The _20260902152801_33",
@@ -741,14 +743,14 @@
       "profit_target": 110.4686,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 108.2188,
-      "unrealized_pnl": -0.85,
+      "current_price": 108.2812,
+      "unrealized_pnl": 1061.65,
       "realized_pnl": 0.0,
-      "return_pct": -0.0,
+      "return_pct": 0.06,
       "duration_days": 0,
       "initial_risk": 19124.15,
       "created_at": "2026-09-02T15:28:01.613845",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_ZN_The _20260902152801_34",
@@ -763,14 +765,14 @@
       "profit_target": 108.3126,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 107.375,
-      "unrealized_pnl": 0.0,
+      "current_price": 107.3906,
+      "unrealized_pnl": 656.25,
       "realized_pnl": 0.0,
-      "return_pct": 0.0,
+      "return_pct": 0.01,
       "duration_days": 0,
       "initial_risk": 19689.6,
       "created_at": "2026-09-02T15:28:01.613845",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.141260"
     },
     {
       "id": "pt_NQ_TooH_20260902152801_35",
@@ -785,14 +787,14 @@
       "profit_target": 27863.5,
       "point_value": 20.0,
       "status": "OPEN",
-      "current_price": 29172.25,
-      "unrealized_pnl": -3405.0,
+      "current_price": 29179.75,
+      "unrealized_pnl": -3555.0,
       "realized_pnl": 0.0,
-      "return_pct": -0.59,
+      "return_pct": -0.61,
       "duration_days": 0,
       "initial_risk": 11385.0,
       "created_at": "2026-09-02T15:28:01.621366",
-      "updated_at": "2026-09-02T15:28:01.630874"
+      "updated_at": "2026-09-02T16:12:42.142264"
     }
   ]
 }

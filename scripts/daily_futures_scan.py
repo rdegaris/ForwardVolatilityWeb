@@ -777,6 +777,54 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         except Exception:
             trades = []
 
+    MAX_PORTFOLIO_OPEN_TRADES = 8
+    CLUSTERS = {
+        "equities": {"ES", "NQ", "RTY", "YM"},
+        "rates": {"ZB", "ZN", "ZF", "ZT"},
+        "energies": {"CL", "NG", "HO", "RB"},
+        "metals": {"GC", "SI", "HG"},
+        "fx": {"6E", "6B", "6J", "6A", "6C", "EUR", "GBP", "JPY", "CAD", "AUD"},
+        "grains": {"ZC", "ZW", "ZS", "ZL"},
+        "softs": {"KC", "SB", "CT"},
+        "livestock": {"HE", "LE"},
+    }
+    CLUSTER_CAPS = {
+        "equities": 2,
+        "rates": 2,
+        "energies": 2,
+        "metals": 1,
+        "fx": 2,
+        "grains": 2,
+        "softs": 2,
+        "livestock": 1,
+        "other": 2,
+    }
+
+    def get_sym_cluster(symbol: str) -> str:
+        s = symbol.upper().strip()
+        for cl, syms in CLUSTERS.items():
+            if s in syms:
+                return cl
+        return "other"
+
+    def can_open_trade(sym: str) -> bool:
+        s = sym.upper().strip()
+        # 1. Global open trades cap
+        cur_open = sum(1 for tr in trades if tr.get("status") == "OPEN")
+        if cur_open >= MAX_PORTFOLIO_OPEN_TRADES:
+            return False
+        # 2. Symbol exclusivity (1 active trade max per symbol)
+        active_syms = {tr.get("symbol", "").upper() for tr in trades if tr.get("status") == "OPEN"}
+        if s in active_syms:
+            return False
+        # 3. Correlation cluster cap
+        cl = get_sym_cluster(s)
+        cl_cap = CLUSTER_CAPS.get(cl, 2)
+        cl_open = sum(1 for tr in trades if tr.get("status") == "OPEN" and get_sym_cluster(tr.get("symbol", "")) == cl)
+        if cl_open >= cl_cap:
+            return False
+        return True
+
     existing_keys = {
         (t.get("entry_date"), t.get("symbol"), t.get("strategy"), t.get("side"))
         for t in trades
@@ -808,6 +856,8 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     continue
                 key = (asof, sym, strat, side)
                 if key not in existing_keys:
+                    if not can_open_trade(sym):
+                        continue
                     entry = float(sig.get("entry_stop") or sig.get("entry_zone") or sig.get("last_close") or sig.get("close") or 0.0)
                     stop = float(sig.get("stop_loss") or sig.get("stop") or (entry * 0.985 if side == "long" else entry * 1.015))
                     target = float(sig.get("target") or sig.get("objective_target") or (entry + 2 * abs(entry - stop) if side == "long" else entry - 2 * abs(entry - stop)))
@@ -844,13 +894,14 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         except Exception as e:
             print(f"  [PAPER TRADES] Error parsing {filename}: {e}")
 
-    # Evaluate daily stops and targets
+    # Evaluate daily stops, targets, and strategy-specific exits
     now_dt = datetime.utcnow()
     for t in trades:
         sym = t.get("symbol", "")
         pt_val = float(t.get("point_value", 1.0))
         qty = int(t.get("qty") or 1)
         side = t.get("side", "long")
+        strat = t.get("strategy", "")
         entry = float(t.get("entry_price", 0.0))
         stop = float(t.get("stop_loss", 0.0))
         target = float(t.get("profit_target", 0.0)) if t.get("profit_target") is not None else None
@@ -860,55 +911,105 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             t["duration_days"] = max(0, (now_dt - e_dt).days)
         except Exception:
             t["duration_days"] = 0
+        duration = t["duration_days"]
 
         if t.get("status") == "OPEN" and sym in daily_bars and daily_bars[sym]:
-            last_bar = daily_bars[sym][-1]
+            bars = daily_bars[sym]
+            last_bar = bars[-1]
             high = last_bar.high
             low = last_bar.low
             close = last_bar.close
             t["current_price"] = round(close, 4)
 
-            if side == "long":
-                if stop > 0 and low <= stop:
-                    t["status"] = "STOPPED_OUT"
-                    t["exit_price"] = round(stop, 4)
-                    t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((stop - entry) * pt_val * qty, 2)
-                    t["unrealized_pnl"] = 0.0
-                    t["return_pct"] = round(((stop - entry) / entry) * 100, 2) if entry > 0 else 0.0
-                elif target and high >= target:
-                    t["status"] = "HIT_TARGET"
-                    t["exit_price"] = round(target, 4)
-                    t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((target - entry) * pt_val * qty, 2)
-                    t["unrealized_pnl"] = 0.0
-                    t["return_pct"] = round(((target - entry) / entry) * 100, 2) if entry > 0 else 0.0
-                else:
-                    t["unrealized_pnl"] = round((close - entry) * pt_val * qty, 2)
-                    t["return_pct"] = round(((close - entry) / entry) * 100, 2) if entry > 0 else 0.0
-            elif side == "short":
-                if stop > 0 and high >= stop:
-                    t["status"] = "STOPPED_OUT"
-                    t["exit_price"] = round(stop, 4)
-                    t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((entry - stop) * pt_val * qty, 2)
-                    t["unrealized_pnl"] = 0.0
-                    t["return_pct"] = round(((entry - stop) / entry) * 100, 2) if entry > 0 else 0.0
-                elif target and low <= target:
-                    t["status"] = "HIT_TARGET"
-                    t["exit_price"] = round(target, 4)
-                    t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((entry - target) * pt_val * qty, 2)
-                    t["unrealized_pnl"] = 0.0
-                    t["return_pct"] = round(((entry - target) / entry) * 100, 2) if entry > 0 else 0.0
-                else:
-                    t["unrealized_pnl"] = round((entry - close) * pt_val * qty, 2)
-                    t["return_pct"] = round(((entry - close) / entry) * 100, 2) if entry > 0 else 0.0
+            # Donchian 20 trailing exit levels for Trendorama
+            donchian_low_20 = min(b.low for b in bars[-21:-1]) if len(bars) >= 21 else (min(b.low for b in bars) if bars else low)
+            donchian_high_20 = max(b.high for b in bars[-21:-1]) if len(bars) >= 21 else (max(b.high for b in bars) if bars else high)
+
+            # EMA 20 for Holy Grail
+            ema20_vals = compute_ema([b.close for b in bars], 20)
+            ema20 = ema20_vals[-1] if ema20_vals else close
+
+            # 1. Stop Loss check
+            is_stopped = (side == "long" and stop > 0 and low <= stop) or \
+                         (side == "short" and stop > 0 and high >= stop)
+
+            # 2. Profit Target check
+            hit_target = (side == "long" and target and target > 0 and high >= target) or \
+                         (side == "short" and target and target > 0 and low <= target)
+
+            # 3. Trendorama Donchian 20 Trailing Exit
+            donchian_exit = False
+            if strat == "Trendorama":
+                if side == "long" and low <= donchian_low_20:
+                    donchian_exit = True
+                elif side == "short" and high >= donchian_high_20:
+                    donchian_exit = True
+
+            # 4. Strategy Time Exits
+            time_exit = False
+            if strat == "The Bradman" and duration >= 3:
+                time_exit = True
+            elif strat == "TooHot TooCold" and duration >= 4:
+                time_exit = True
+            elif strat in ("YouHaveChosenWisely", "The Linda") and duration >= 5:
+                time_exit = True
+
+            # 5. Holy Grail EMA Exit
+            ema_exit = False
+            if strat == "YouHaveChosenWisely":
+                if side == "long" and close < ema20:
+                    ema_exit = True
+                elif side == "short" and close > ema20:
+                    ema_exit = True
+
+            if is_stopped:
+                t["status"] = "STOPPED_OUT"
+                exit_price = stop
+                t["exit_price"] = round(exit_price, 4)
+                t["exit_date"] = last_bar.dt
+                t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                t["unrealized_pnl"] = 0.0
+                t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            elif hit_target:
+                t["status"] = "HIT_TARGET"
+                exit_price = target
+                t["exit_price"] = round(exit_price, 4)
+                t["exit_date"] = last_bar.dt
+                t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                t["unrealized_pnl"] = 0.0
+                t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            elif donchian_exit:
+                t["status"] = "DONCHIAN_EXIT"
+                exit_price = donchian_low_20 if side == "long" else donchian_high_20
+                t["exit_price"] = round(exit_price, 4)
+                t["exit_date"] = last_bar.dt
+                t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                t["unrealized_pnl"] = 0.0
+                t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            elif ema_exit:
+                t["status"] = "EMA_EXIT"
+                exit_price = close
+                t["exit_price"] = round(exit_price, 4)
+                t["exit_date"] = last_bar.dt
+                t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                t["unrealized_pnl"] = 0.0
+                t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            elif time_exit:
+                t["status"] = "TIME_EXIT"
+                exit_price = close
+                t["exit_price"] = round(exit_price, 4)
+                t["exit_date"] = last_bar.dt
+                t["realized_pnl"] = round((exit_price - entry if side == "long" else entry - exit_price) * pt_val * qty, 2)
+                t["unrealized_pnl"] = 0.0
+                t["return_pct"] = round(((exit_price - entry) / entry) * 100, 2) if entry > 0 else 0.0
+            else:
+                t["unrealized_pnl"] = round((close - entry if side == "long" else entry - close) * pt_val * qty, 2)
+                t["return_pct"] = round(((close - entry if side == "long" else entry - close) / entry) * 100, 2) if entry > 0 else 0.0
 
             t["updated_at"] = datetime.utcnow().isoformat()
 
     # Calculate summary metrics
-    closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED")]
+    closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT")]
     open_trades = [t for t in trades if t.get("status") == "OPEN"]
     tot_realized = sum(float(t.get("realized_pnl", 0.0)) for t in closed_trades)
     tot_unrealized = sum(float(t.get("unrealized_pnl", 0.0)) for t in open_trades)

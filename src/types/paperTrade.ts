@@ -10,7 +10,7 @@ export interface PaperTrade {
   stop_loss: number;
   profit_target?: number | null;
   point_value: number;
-  status: 'OPEN' | 'HIT_TARGET' | 'STOPPED_OUT' | 'MANUALLY_CLOSED';
+  status: 'OPEN' | 'HIT_TARGET' | 'STOPPED_OUT' | 'MANUALLY_CLOSED' | 'DONCHIAN_EXIT' | 'TIME_EXIT' | 'EMA_EXIT';
   exit_date?: string | null;
   exit_price?: number | string | null;
   current_price?: number | null;
