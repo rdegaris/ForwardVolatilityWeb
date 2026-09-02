@@ -868,7 +868,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     pt_val = point_values.get(sym, 1.0)
                     risk_dist = abs(entry - stop)
                     per_contract_risk = risk_dist * pt_val
-                    dollar_risk = 1000000.0 * 0.02
+                    dollar_risk = 100000.0 * 0.02
                     qty = max(1, int(dollar_risk // per_contract_risk)) if per_contract_risk > 0 else 1
                     initial_risk = round(per_contract_risk * qty, 2)
                     trade_id = f"pt_{sym}_{strat[:4]}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{len(trades)+1}"
@@ -1090,7 +1090,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
     sorted_trades = sorted(trades, key=lambda x: x.get("entry_date", ""))
     dates = sorted(list(set(t.get("entry_date", "") for t in sorted_trades if t.get("entry_date"))))
     eq_curve = []
-    running_eq = 1000000.0  # $1M starting portfolio capital
+    running_eq = 100000.0  # $100k starting portfolio capital
     cum_pnl = 0.0
     peak_eq = running_eq
     max_dd = 0.0

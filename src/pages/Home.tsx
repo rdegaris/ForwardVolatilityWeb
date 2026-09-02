@@ -194,7 +194,7 @@ export default function Home() {
     const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
     const netPnl = realizedPnl + unrealizedPnl;
-    const returnPct = (netPnl / 1000000) * 100;
+    const returnPct = (netPnl / 100000) * 100;
 
     const wins = closed.filter((t) => (t.realized_pnl || 0) > 0);
     const losses = closed.filter((t) => (t.realized_pnl || 0) < 0);
@@ -809,7 +809,7 @@ export default function Home() {
                 Starting Capital
               </div>
               <div className="text-sm font-black text-slate-100 font-mono">
-                $1,000,000 <span className="text-[10px] text-emerald-400/80 font-normal">(2% Risk / Trade)</span>
+                $100,000 <span className="text-[10px] text-emerald-400/80 font-normal">(2% Risk / Trade)</span>
               </div>
             </div>
             <Link

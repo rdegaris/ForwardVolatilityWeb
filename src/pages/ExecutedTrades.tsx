@@ -281,7 +281,7 @@ export default function ExecutedTrades() {
     const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
     const netPnl = realizedPnl + unrealizedPnl;
-    const returnPct = (netPnl / 1000000) * 100;
+    const returnPct = (netPnl / 100000) * 100;
 
     const wins = closed.filter((t) => (t.realized_pnl || 0) > 0);
     const losses = closed.filter((t) => (t.realized_pnl || 0) < 0);
@@ -398,10 +398,10 @@ export default function ExecutedTrades() {
 
             <div className="mt-4 flex flex-wrap items-center gap-2.5">
               <div className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
-                <span className="text-slate-400 font-semibold">Starting Capital:</span> $1,000,000
+                <span className="text-slate-400 font-semibold">Starting Capital:</span> $100,000
               </div>
               <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
-                <span className="text-slate-400 font-semibold">Risk Budget:</span> 2.0% / Trade ($20,000 Heat)
+                <span className="text-slate-400 font-semibold">Risk Budget:</span> 2.0% / Trade ($2,000 Heat)
               </div>
               <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
                 <span className="text-slate-400 font-semibold">Portfolio Limit:</span> Max 8 Open Positions (16% Heat)
@@ -415,10 +415,10 @@ export default function ExecutedTrades() {
                 Starting Capital
               </div>
               <div className="mt-1 text-xl font-black text-slate-100 font-mono">
-                $1,000,000
+                $100,000
               </div>
               <div className="text-[10px] text-emerald-400/80 font-semibold">
-                $20,000 (2.0%) Max Heat / Trade
+                $2,000 (2.0%) Max Heat / Trade
               </div>
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-right">
