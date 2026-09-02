@@ -152,49 +152,80 @@ export default function Home() {
   }, [lindaSignals]);
 
   const [selectedPerfStrategy, setSelectedPerfStrategy] = useState<string>('ALL');
+  const [selectedPerfTimeframe, setSelectedPerfTimeframe] = useState<'QTD' | 'YTD' | 'INCEPTION'>('INCEPTION');
+
+  const isTradeInTimeframe = (entryDateStr?: string | null, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
+    if (tf === 'INCEPTION' || !entryDateStr) return true;
+    const d = new Date(entryDateStr.slice(0, 10));
+    if (isNaN(d.getTime())) return true;
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    if (tf === 'YTD') {
+      const ytdStart = new Date(currentYear, 0, 1);
+      return d >= ytdStart;
+    }
+    if (tf === 'QTD') {
+      const currentMonth = now.getMonth();
+      const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
+      const qtdStart = new Date(currentYear, quarterStartMonth, 1);
+      return d >= qtdStart;
+    }
+    return true;
+  };
 
   // Filtered Trades for Performance Section
   const perfTrades = useMemo(() => {
     if (!paperPerformance?.recent_trades) return [];
-    if (selectedPerfStrategy === 'ALL') return paperPerformance.recent_trades;
-    return paperPerformance.recent_trades.filter((t) => t.strategy === selectedPerfStrategy);
-  }, [paperPerformance, selectedPerfStrategy]);
+    return paperPerformance.recent_trades.filter((t) => {
+      const matchStrat = selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy;
+      const matchTf = isTradeInTimeframe(t.entry_date, selectedPerfTimeframe);
+      return matchStrat && matchTf;
+    });
+  }, [paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
 
   // Strategy Specific Metrics
   const activeMetrics = useMemo(() => {
     if (!paperPerformance) return null;
-    if (selectedPerfStrategy === 'ALL') {
-      return {
-        netPnl: paperPerformance.net_pnl,
-        realizedPnl: paperPerformance.total_realized_pnl,
-        unrealizedPnl: paperPerformance.total_unrealized_pnl,
-        winRate: paperPerformance.win_rate_pct,
-        wins: paperPerformance.winning_trades,
-        losses: paperPerformance.losing_trades,
-        profitFactor: paperPerformance.profit_factor,
-        openCount: paperPerformance.open_trades_count,
-        totalTrades: paperPerformance.total_trades,
-        closedCount: paperPerformance.closed_trades_count,
-        avgWin: paperPerformance.avg_win,
-      };
-    }
-    const stat = paperPerformance.strategy_breakdown?.[selectedPerfStrategy];
-    const sWins = stat?.wins ?? 0;
-    const sLosses = stat?.losses ?? 0;
+    const pool = perfTrades;
+
+    const closed = pool.filter((t) => t.status !== 'OPEN');
+    const open = pool.filter((t) => t.status === 'OPEN');
+
+    const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const netPnl = realizedPnl + unrealizedPnl;
+    const returnPct = (netPnl / 1000000) * 100;
+
+    const wins = closed.filter((t) => (t.realized_pnl || 0) > 0);
+    const losses = closed.filter((t) => (t.realized_pnl || 0) < 0);
+    const winDollars = wins.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const lossDollars = Math.abs(losses.reduce((acc, t) => acc + (t.realized_pnl || 0), 0));
+
+    const winRate = closed.length > 0
+      ? (wins.length / closed.length) * 100
+      : (open.length > 0 ? (open.filter((t) => (t.unrealized_pnl || 0) > 0).length / open.length) * 100 : 0);
+
+    const profitFactor = lossDollars > 0
+      ? winDollars / lossDollars
+      : (winDollars > 0 ? 99.9 : 1.0);
+
+    const avgWin = wins.length > 0 ? winDollars / wins.length : 0;
+
     return {
-      netPnl: stat?.net_pnl ?? 0,
-      realizedPnl: stat?.realized_pnl ?? 0,
-      unrealizedPnl: stat?.unrealized_pnl ?? 0,
-      winRate: stat?.win_rate_pct ?? 0,
-      wins: sWins,
-      losses: sLosses,
-      profitFactor: sLosses > 0 ? (sWins / sLosses) : (sWins > 0 ? 99.9 : 1.0),
-      openCount: stat?.open_trades ?? 0,
-      totalTrades: stat?.total_trades ?? 0,
-      closedCount: stat?.closed_trades ?? 0,
-      avgWin: paperPerformance.avg_win,
+      netPnl: Math.round(netPnl * 100) / 100,
+      returnPct: Math.round(returnPct * 100) / 100,
+      realizedPnl: Math.round(realizedPnl * 100) / 100,
+      unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      winRate: Math.round(winRate * 10) / 10,
+      wins: wins.length,
+      losses: losses.length,
+      profitFactor: Math.round(profitFactor * 100) / 100,
+      openCount: open.length,
+      totalTrades: pool.length,
+      closedCount: closed.length,
+      avgWin: Math.round(avgWin * 100) / 100,
     };
-  }, [paperPerformance, selectedPerfStrategy]);
+  }, [paperPerformance, perfTrades]);
 
   // Biggest Winners & Losers for Selected Strategy
   const biggestWinners = useMemo(() => {
@@ -790,33 +821,61 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── STRATEGY PERFORMANCE TOGGLE ── */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-800/60 pb-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2">Filter by Strategy:</span>
-          {[
-            { id: 'ALL', label: 'All Strategies', dot: 'bg-emerald-400' },
-            { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
-            { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
-            { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
-            { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
-            { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
-          ].map((strat) => {
-            const isSelected = selectedPerfStrategy === strat.id;
-            return (
-              <button
-                key={strat.id}
-                onClick={() => setSelectedPerfStrategy(strat.id)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
-                  isSelected
-                    ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
-                    : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
-                {strat.label}
-              </button>
-            );
-          })}
+        {/* ── STRATEGY & TIMEFRAME CONTROLS (SINGLE NON-WRAPPING ROW) ── */}
+        <div className="flex items-center justify-between gap-3 border-b border-slate-800/60 pb-4 overflow-x-auto no-scrollbar whitespace-nowrap flex-nowrap">
+          {/* Strategy Pills */}
+          <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 shrink-0">Strategy:</span>
+            {[
+              { id: 'ALL', label: 'All', dot: 'bg-emerald-400' },
+              { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
+              { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
+              { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
+              { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
+              { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
+            ].map((strat) => {
+              const isSelected = selectedPerfStrategy === strat.id;
+              return (
+                <button
+                  key={strat.id}
+                  onClick={() => setSelectedPerfStrategy(strat.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold transition-all shrink-0 ${
+                    isSelected
+                      ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
+                      : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
+                  {strat.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Timeframe Buttons: QTD, YTD, Inception (Single Row) */}
+          <div className="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800 shrink-0 flex-nowrap">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 shrink-0">Timeframe:</span>
+            {[
+              { id: 'QTD' as const, label: `QTD (Q${Math.floor(new Date().getMonth() / 3) + 1})` },
+              { id: 'YTD' as const, label: `YTD (${new Date().getFullYear()})` },
+              { id: 'INCEPTION' as const, label: 'Inception' },
+            ].map((tf) => {
+              const isSelected = selectedPerfTimeframe === tf.id;
+              return (
+                <button
+                  key={tf.id}
+                  onClick={() => setSelectedPerfTimeframe(tf.id)}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition-all shrink-0 ${
+                    isSelected
+                      ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                  }`}
+                >
+                  {tf.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Summary Metrics */}
@@ -826,14 +885,14 @@ export default function Home() {
             className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
           >
             <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Net Dollar P&L</span>
+              <span>Net P&L ({selectedPerfTimeframe === 'INCEPTION' ? 'Inception' : selectedPerfTimeframe})</span>
               <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Ledger →</span>
             </div>
             <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.netPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {fmt$(activeMetrics?.netPnl ?? 0)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Realized: {fmt$(activeMetrics?.realizedPnl ?? 0)}
+              Return: {activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'}
             </div>
           </Link>
 

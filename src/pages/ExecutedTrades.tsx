@@ -134,17 +134,37 @@ export default function ExecutedTrades() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tableRef = useRef<HTMLDivElement>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<string>('ALL');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'QTD' | 'YTD' | 'INCEPTION'>('INCEPTION');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [editingTrade, setEditingTrade] = useState<PaperTrade | null>(null);
   const [newTarget, setNewTarget] = useState<string>('');
   const [newStop, setNewStop] = useState<string>('');
 
+  const isTradeInTimeframe = (entryDateStr?: string | null, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
+    if (tf === 'INCEPTION' || !entryDateStr) return true;
+    const d = new Date(entryDateStr.slice(0, 10));
+    if (isNaN(d.getTime())) return true;
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    if (tf === 'YTD') {
+      const ytdStart = new Date(currentYear, 0, 1);
+      return d >= ytdStart;
+    }
+    if (tf === 'QTD') {
+      const currentMonth = now.getMonth();
+      const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
+      const qtdStart = new Date(currentYear, quarterStartMonth, 1);
+      return d >= qtdStart;
+    }
+    return true;
+  };
+
   useEffect(() => {
     const statusParam = searchParams.get('status');
     if (statusParam) {
       const upper = statusParam.toUpperCase();
-      if (['ALL', 'OPEN', 'CLOSED', 'HIT_TARGET', 'STOPPED_OUT'].includes(upper)) {
+      if (['ALL', 'OPEN', 'CLOSED', 'HIT_TARGET', 'STOPPED_OUT', 'DONCHIAN_EXIT', 'TIME_EXIT', 'EMA_EXIT', 'EOD_EXIT'].includes(upper)) {
         setSelectedStatus(upper);
       }
     }
@@ -193,6 +213,8 @@ export default function ExecutedTrades() {
     return trades.filter((t) => {
       if (selectedStrategy !== 'ALL' && t.strategy !== selectedStrategy)
         return false;
+      if (!isTradeInTimeframe(t.entry_date, selectedTimeframe))
+        return false;
       if (selectedStatus === 'OPEN' && t.status !== 'OPEN') return false;
       if (selectedStatus === 'CLOSED' && t.status === 'OPEN') return false;
       if (
@@ -212,10 +234,14 @@ export default function ExecutedTrades() {
       }
       return true;
     });
-  }, [trades, selectedStrategy, selectedStatus, searchQuery]);
+  }, [trades, selectedStrategy, selectedStatus, searchQuery, selectedTimeframe]);
 
   const biggestWinners = useMemo(() => {
-    const pool = selectedStrategy === 'ALL' ? trades : trades.filter((t) => t.strategy === selectedStrategy);
+    const pool = trades.filter((t) => {
+      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      return matchStrat && matchTf;
+    });
     return [...pool]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
       .sort((a, b) => {
@@ -224,10 +250,14 @@ export default function ExecutedTrades() {
         return pnlB - pnlA;
       })
       .slice(0, 5);
-  }, [trades, selectedStrategy]);
+  }, [trades, selectedStrategy, selectedTimeframe]);
 
   const biggestLosers = useMemo(() => {
-    const pool = selectedStrategy === 'ALL' ? trades : trades.filter((t) => t.strategy === selectedStrategy);
+    const pool = trades.filter((t) => {
+      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      return matchStrat && matchTf;
+    });
     return [...pool]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) < 0)
       .sort((a, b) => {
@@ -236,44 +266,54 @@ export default function ExecutedTrades() {
         return pnlA - pnlB;
       })
       .slice(0, 5);
-  }, [trades, selectedStrategy]);
+  }, [trades, selectedStrategy, selectedTimeframe]);
 
   const activeMetrics = useMemo(() => {
-    if (!performance) return null;
-    if (selectedStrategy === 'ALL') {
-      return {
-        netPnl: performance.net_pnl,
-        realizedPnl: performance.total_realized_pnl,
-        unrealizedPnl: performance.total_unrealized_pnl,
-        winRate: performance.win_rate_pct,
-        wins: performance.winning_trades,
-        losses: performance.losing_trades,
-        profitFactor: performance.profit_factor,
-        openCount: performance.open_trades_count,
-        totalTrades: performance.total_trades,
-        closedCount: performance.closed_trades_count,
-        avgWin: performance.avg_win,
-        maxDrawdown: performance.max_drawdown_pct,
-      };
-    }
-    const stat = performance.strategy_breakdown?.[selectedStrategy];
-    const sWins = stat?.wins ?? 0;
-    const sLosses = stat?.losses ?? 0;
+    const pool = trades.filter((t) => {
+      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      return matchStrat && matchTf;
+    });
+
+    const closed = pool.filter((t) => t.status !== 'OPEN');
+    const open = pool.filter((t) => t.status === 'OPEN');
+
+    const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const netPnl = realizedPnl + unrealizedPnl;
+    const returnPct = (netPnl / 1000000) * 100;
+
+    const wins = closed.filter((t) => (t.realized_pnl || 0) > 0);
+    const losses = closed.filter((t) => (t.realized_pnl || 0) < 0);
+    const winDollars = wins.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const lossDollars = Math.abs(losses.reduce((acc, t) => acc + (t.realized_pnl || 0), 0));
+
+    const winRate = closed.length > 0
+      ? (wins.length / closed.length) * 100
+      : (open.length > 0 ? (open.filter((t) => (t.unrealized_pnl || 0) > 0).length / open.length) * 100 : 0);
+
+    const profitFactor = lossDollars > 0
+      ? winDollars / lossDollars
+      : (winDollars > 0 ? 99.9 : 1.0);
+
+    const avgWin = wins.length > 0 ? winDollars / wins.length : 0;
+
     return {
-      netPnl: stat?.net_pnl ?? 0,
-      realizedPnl: stat?.realized_pnl ?? 0,
-      unrealizedPnl: stat?.unrealized_pnl ?? 0,
-      winRate: stat?.win_rate_pct ?? 0,
-      wins: sWins,
-      losses: sLosses,
-      profitFactor: sLosses > 0 ? (sWins / sLosses) : (sWins > 0 ? 99.9 : 1.0),
-      openCount: stat?.open_trades ?? 0,
-      totalTrades: stat?.total_trades ?? 0,
-      closedCount: stat?.closed_trades ?? 0,
-      avgWin: performance.avg_win,
-      maxDrawdown: performance.max_drawdown_pct,
+      netPnl: Math.round(netPnl * 100) / 100,
+      returnPct: Math.round(returnPct * 100) / 100,
+      realizedPnl: Math.round(realizedPnl * 100) / 100,
+      unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      winRate: Math.round(winRate * 10) / 10,
+      wins: wins.length,
+      losses: losses.length,
+      profitFactor: Math.round(profitFactor * 100) / 100,
+      openCount: open.length,
+      totalTrades: pool.length,
+      closedCount: closed.length,
+      avgWin: Math.round(avgWin * 100) / 100,
+      maxDrawdown: performance?.max_drawdown_pct || 0,
     };
-  }, [performance, selectedStrategy]);
+  }, [trades, selectedStrategy, selectedTimeframe, performance]);
 
   const handleEditSave = () => {
     if (!editingTrade) return;
@@ -396,43 +436,71 @@ export default function ExecutedTrades() {
           </div>
         </div>
 
-        {/* ── STRATEGY TOGGLE PILLS ── */}
-        <div className="mt-8 flex flex-wrap items-center gap-2 border-t border-slate-800/80 pt-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2">Filter by Strategy:</span>
-          {[
-            { id: 'ALL', label: 'All Strategies', dot: 'bg-emerald-400' },
-            { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
-            { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
-            { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
-            { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
-            { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
-          ].map((strat) => {
-            const isSelected = selectedStrategy === strat.id;
-            return (
-              <button
-                key={strat.id}
-                onClick={() => setSelectedStrategy(strat.id)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
-                  isSelected
-                    ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
-                    : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
-                {strat.label}
-              </button>
-            );
-          })}
+        {/* ── STRATEGY & TIMEFRAME CONTROLS (SINGLE NON-WRAPPING ROW) ── */}
+        <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-800/80 pt-6 overflow-x-auto no-scrollbar whitespace-nowrap flex-nowrap">
+          {/* Strategy Pills */}
+          <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 shrink-0">Strategy:</span>
+            {[
+              { id: 'ALL', label: 'All', dot: 'bg-emerald-400' },
+              { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
+              { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
+              { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
+              { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
+              { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
+            ].map((strat) => {
+              const isSelected = selectedStrategy === strat.id;
+              return (
+                <button
+                  key={strat.id}
+                  onClick={() => setSelectedStrategy(strat.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold transition-all shrink-0 ${
+                    isSelected
+                      ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
+                      : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
+                  {strat.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Timeframe Buttons: QTD, YTD, Inception (Single Row) */}
+          <div className="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800 shrink-0 flex-nowrap">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 shrink-0">Timeframe:</span>
+            {[
+              { id: 'QTD' as const, label: `QTD (Q${Math.floor(new Date().getMonth() / 3) + 1})` },
+              { id: 'YTD' as const, label: `YTD (${new Date().getFullYear()})` },
+              { id: 'INCEPTION' as const, label: 'Inception' },
+            ].map((tf) => {
+              const isSelected = selectedTimeframe === tf.id;
+              return (
+                <button
+                  key={tf.id}
+                  onClick={() => setSelectedTimeframe(tf.id)}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition-all shrink-0 ${
+                    isSelected
+                      ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                  }`}
+                >
+                  {tf.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ── KPI STATS ── */}
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard
-            title="Net Total P&L"
+            title={`Net Total P&L (${selectedTimeframe === 'INCEPTION' ? 'Inception' : selectedTimeframe})`}
             value={fmt$(netPnl)}
-            sub={`Realized: ${fmt$(realizedPnl)}`}
+            sub={`Return: ${activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'} | Realized: ${fmt$(realizedPnl)}`}
             accent={netPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}
-            badge="Live Mark"
+            badge={selectedTimeframe}
             active={selectedStatus === 'ALL'}
             clickableHint="Click to view all executed trades"
             onClick={() => {
