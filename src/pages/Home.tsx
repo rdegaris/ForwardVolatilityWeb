@@ -813,55 +813,86 @@ export default function Home() {
 
         {/* Summary Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Net Dollar P&L</div>
+          <Link
+            to="/executed-trades"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
+              <span>Net Dollar P&L</span>
+              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Ledger →</span>
+            </div>
             <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.netPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {fmt$(activeMetrics?.netPnl ?? 0)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               Realized: {fmt$(activeMetrics?.realizedPnl ?? 0)}
             </div>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Win Rate</div>
+          <Link
+            to="/executed-trades?status=CLOSED"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
+              <span>Win Rate</span>
+              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Closed →</span>
+            </div>
             <div className="mt-1 text-2xl font-black text-amber-400 font-mono">
               {(activeMetrics?.winRate ?? 0).toFixed(1)}%
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               {activeMetrics?.wins ?? 0} Wins / {activeMetrics?.losses ?? 0} Losses
             </div>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Profit Factor</div>
+          <Link
+            to="/executed-trades?status=CLOSED"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
+              <span>Profit Factor</span>
+              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Metrics →</span>
+            </div>
             <div className="mt-1 text-2xl font-black text-cyan-300 font-mono">
               {(activeMetrics?.profitFactor ?? 0) > 50 ? '> 50' : (activeMetrics?.profitFactor ?? 0).toFixed(2)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               Avg Win: {fmt$(activeMetrics?.avgWin ?? 0)}
             </div>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Open Positions</div>
+          <Link
+            to="/executed-trades?status=OPEN"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-indigo-500/80 hover:bg-indigo-950/20 active:scale-[0.98] block shadow-sm hover:shadow-indigo-950/40"
+            title="Click to view all open positions in the executed ledger"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-300 transition-colors">
+              <span>Open Positions</span>
+              <span className="text-[10px] text-indigo-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+            </div>
             <div className="mt-1 text-2xl font-black text-indigo-300 font-mono">
               {activeMetrics?.openCount ?? 0}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               Unrealized: {fmt$(activeMetrics?.unrealizedPnl ?? 0)}
             </div>
-          </div>
+          </Link>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Trades</div>
+          <Link
+            to="/executed-trades"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
+              <span>Total Trades</span>
+              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">All →</span>
+            </div>
             <div className="mt-1 text-2xl font-black text-slate-200 font-mono">
               {activeMetrics?.totalTrades ?? 0}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               {activeMetrics?.closedCount ?? 0} completed
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* ── BIGGEST WINNERS & LOSERS ── */}

@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   AreaChart,
   Area,
@@ -72,24 +73,48 @@ function StatCard({
   sub,
   accent,
   badge,
+  onClick,
+  active,
+  clickableHint,
 }: {
   title: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
   accent: string;
   badge?: string;
+  onClick?: () => void;
+  active?: boolean;
+  clickableHint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg backdrop-blur transition-all hover:border-slate-700">
+    <div
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => (e.key === 'Enter' || e.key === ' ') && onClick() : undefined}
+      title={clickableHint || (onClick ? `Click to filter by ${title}` : undefined)}
+      className={`group relative rounded-2xl border bg-slate-900/80 p-5 shadow-lg backdrop-blur transition-all duration-200 select-none ${
+        onClick
+          ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98] ' +
+            (active
+              ? 'border-indigo-500 ring-2 ring-indigo-500/50 bg-indigo-950/30 shadow-indigo-950/50'
+              : 'border-slate-800 hover:border-slate-600 hover:bg-slate-800/60 hover:shadow-xl')
+          : 'border-slate-800 hover:border-slate-700'
+      }`}
+    >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
           {title}
         </span>
-        {badge && (
+        {badge ? (
           <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 border border-slate-700">
             {badge}
           </span>
-        )}
+        ) : onClick ? (
+          <span className={`text-[10px] font-semibold transition-opacity ${active ? 'text-indigo-400 opacity-100' : 'text-slate-500 opacity-0 group-hover:opacity-100'}`}>
+            {active ? 'Active' : 'View →'}
+          </span>
+        ) : null}
       </div>
       <div className={`mt-2 text-3xl font-black tracking-tight ${accent}`}>
         {value}
@@ -105,13 +130,35 @@ export default function ExecutedTrades() {
   const [performance, setPerformance] =
     useState<PaperTradePerformancePayload | null>(null);
 
-  // Filters
+  // Filters & Navigation
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tableRef = useRef<HTMLDivElement>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [editingTrade, setEditingTrade] = useState<PaperTrade | null>(null);
   const [newTarget, setNewTarget] = useState<string>('');
   const [newStop, setNewStop] = useState<string>('');
+
+  useEffect(() => {
+    const statusParam = searchParams.get('status');
+    if (statusParam) {
+      const upper = statusParam.toUpperCase();
+      if (['ALL', 'OPEN', 'CLOSED', 'HIT_TARGET', 'STOPPED_OUT'].includes(upper)) {
+        setSelectedStatus(upper);
+      }
+    }
+    const stratParam = searchParams.get('strategy');
+    if (stratParam) {
+      setSelectedStrategy(stratParam);
+    }
+  }, [searchParams]);
+
+  const scrollToTable = () => {
+    setTimeout(() => {
+      tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -363,30 +410,71 @@ export default function ExecutedTrades() {
             sub={`Realized: ${fmt$(realizedPnl)}`}
             accent={netPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}
             badge="Live Mark"
+            active={selectedStatus === 'ALL'}
+            clickableHint="Click to view all executed trades"
+            onClick={() => {
+              setSelectedStatus('ALL');
+              setSearchParams(selectedStrategy !== 'ALL' ? { strategy: selectedStrategy } : {});
+              scrollToTable();
+            }}
           />
           <StatCard
             title="Unrealized P&L"
             value={fmt$(unrealizedPnl)}
             sub={`${openCount} open positions`}
             accent={unrealizedPnl >= 0 ? 'text-teal-300' : 'text-rose-400'}
+            active={selectedStatus === 'OPEN'}
+            clickableHint="Click to filter by open positions"
+            onClick={() => {
+              setSelectedStatus('OPEN');
+              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'OPEN', strategy: selectedStrategy } : { status: 'OPEN' });
+              scrollToTable();
+            }}
           />
           <StatCard
             title="Win Rate"
             value={`${winRate.toFixed(1)}%`}
             sub={`${activeMetrics?.wins ?? 0}W / ${activeMetrics?.losses ?? 0}L`}
             accent="text-amber-400"
+            active={selectedStatus === 'CLOSED'}
+            clickableHint="Click to view closed trades"
+            onClick={() => {
+              setSelectedStatus('CLOSED');
+              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'CLOSED', strategy: selectedStrategy } : { status: 'CLOSED' });
+              scrollToTable();
+            }}
           />
           <StatCard
             title="Profit Factor"
             value={profitFactor > 50 ? '> 50' : profitFactor.toFixed(2)}
             sub={`Avg Win: ${fmt$(activeMetrics?.avgWin ?? 0)}`}
             accent="text-cyan-300"
+            active={selectedStatus === 'CLOSED'}
+            clickableHint="Click to view closed trades"
+            onClick={() => {
+              setSelectedStatus('CLOSED');
+              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'CLOSED', strategy: selectedStrategy } : { status: 'CLOSED' });
+              scrollToTable();
+            }}
           />
           <StatCard
             title="Open Positions"
             value={openCount}
             sub={`${closedCount} closed trades`}
             accent="text-indigo-300"
+            badge={selectedStatus === 'OPEN' ? 'Filtered' : undefined}
+            active={selectedStatus === 'OPEN'}
+            clickableHint="Click to view open positions"
+            onClick={() => {
+              if (selectedStatus === 'OPEN') {
+                setSelectedStatus('ALL');
+                setSearchParams(selectedStrategy !== 'ALL' ? { strategy: selectedStrategy } : {});
+              } else {
+                setSelectedStatus('OPEN');
+                setSearchParams(selectedStrategy !== 'ALL' ? { status: 'OPEN', strategy: selectedStrategy } : { status: 'OPEN' });
+              }
+              scrollToTable();
+            }}
           />
           <StatCard
             title="Max Drawdown"
@@ -615,19 +703,46 @@ export default function ExecutedTrades() {
       </div>
 
       {/* ──────────────── EXECUTED TRADES TABLE ──────────────── */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur overflow-hidden">
+      <div
+        ref={tableRef}
+        id="executed-trades-table"
+        className="scroll-mt-6 rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl backdrop-blur overflow-hidden"
+      >
         {/* Controls Bar */}
         <div className="border-b border-slate-800 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-black text-slate-100 tracking-tight">
-              Executed Signals Ledger
-            </h2>
-            <p className="text-xs text-slate-400">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-black text-slate-100 tracking-tight">
+                Executed Signals Ledger
+              </h2>
+              {selectedStatus !== 'ALL' && (
+                <span className="rounded-full bg-indigo-500/20 border border-indigo-500/40 px-2.5 py-0.5 text-[11px] font-bold text-indigo-300">
+                  {selectedStatus === 'OPEN' ? '🟢 Open Positions Only' : selectedStatus}
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
               Showing {filteredTrades.length} of {trades.length} recorded executed trades
+              {selectedStatus === 'OPEN' && ' (currently active in portfolio)'}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* Reset Filters Button */}
+            {(selectedStatus !== 'ALL' || selectedStrategy !== 'ALL' || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSelectedStatus('ALL');
+                  setSelectedStrategy('ALL');
+                  setSearchQuery('');
+                  setSearchParams({});
+                }}
+                className="rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition"
+              >
+                Reset Filters
+              </button>
+            )}
+
             {/* Search Input */}
             <input
               type="text"

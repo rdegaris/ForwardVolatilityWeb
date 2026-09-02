@@ -812,6 +812,11 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     stop = float(sig.get("stop_loss") or sig.get("stop") or (entry * 0.985 if side == "long" else entry * 1.015))
                     target = float(sig.get("target") or sig.get("objective_target") or (entry + 2 * abs(entry - stop) if side == "long" else entry - 2 * abs(entry - stop)))
                     pt_val = point_values.get(sym, 1.0)
+                    risk_dist = abs(entry - stop)
+                    per_contract_risk = risk_dist * pt_val
+                    dollar_risk = 1000000.0 * 0.02
+                    qty = max(1, int(dollar_risk // per_contract_risk)) if per_contract_risk > 0 else 1
+                    initial_risk = round(per_contract_risk * qty, 2)
                     trade_id = f"pt_{sym}_{strat[:4]}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{len(trades)+1}"
                     trades.append({
                         "id": trade_id,
@@ -821,7 +826,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                         "side": side,
                         "entry_date": asof,
                         "entry_price": round(entry, 4),
-                        "qty": 1,
+                        "qty": qty,
                         "stop_loss": round(stop, 4),
                         "profit_target": round(target, 4),
                         "point_value": pt_val,
@@ -831,7 +836,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                         "realized_pnl": 0.0,
                         "return_pct": 0.0,
                         "duration_days": 0,
-                        "initial_risk": round(abs(entry - stop) * pt_val, 2),
+                        "initial_risk": initial_risk,
                         "created_at": datetime.utcnow().isoformat(),
                         "updated_at": datetime.utcnow().isoformat()
                     })
@@ -844,6 +849,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
     for t in trades:
         sym = t.get("symbol", "")
         pt_val = float(t.get("point_value", 1.0))
+        qty = int(t.get("qty") or 1)
         side = t.get("side", "long")
         entry = float(t.get("entry_price", 0.0))
         stop = float(t.get("stop_loss", 0.0))
@@ -867,36 +873,36 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     t["status"] = "STOPPED_OUT"
                     t["exit_price"] = round(stop, 4)
                     t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((stop - entry) * pt_val, 2)
+                    t["realized_pnl"] = round((stop - entry) * pt_val * qty, 2)
                     t["unrealized_pnl"] = 0.0
                     t["return_pct"] = round(((stop - entry) / entry) * 100, 2) if entry > 0 else 0.0
                 elif target and high >= target:
                     t["status"] = "HIT_TARGET"
                     t["exit_price"] = round(target, 4)
                     t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((target - entry) * pt_val, 2)
+                    t["realized_pnl"] = round((target - entry) * pt_val * qty, 2)
                     t["unrealized_pnl"] = 0.0
                     t["return_pct"] = round(((target - entry) / entry) * 100, 2) if entry > 0 else 0.0
                 else:
-                    t["unrealized_pnl"] = round((close - entry) * pt_val, 2)
+                    t["unrealized_pnl"] = round((close - entry) * pt_val * qty, 2)
                     t["return_pct"] = round(((close - entry) / entry) * 100, 2) if entry > 0 else 0.0
             elif side == "short":
                 if stop > 0 and high >= stop:
                     t["status"] = "STOPPED_OUT"
                     t["exit_price"] = round(stop, 4)
                     t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((entry - stop) * pt_val, 2)
+                    t["realized_pnl"] = round((entry - stop) * pt_val * qty, 2)
                     t["unrealized_pnl"] = 0.0
                     t["return_pct"] = round(((entry - stop) / entry) * 100, 2) if entry > 0 else 0.0
                 elif target and low <= target:
                     t["status"] = "HIT_TARGET"
                     t["exit_price"] = round(target, 4)
                     t["exit_date"] = last_bar.dt
-                    t["realized_pnl"] = round((entry - target) * pt_val, 2)
+                    t["realized_pnl"] = round((entry - target) * pt_val * qty, 2)
                     t["unrealized_pnl"] = 0.0
                     t["return_pct"] = round(((entry - target) / entry) * 100, 2) if entry > 0 else 0.0
                 else:
-                    t["unrealized_pnl"] = round((entry - close) * pt_val, 2)
+                    t["unrealized_pnl"] = round((entry - close) * pt_val * qty, 2)
                     t["return_pct"] = round(((entry - close) / entry) * 100, 2) if entry > 0 else 0.0
 
             t["updated_at"] = datetime.utcnow().isoformat()
@@ -949,21 +955,26 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
     sorted_trades = sorted(trades, key=lambda x: x.get("entry_date", ""))
     dates = sorted(list(set(t.get("entry_date", "") for t in sorted_trades if t.get("entry_date"))))
     eq_curve = []
-    running_eq = 100000.0
+    running_eq = 1000000.0  # $1M starting portfolio capital
     cum_pnl = 0.0
     peak_eq = running_eq
     max_dd = 0.0
-    for d in dates:
-        d_trades = [t for t in trades if t.get("entry_date") == d or t.get("exit_date") == d]
-        d_pnl = sum(float(t.get("realized_pnl", 0.0)) if t.get("exit_date") == d else float(t.get("unrealized_pnl", 0.0)) for t in d_trades)
-        cum_pnl += d_pnl
-        c_eq = running_eq + cum_pnl
-        if c_eq > peak_eq: peak_eq = c_eq
-        dd = ((peak_eq - c_eq) / peak_eq * 100) if peak_eq > 0 else 0.0
-        if dd > max_dd: max_dd = dd
+    if not dates:
         eq_curve.append({
-            "date": d, "cum_pnl": round(cum_pnl, 2), "equity": round(c_eq, 2), "drawdown_pct": round(dd, 2)
+            "date": latest_date, "cum_pnl": 0.0, "equity": running_eq, "drawdown_pct": 0.0
         })
+    else:
+        for d in dates:
+            d_trades = [t for t in trades if t.get("entry_date") == d or t.get("exit_date") == d]
+            d_pnl = sum(float(t.get("realized_pnl", 0.0)) if t.get("exit_date") == d else float(t.get("unrealized_pnl", 0.0)) for t in d_trades)
+            cum_pnl += d_pnl
+            c_eq = running_eq + cum_pnl
+            if c_eq > peak_eq: peak_eq = c_eq
+            dd = ((peak_eq - c_eq) / peak_eq * 100) if peak_eq > 0 else 0.0
+            if dd > max_dd: max_dd = dd
+            eq_curve.append({
+                "date": d, "cum_pnl": round(cum_pnl, 2), "equity": round(c_eq, 2), "drawdown_pct": round(dd, 2)
+            })
 
     perf_payload = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
