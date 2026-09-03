@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-03T01:06:08.068929Z",
+  "timestamp": "2026-09-03T21:32:41.274963Z",
   "date": "2026-09-03",
   "total_alerts": 1,
   "alerts": [
     {
-      "symbol": "NQ",
+      "symbol": "6J",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-09-01",
-      "high_trigger": 29571.25,
-      "low_trigger": 29002.0,
-      "last_close": 29157.25,
+      "asof": "2026-09-02",
+      "high_trigger": 0.0063,
+      "low_trigger": 0.0062,
+      "last_close": 0.0064,
       "severity": "high"
     }
   ]
