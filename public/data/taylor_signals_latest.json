@@ -1,11 +1,11 @@
 {
   "date": "2026-09-04",
-  "timestamp": "2026-09-04T21:32:35.513114Z",
+  "timestamp": "2026-09-05T01:02:14.387265Z",
   "total_scanned": 13,
   "summary": {
-    "buy_day_count": 11,
+    "buy_day_count": 10,
     "sell_day_count": 1,
-    "sell_short_day_count": 1
+    "sell_short_day_count": 2
   },
   "signals": [
     {
@@ -14,7 +14,7 @@
       "cycle_phase": "BUY_DAY",
       "cycle_day": 1,
       "action": "BUY_LONG",
-      "close": 7715.0,
+      "close": 7722.0,
       "buying_pressure": 93.5,
       "selling_pressure": 11.75,
       "buying_objective": 7805.25,
@@ -28,19 +28,19 @@
     {
       "symbol": "NQ",
       "asof": "2026-09-04",
-      "cycle_phase": "BUY_DAY",
-      "cycle_day": 1,
-      "action": "BUY_LONG",
-      "close": 29523.0,
+      "cycle_phase": "SELL_SHORT_DAY",
+      "cycle_day": 3,
+      "action": "SELL_SHORT",
+      "close": 29565.25,
       "buying_pressure": 449.75,
       "selling_pressure": 59.5,
       "buying_objective": 29917.75,
       "selling_objective": 29645.0,
       "high_resistance": 30213.75,
       "low_support": 28958.75,
-      "entry_target": 29692.875,
-      "profit_target": 29645.0,
-      "stop_loss": 28958.75
+      "entry_target": 29674.75,
+      "profit_target": 29917.75,
+      "stop_loss": 30213.75
     },
     {
       "symbol": "RTY",
@@ -48,7 +48,7 @@
       "cycle_phase": "SELL_SHORT_DAY",
       "cycle_day": 3,
       "action": "SELL_SHORT",
-      "close": 2973.800048828125,
+      "close": 2976.60009765625,
       "buying_pressure": 19.8,
       "selling_pressure": 13.6001,
       "buying_objective": 2969.3,
