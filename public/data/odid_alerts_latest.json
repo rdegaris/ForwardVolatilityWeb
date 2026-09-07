@@ -1,15 +1,87 @@
 {
-  "timestamp": "2026-09-05T01:02:14.388490Z",
-  "date": "2026-09-04",
-  "total_alerts": 1,
+  "timestamp": "2026-09-07T21:32:28.350494Z",
+  "date": "2026-09-07",
+  "total_alerts": 9,
   "alerts": [
     {
+      "symbol": "ES",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 7764.5,
+      "low_trigger": 7711.75,
+      "last_close": 7722.0,
+      "severity": "medium"
+    },
+    {
+      "symbol": "YM",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 53772.0,
+      "low_trigger": 53235.0,
+      "last_close": 53440.0,
+      "severity": "medium"
+    },
+    {
+      "symbol": "GC",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 4429.7998,
+      "low_trigger": 4429.7998,
+      "last_close": 4476.6001,
+      "severity": "medium"
+    },
+    {
+      "symbol": "SI",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 66.54,
+      "low_trigger": 65.465,
+      "last_close": 66.748,
+      "severity": "medium"
+    },
+    {
       "symbol": "NG",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 2.986,
+      "low_trigger": 2.902,
+      "last_close": 2.975,
+      "severity": "medium"
+    },
+    {
+      "symbol": "6E",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 1.1637,
+      "low_trigger": 1.1588,
+      "last_close": 1.1614,
+      "severity": "medium"
+    },
+    {
+      "symbol": "6B",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-09-03",
-      "high_trigger": 3.026,
-      "low_trigger": 2.885,
-      "last_close": 2.939,
+      "asof": "2026-09-04",
+      "high_trigger": 1.3549,
+      "low_trigger": 1.3476,
+      "last_close": 1.3514,
+      "severity": "high"
+    },
+    {
+      "symbol": "ZB",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 109.5,
+      "low_trigger": 108.9375,
+      "last_close": 108.5,
+      "severity": "medium"
+    },
+    {
+      "symbol": "ZN",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-09-04",
+      "high_trigger": 108.125,
+      "low_trigger": 107.5938,
+      "last_close": 107.4688,
       "severity": "high"
     }
   ]
