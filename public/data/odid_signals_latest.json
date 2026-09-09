@@ -1,32 +1,23 @@
 {
-  "timestamp": "2026-09-09T01:04:50.246153Z",
+  "timestamp": "2026-09-09T21:33:09.481891Z",
   "date": "2026-09-09",
-  "total_armed": 9,
+  "total_armed": 4,
   "triggered": [
     {
-      "symbol": "ES",
+      "symbol": "NQ",
       "side": "short",
       "asof": "2026-09-09",
-      "entry_stop": 7711.75,
-      "stop_loss": 7764.5,
+      "entry_stop": 29424.75,
+      "stop_loss": 29764.75,
       "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
+      "notes": "Confirmed TOO_HOT (OUTSIDE_DAY) downside breakout"
     },
     {
-      "symbol": "YM",
+      "symbol": "RTY",
       "side": "short",
       "asof": "2026-09-09",
-      "entry_stop": 53235.0,
-      "stop_loss": 53772.0,
-      "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
-    },
-    {
-      "symbol": "GC",
-      "side": "short",
-      "asof": "2026-09-09",
-      "entry_stop": 4429.7998,
-      "stop_loss": 4429.7998,
+      "entry_stop": 2954.7,
+      "stop_loss": 2977.8999,
       "eligible": true,
       "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
     },
@@ -34,8 +25,8 @@
       "symbol": "SI",
       "side": "long",
       "asof": "2026-09-09",
-      "entry_stop": 66.54,
-      "stop_loss": 65.465,
+      "entry_stop": 66.297,
+      "stop_loss": 65.595,
       "eligible": true,
       "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
     },
@@ -43,26 +34,8 @@
       "symbol": "NG",
       "side": "short",
       "asof": "2026-09-09",
-      "entry_stop": 2.902,
-      "stop_loss": 2.986,
-      "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
-    },
-    {
-      "symbol": "ZB",
-      "side": "short",
-      "asof": "2026-09-09",
-      "entry_stop": 108.9375,
-      "stop_loss": 109.5,
-      "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
-    },
-    {
-      "symbol": "ZN",
-      "side": "short",
-      "asof": "2026-09-09",
-      "entry_stop": 107.5938,
-      "stop_loss": 108.125,
+      "entry_stop": 2.863,
+      "stop_loss": 3.014,
       "eligible": true,
       "notes": "Confirmed TOO_HOT (OUTSIDE_DAY) downside breakout"
     }
