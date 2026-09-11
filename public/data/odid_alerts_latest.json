@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-09-11T01:02:45.067149Z",
+  "timestamp": "2026-09-11T21:32:46.873462Z",
   "date": "2026-09-11",
   "total_alerts": 1,
   "alerts": [
     {
-      "symbol": "6J",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-09",
-      "high_trigger": 0.0065,
-      "low_trigger": 0.0065,
-      "last_close": 0.0065,
-      "severity": "medium"
+      "symbol": "GC",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-09-10",
+      "high_trigger": 4420.0,
+      "low_trigger": 4330.7002,
+      "last_close": 4390.0,
+      "severity": "high"
     }
   ]
 }
