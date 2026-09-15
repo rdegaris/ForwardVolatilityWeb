@@ -11,7 +11,7 @@ import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } fro
 import type { TaylorSignalsPayload } from '../types/taylor';
 import type { GrailSignalsPayload } from '../types/grail';
 import type { LindaSignalsPayload } from '../types/linda';
-import type { PaperTradePerformancePayload } from '../types/paperTrade';
+import type { PaperTrade, PaperTradesPayload, PaperTradePerformancePayload } from '../types/paperTrade';
 import { fmt$ } from '../lib/formatCurrency';
 import SignalChartModal from '../components/SignalChartModal';
 
@@ -80,6 +80,7 @@ export default function Home() {
   const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
   const [lindaSignals, setLindaSignals] = useState<LindaSignalsPayload | null>(null);
   const [paperPerformance, setPaperPerformance] = useState<PaperTradePerformancePayload | null>(null);
+  const [allTrades, setAllTrades] = useState<PaperTrade[]>([]);
   const [chartItem, setChartItem] = useState<{
     symbol: string;
     strategy: string;
@@ -107,9 +108,10 @@ export default function Home() {
           fetchJson<GrailSignalsPayload>('/data/grail_signals_latest.json', { cache: 'no-store' }),
           fetchJson<LindaSignalsPayload>('/data/linda_signals_latest.json', { cache: 'no-store' }),
           fetchJson<PaperTradePerformancePayload>('/data/paper_trade_performance.json', { cache: 'no-store' }),
+          fetchJson<PaperTradesPayload>('/data/paper_trades_latest.json', { cache: 'no-store' }),
         ]);
 
-        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin, pp] = results;
+        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin, pp, pt] = results;
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
@@ -120,6 +122,7 @@ export default function Home() {
         if (gr.status === 'fulfilled') setGrailSignals(gr.value);
         if (lin.status === 'fulfilled') setLindaSignals(lin.value);
         if (pp.status === 'fulfilled') setPaperPerformance(pp.value);
+        if (pt.status === 'fulfilled' && pt.value?.trades) setAllTrades(pt.value.trades);
       } finally {
         setLoading(false);
       }
@@ -175,13 +178,14 @@ export default function Home() {
 
   // Filtered Trades for Performance Section
   const perfTrades = useMemo(() => {
-    if (!paperPerformance?.recent_trades) return [];
-    return paperPerformance.recent_trades.filter((t) => {
+    const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
+    if (sourceTrades.length === 0) return [];
+    return sourceTrades.filter((t) => {
       const matchStrat = selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy;
       const matchTf = isTradeInTimeframe(t.entry_date, selectedPerfTimeframe);
       return matchStrat && matchTf;
     });
-  }, [paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
+  }, [allTrades, paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
 
   // Strategy Specific Metrics
   const activeMetrics = useMemo(() => {
