@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-15T18:46:15.609943Z",
+  "timestamp": "2026-09-15T21:32:32.037992Z",
   "date": "2026-09-15",
   "total_trades": 169,
   "open_trades_count": 8,
@@ -7,12 +7,12 @@
   "winning_trades": 68,
   "losing_trades": 87,
   "win_rate_pct": 42.2,
-  "total_realized_pnl": -34258.28,
-  "total_unrealized_pnl": 9558.29,
-  "net_pnl": -24699.99,
+  "total_realized_pnl": -34153.28,
+  "total_unrealized_pnl": 9839.95,
+  "net_pnl": -24313.33,
   "profit_factor": 0.74,
-  "max_drawdown_pct": 36.38,
-  "avg_win": 1433.7,
+  "max_drawdown_pct": 36.44,
+  "avg_win": 1435.25,
   "avg_loss": 1514.37,
   "strategy_breakdown": {
     "Trendorama": {
@@ -23,8 +23,8 @@
       "wins": 0,
       "losses": 15,
       "realized_pnl": -25862.83,
-      "unrealized_pnl": 9208.55,
-      "net_pnl": -16654.28,
+      "unrealized_pnl": 9014.8,
+      "net_pnl": -16848.03,
       "win_rate_pct": 0.0
     },
     "The Bradman": {
@@ -35,8 +35,8 @@
       "wins": 44,
       "losses": 48,
       "realized_pnl": -2939.77,
-      "unrealized_pnl": 1433.49,
-      "net_pnl": -1506.28,
+      "unrealized_pnl": 1373.52,
+      "net_pnl": -1566.25,
       "win_rate_pct": 45.8
     },
     "TooHot TooCold": {
@@ -46,9 +46,9 @@
       "closed_trades": 23,
       "wins": 10,
       "losses": 12,
-      "realized_pnl": -7032.46,
-      "unrealized_pnl": -900.0,
-      "net_pnl": -7932.46,
+      "realized_pnl": -6927.46,
+      "unrealized_pnl": -404.0,
+      "net_pnl": -7331.46,
       "win_rate_pct": 43.5
     },
     "YouHaveChosenWisely": {
@@ -59,8 +59,8 @@
       "wins": 9,
       "losses": 12,
       "realized_pnl": -1551.94,
-      "unrealized_pnl": -183.75,
-      "net_pnl": -1735.69,
+      "unrealized_pnl": -144.37,
+      "net_pnl": -1696.31,
       "win_rate_pct": 40.9
     },
     "The Linda": {
@@ -301,177 +301,177 @@
     },
     {
       "date": "2026-07-29",
-      "cum_pnl": 11794.28,
-      "equity": 111794.28,
-      "drawdown_pct": 3.97
+      "cum_pnl": 11731.78,
+      "equity": 111731.78,
+      "drawdown_pct": 4.03
     },
     {
       "date": "2026-07-30",
-      "cum_pnl": 6549.03,
-      "equity": 106549.03,
-      "drawdown_pct": 8.48
+      "cum_pnl": 6486.53,
+      "equity": 106486.53,
+      "drawdown_pct": 8.53
     },
     {
       "date": "2026-08-03",
-      "cum_pnl": -2147.85,
-      "equity": 97852.15,
-      "drawdown_pct": 15.95
+      "cum_pnl": -2210.35,
+      "equity": 97789.65,
+      "drawdown_pct": 16.0
     },
     {
       "date": "2026-08-04",
-      "cum_pnl": -4848.67,
-      "equity": 95151.33,
-      "drawdown_pct": 18.27
+      "cum_pnl": -4911.17,
+      "equity": 95088.83,
+      "drawdown_pct": 18.32
     },
     {
       "date": "2026-08-05",
-      "cum_pnl": -7398.74,
-      "equity": 92601.26,
-      "drawdown_pct": 20.46
+      "cum_pnl": -7461.24,
+      "equity": 92538.76,
+      "drawdown_pct": 20.51
     },
     {
       "date": "2026-08-06",
-      "cum_pnl": -7658.75,
-      "equity": 92341.25,
-      "drawdown_pct": 20.68
+      "cum_pnl": -7721.25,
+      "equity": 92278.75,
+      "drawdown_pct": 20.74
     },
     {
       "date": "2026-08-07",
-      "cum_pnl": -8047.74,
-      "equity": 91952.26,
-      "drawdown_pct": 21.02
+      "cum_pnl": -8110.24,
+      "equity": 91889.76,
+      "drawdown_pct": 21.07
     },
     {
       "date": "2026-08-10",
-      "cum_pnl": -11468.74,
-      "equity": 88531.26,
-      "drawdown_pct": 23.96
+      "cum_pnl": -11531.24,
+      "equity": 88468.76,
+      "drawdown_pct": 24.01
     },
     {
       "date": "2026-08-13",
-      "cum_pnl": -12635.34,
-      "equity": 87364.66,
-      "drawdown_pct": 24.96
+      "cum_pnl": -12697.84,
+      "equity": 87302.16,
+      "drawdown_pct": 25.01
     },
     {
       "date": "2026-08-17",
-      "cum_pnl": -11920.05,
-      "equity": 88079.95,
-      "drawdown_pct": 24.34
+      "cum_pnl": -11982.55,
+      "equity": 88017.45,
+      "drawdown_pct": 24.4
     },
     {
       "date": "2026-08-18",
-      "cum_pnl": -13786.8,
-      "equity": 86213.2,
-      "drawdown_pct": 25.95
+      "cum_pnl": -13849.3,
+      "equity": 86150.7,
+      "drawdown_pct": 26.0
     },
     {
       "date": "2026-08-19",
-      "cum_pnl": -17701.8,
-      "equity": 82298.2,
-      "drawdown_pct": 29.31
+      "cum_pnl": -17764.3,
+      "equity": 82235.7,
+      "drawdown_pct": 29.36
     },
     {
       "date": "2026-08-20",
-      "cum_pnl": -21359.8,
-      "equity": 78640.2,
-      "drawdown_pct": 32.45
+      "cum_pnl": -21422.3,
+      "equity": 78577.7,
+      "drawdown_pct": 32.51
     },
     {
       "date": "2026-08-24",
-      "cum_pnl": -20366.8,
-      "equity": 79633.2,
-      "drawdown_pct": 31.6
+      "cum_pnl": -20429.3,
+      "equity": 79570.7,
+      "drawdown_pct": 31.65
     },
     {
       "date": "2026-08-25",
-      "cum_pnl": -22531.29,
-      "equity": 77468.71,
-      "drawdown_pct": 33.46
+      "cum_pnl": -22593.79,
+      "equity": 77406.21,
+      "drawdown_pct": 33.51
     },
     {
       "date": "2026-08-26",
-      "cum_pnl": -24023.79,
-      "equity": 75976.21,
-      "drawdown_pct": 34.74
+      "cum_pnl": -24086.29,
+      "equity": 75913.71,
+      "drawdown_pct": 34.79
     },
     {
       "date": "2026-08-27",
-      "cum_pnl": -25937.79,
-      "equity": 74062.21,
-      "drawdown_pct": 36.38
+      "cum_pnl": -26000.29,
+      "equity": 73999.71,
+      "drawdown_pct": 36.44
     },
     {
       "date": "2026-08-28",
-      "cum_pnl": -23946.29,
-      "equity": 76053.71,
-      "drawdown_pct": 34.67
+      "cum_pnl": -24008.79,
+      "equity": 75991.21,
+      "drawdown_pct": 34.73
     },
     {
       "date": "2026-08-31",
-      "cum_pnl": -24656.32,
-      "equity": 75343.68,
-      "drawdown_pct": 35.28
+      "cum_pnl": -24750.07,
+      "equity": 75249.93,
+      "drawdown_pct": 35.36
     },
     {
       "date": "2026-09-01",
-      "cum_pnl": -22543.33,
-      "equity": 77456.67,
-      "drawdown_pct": 33.47
+      "cum_pnl": -22637.08,
+      "equity": 77362.92,
+      "drawdown_pct": 33.55
     },
     {
       "date": "2026-09-02",
-      "cum_pnl": -24640.47,
-      "equity": 75359.53,
-      "drawdown_pct": 35.27
+      "cum_pnl": -24734.22,
+      "equity": 75265.78,
+      "drawdown_pct": 35.35
     },
     {
       "date": "2026-09-03",
-      "cum_pnl": -21258.72,
-      "equity": 78741.28,
-      "drawdown_pct": 32.37
+      "cum_pnl": -21352.47,
+      "equity": 78647.53,
+      "drawdown_pct": 32.45
     },
     {
       "date": "2026-09-04",
-      "cum_pnl": -21873.72,
-      "equity": 78126.28,
-      "drawdown_pct": 32.89
+      "cum_pnl": -21967.47,
+      "equity": 78032.53,
+      "drawdown_pct": 32.97
     },
     {
       "date": "2026-09-08",
-      "cum_pnl": -17733.47,
-      "equity": 82266.53,
-      "drawdown_pct": 29.34
+      "cum_pnl": -17937.22,
+      "equity": 82062.78,
+      "drawdown_pct": 29.51
     },
     {
       "date": "2026-09-09",
-      "cum_pnl": -19623.47,
-      "equity": 80376.53,
-      "drawdown_pct": 30.96
+      "cum_pnl": -19827.22,
+      "equity": 80172.78,
+      "drawdown_pct": 31.14
     },
     {
       "date": "2026-09-10",
-      "cum_pnl": -23278.22,
-      "equity": 76721.78,
-      "drawdown_pct": 34.1
+      "cum_pnl": -23481.97,
+      "equity": 76518.03,
+      "drawdown_pct": 34.28
     },
     {
       "date": "2026-09-11",
-      "cum_pnl": -25234.72,
-      "equity": 74765.28,
-      "drawdown_pct": 35.78
+      "cum_pnl": -25438.47,
+      "equity": 74561.53,
+      "drawdown_pct": 35.96
     },
     {
       "date": "2026-09-14",
-      "cum_pnl": -24036.49,
-      "equity": 75963.51,
-      "drawdown_pct": 34.75
+      "cum_pnl": -24145.83,
+      "equity": 75854.17,
+      "drawdown_pct": 34.85
     },
     {
       "date": "2026-09-15",
-      "cum_pnl": -24699.99,
-      "equity": 75300.01,
-      "drawdown_pct": 35.32
+      "cum_pnl": -24313.33,
+      "equity": 75686.67,
+      "drawdown_pct": 34.99
     }
   ],
   "recent_trades": [
@@ -488,10 +488,10 @@
       "profit_target": 53564.0,
       "point_value": 0.5,
       "status": "OPEN",
-      "current_price": 52447.0,
-      "unrealized_pnl": -900.0,
+      "current_price": 52571.0,
+      "unrealized_pnl": -404.0,
       "realized_pnl": 0.0,
-      "return_pct": -0.43,
+      "return_pct": -0.19,
       "duration_days": 0,
       "initial_risk": 1784.0,
       "created_at": "2026-09-15T13:30:00Z",
@@ -510,10 +510,10 @@
       "profit_target": 4462.0,
       "point_value": 10.0,
       "status": "OPEN",
-      "current_price": 4343.8999,
-      "unrealized_pnl": 128.5,
+      "current_price": 4333.3999,
+      "unrealized_pnl": 23.5,
       "realized_pnl": 0.0,
-      "return_pct": 0.3,
+      "return_pct": 0.05,
       "duration_days": 0,
       "initial_risk": 1332.5,
       "created_at": "2026-09-15T13:30:00Z",
@@ -532,10 +532,10 @@
       "profit_target": 2648.2454,
       "point_value": 5.0,
       "status": "OPEN",
-      "current_price": 2897.0,
-      "unrealized_pnl": -235.0,
+      "current_price": 2896.6001,
+      "unrealized_pnl": -225.0,
       "realized_pnl": 0.0,
-      "return_pct": -0.33,
+      "return_pct": -0.31,
       "duration_days": 1,
       "initial_risk": 1994.62,
       "created_at": "2026-09-14T13:30:00Z",
@@ -554,10 +554,10 @@
       "profit_target": 1.1648,
       "point_value": 12500.0,
       "status": "OPEN",
-      "current_price": 1.1582,
-      "unrealized_pnl": 1304.99,
+      "current_price": 1.1584,
+      "unrealized_pnl": 1350.02,
       "realized_pnl": 0.0,
-      "return_pct": 0.38,
+      "return_pct": 0.39,
       "duration_days": 1,
       "initial_risk": 1965.0,
       "created_at": "2026-09-14T13:30:00Z",
@@ -577,9 +577,9 @@
       "point_value": 1250000.0,
       "status": "OPEN",
       "current_price": 0.0065,
-      "unrealized_pnl": -183.75,
+      "unrealized_pnl": -144.37,
       "realized_pnl": 0.0,
-      "return_pct": -0.11,
+      "return_pct": -0.08,
       "duration_days": 1,
       "initial_risk": 1999.4,
       "created_at": "2026-09-14T13:30:00Z",
@@ -598,15 +598,15 @@
       "profit_target": 4104.3008,
       "point_value": 10.0,
       "status": "TIME_EXIT",
-      "current_price": 4343.8999,
+      "current_price": 4333.3999,
       "unrealized_pnl": 0.0,
-      "realized_pnl": 108.0,
-      "return_pct": -0.25,
+      "realized_pnl": 213.0,
+      "return_pct": -0.49,
       "duration_days": 4,
       "initial_risk": 1252.0,
       "created_at": "2026-09-11T13:30:00Z",
       "updated_at": "2026-09-15T20:00:00Z",
-      "exit_price": 4343.8999,
+      "exit_price": 4333.3999,
       "exit_date": "2026-09-15"
     },
     {
@@ -622,10 +622,10 @@
       "profit_target": 116.0982,
       "point_value": 100.0,
       "status": "OPEN",
-      "current_price": 106.03,
-      "unrealized_pnl": 2506.0,
+      "current_price": 105.48,
+      "unrealized_pnl": 2396.0,
       "realized_pnl": 0.0,
-      "return_pct": 13.4,
+      "return_pct": 12.81,
       "duration_days": 7,
       "initial_risk": 1506.55,
       "created_at": "2026-09-08T13:30:00Z",
@@ -644,10 +644,10 @@
       "profit_target": 105.1288,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 105.8906,
-      "unrealized_pnl": 4187.55,
+      "current_price": 105.9062,
+      "unrealized_pnl": 4156.3,
       "realized_pnl": 0.0,
-      "return_pct": 1.94,
+      "return_pct": 1.92,
       "duration_days": 15,
       "initial_risk": 1903.68,
       "created_at": "2026-08-31T13:30:00Z",
@@ -666,10 +666,10 @@
       "profit_target": 103.9098,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 106.5,
-      "unrealized_pnl": 2750.0,
+      "current_price": 106.5625,
+      "unrealized_pnl": 2687.5,
       "realized_pnl": 0.0,
-      "return_pct": 2.52,
+      "return_pct": 2.46,
       "duration_days": 48,
       "initial_risk": 1780.06,
       "created_at": "2026-07-29T13:30:00Z",
