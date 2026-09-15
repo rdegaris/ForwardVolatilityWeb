@@ -722,18 +722,23 @@ export default function ExecutedTrades() {
                     key={t.id}
                     className="flex items-center justify-between rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 transition hover:border-emerald-500/40"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
                           <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
                             {t.side.toUpperCase()}
                           </span>
+                          <span className="text-[11px] text-slate-300 font-semibold">{t.strategy}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400">{t.strategy} · {t.entry_date}</div>
+                        <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                          <span>Open: {t.entry_date?.slice(0, 10)}</span>
+                          <span className="text-slate-600">·</span>
+                          <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right font-mono">
+                    <div className="text-right font-mono shrink-0 pl-3">
                       <div className="font-black text-emerald-400 text-sm">+{fmt$(pnl)}</div>
                       <div className="text-[10px] text-emerald-300 font-semibold">
                         {t.return_pct > 0 ? `+${t.return_pct.toFixed(1)}%` : `${t.return_pct.toFixed(1)}%`}
@@ -768,18 +773,23 @@ export default function ExecutedTrades() {
                     key={t.id}
                     className="flex items-center justify-between rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 transition hover:border-rose-500/40"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
                           <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
                             {t.side.toUpperCase()}
                           </span>
+                          <span className="text-[11px] text-slate-300 font-semibold">{t.strategy}</span>
                         </div>
-                        <div className="text-[11px] text-slate-400">{t.strategy} · {t.entry_date}</div>
+                        <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                          <span>Open: {t.entry_date?.slice(0, 10)}</span>
+                          <span className="text-slate-600">·</span>
+                          <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right font-mono">
+                    <div className="text-right font-mono shrink-0 pl-3">
                       <div className="font-black text-rose-400 text-sm">{fmt$(pnl)}</div>
                       <div className="text-[10px] text-rose-300 font-semibold">
                         {t.return_pct.toFixed(1)}%
@@ -881,7 +891,7 @@ export default function ExecutedTrades() {
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="border-b border-slate-800 bg-slate-950/60 text-[10px] font-black uppercase tracking-wider text-slate-400">
               <tr>
-                <th className="px-5 py-3.5">Entry Date</th>
+                <th className="px-5 py-3.5">Dates (Open / Close)</th>
                 <th className="px-5 py-3.5">Symbol</th>
                 <th className="px-5 py-3.5">Strategy</th>
                 <th className="px-5 py-3.5">Side</th>
@@ -916,9 +926,16 @@ export default function ExecutedTrades() {
                       key={t.id}
                       className="transition-colors hover:bg-slate-800/40"
                     >
-                      {/* Entry Date */}
-                      <td className="px-5 py-4 font-mono text-slate-400">
-                        {t.entry_date}
+                      {/* Entry & Exit Dates */}
+                      <td className="px-5 py-4 font-mono text-xs">
+                        <div className="text-slate-200 font-semibold">{t.entry_date?.slice(0, 10)}</div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">
+                          {isOpen ? (
+                            <span className="text-emerald-400/90 font-bold">Active Open ({t.duration_days}d)</span>
+                          ) : (
+                            <span>Exit: {t.exit_date?.slice(0, 10) || 'Closed'} ({t.duration_days}d)</span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Symbol & Name */}

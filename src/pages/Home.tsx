@@ -986,16 +986,25 @@ export default function Home() {
                       key={t.id}
                       className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3.5 py-2.5 transition hover:border-emerald-500/40"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</div>
-                        <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
-                          {t.side.toUpperCase()}
-                        </span>
-                        <span className="text-[11px] text-slate-400 hidden sm:inline truncate max-w-[110px]">
-                          {t.strategy}
-                        </span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
+                            <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
+                              {t.side.toUpperCase()}
+                            </span>
+                            <span className="text-[11px] text-slate-300 font-semibold truncate max-w-[130px]">
+                              {t.strategy}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                            <span>Open: {t.entry_date?.slice(0, 10)}</span>
+                            <span className="text-slate-600">·</span>
+                            <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right font-mono">
+                      <div className="text-right font-mono shrink-0 pl-3">
                         <div className="font-black text-emerald-400 text-sm">+{fmt$(pnl)}</div>
                         <div className="text-[10px] text-emerald-300 font-semibold">
                           {t.return_pct > 0 ? `+${t.return_pct.toFixed(1)}%` : `${t.return_pct.toFixed(1)}%`}
@@ -1030,16 +1039,25 @@ export default function Home() {
                       key={t.id}
                       className="flex items-center justify-between rounded-xl border border-rose-500/20 bg-rose-500/5 px-3.5 py-2.5 transition hover:border-rose-500/40"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</div>
-                        <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
-                          {t.side.toUpperCase()}
-                        </span>
-                        <span className="text-[11px] text-slate-400 hidden sm:inline truncate max-w-[110px]">
-                          {t.strategy}
-                        </span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
+                            <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
+                              {t.side.toUpperCase()}
+                            </span>
+                            <span className="text-[11px] text-slate-300 font-semibold truncate max-w-[130px]">
+                              {t.strategy}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                            <span>Open: {t.entry_date?.slice(0, 10)}</span>
+                            <span className="text-slate-600">·</span>
+                            <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right font-mono">
+                      <div className="text-right font-mono shrink-0 pl-3">
                         <div className="font-black text-rose-400 text-sm">{fmt$(pnl)}</div>
                         <div className="text-[10px] text-rose-300 font-semibold">
                           {t.return_pct.toFixed(1)}%
