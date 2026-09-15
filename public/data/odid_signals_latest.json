@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-09-15T01:05:55.062095Z",
+  "timestamp": "2026-09-15T18:46:14.879429Z",
   "date": "2026-09-15",
   "total_armed": 2,
   "triggered": [
     {
-      "symbol": "ZB",
-      "side": "short",
+      "symbol": "YM",
+      "side": "long",
       "asof": "2026-09-15",
-      "entry_stop": 107.25,
-      "stop_loss": 107.8438,
+      "entry_stop": 52672.0,
+      "stop_loss": 52226.0,
       "eligible": true,
-      "notes": "Confirmed TOO_COLD (INSIDE_DAY) downside breakout"
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
     }
   ]
 }

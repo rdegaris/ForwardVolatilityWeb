@@ -759,16 +759,34 @@ def main():
     print(f"=== SUCCESSFULLY UPDATED ALL FUTURES SIGNAL FEEDS FOR {latest_date} ===")
 def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Bar]], latest_date: str, start_date: str = "2026-06-01"):
     point_values = {
-        "ES": 50.0, "NQ": 20.0, "RTY": 50.0, "YM": 5.0, "GC": 100.0,
-        "SI": 5000.0, "CL": 1000.0, "NG": 10000.0, "6E": 125000.0,
-        "6B": 62500.0, "6J": 12500000.0, "ZB": 1000.0, "ZN": 1000.0
+        "ES": 5.0,        # Micro E-mini S&P 500 (MES)
+        "NQ": 2.0,        # Micro E-mini Nasdaq 100 (MNQ)
+        "RTY": 5.0,       # Micro E-mini Russell 2000 (M2K)
+        "YM": 0.5,        # Micro E-mini Dow Jones (MYM)
+        "GC": 10.0,       # Micro Gold (MGC, 10 oz)
+        "SI": 1000.0,     # Micro Silver (SIL, 1000 oz)
+        "CL": 100.0,      # Micro WTI Crude Oil (MCL, 100 bbl)
+        "NG": 2500.0,     # E-mini Natural Gas (QG)
+        "6E": 12500.0,    # Micro Euro FX (M6E)
+        "6B": 6250.0,     # Micro British Pound (M6B)
+        "6J": 1250000.0,  # Micro Japanese Yen (M6J)
+        "ZB": 1000.0,     # 30-Year T-Bond Futures
+        "ZN": 1000.0      # 10-Year T-Note Futures
     }
     symbol_names = {
-        "ES": "E-mini S&P 500", "NQ": "E-mini Nasdaq 100", "RTY": "E-mini Russell 2000",
-        "YM": "E-mini Dow Jones", "GC": "Gold Futures", "SI": "Silver Futures",
-        "CL": "Crude Oil Futures", "NG": "Natural Gas Futures", "6E": "Euro FX Futures",
-        "6B": "British Pound Futures", "6J": "Japanese Yen Futures",
-        "ZB": "30-Year T-Bond Futures", "ZN": "10-Year T-Note Futures"
+        "ES": "Micro E-mini S&P 500 (MES)",
+        "NQ": "Micro E-mini Nasdaq 100 (MNQ)",
+        "RTY": "Micro E-mini Russell 2000 (M2K)",
+        "YM": "Micro E-mini Dow Jones (MYM)",
+        "GC": "Micro Gold Futures (MGC)",
+        "SI": "Micro Silver Futures (SIL)",
+        "CL": "Micro WTI Crude Oil (MCL)",
+        "NG": "E-mini Natural Gas (QG)",
+        "6E": "Micro Euro FX (M6E)",
+        "6B": "Micro British Pound (M6B)",
+        "6J": "Micro Japanese Yen (M6J)",
+        "ZB": "30-Year T-Bond Futures",
+        "ZN": "10-Year T-Note Futures"
     }
 
     trades_file = data_dir / "executed_trades.json"
@@ -1207,29 +1225,48 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         cl = sb["closed_trades"]
         sb["win_rate_pct"] = round((sb["wins"] / cl * 100), 1) if cl > 0 else 0.0
 
-    # Equity Curve
-    sorted_trades = sorted(trades, key=lambda x: x.get("entry_date", ""))
-    dates = sorted(list(set(t.get("entry_date", "") for t in sorted_trades if t.get("entry_date"))))
+    # Equity Curve (Accurate Mark-to-Market Timeline)
+    all_dates = sorted(list(set(
+        [t.get("entry_date") for t in trades if t.get("entry_date")] +
+        [t.get("exit_date") for t in trades if t.get("exit_date")]
+    )))
     eq_curve = []
     running_eq = STARTING_PORTFOLIO_CAPITAL  # $100k starting portfolio capital
-    cum_pnl = 0.0
     peak_eq = running_eq
     max_dd = 0.0
-    if not dates:
+    if not all_dates:
         eq_curve.append({
             "date": latest_date, "cum_pnl": 0.0, "equity": running_eq, "drawdown_pct": 0.0
         })
     else:
-        for d in dates:
-            d_trades = [t for t in trades if t.get("entry_date") == d or t.get("exit_date") == d]
-            d_pnl = sum(float(t.get("realized_pnl", 0.0)) if t.get("exit_date") == d else float(t.get("unrealized_pnl", 0.0)) for t in d_trades)
-            cum_pnl += d_pnl
+        for d in all_dates:
+            # Realized PnL of all trades closed on or before date d
+            realized_up_to_d = sum(
+                float(t.get("realized_pnl", 0.0))
+                for t in trades
+                if t.get("status") != "OPEN" and t.get("exit_date") and t.get("exit_date") <= d
+            )
+            # Unrealized PnL of active trades on date d
+            active_on_d = [
+                t for t in trades
+                if t.get("entry_date") and t.get("entry_date") <= d and (
+                    t.get("status") == "OPEN" or (t.get("exit_date") and t.get("exit_date") > d)
+                )
+            ]
+            unrealized_d = sum(float(t.get("unrealized_pnl", 0.0)) for t in active_on_d if t.get("status") == "OPEN")
+            
+            cum_pnl = realized_up_to_d + unrealized_d
             c_eq = running_eq + cum_pnl
-            if c_eq > peak_eq: peak_eq = c_eq
+            if c_eq > peak_eq:
+                peak_eq = c_eq
             dd = ((peak_eq - c_eq) / peak_eq * 100) if peak_eq > 0 else 0.0
-            if dd > max_dd: max_dd = dd
+            if dd > max_dd:
+                max_dd = dd
             eq_curve.append({
-                "date": d, "cum_pnl": round(cum_pnl, 2), "equity": round(c_eq, 2), "drawdown_pct": round(dd, 2)
+                "date": d,
+                "cum_pnl": round(cum_pnl, 2),
+                "equity": round(c_eq, 2),
+                "drawdown_pct": round(dd, 2)
             })
 
     perf_payload = {
