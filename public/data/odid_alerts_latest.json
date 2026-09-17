@@ -1,61 +1,34 @@
 {
-  "timestamp": "2026-09-17T01:05:37.191818Z",
+  "timestamp": "2026-09-17T21:32:18.489409Z",
   "date": "2026-09-17",
-  "total_alerts": 6,
+  "total_alerts": 3,
   "alerts": [
     {
       "symbol": "NQ",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 29200.0,
-      "low_trigger": 28918.75,
-      "last_close": 29436.75,
-      "severity": "medium"
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-09-16",
+      "high_trigger": 29252.25,
+      "low_trigger": 28763.75,
+      "last_close": 29720.5,
+      "severity": "high"
     },
     {
       "symbol": "GC",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 4358.2002,
-      "low_trigger": 4301.6001,
-      "last_close": 4317.8999,
-      "severity": "medium"
-    },
-    {
-      "symbol": "SI",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 63.64,
-      "low_trigger": 63.03,
-      "last_close": 63.615,
-      "severity": "medium"
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-09-16",
+      "high_trigger": 4413.1001,
+      "low_trigger": 4273.2998,
+      "last_close": 4380.6001,
+      "severity": "high"
     },
     {
       "symbol": "6E",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 1.1567,
-      "low_trigger": 1.1543,
-      "last_close": 1.1501,
-      "severity": "medium"
-    },
-    {
-      "symbol": "6J",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 0.0065,
-      "low_trigger": 0.0065,
-      "last_close": 0.0064,
-      "severity": "medium"
-    },
-    {
-      "symbol": "6B",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-15",
-      "high_trigger": 1.3497,
-      "low_trigger": 1.3472,
-      "last_close": 1.3378,
-      "severity": "medium"
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-09-16",
+      "high_trigger": 1.1568,
+      "low_trigger": 1.1478,
+      "last_close": 1.1516,
+      "severity": "high"
     }
   ]
 }
