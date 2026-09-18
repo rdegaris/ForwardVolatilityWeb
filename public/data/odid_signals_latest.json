@@ -1,23 +1,14 @@
 {
-  "timestamp": "2026-09-17T21:32:18.489404Z",
-  "date": "2026-09-17",
+  "timestamp": "2026-09-18T01:05:09.254555Z",
+  "date": "2026-09-18",
   "total_armed": 3,
   "triggered": [
     {
       "symbol": "NQ",
       "side": "long",
-      "asof": "2026-09-17",
+      "asof": "2026-09-18",
       "entry_stop": 29252.25,
       "stop_loss": 28763.75,
-      "eligible": true,
-      "notes": "Confirmed TOO_HOT (OUTSIDE_DAY) upside breakout"
-    },
-    {
-      "symbol": "GC",
-      "side": "long",
-      "asof": "2026-09-17",
-      "entry_stop": 4413.1001,
-      "stop_loss": 4273.2998,
       "eligible": true,
       "notes": "Confirmed TOO_HOT (OUTSIDE_DAY) upside breakout"
     }
