@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-18T01:05:09.989884Z",
+  "timestamp": "2026-09-18T21:32:38.962541Z",
   "date": "2026-09-18",
-  "total_trades": 173,
+  "total_trades": 174,
   "open_trades_count": 8,
-  "closed_trades_count": 165,
+  "closed_trades_count": 166,
   "winning_trades": 70,
-  "losing_trades": 89,
-  "win_rate_pct": 42.4,
-  "total_realized_pnl": -30787.64,
-  "total_unrealized_pnl": 4786.93,
-  "net_pnl": -26000.71,
-  "profit_factor": 0.77,
-  "max_drawdown_pct": 40.72,
-  "avg_win": 1477.28,
-  "avg_loss": 1507.83,
+  "losing_trades": 90,
+  "win_rate_pct": 42.2,
+  "total_realized_pnl": -34560.66,
+  "total_unrealized_pnl": 8697.54,
+  "net_pnl": -25863.12,
+  "profit_factor": 0.75,
+  "max_drawdown_pct": 41.5,
+  "avg_win": 1480.59,
+  "avg_loss": 1535.58,
   "strategy_breakdown": {
     "Trendorama": {
       "strategy": "Trendorama",
@@ -23,8 +23,8 @@
       "wins": 0,
       "losses": 15,
       "realized_pnl": -25862.83,
-      "unrealized_pnl": 6489.55,
-      "net_pnl": -19373.28,
+      "unrealized_pnl": 7102.8,
+      "net_pnl": -18760.03,
       "win_rate_pct": 0.0
     },
     "The Bradman": {
@@ -34,34 +34,34 @@
       "closed_trades": 100,
       "wins": 46,
       "losses": 50,
-      "realized_pnl": 419.87,
-      "unrealized_pnl": -219.5,
-      "net_pnl": 200.37,
+      "realized_pnl": -728.15,
+      "unrealized_pnl": 2614.75,
+      "net_pnl": 1886.6,
       "win_rate_pct": 46.0
     },
     "TooHot TooCold": {
       "strategy": "TooHot TooCold",
-      "total_trades": 23,
-      "open_trades": 0,
+      "total_trades": 24,
+      "open_trades": 1,
       "closed_trades": 23,
       "wins": 10,
       "losses": 12,
       "realized_pnl": -6921.46,
-      "unrealized_pnl": 0.0,
-      "net_pnl": -6921.46,
+      "unrealized_pnl": -1020.01,
+      "net_pnl": -7941.47,
       "win_rate_pct": 43.5
     },
     "YouHaveChosenWisely": {
       "strategy": "YouHaveChosenWisely",
       "total_trades": 23,
-      "open_trades": 1,
-      "closed_trades": 22,
+      "open_trades": 0,
+      "closed_trades": 23,
       "wins": 9,
-      "losses": 12,
-      "realized_pnl": -1551.94,
-      "unrealized_pnl": -1483.12,
-      "net_pnl": -3035.06,
-      "win_rate_pct": 40.9
+      "losses": 13,
+      "realized_pnl": -4176.94,
+      "unrealized_pnl": 0.0,
+      "net_pnl": -4176.94,
+      "win_rate_pct": 39.1
     },
     "The Linda": {
       "strategy": "The Linda",
@@ -301,256 +301,284 @@
     },
     {
       "date": "2026-07-29",
-      "cum_pnl": 10606.78,
-      "equity": 110606.78,
-      "drawdown_pct": 4.99
+      "cum_pnl": 11263.03,
+      "equity": 111263.03,
+      "drawdown_pct": 4.43
     },
     {
       "date": "2026-07-30",
-      "cum_pnl": 5361.53,
-      "equity": 105361.53,
-      "drawdown_pct": 9.5
+      "cum_pnl": 6017.78,
+      "equity": 106017.78,
+      "drawdown_pct": 8.94
     },
     {
       "date": "2026-08-03",
-      "cum_pnl": -3335.35,
-      "equity": 96664.65,
-      "drawdown_pct": 16.97
+      "cum_pnl": -2679.1,
+      "equity": 97320.9,
+      "drawdown_pct": 16.41
     },
     {
       "date": "2026-08-04",
-      "cum_pnl": -6036.17,
-      "equity": 93963.83,
-      "drawdown_pct": 19.29
+      "cum_pnl": -5379.92,
+      "equity": 94620.08,
+      "drawdown_pct": 18.73
     },
     {
       "date": "2026-08-05",
-      "cum_pnl": -8586.24,
-      "equity": 91413.76,
-      "drawdown_pct": 21.48
+      "cum_pnl": -7929.99,
+      "equity": 92070.01,
+      "drawdown_pct": 20.92
     },
     {
       "date": "2026-08-06",
-      "cum_pnl": -8846.25,
-      "equity": 91153.75,
-      "drawdown_pct": 21.7
+      "cum_pnl": -8190.0,
+      "equity": 91810.0,
+      "drawdown_pct": 21.14
     },
     {
       "date": "2026-08-07",
-      "cum_pnl": -9235.24,
-      "equity": 90764.76,
-      "drawdown_pct": 22.04
+      "cum_pnl": -8578.99,
+      "equity": 91421.01,
+      "drawdown_pct": 21.47
     },
     {
       "date": "2026-08-10",
-      "cum_pnl": -12656.24,
-      "equity": 87343.76,
-      "drawdown_pct": 24.98
+      "cum_pnl": -11999.99,
+      "equity": 88000.01,
+      "drawdown_pct": 24.41
     },
     {
       "date": "2026-08-13",
-      "cum_pnl": -13822.84,
-      "equity": 86177.16,
-      "drawdown_pct": 25.98
+      "cum_pnl": -13166.59,
+      "equity": 86833.41,
+      "drawdown_pct": 25.41
     },
     {
       "date": "2026-08-17",
-      "cum_pnl": -13107.55,
-      "equity": 86892.45,
-      "drawdown_pct": 25.36
+      "cum_pnl": -12451.3,
+      "equity": 87548.7,
+      "drawdown_pct": 24.8
     },
     {
       "date": "2026-08-18",
-      "cum_pnl": -14974.3,
-      "equity": 85025.7,
-      "drawdown_pct": 26.97
+      "cum_pnl": -14318.05,
+      "equity": 85681.95,
+      "drawdown_pct": 26.4
     },
     {
       "date": "2026-08-19",
-      "cum_pnl": -18889.3,
-      "equity": 81110.7,
-      "drawdown_pct": 30.33
+      "cum_pnl": -18233.05,
+      "equity": 81766.95,
+      "drawdown_pct": 29.77
     },
     {
       "date": "2026-08-20",
-      "cum_pnl": -22547.3,
-      "equity": 77452.7,
-      "drawdown_pct": 33.47
+      "cum_pnl": -21891.05,
+      "equity": 78108.95,
+      "drawdown_pct": 32.91
     },
     {
       "date": "2026-08-24",
-      "cum_pnl": -21554.3,
-      "equity": 78445.7,
-      "drawdown_pct": 32.62
+      "cum_pnl": -20898.05,
+      "equity": 79101.95,
+      "drawdown_pct": 32.06
     },
     {
       "date": "2026-08-25",
-      "cum_pnl": -23718.79,
-      "equity": 76281.21,
-      "drawdown_pct": 34.48
+      "cum_pnl": -23062.54,
+      "equity": 76937.46,
+      "drawdown_pct": 33.91
     },
     {
       "date": "2026-08-26",
-      "cum_pnl": -25211.29,
-      "equity": 74788.71,
-      "drawdown_pct": 35.76
+      "cum_pnl": -24555.04,
+      "equity": 75444.96,
+      "drawdown_pct": 35.2
     },
     {
       "date": "2026-08-27",
-      "cum_pnl": -27125.29,
-      "equity": 72874.71,
-      "drawdown_pct": 37.4
+      "cum_pnl": -26469.04,
+      "equity": 73530.96,
+      "drawdown_pct": 36.84
     },
     {
       "date": "2026-08-28",
-      "cum_pnl": -25133.79,
-      "equity": 74866.21,
-      "drawdown_pct": 35.69
+      "cum_pnl": -24477.54,
+      "equity": 75522.46,
+      "drawdown_pct": 35.13
     },
     {
       "date": "2026-08-31",
-      "cum_pnl": -26531.32,
-      "equity": 73468.68,
-      "drawdown_pct": 36.89
+      "cum_pnl": -25062.57,
+      "equity": 74937.43,
+      "drawdown_pct": 35.63
     },
     {
       "date": "2026-09-01",
-      "cum_pnl": -24418.33,
-      "equity": 75581.67,
-      "drawdown_pct": 35.08
+      "cum_pnl": -22949.58,
+      "equity": 77050.42,
+      "drawdown_pct": 33.82
     },
     {
       "date": "2026-09-02",
-      "cum_pnl": -26515.47,
-      "equity": 73484.53,
-      "drawdown_pct": 36.88
+      "cum_pnl": -25046.72,
+      "equity": 74953.28,
+      "drawdown_pct": 35.62
     },
     {
       "date": "2026-09-03",
-      "cum_pnl": -23133.72,
-      "equity": 76866.28,
-      "drawdown_pct": 33.98
+      "cum_pnl": -21664.97,
+      "equity": 78335.03,
+      "drawdown_pct": 32.71
     },
     {
       "date": "2026-09-04",
-      "cum_pnl": -23748.72,
-      "equity": 76251.28,
-      "drawdown_pct": 34.5
+      "cum_pnl": -22279.97,
+      "equity": 77720.03,
+      "drawdown_pct": 33.24
     },
     {
       "date": "2026-09-08",
-      "cum_pnl": -20612.47,
-      "equity": 79387.53,
-      "drawdown_pct": 31.81
+      "cum_pnl": -20251.72,
+      "equity": 79748.28,
+      "drawdown_pct": 31.5
     },
     {
       "date": "2026-09-09",
-      "cum_pnl": -22502.47,
-      "equity": 77497.53,
-      "drawdown_pct": 33.43
+      "cum_pnl": -22141.72,
+      "equity": 77858.28,
+      "drawdown_pct": 33.12
     },
     {
       "date": "2026-09-10",
-      "cum_pnl": -26157.22,
-      "equity": 73842.78,
-      "drawdown_pct": 36.57
+      "cum_pnl": -25796.47,
+      "equity": 74203.53,
+      "drawdown_pct": 36.26
     },
     {
       "date": "2026-09-11",
-      "cum_pnl": -28113.72,
-      "equity": 71886.28,
-      "drawdown_pct": 38.25
+      "cum_pnl": -27752.97,
+      "equity": 72247.03,
+      "drawdown_pct": 37.94
     },
     {
       "date": "2026-09-14",
-      "cum_pnl": -29359.85,
-      "equity": 70640.15,
-      "drawdown_pct": 39.32
+      "cum_pnl": -27263.48,
+      "equity": 72736.52,
+      "drawdown_pct": 37.52
     },
     {
       "date": "2026-09-15",
-      "cum_pnl": -29140.85,
-      "equity": 70859.15,
-      "drawdown_pct": 39.14
+      "cum_pnl": -27044.48,
+      "equity": 72955.52,
+      "drawdown_pct": 37.34
     },
     {
       "date": "2026-09-16",
-      "cum_pnl": -30987.73,
-      "equity": 69012.27,
-      "drawdown_pct": 40.72
+      "cum_pnl": -28891.36,
+      "equity": 71108.64,
+      "drawdown_pct": 38.92
+    },
+    {
+      "date": "2026-09-17",
+      "cum_pnl": -31891.37,
+      "equity": 68108.63,
+      "drawdown_pct": 41.5
     },
     {
       "date": "2026-09-18",
-      "cum_pnl": -26000.71,
-      "equity": 73999.29,
-      "drawdown_pct": 36.44
+      "cum_pnl": -25863.12,
+      "equity": 74136.88,
+      "drawdown_pct": 36.32
     }
   ],
   "recent_trades": [
     {
-      "id": "pt_NQ_Brad_20260918_171",
-      "symbol": "NQ",
-      "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
+      "id": "pt_ES_Brad_20260918_172",
+      "symbol": "ES",
+      "symbol_name": "Micro E-mini S&P 500 (MES)",
       "strategy": "The Bradman",
       "side": "short",
       "entry_date": "2026-09-18",
-      "entry_price": 29584.125,
-      "qty": 1,
-      "stop_loss": 30217.0,
-      "profit_target": 29172.0,
-      "point_value": 2.0,
+      "entry_price": 7732.0,
+      "qty": 3,
+      "stop_loss": 7842.25,
+      "profit_target": 7572.0,
+      "point_value": 5.0,
       "status": "OPEN",
-      "current_price": 29668.25,
-      "unrealized_pnl": -168.25,
+      "current_price": 7725.0,
+      "unrealized_pnl": 105.0,
       "realized_pnl": 0.0,
-      "return_pct": -0.28,
+      "return_pct": 0.09,
       "duration_days": 0,
-      "initial_risk": 1265.75,
+      "initial_risk": 1653.75,
       "created_at": "2026-09-18T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z"
     },
     {
-      "id": "pt_GC_Brad_20260918_172",
+      "id": "pt_GC_Brad_20260918_173",
       "symbol": "GC",
       "symbol_name": "Micro Gold Futures (MGC)",
       "strategy": "The Bradman",
       "side": "short",
       "entry_date": "2026-09-18",
-      "entry_price": 4386.7,
+      "entry_price": 4428.0,
       "qty": 1,
-      "stop_loss": 4539.3003,
-      "profit_target": 4238.4995,
+      "stop_loss": 4568.5996,
+      "profit_target": 4243.4004,
       "point_value": 10.0,
       "status": "OPEN",
-      "current_price": 4392.7002,
-      "unrealized_pnl": -60.0,
+      "current_price": 4415.8999,
+      "unrealized_pnl": 121.0,
       "realized_pnl": 0.0,
-      "return_pct": -0.14,
+      "return_pct": 0.27,
       "duration_days": 0,
-      "initial_risk": 1526.0,
+      "initial_risk": 1406.0,
       "created_at": "2026-09-18T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z"
     },
     {
-      "id": "pt_NG_Brad_20260918_173",
-      "symbol": "NG",
-      "symbol_name": "E-mini Natural Gas (QG)",
+      "id": "pt_6J_Brad_20260918_174",
+      "symbol": "6J",
+      "symbol_name": "Micro Japanese Yen (M6J)",
       "strategy": "The Bradman",
       "side": "long",
       "entry_date": "2026-09-18",
-      "entry_price": 2.8565,
-      "qty": 7,
-      "stop_loss": 2.75,
-      "profit_target": 2.973,
-      "point_value": 2500.0,
+      "entry_price": 0.0064,
+      "qty": 42,
+      "stop_loss": 0.0063,
+      "profit_target": 0.0065,
+      "point_value": 1250000.0,
       "status": "OPEN",
-      "current_price": 2.857,
-      "unrealized_pnl": 8.75,
+      "current_price": 0.0064,
+      "unrealized_pnl": 2388.75,
       "realized_pnl": 0.0,
-      "return_pct": 0.02,
+      "return_pct": 0.71,
       "duration_days": 0,
-      "initial_risk": 1863.75,
+      "initial_risk": 1994.98,
       "created_at": "2026-09-18T13:30:00Z",
+      "updated_at": "2026-09-18T20:00:00Z"
+    },
+    {
+      "id": "pt_6E_THTC_20260917_171",
+      "symbol": "6E",
+      "symbol_name": "Micro Euro FX (M6E)",
+      "strategy": "TooHot TooCold",
+      "side": "short",
+      "entry_date": "2026-09-17",
+      "entry_price": 1.1478,
+      "qty": 17,
+      "stop_loss": 1.1568,
+      "profit_target": 1.1297,
+      "point_value": 12500.0,
+      "status": "OPEN",
+      "current_price": 1.1526,
+      "unrealized_pnl": -1020.01,
+      "realized_pnl": 0.0,
+      "return_pct": -0.42,
+      "duration_days": 1,
+      "initial_risk": 1923.13,
+      "created_at": "2026-09-17T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z"
     },
     {
@@ -566,7 +594,7 @@
       "profit_target": 7688.5,
       "point_value": 5.0,
       "status": "HIT_TARGET",
-      "current_price": 7699.5,
+      "current_price": 7725.0,
       "unrealized_pnl": 0.0,
       "realized_pnl": 5190.0,
       "return_pct": 2.3,
@@ -590,15 +618,15 @@
       "profit_target": 4462.0,
       "point_value": 10.0,
       "status": "TIME_EXIT",
-      "current_price": 4392.7002,
+      "current_price": 4415.8999,
       "unrealized_pnl": 0.0,
-      "realized_pnl": 616.5,
-      "return_pct": 1.42,
+      "realized_pnl": 848.5,
+      "return_pct": 1.96,
       "duration_days": 3,
       "initial_risk": 1332.5,
       "created_at": "2026-09-15T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z",
-      "exit_price": 4392.7002,
+      "exit_price": 4415.8999,
       "exit_date": "2026-09-18"
     },
     {
@@ -614,38 +642,14 @@
       "profit_target": 2648.2454,
       "point_value": 5.0,
       "status": "OPEN",
-      "current_price": 2890.6001,
-      "unrealized_pnl": -75.0,
+      "current_price": 2880.5,
+      "unrealized_pnl": 177.5,
       "realized_pnl": 0.0,
-      "return_pct": -0.1,
+      "return_pct": 0.25,
       "duration_days": 4,
       "initial_risk": 1994.62,
       "created_at": "2026-09-14T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z"
-    },
-    {
-      "id": "pt_6E_Brad_20260914_166",
-      "symbol": "6E",
-      "symbol_name": "Micro Euro FX (M6E)",
-      "strategy": "The Bradman",
-      "side": "long",
-      "entry_date": "2026-09-14",
-      "entry_price": 1.1539,
-      "qty": 24,
-      "stop_loss": 1.1473,
-      "profit_target": 1.1648,
-      "point_value": 12500.0,
-      "status": "TIME_EXIT",
-      "current_price": 1.1519,
-      "unrealized_pnl": 0.0,
-      "realized_pnl": -599.98,
-      "return_pct": -0.17,
-      "duration_days": 4,
-      "initial_risk": 1965.0,
-      "created_at": "2026-09-14T13:30:00Z",
-      "updated_at": "2026-09-18T20:00:00Z",
-      "exit_price": 1.1519,
-      "exit_date": "2026-09-18"
     },
     {
       "id": "pt_6J_Wisely_20260914_167",
@@ -659,15 +663,17 @@
       "stop_loss": 0.0064,
       "profit_target": 0.0066,
       "point_value": 1250000.0,
-      "status": "OPEN",
+      "status": "STOPPED_OUT",
       "current_price": 0.0064,
-      "unrealized_pnl": -1483.12,
-      "realized_pnl": 0.0,
-      "return_pct": -0.87,
+      "unrealized_pnl": 0.0,
+      "realized_pnl": -2625.0,
+      "return_pct": -1.54,
       "duration_days": 4,
       "initial_risk": 1999.4,
       "created_at": "2026-09-14T13:30:00Z",
-      "updated_at": "2026-09-18T20:00:00Z"
+      "updated_at": "2026-09-18T20:00:00Z",
+      "exit_price": 0.0064,
+      "exit_date": "2026-09-18"
     },
     {
       "id": "pt_CL_Tren_20260908_158",
@@ -682,10 +688,10 @@
       "profit_target": 116.0982,
       "point_value": 100.0,
       "status": "OPEN",
-      "current_price": 101.01,
-      "unrealized_pnl": 1502.0,
+      "current_price": 95.47,
+      "unrealized_pnl": 394.0,
       "realized_pnl": 0.0,
-      "return_pct": 8.03,
+      "return_pct": 2.11,
       "duration_days": 10,
       "initial_risk": 1506.55,
       "created_at": "2026-09-08T13:30:00Z",
@@ -704,10 +710,10 @@
       "profit_target": 105.1288,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 106.2344,
-      "unrealized_pnl": 3500.05,
+      "current_price": 105.8281,
+      "unrealized_pnl": 4312.55,
       "realized_pnl": 0.0,
-      "return_pct": 1.62,
+      "return_pct": 2.0,
       "duration_days": 18,
       "initial_risk": 1903.68,
       "created_at": "2026-08-31T13:30:00Z",
@@ -726,14 +732,38 @@
       "profit_target": 103.9098,
       "point_value": 1000.0,
       "status": "OPEN",
-      "current_price": 107.6875,
-      "unrealized_pnl": 1562.5,
+      "current_price": 107.0312,
+      "unrealized_pnl": 2218.75,
       "realized_pnl": 0.0,
-      "return_pct": 1.43,
+      "return_pct": 2.03,
       "duration_days": 51,
       "initial_risk": 1780.06,
       "created_at": "2026-07-29T13:30:00Z",
       "updated_at": "2026-09-18T20:00:00Z"
+    },
+    {
+      "id": "pt_6E_Brad_20260914_166",
+      "symbol": "6E",
+      "symbol_name": "Micro Euro FX (M6E)",
+      "strategy": "The Bradman",
+      "side": "long",
+      "entry_date": "2026-09-14",
+      "entry_price": 1.1539,
+      "qty": 24,
+      "stop_loss": 1.1473,
+      "profit_target": 1.1648,
+      "point_value": 12500.0,
+      "status": "STOPPED_OUT",
+      "current_price": 1.1489,
+      "unrealized_pnl": 0.0,
+      "realized_pnl": -1980.0,
+      "return_pct": -0.57,
+      "duration_days": 3,
+      "initial_risk": 1965.0,
+      "created_at": "2026-09-14T13:30:00Z",
+      "updated_at": "2026-09-17T20:00:00Z",
+      "exit_price": 1.1473,
+      "exit_date": "2026-09-17"
     },
     {
       "id": "pt_ES_Brad_20260915_168",
@@ -1646,30 +1676,6 @@
       "updated_at": "2026-08-24T20:00:00Z",
       "exit_price": 85.01,
       "exit_date": "2026-08-24"
-    },
-    {
-      "id": "pt_6J_Wisely_20260819_129",
-      "symbol": "6J",
-      "symbol_name": "Micro Japanese Yen (M6J)",
-      "strategy": "YouHaveChosenWisely",
-      "side": "long",
-      "entry_date": "2026-08-19",
-      "entry_price": 0.0063,
-      "qty": 26,
-      "stop_loss": 0.0063,
-      "profit_target": 0.0064,
-      "point_value": 1250000.0,
-      "status": "STOPPED_OUT",
-      "current_price": 0.0063,
-      "unrealized_pnl": 0.0,
-      "realized_pnl": 0.0,
-      "return_pct": 0.0,
-      "duration_days": 1,
-      "initial_risk": 1965.79,
-      "created_at": "2026-08-19T13:30:00Z",
-      "updated_at": "2026-08-20T20:00:00Z",
-      "exit_price": 0.0063,
-      "exit_date": "2026-08-20"
     }
   ]
 }
