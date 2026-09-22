@@ -1,15 +1,24 @@
 {
-  "timestamp": "2026-09-22T01:05:06.035836Z",
+  "timestamp": "2026-09-22T21:32:43.963911Z",
   "date": "2026-09-22",
-  "total_alerts": 1,
+  "total_alerts": 2,
   "alerts": [
     {
-      "symbol": "YM",
+      "symbol": "6J",
       "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-18",
-      "high_trigger": 51957.0,
-      "low_trigger": 51576.0,
-      "last_close": 52418.0,
+      "asof": "2026-09-21",
+      "high_trigger": 0.0064,
+      "low_trigger": 0.0064,
+      "last_close": 0.0064,
+      "severity": "medium"
+    },
+    {
+      "symbol": "ZB",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-21",
+      "high_trigger": 108.125,
+      "low_trigger": 108.0625,
+      "last_close": 107.5625,
       "severity": "medium"
     }
   ]
