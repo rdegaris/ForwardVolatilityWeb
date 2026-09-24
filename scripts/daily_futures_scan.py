@@ -36,7 +36,6 @@ FUTURES_MAP = {
     "CL": "CL=F",   # Crude Oil Futures
     "NG": "NG=F",   # Natural Gas Futures
     "6E": "6E=F",   # Euro FX Futures
-    "6J": "6J=F",   # Japanese Yen Futures
     "6B": "6B=F",   # British Pound Futures
     "ZB": "ZB=F",   # 30-Yr T-Bond Futures
     "ZN": "ZN=F",   # 10-Yr T-Note Futures
@@ -153,6 +152,14 @@ def compute_ema(closes: List[float], period: int = 20) -> List[float]:
     for i in range(period, len(closes)):
         emas[i] = (closes[i] - emas[i - 1]) * multiplier + emas[i - 1]
     return emas
+
+def compute_sma(closes: List[float], period: int = 200) -> List[float]:
+    smas = [0.0] * len(closes)
+    if len(closes) < period:
+        period = min(len(closes), 50)
+    for i in range(period - 1, len(closes)):
+        smas[i] = sum(closes[i - period + 1 : i + 1]) / period
+    return smas
 
 def compute_adx(bars: List[Bar], period: int = 14) -> Tuple[List[float], List[float], List[float]]:
     n = len(bars)
@@ -769,7 +776,6 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "NG": 2500.0,     # E-mini Natural Gas (QG)
         "6E": 12500.0,    # Micro Euro FX (M6E)
         "6B": 6250.0,     # Micro British Pound (M6B)
-        "6J": 1250000.0,  # Micro Japanese Yen (M6J)
         "ZB": 1000.0,     # 30-Year T-Bond Futures
         "ZN": 1000.0      # 10-Year T-Note Futures
     }
@@ -784,7 +790,6 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "NG": "E-mini Natural Gas (QG)",
         "6E": "Micro Euro FX (M6E)",
         "6B": "Micro British Pound (M6B)",
-        "6J": "Micro Japanese Yen (M6J)",
         "ZB": "30-Year T-Bond Futures",
         "ZN": "10-Year T-Note Futures"
     }
@@ -799,7 +804,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "rates": {"ZB", "ZN", "ZF", "ZT"},
         "energies": {"CL", "NG", "HO", "RB"},
         "metals": {"GC", "SI", "HG"},
-        "fx": {"6E", "6B", "6J", "6A", "6C", "EUR", "GBP", "JPY", "CAD", "AUD"},
+        "fx": {"6E", "6B", "6A", "6C", "EUR", "GBP", "CAD", "AUD"},
         "grains": {"ZC", "ZW", "ZS", "ZL"},
         "softs": {"KC", "SB", "CT"},
         "livestock": {"HE", "LE"},
@@ -880,6 +885,26 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 duration = 0
             t["duration_days"] = duration
 
+            atrs_cur = compute_atr(bars, 20)
+            atr_cur = atrs_cur[-1] if atrs_cur else 1.0
+
+            # Dynamic Breakeven & Trailing Stops
+            if strat == "Trendorama":
+                if side == "long" and high >= entry + 1.0 * atr_cur:
+                    stop = max(stop, entry, high - 2.0 * atr_cur)
+                    t["stop_loss"] = round(stop, 4)
+                elif side == "short" and low <= entry - 1.0 * atr_cur:
+                    stop = min(stop, entry, low + 2.0 * atr_cur)
+                    t["stop_loss"] = round(stop, 4)
+
+            if strat == "TooHot TooCold":
+                if side == "long" and high >= entry + 1.0 * atr_cur:
+                    stop = max(stop, entry)
+                    t["stop_loss"] = round(stop, 4)
+                elif side == "short" and low <= entry - 1.0 * atr_cur:
+                    stop = min(stop, entry)
+                    t["stop_loss"] = round(stop, 4)
+
             donchian_low_20 = min(b.low for b in bars[-21:-1]) if len(bars) >= 21 else min(b.low for b in bars)
             donchian_high_20 = max(b.high for b in bars[-21:-1]) if len(bars) >= 21 else max(b.high for b in bars)
 
@@ -919,10 +944,12 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             elif strat == "TooHot TooCold" and duration >= 4: time_exit = True
             elif strat == "YouHaveChosenWisely" and duration >= 5: time_exit = True
 
+            # YouHaveChosenWisely: 2 consecutive closes across EMA20
             ema_exit = False
-            if strat == "YouHaveChosenWisely":
-                if side == "long" and close < ema20: ema_exit = True
-                elif side == "short" and close > ema20: ema_exit = True
+            if strat == "YouHaveChosenWisely" and len(bars) >= 2:
+                b_prev = bars[-2]
+                if side == "long" and close < ema20 and b_prev.close < ema20: ema_exit = True
+                elif side == "short" and close > ema20 and b_prev.close > ema20: ema_exit = True
 
             if is_stopped:
                 t["status"] = "STOPPED_OUT"
@@ -982,18 +1009,23 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             if len(bars) < 60 or bars[-1].dt != cur_date:
                 continue
             b0 = bars[-1]
+            b1, b2 = bars[-2], bars[-3]
             pt_val = point_values.get(sym, 1.0)
             sym_name = symbol_names.get(sym, sym)
             atrs = compute_atr(bars, 20)
             atr = atrs[-1]
+            adx_list, pdi_list, mdi_list = compute_adx(bars, 14)
+            cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
+            smas200 = compute_sma([b.close for b in bars], 200)
+            sma200 = smas200[-1] if smas200 else b0.close
 
-            # Strategy 1: Trendorama (55-day Donchian Breakout)
+            # Strategy 1: Trendorama (55-day Donchian Breakout with 200 SMA Trend Filter)
             hist_55 = bars[-56:-1]
             donchian_high_55 = max(b.high for b in hist_55)
             donchian_low_55 = min(b.low for b in hist_55)
-            if b0.high >= donchian_high_55 and can_open_trade(sym):
+            if b0.high >= donchian_high_55 and b0.close >= sma200 and cur_adx >= 20.0 and can_open_trade(sym):
                 entry_p = donchian_high_55
-                stop_p = entry_p - 2 * atr
+                stop_p = entry_p - 1.5 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                 trades.append({
@@ -1007,9 +1039,9 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
                 })
                 trade_id_seq += 1
-            elif b0.low <= donchian_low_55 and can_open_trade(sym):
+            elif b0.low <= donchian_low_55 and b0.close <= sma200 and cur_adx >= 20.0 and can_open_trade(sym):
                 entry_p = donchian_low_55
-                stop_p = entry_p + 2 * atr
+                stop_p = entry_p + 1.5 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                 trades.append({
@@ -1024,16 +1056,15 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 })
                 trade_id_seq += 1
 
-            # Strategy 2: The Bradman (Taylor 3-day cycle)
-            b1, b2 = bars[-2], bars[-3]
+            # Strategy 2: The Bradman (Taylor 3-day cycle with 0.80x ATR Risk Optimization)
             is_declining = b1.close < b2.close and b0.close <= b1.close
             is_advancing = b1.close > b2.close and b0.close >= b1.close
             buy_press = b1.close - b1.low
             sell_press = b1.high - b1.close
-            if is_declining and can_open_trade(sym):
+            if is_declining and cur_adx < 35.0 and can_open_trade(sym):
                 entry_p = b0.low + (buy_press * 0.5)
-                stop_p = b0.low - (b1.high - b1.low)
-                target_p = b0.high + (b1.high - b1.low)
+                stop_p = entry_p - 0.80 * atr
+                target_p = entry_p + 1.50 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                 trades.append({
@@ -1047,10 +1078,10 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
                 })
                 trade_id_seq += 1
-            elif is_advancing and can_open_trade(sym):
+            elif is_advancing and cur_adx < 35.0 and can_open_trade(sym):
                 entry_p = b0.high - (sell_press * 0.5)
-                stop_p = b0.high + (b1.high - b1.low)
-                target_p = b0.low - (b1.high - b1.low)
+                stop_p = entry_p + 0.80 * atr
+                target_p = entry_p - 1.50 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                 trades.append({
@@ -1065,9 +1096,8 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 })
                 trade_id_seq += 1
 
-            # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA + 14 ADX > 25/30)
+            # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA Pullback)
             emas = compute_ema([b.close for b in bars], 20)
-            adx_list, pdi_list, mdi_list = compute_adx(bars, 14)
             if len(emas) >= 20 and len(adx_list) >= 28:
                 last_ema = emas[-1]
                 last_adx = adx_list[-1]
@@ -1078,7 +1108,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 if last_adx >= 25.0 and dist_pct <= 2.5 and can_open_trade(sym):
                     side = "long" if is_uptrend else "short"
                     entry_p = b0.close
-                    stop_p = entry_p - 1.5 * atr if side == "long" else entry_p + 1.5 * atr
+                    stop_p = entry_p - 1.25 * atr if side == "long" else entry_p + 1.25 * atr
                     target_p = entry_p + 2.5 * atr if side == "long" else entry_p - 2.5 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
@@ -1094,14 +1124,14 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     })
                     trade_id_seq += 1
 
-            # Strategy 4: TooHot TooCold (OD/ID Breakout)
+            # Strategy 4: TooHot TooCold (OD/ID Breakout with 1.0x ATR Stop & Dynamic BE)
             is_inside = (b1.high <= b2.high) and (b1.low >= b2.low)
             is_outside = (b1.high > b2.high) and (b1.low < b2.low)
-            if (is_inside or is_outside) and can_open_trade(sym):
+            if (is_inside or is_outside) and cur_adx < 35.0 and can_open_trade(sym):
                 if b0.high > b1.high:
                     entry_p = b1.high
-                    stop_p = b1.low
-                    target_p = entry_p + 2 * (entry_p - stop_p)
+                    stop_p = entry_p - 1.0 * atr
+                    target_p = entry_p + 2.0 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                     trades.append({
@@ -1117,8 +1147,8 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     trade_id_seq += 1
                 elif b0.low < b1.low:
                     entry_p = b1.low
-                    stop_p = b1.high
-                    target_p = entry_p - 2 * (stop_p - entry_p)
+                    stop_p = entry_p + 1.0 * atr
+                    target_p = entry_p - 2.0 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
                     trades.append({
@@ -1139,10 +1169,10 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 ema20_prev = emas20[-1]
                 b1_range = b1.high - b1.low
                 atr_prev = atrs[-2] if len(atrs) >= 2 else atr
-                if b1_range > 0 and atr_prev > 0 and (b1_range / atr_prev) >= 0.70:
+                if b1_range > 0 and atr_prev > 0 and (b1_range / atr_prev) >= 0.55:
                     trend_strength = (b1.close - b1.low) / b1_range
-                    is_bull_thrust = trend_strength >= 0.75 and b1.low > ema20_prev
-                    is_bear_thrust = trend_strength <= 0.25 and b1.high < ema20_prev
+                    is_bull_thrust = trend_strength >= 0.70 and b1.low > ema20_prev
+                    is_bear_thrust = trend_strength <= 0.30 and b1.high < ema20_prev
                     
                     if (is_bull_thrust or is_bear_thrust) and can_open_trade(sym):
                         side = "short" if is_bull_thrust else "long"
