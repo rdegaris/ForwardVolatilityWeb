@@ -1,25 +1,25 @@
 {
-  "timestamp": "2026-09-29T01:11:33.353108Z",
+  "timestamp": "2026-09-29T21:35:49.743629Z",
   "date": "2026-09-29",
   "total_alerts": 2,
   "alerts": [
+    {
+      "symbol": "YM",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-09-28",
+      "high_trigger": 52153.0,
+      "low_trigger": 51744.0,
+      "last_close": 51755.0,
+      "severity": "medium"
+    },
     {
       "symbol": "CL",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
       "asof": "2026-09-28",
       "high_trigger": 96.54,
       "low_trigger": 91.25,
-      "last_close": 93.54,
+      "last_close": 88.94,
       "severity": "high"
-    },
-    {
-      "symbol": "ZN",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-09-25",
-      "high_trigger": 105.0469,
-      "low_trigger": 104.5312,
-      "last_close": 104.5156,
-      "severity": "medium"
     }
   ]
 }
