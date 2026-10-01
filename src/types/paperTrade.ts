@@ -16,6 +16,10 @@ export interface PaperTrade {
   current_price?: number | null;
   unrealized_pnl: number;
   realized_pnl: number;
+  gross_pnl?: number;
+  commission?: number;
+  slippage?: number;
+  fees_and_slippage?: number;
   return_pct: number;
   duration_days: number;
   notes?: string | null;
@@ -33,6 +37,9 @@ export interface StrategyPerformance {
   losses: number;
   realized_pnl: number;
   unrealized_pnl: number;
+  gross_pnl?: number;
+  commissions?: number;
+  slippage?: number;
   net_pnl: number;
   win_rate_pct: number;
 }
@@ -53,6 +60,12 @@ export interface PaperTradePerformancePayload {
   winning_trades: number;
   losing_trades: number;
   win_rate_pct: number;
+  total_gross_realized_pnl?: number;
+  total_gross_unrealized_pnl?: number;
+  total_gross_pnl?: number;
+  total_commissions?: number;
+  total_slippage?: number;
+  total_fees_and_slippage?: number;
   total_realized_pnl: number;
   total_unrealized_pnl: number;
   net_pnl: number;

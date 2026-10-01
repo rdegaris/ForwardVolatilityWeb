@@ -194,9 +194,37 @@ export default function Home() {
       });
   }, [allTrades, paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
 
-  // Strategy Specific Metrics
+  // Inception-level metrics (always across full history for selected strategy)
+  const inceptionMetrics = useMemo(() => {
+    const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
+    const pool = sourceTrades.filter(
+      (t) => selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy
+    );
+    const closed = pool.filter((t) => t.status !== 'OPEN');
+    const open = pool.filter((t) => t.status === 'OPEN');
+
+    const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
+    const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
+    const totalCosts = totalCommissions + totalSlippage;
+    const netPnl = realizedPnl + unrealizedPnl;
+
+    return {
+      realizedPnl: Math.round(realizedPnl * 100) / 100,
+      unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      netPnl: Math.round(netPnl * 100) / 100,
+      totalCommissions: Math.round(totalCommissions * 100) / 100,
+      totalSlippage: Math.round(totalSlippage * 100) / 100,
+      totalCosts: Math.round(totalCosts * 100) / 100,
+      closedCount: closed.length,
+      openCount: open.length,
+    };
+  }, [allTrades, paperPerformance, selectedPerfStrategy]);
+
+  // Strategy & Timeframe Specific Metrics
   const activeMetrics = useMemo(() => {
-    if (!paperPerformance) return null;
+    if (!paperPerformance && allTrades.length === 0) return null;
     const pool = perfTrades;
 
     const closed = pool.filter((t) => t.status !== 'OPEN');
@@ -204,6 +232,14 @@ export default function Home() {
 
     const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const grossRealizedPnl = closed.reduce((acc, t) => acc + (t.gross_pnl ?? t.realized_pnl ?? 0), 0);
+    const grossUnrealizedPnl = open.reduce((acc, t) => acc + (t.gross_pnl ?? t.unrealized_pnl ?? 0), 0);
+    const grossPnl = grossRealizedPnl + grossUnrealizedPnl;
+    const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
+    const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
+    const totalCosts = totalCommissions + totalSlippage;
+    const closedCosts = closed.reduce((acc, t) => acc + (t.fees_and_slippage ?? ((t.commission || 0) + (t.slippage || 0))), 0);
+
     const netPnl = realizedPnl + unrealizedPnl;
     const returnPct = (netPnl / 100000) * 100;
 
@@ -227,6 +263,13 @@ export default function Home() {
       returnPct: Math.round(returnPct * 100) / 100,
       realizedPnl: Math.round(realizedPnl * 100) / 100,
       unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      grossRealizedPnl: Math.round(grossRealizedPnl * 100) / 100,
+      grossUnrealizedPnl: Math.round(grossUnrealizedPnl * 100) / 100,
+      grossPnl: Math.round(grossPnl * 100) / 100,
+      totalCommissions: Math.round(totalCommissions * 100) / 100,
+      totalSlippage: Math.round(totalSlippage * 100) / 100,
+      totalCosts: Math.round(totalCosts * 100) / 100,
+      closedCosts: Math.round(closedCosts * 100) / 100,
       winRate: Math.round(winRate * 10) / 10,
       wins: wins.length,
       losses: losses.length,
@@ -236,7 +279,7 @@ export default function Home() {
       closedCount: closed.length,
       avgWin: Math.round(avgWin * 100) / 100,
     };
-  }, [paperPerformance, perfTrades]);
+  }, [paperPerformance, allTrades, perfTrades]);
 
   // Biggest Winners & Losers for Selected Strategy
   const biggestWinners = useMemo(() => {
@@ -815,14 +858,47 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+            <div className="rounded-2xl border border-slate-700/80 bg-slate-950/70 px-4 py-2 text-right">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Starting Capital
               </div>
               <div className="text-sm font-black text-slate-100 font-mono">
-                $100,000 <span className="text-[10px] text-emerald-400/80 font-normal">(2% Risk / Trade)</span>
+                $100,000 <span className="text-[10px] text-slate-400 font-normal">(2% Risk / Trade)</span>
               </div>
             </div>
+
+            <Link
+              to="/executed-trades?status=CLOSED"
+              className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-right hover:bg-emerald-500/15 transition"
+              title="Closed Realized P&L Since Inception (Net of Commissions & Slippage)"
+            >
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                Closed P&L (Since Inception)
+              </div>
+              <div className={`text-sm font-black font-mono ${(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? 'text-emerald-300' : 'text-rose-400'}`}>
+                {(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.realizedPnl ?? 0)}{' '}
+                <span className="text-[10px] text-emerald-400/80 font-normal">
+                  ({inceptionMetrics?.closedCount ?? 0} Closed · Net)
+                </span>
+              </div>
+            </Link>
+
+            <Link
+              to="/executed-trades?status=OPEN"
+              className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-right hover:bg-blue-500/15 transition"
+              title="Open Unrealized P&L from Active Trades (Net of Entry Commissions & Slippage)"
+            >
+              <div className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+                Open P&L (Active Trades)
+              </div>
+              <div className={`text-sm font-black font-mono ${(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
+                {(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.unrealizedPnl ?? 0)}{' '}
+                <span className="text-[10px] text-blue-400/80 font-normal">
+                  ({inceptionMetrics?.openCount ?? 0} Open)
+                </span>
+              </div>
+            </Link>
+
             <Link
               to="/executed-trades"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap"
@@ -890,20 +966,70 @@ export default function Home() {
         </div>
 
         {/* Summary Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <Link
+            to="/executed-trades?status=CLOSED"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-emerald-500/60 hover:bg-emerald-950/20 active:scale-[0.98] block"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-300 transition-colors">
+              <span>Closed P&L ({selectedPerfTimeframe === 'INCEPTION' ? 'Inception' : selectedPerfTimeframe})</span>
+              <span className="text-[10px] text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">Closed →</span>
+            </div>
+            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.realizedPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {(activeMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.realizedPnl ?? 0)}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              {activeMetrics?.closedCount ?? 0} closed · Net of comm/slip
+            </div>
+          </Link>
+
+          <Link
+            to="/executed-trades?status=OPEN"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-blue-500/80 hover:bg-blue-950/20 active:scale-[0.98] block shadow-sm hover:shadow-blue-950/40"
+            title="Click to view all open positions in the executed ledger"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-blue-300 transition-colors">
+              <span>Open P&L (Active)</span>
+              <span className="text-[10px] text-blue-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            </div>
+            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
+              {(activeMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.unrealizedPnl ?? 0)}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              {activeMetrics?.openCount ?? 0} open positions active
+            </div>
+          </Link>
+
           <Link
             to="/executed-trades"
             className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
           >
             <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Net P&L ({selectedPerfTimeframe === 'INCEPTION' ? 'Inception' : selectedPerfTimeframe})</span>
+              <span>Total Net P&L</span>
               <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Ledger →</span>
             </div>
             <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.netPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {fmt$(activeMetrics?.netPnl ?? 0)}
+              {(activeMetrics?.netPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.netPnl ?? 0)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Return: {activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'}
+              Return: {activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'} · Gross: {fmt$(activeMetrics?.grossPnl ?? 0)}
+            </div>
+          </Link>
+
+          <Link
+            to="/executed-trades"
+            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+            title="All-in round-turn futures commissions and tick slippage included in Net P&L"
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
+              <span>Comm. & Slippage</span>
+              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Included</span>
+            </div>
+            <div className="mt-1 text-2xl font-black text-rose-300/90 font-mono">
+              -{fmt$(activeMetrics?.totalCosts ?? 0)}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500 font-mono">
+              Comm: {fmt$(activeMetrics?.totalCommissions ?? 0)} · Slip: {fmt$(activeMetrics?.totalSlippage ?? 0)}
             </div>
           </Link>
 
@@ -912,14 +1038,14 @@ export default function Home() {
             className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
           >
             <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Win Rate</span>
+              <span>Win Rate (Net)</span>
               <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Closed →</span>
             </div>
             <div className="mt-1 text-2xl font-black text-amber-400 font-mono">
               {(activeMetrics?.winRate ?? 0).toFixed(1)}%
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {activeMetrics?.wins ?? 0} Wins / {activeMetrics?.losses ?? 0} Losses
+              {activeMetrics?.wins ?? 0}W / {activeMetrics?.losses ?? 0}L ({activeMetrics?.totalTrades ?? 0} trades)
             </div>
           </Link>
 
@@ -936,39 +1062,6 @@ export default function Home() {
             </div>
             <div className="mt-1 text-[11px] text-slate-500 font-mono">
               Avg Win: {fmt$(activeMetrics?.avgWin ?? 0)}
-            </div>
-          </Link>
-
-          <Link
-            to="/executed-trades?status=OPEN"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-indigo-500/80 hover:bg-indigo-950/20 active:scale-[0.98] block shadow-sm hover:shadow-indigo-950/40"
-            title="Click to view all open positions in the executed ledger"
-          >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-300 transition-colors">
-              <span>Open Positions</span>
-              <span className="text-[10px] text-indigo-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
-            </div>
-            <div className="mt-1 text-2xl font-black text-indigo-300 font-mono">
-              {activeMetrics?.openCount ?? 0}
-            </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Unrealized: {fmt$(activeMetrics?.unrealizedPnl ?? 0)}
-            </div>
-          </Link>
-
-          <Link
-            to="/executed-trades"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
-          >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Total Trades</span>
-              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">All →</span>
-            </div>
-            <div className="mt-1 text-2xl font-black text-slate-200 font-mono">
-              {activeMetrics?.totalTrades ?? 0}
-            </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {activeMetrics?.closedCount ?? 0} completed
             </div>
           </Link>
         </div>
@@ -1105,7 +1198,7 @@ export default function Home() {
                   <th className="px-4 py-3 text-right">Current / Exit</th>
                   <th className="px-4 py-3 text-right">Stop Loss</th>
                   <th className="px-4 py-3 text-right">Target</th>
-                  <th className="px-4 py-3 text-right">P&L ($)</th>
+                  <th className="px-4 py-3 text-right">Net P&L ($)</th>
                   <th className="px-4 py-3 text-center">Status</th>
                 </tr>
               </thead>
@@ -1120,6 +1213,7 @@ export default function Home() {
                   perfTrades.slice(0, Math.max(10, (activeMetrics?.openCount ?? 0) + 4)).map((t) => {
                     const isOpen = t.status === 'OPEN';
                     const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
+                    const tradeCost = t.fees_and_slippage ?? ((t.commission || 0) + (t.slippage || 0));
                     const rowBgClass = isOpen
                       ? 'bg-blue-500/10 hover:bg-blue-500/15 border-l-2 border-l-blue-400'
                       : t.status === 'HIT_TARGET'
@@ -1160,8 +1254,15 @@ export default function Home() {
                         <td className="px-4 py-3 text-right font-mono text-emerald-300">
                           {formatSignalPrice(t.profit_target)}
                         </td>
-                        <td className={`px-4 py-3 text-right font-mono font-black ${displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {fmt$(displayPnl)}
+                        <td className="px-4 py-3 text-right font-mono">
+                          <div className={`font-black ${displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {fmt$(displayPnl)}
+                          </div>
+                          {tradeCost > 0 && (
+                            <div className="text-[10px] text-slate-500 font-normal" title={`Gross: ${fmt$(t.gross_pnl ?? displayPnl)} | Comm: -$${(t.commission || 0).toFixed(2)} | Slip: -$${(t.slippage || 0).toFixed(2)}`}>
+                              incl. -{fmt$(tradeCost)} cost
+                            </div>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-center">
                           {t.status === 'OPEN' && (

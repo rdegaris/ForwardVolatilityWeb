@@ -1211,11 +1211,60 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                         })
                         trade_id_seq += 1
 
-    # Calculate summary metrics
+    # Apply institutional commissions and slippage to all trades
+    # Round-turn commission per contract ($) and round-turn slippage per contract ($)
+    commission_rt_per_contract = {
+        "ES": 1.20, "NQ": 1.20, "RTY": 1.20, "YM": 1.20,
+        "GC": 1.50, "SI": 1.50, "CL": 1.50, "NG": 2.50,
+        "6E": 0.50, "6B": 0.50, "ZB": 2.50, "ZN": 2.50,
+    }
+    slippage_rt_per_contract = {
+        "ES": 1.25, "NQ": 0.50, "RTY": 0.50, "YM": 0.50,
+        "GC": 1.00, "SI": 2.50, "CL": 1.00, "NG": 2.50,
+        "6E": 0.62, "6B": 0.62, "ZB": 3.12, "ZN": 1.56,
+    }
+
+    for t in trades:
+        sym = t.get("symbol", "")
+        raw_qty = max(1, int(t.get("qty", 1)))
+        # For micro FX/contracts with large unit counts, 10 micros route as 1 standard lot equivalent
+        eff_qty = min(raw_qty, 8) if sym in ("6E", "6B") else min(raw_qty, 10)
+        c_rt = commission_rt_per_contract.get(sym, 1.50)
+        s_rt = slippage_rt_per_contract.get(sym, 1.25)
+
+        if t.get("status") == "OPEN":
+            gross = round(float(t.get("unrealized_pnl", 0.0)), 2)
+            comm = round(c_rt * eff_qty * 0.5, 2)
+            slip = round(s_rt * eff_qty * 0.5, 2)
+            net_u = round(gross - comm - slip, 2)
+            t["gross_pnl"] = gross
+            t["commission"] = comm
+            t["slippage"] = slip
+            t["fees_and_slippage"] = round(comm + slip, 2)
+            t["unrealized_pnl"] = net_u
+            t["realized_pnl"] = 0.0
+        else:
+            gross = round(float(t.get("realized_pnl", 0.0)), 2)
+            comm = round(c_rt * eff_qty, 2)
+            slip = round(s_rt * eff_qty, 2)
+            net_r = round(gross - comm - slip, 2)
+            t["gross_pnl"] = gross
+            t["commission"] = comm
+            t["slippage"] = slip
+            t["fees_and_slippage"] = round(comm + slip, 2)
+            t["realized_pnl"] = net_r
+            t["unrealized_pnl"] = 0.0
+
+    # Calculate summary metrics (Net of Commissions & Slippage)
     closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT", "EOD_EXIT")]
     open_trades = [t for t in trades if t.get("status") == "OPEN"]
     tot_realized = sum(float(t.get("realized_pnl", 0.0)) for t in closed_trades)
     tot_unrealized = sum(float(t.get("unrealized_pnl", 0.0)) for t in open_trades)
+    tot_gross_realized = sum(float(t.get("gross_pnl", 0.0)) for t in closed_trades)
+    tot_gross_unrealized = sum(float(t.get("gross_pnl", 0.0)) for t in open_trades)
+    tot_commissions = sum(float(t.get("commission", 0.0)) for t in trades)
+    tot_slippage = sum(float(t.get("slippage", 0.0)) for t in trades)
+    tot_fees_and_slippage = tot_commissions + tot_slippage
     net_pnl = tot_realized + tot_unrealized
     wins = [t for t in closed_trades if float(t.get("realized_pnl", 0.0)) > 0]
     losses = [t for t in closed_trades if float(t.get("realized_pnl", 0.0)) < 0]
@@ -1234,10 +1283,14 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             strat_breakdown[st] = {
                 "strategy": st, "total_trades": 0, "open_trades": 0, "closed_trades": 0,
                 "wins": 0, "losses": 0, "realized_pnl": 0.0, "unrealized_pnl": 0.0,
+                "gross_pnl": 0.0, "commissions": 0.0, "slippage": 0.0,
                 "net_pnl": 0.0, "win_rate_pct": 0.0
             }
         sb = strat_breakdown[st]
         sb["total_trades"] += 1
+        sb["gross_pnl"] += float(t.get("gross_pnl", 0.0))
+        sb["commissions"] += float(t.get("commission", 0.0))
+        sb["slippage"] += float(t.get("slippage", 0.0))
         if t.get("status") == "OPEN":
             sb["open_trades"] += 1
             sb["unrealized_pnl"] += float(t.get("unrealized_pnl", 0.0))
@@ -1252,6 +1305,9 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         sb["net_pnl"] = round(sb["realized_pnl"] + sb["unrealized_pnl"], 2)
         sb["realized_pnl"] = round(sb["realized_pnl"], 2)
         sb["unrealized_pnl"] = round(sb["unrealized_pnl"], 2)
+        sb["gross_pnl"] = round(sb["gross_pnl"], 2)
+        sb["commissions"] = round(sb["commissions"], 2)
+        sb["slippage"] = round(sb["slippage"], 2)
         cl = sb["closed_trades"]
         sb["win_rate_pct"] = round((sb["wins"] / cl * 100), 1) if cl > 0 else 0.0
 
@@ -1308,6 +1364,12 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "winning_trades": len(wins),
         "losing_trades": len(losses),
         "win_rate_pct": round(win_rate, 1),
+        "total_gross_realized_pnl": round(tot_gross_realized, 2),
+        "total_gross_unrealized_pnl": round(tot_gross_unrealized, 2),
+        "total_gross_pnl": round(tot_gross_realized + tot_gross_unrealized, 2),
+        "total_commissions": round(tot_commissions, 2),
+        "total_slippage": round(tot_slippage, 2),
+        "total_fees_and_slippage": round(tot_fees_and_slippage, 2),
         "total_realized_pnl": round(tot_realized, 2),
         "total_unrealized_pnl": round(tot_unrealized, 2),
         "net_pnl": round(net_pnl, 2),
@@ -1317,13 +1379,13 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "avg_loss": round(loss_dollars / len(losses), 2) if losses else 0.0,
         "strategy_breakdown": strat_breakdown,
         "equity_curve": eq_curve,
-        "recent_trades": sorted(trades, key=lambda x: (x.get("updated_at", ""), x.get("entry_date", "")), reverse=True)[:50]
+        "recent_trades": sorted(trades, key=lambda x: (x.get("status") == "OPEN", x.get("entry_date", ""), x.get("updated_at", "")), reverse=True)[:50]
     }
 
     trades_file.write_text(json.dumps(trades, indent=2), encoding="utf-8")
     (data_dir / "paper_trades_latest.json").write_text(json.dumps({"timestamp": datetime.utcnow().isoformat() + "Z", "date": latest_date, "trades": trades}, indent=2), encoding="utf-8")
     (data_dir / "paper_trade_performance.json").write_text(json.dumps(perf_payload, indent=2), encoding="utf-8")
-    print(f"  [PAPER TRADES] Updated {len(trades)} executed trades ({len(closed_trades)} closed, {len(open_trades)} open, Net PnL: ${net_pnl:,.2f})")
+    print(f"  [PAPER TRADES] Updated {len(trades)} executed trades ({len(closed_trades)} closed, {len(open_trades)} open, Gross PnL: ${tot_gross_realized+tot_gross_unrealized:,.2f}, Comm+Slip: -${tot_fees_and_slippage:,.2f}, Net PnL: ${net_pnl:,.2f})")
 
 
 if __name__ == "__main__":

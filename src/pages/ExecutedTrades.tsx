@@ -275,6 +275,27 @@ export default function ExecutedTrades() {
       .slice(0, 5);
   }, [trades, selectedStrategy, selectedTimeframe]);
 
+  const inceptionMetrics = useMemo(() => {
+    const pool = trades.filter(
+      (t) => selectedStrategy === 'ALL' || t.strategy === selectedStrategy
+    );
+    const closed = pool.filter((t) => t.status !== 'OPEN');
+    const open = pool.filter((t) => t.status === 'OPEN');
+
+    const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
+    const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
+
+    return {
+      realizedPnl: Math.round(realizedPnl * 100) / 100,
+      unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      totalCosts: Math.round((totalCommissions + totalSlippage) * 100) / 100,
+      closedCount: closed.length,
+      openCount: open.length,
+    };
+  }, [trades, selectedStrategy]);
+
   const activeMetrics = useMemo(() => {
     const pool = trades.filter((t) => {
       const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
@@ -287,6 +308,13 @@ export default function ExecutedTrades() {
 
     const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const grossRealizedPnl = closed.reduce((acc, t) => acc + (t.gross_pnl ?? t.realized_pnl ?? 0), 0);
+    const grossUnrealizedPnl = open.reduce((acc, t) => acc + (t.gross_pnl ?? t.unrealized_pnl ?? 0), 0);
+    const grossPnl = grossRealizedPnl + grossUnrealizedPnl;
+    const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
+    const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
+    const totalCosts = totalCommissions + totalSlippage;
+
     const netPnl = realizedPnl + unrealizedPnl;
     const returnPct = (netPnl / 100000) * 100;
 
@@ -310,6 +338,10 @@ export default function ExecutedTrades() {
       returnPct: Math.round(returnPct * 100) / 100,
       realizedPnl: Math.round(realizedPnl * 100) / 100,
       unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      grossPnl: Math.round(grossPnl * 100) / 100,
+      totalCommissions: Math.round(totalCommissions * 100) / 100,
+      totalSlippage: Math.round(totalSlippage * 100) / 100,
+      totalCosts: Math.round(totalCosts * 100) / 100,
       winRate: Math.round(winRate * 10) / 10,
       wins: wins.length,
       losses: losses.length,
@@ -345,13 +377,20 @@ export default function ExecutedTrades() {
         const exit = t.current_price || t.entry_price;
         const diff =
           t.side === 'long' ? exit - t.entry_price : t.entry_price - exit;
-        const pnl = diff * t.point_value * (t.qty || 1);
+        const grossPnl = diff * t.point_value * (t.qty || 1);
+        const fullComm = (t.commission || 0) * 2;
+        const fullSlip = (t.slippage || 0) * 2;
+        const netPnlCalc = grossPnl - fullComm - fullSlip;
         return {
           ...t,
           status: 'MANUALLY_CLOSED' as const,
           exit_price: exit,
           exit_date: new Date().toISOString().split('T')[0],
-          realized_pnl: Math.round(pnl * 100) / 100,
+          gross_pnl: Math.round(grossPnl * 100) / 100,
+          commission: Math.round(fullComm * 100) / 100,
+          slippage: Math.round(fullSlip * 100) / 100,
+          fees_and_slippage: Math.round((fullComm + fullSlip) * 100) / 100,
+          realized_pnl: Math.round(netPnlCalc * 100) / 100,
           unrealized_pnl: 0,
           return_pct:
             Math.round(((exit - t.entry_price) / t.entry_price) * 10000) / 100,
@@ -400,7 +439,7 @@ export default function ExecutedTrades() {
               Executed Trades & Performance Tracker
             </h1>
             <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-              Real-time systematic execution ledger for all triggered OzCTA futures strategy signals. Tracks contract multiplier points, dynamic risk stops, objective profit targets, and running P&L.
+              Real-time systematic execution ledger for all triggered OzCTA futures strategy signals. Tracks contract multiplier points, dynamic risk stops, objective profit targets, and running P&L net of commissions and slippage.
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-2.5">
@@ -413,31 +452,46 @@ export default function ExecutedTrades() {
               <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
                 <span className="text-slate-400 font-semibold">Portfolio Limit:</span> Max 8 Open Positions (16% Heat)
               </div>
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-xs font-bold text-slate-200">
+                <span className="text-slate-400 font-semibold">Friction Included:</span> Round-Turn Comm. & Tick Slippage
+              </div>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-right">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+            <div className="rounded-2xl border border-slate-700/80 bg-slate-950/70 p-4 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Starting Capital
               </div>
               <div className="mt-1 text-xl font-black text-slate-100 font-mono">
                 $100,000
               </div>
-              <div className="text-[10px] text-emerald-400/80 font-semibold">
+              <div className="text-[10px] text-slate-400 font-semibold">
                 $2,000 (2.0%) Max Heat / Trade
               </div>
             </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-right">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                System Status
+
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                Closed P&L (Since Inception)
               </div>
-              <div className="mt-1 flex items-center justify-end gap-2 text-sm font-bold text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                Active Monitoring
+              <div className={`mt-1 text-xl font-black font-mono ${(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? 'text-emerald-300' : 'text-rose-400'}`}>
+                {(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.realizedPnl ?? 0)}
               </div>
-              <div className="text-[10px] text-slate-500 font-semibold">
-                Institutional Risk Engine
+              <div className="text-[10px] text-emerald-400/80 font-semibold">
+                {inceptionMetrics?.closedCount ?? 0} Closed Trades · Net of Costs
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-blue-400">
+                Open P&L (Active Trades)
+              </div>
+              <div className={`mt-1 text-xl font-black font-mono ${(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
+                {(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.unrealizedPnl ?? 0)}
+              </div>
+              <div className="text-[10px] text-blue-400/80 font-semibold">
+                {inceptionMetrics?.openCount ?? 0} Active Open Positions
               </div>
             </div>
           </div>
@@ -503,9 +557,37 @@ export default function ExecutedTrades() {
         {/* ── KPI STATS ── */}
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard
-            title={`Net Total P&L (${selectedTimeframe === 'INCEPTION' ? 'Inception' : selectedTimeframe})`}
-            value={fmt$(netPnl)}
-            sub={`Return: ${activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'} | Realized: ${fmt$(realizedPnl)}`}
+            title={`Closed P&L (${selectedTimeframe === 'INCEPTION' ? 'Inception' : selectedTimeframe})`}
+            value={`${realizedPnl >= 0 ? '+' : ''}${fmt$(realizedPnl)}`}
+            sub={`${closedCount} closed trades · Net of comm/slip`}
+            accent={realizedPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}
+            badge="Realized"
+            active={selectedStatus === 'CLOSED'}
+            clickableHint="Click to view closed trades"
+            onClick={() => {
+              setSelectedStatus('CLOSED');
+              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'CLOSED', strategy: selectedStrategy } : { status: 'CLOSED' });
+              scrollToTable();
+            }}
+          />
+          <StatCard
+            title="Open P&L (Active)"
+            value={`${unrealizedPnl >= 0 ? '+' : ''}${fmt$(unrealizedPnl)}`}
+            sub={`${openCount} open positions active`}
+            accent={unrealizedPnl >= 0 ? 'text-blue-300' : 'text-rose-400'}
+            badge="Unrealized"
+            active={selectedStatus === 'OPEN'}
+            clickableHint="Click to filter by open positions"
+            onClick={() => {
+              setSelectedStatus('OPEN');
+              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'OPEN', strategy: selectedStrategy } : { status: 'OPEN' });
+              scrollToTable();
+            }}
+          />
+          <StatCard
+            title="Total Net P&L"
+            value={`${netPnl >= 0 ? '+' : ''}${fmt$(netPnl)}`}
+            sub={`Return: ${activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'} | Gross: ${fmt$(activeMetrics?.grossPnl ?? 0)}`}
             accent={netPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}
             badge={selectedTimeframe}
             active={selectedStatus === 'ALL'}
@@ -517,22 +599,16 @@ export default function ExecutedTrades() {
             }}
           />
           <StatCard
-            title="Unrealized P&L"
-            value={fmt$(unrealizedPnl)}
-            sub={`${openCount} open positions`}
-            accent={unrealizedPnl >= 0 ? 'text-teal-300' : 'text-rose-400'}
-            active={selectedStatus === 'OPEN'}
-            clickableHint="Click to filter by open positions"
-            onClick={() => {
-              setSelectedStatus('OPEN');
-              setSearchParams(selectedStrategy !== 'ALL' ? { status: 'OPEN', strategy: selectedStrategy } : { status: 'OPEN' });
-              scrollToTable();
-            }}
+            title="Comm. & Slippage"
+            value={`-${fmt$(activeMetrics?.totalCosts ?? 0)}`}
+            sub={`Comm: ${fmt$(activeMetrics?.totalCommissions ?? 0)} | Slip: ${fmt$(activeMetrics?.totalSlippage ?? 0)}`}
+            accent="text-rose-300/90"
+            badge="Included"
           />
           <StatCard
-            title="Win Rate"
+            title="Win Rate (Net)"
             value={`${winRate.toFixed(1)}%`}
-            sub={`${activeMetrics?.wins ?? 0}W / ${activeMetrics?.losses ?? 0}L`}
+            sub={`${activeMetrics?.wins ?? 0}W / ${activeMetrics?.losses ?? 0}L (${activeMetrics?.totalTrades ?? 0} total)`}
             accent="text-amber-400"
             active={selectedStatus === 'CLOSED'}
             clickableHint="Click to view closed trades"
@@ -545,7 +621,7 @@ export default function ExecutedTrades() {
           <StatCard
             title="Profit Factor"
             value={profitFactor > 50 ? '> 50' : profitFactor.toFixed(2)}
-            sub={`Avg Win: ${fmt$(activeMetrics?.avgWin ?? 0)}`}
+            sub={`Avg Win: ${fmt$(activeMetrics?.avgWin ?? 0)} | Max DD: ${(activeMetrics?.maxDrawdown ?? 0).toFixed(1)}%`}
             accent="text-cyan-300"
             active={selectedStatus === 'CLOSED'}
             clickableHint="Click to view closed trades"
@@ -554,31 +630,6 @@ export default function ExecutedTrades() {
               setSearchParams(selectedStrategy !== 'ALL' ? { status: 'CLOSED', strategy: selectedStrategy } : { status: 'CLOSED' });
               scrollToTable();
             }}
-          />
-          <StatCard
-            title="Open Positions"
-            value={openCount}
-            sub={`${closedCount} closed trades`}
-            accent="text-indigo-300"
-            badge={selectedStatus === 'OPEN' ? 'Filtered' : undefined}
-            active={selectedStatus === 'OPEN'}
-            clickableHint="Click to view open positions"
-            onClick={() => {
-              if (selectedStatus === 'OPEN') {
-                setSelectedStatus('ALL');
-                setSearchParams(selectedStrategy !== 'ALL' ? { strategy: selectedStrategy } : {});
-              } else {
-                setSelectedStatus('OPEN');
-                setSearchParams(selectedStrategy !== 'ALL' ? { status: 'OPEN', strategy: selectedStrategy } : { status: 'OPEN' });
-              }
-              scrollToTable();
-            }}
-          />
-          <StatCard
-            title="Max Drawdown"
-            value={`${(activeMetrics?.maxDrawdown ?? 0).toFixed(1)}%`}
-            sub="Peak to trough"
-            accent="text-slate-300"
           />
         </div>
       </div>
@@ -906,7 +957,7 @@ export default function ExecutedTrades() {
                 <th className="px-5 py-3.5 text-right">Current / Exit</th>
                 <th className="px-5 py-3.5 text-right">Stop Loss</th>
                 <th className="px-5 py-3.5 text-right">Profit Target</th>
-                <th className="px-5 py-3.5 text-right">P&L ($)</th>
+                <th className="px-5 py-3.5 text-right">Net P&L ($)</th>
                 <th className="px-5 py-3.5 text-right">Return</th>
                 <th className="px-5 py-3.5 text-center">Status</th>
                 <th className="px-5 py-3.5 text-right">Actions</th>
@@ -927,6 +978,7 @@ export default function ExecutedTrades() {
                   const isLong = t.side === 'long';
                   const isOpen = t.status === 'OPEN';
                   const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
+                  const tradeCost = t.fees_and_slippage ?? ((t.commission || 0) + (t.slippage || 0));
                   const rowBgClass = isOpen
                     ? 'bg-blue-500/10 hover:bg-blue-500/15 border-l-2 border-l-blue-400'
                     : t.status === 'HIT_TARGET'
@@ -1004,13 +1056,23 @@ export default function ExecutedTrades() {
                         {formatPrice(t.profit_target)}
                       </td>
 
-                      {/* P&L */}
-                      <td
-                        className={`px-5 py-4 text-right font-mono font-black ${
-                          displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                        }`}
-                      >
-                        {fmt$(displayPnl)}
+                      {/* Net P&L */}
+                      <td className="px-5 py-4 text-right font-mono">
+                        <div
+                          className={`font-black ${
+                            displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                          }`}
+                        >
+                          {fmt$(displayPnl)}
+                        </div>
+                        {tradeCost > 0 && (
+                          <div
+                            className="text-[10px] text-slate-500 font-normal"
+                            title={`Gross: ${fmt$(t.gross_pnl ?? displayPnl)} | Comm: -$${(t.commission || 0).toFixed(2)} | Slip: -$${(t.slippage || 0).toFixed(2)}`}
+                          >
+                            incl. -{fmt$(tradeCost)} cost
+                          </div>
+                        )}
                       </td>
 
                       {/* Return % */}
