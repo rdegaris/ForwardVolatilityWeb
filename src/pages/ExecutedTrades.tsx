@@ -210,30 +210,37 @@ export default function ExecutedTrades() {
   }, []);
 
   const filteredTrades = useMemo(() => {
-    return trades.filter((t) => {
-      if (selectedStrategy !== 'ALL' && t.strategy !== selectedStrategy)
-        return false;
-      if (!isTradeInTimeframe(t.entry_date, selectedTimeframe))
-        return false;
-      if (selectedStatus === 'OPEN' && t.status !== 'OPEN') return false;
-      if (selectedStatus === 'CLOSED' && t.status === 'OPEN') return false;
-      if (
-        selectedStatus !== 'ALL' &&
-        selectedStatus !== 'OPEN' &&
-        selectedStatus !== 'CLOSED' &&
-        t.status !== selectedStatus
-      )
-        return false;
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const sym = t.symbol.toLowerCase();
-        const name = (t.symbol_name || '').toLowerCase();
-        const strat = t.strategy.toLowerCase();
-        if (!sym.includes(q) && !name.includes(q) && !strat.includes(q))
+    return trades
+      .filter((t) => {
+        if (selectedStrategy !== 'ALL' && t.strategy !== selectedStrategy)
           return false;
-      }
-      return true;
-    });
+        if (!isTradeInTimeframe(t.entry_date, selectedTimeframe))
+          return false;
+        if (selectedStatus === 'OPEN' && t.status !== 'OPEN') return false;
+        if (selectedStatus === 'CLOSED' && t.status === 'OPEN') return false;
+        if (
+          selectedStatus !== 'ALL' &&
+          selectedStatus !== 'OPEN' &&
+          selectedStatus !== 'CLOSED' &&
+          t.status !== selectedStatus
+        )
+          return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const sym = t.symbol.toLowerCase();
+          const name = (t.symbol_name || '').toLowerCase();
+          const strat = t.strategy.toLowerCase();
+          if (!sym.includes(q) && !name.includes(q) && !strat.includes(q))
+            return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const aOpen = a.status === 'OPEN' ? 0 : 1;
+        const bOpen = b.status === 'OPEN' ? 0 : 1;
+        if (aOpen !== bOpen) return aOpen - bOpen;
+        return (b.entry_date || '').localeCompare(a.entry_date || '');
+      });
   }, [trades, selectedStrategy, selectedStatus, searchQuery, selectedTimeframe]);
 
   const biggestWinners = useMemo(() => {
@@ -920,18 +927,25 @@ export default function ExecutedTrades() {
                   const isLong = t.side === 'long';
                   const isOpen = t.status === 'OPEN';
                   const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
+                  const rowBgClass = isOpen
+                    ? 'bg-blue-500/10 hover:bg-blue-500/15 border-l-2 border-l-blue-400'
+                    : t.status === 'HIT_TARGET'
+                    ? 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08]'
+                    : t.status === 'STOPPED_OUT'
+                    ? 'bg-rose-500/[0.03] hover:bg-rose-500/[0.08]'
+                    : 'hover:bg-slate-800/40';
 
                   return (
                     <tr
                       key={t.id}
-                      className="transition-colors hover:bg-slate-800/40"
+                      className={`transition-colors ${rowBgClass}`}
                     >
                       {/* Entry & Exit Dates */}
                       <td className="px-5 py-4 font-mono text-xs">
                         <div className="text-slate-200 font-semibold">{t.entry_date?.slice(0, 10)}</div>
                         <div className="text-[10px] text-slate-500 mt-0.5">
                           {isOpen ? (
-                            <span className="text-emerald-400/90 font-bold">Active Open ({t.duration_days}d)</span>
+                            <span className="text-blue-400 font-bold">Active Open ({t.duration_days}d)</span>
                           ) : (
                             <span>Exit: {t.exit_date?.slice(0, 10) || 'Closed'} ({t.duration_days}d)</span>
                           )}
@@ -1011,7 +1025,7 @@ export default function ExecutedTrades() {
                       {/* Status */}
                       <td className="px-5 py-4 text-center">
                         {t.status === 'OPEN' && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-300 border border-blue-400/40 shadow-sm shadow-blue-500/10">
                             <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                             OPEN
                           </span>

@@ -176,15 +176,22 @@ export default function Home() {
     return true;
   };
 
-  // Filtered Trades for Performance Section
+  // Filtered Trades for Performance Section (Open trades first, then newest first)
   const perfTrades = useMemo(() => {
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
     if (sourceTrades.length === 0) return [];
-    return sourceTrades.filter((t) => {
-      const matchStrat = selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy;
-      const matchTf = isTradeInTimeframe(t.entry_date, selectedPerfTimeframe);
-      return matchStrat && matchTf;
-    });
+    return sourceTrades
+      .filter((t) => {
+        const matchStrat = selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy;
+        const matchTf = isTradeInTimeframe(t.entry_date, selectedPerfTimeframe);
+        return matchStrat && matchTf;
+      })
+      .sort((a, b) => {
+        const aOpen = a.status === 'OPEN' ? 0 : 1;
+        const bOpen = b.status === 'OPEN' ? 0 : 1;
+        if (aOpen !== bOpen) return aOpen - bOpen;
+        return (b.entry_date || '').localeCompare(a.entry_date || '');
+      });
   }, [allTrades, paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
 
   // Strategy Specific Metrics
@@ -1110,12 +1117,24 @@ export default function Home() {
                     </td>
                   </tr>
                 ) : (
-                  perfTrades.slice(0, 8).map((t) => {
+                  perfTrades.slice(0, Math.max(10, (activeMetrics?.openCount ?? 0) + 4)).map((t) => {
                     const isOpen = t.status === 'OPEN';
                     const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
+                    const rowBgClass = isOpen
+                      ? 'bg-blue-500/10 hover:bg-blue-500/15 border-l-2 border-l-blue-400'
+                      : t.status === 'HIT_TARGET'
+                      ? 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08]'
+                      : t.status === 'STOPPED_OUT'
+                      ? 'bg-rose-500/[0.03] hover:bg-rose-500/[0.08]'
+                      : 'hover:bg-slate-800/40';
                     return (
-                      <tr key={t.id} className="transition-colors hover:bg-slate-800/40">
-                        <td className="px-4 py-3 font-mono text-slate-400">{t.entry_date}</td>
+                      <tr key={t.id} className={`transition-colors ${rowBgClass}`}>
+                        <td className="px-4 py-3 font-mono text-slate-300">
+                          <div>{t.entry_date}</div>
+                          {isOpen && (
+                            <div className="text-[10px] font-bold text-blue-400">Active Open</div>
+                          )}
+                        </td>
                         <td className="px-4 py-3 font-mono font-bold text-slate-100">{t.symbol}</td>
                         <td className="px-4 py-3">
                           <span className="inline-flex rounded-md bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700">
@@ -1146,23 +1165,43 @@ export default function Home() {
                         </td>
                         <td className="px-4 py-3 text-center">
                           {t.status === 'OPEN' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20">
-                              <span className="h-1 w-1 rounded-full bg-blue-400 animate-pulse" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-300 border border-blue-400/40 shadow-sm shadow-blue-500/10">
+                              <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                               OPEN
                             </span>
                           )}
                           {t.status === 'HIT_TARGET' && (
-                            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-300 border border-emerald-500/30">
+                            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-300 border border-emerald-500/30">
                               🎯 TARGET HIT
                             </span>
                           )}
                           {t.status === 'STOPPED_OUT' && (
-                            <span className="inline-flex items-center rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-extrabold text-rose-300 border border-rose-500/30">
+                            <span className="inline-flex items-center rounded-full bg-rose-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-rose-300 border border-rose-500/30">
                               🛑 STOPPED
                             </span>
                           )}
+                          {t.status === 'DONCHIAN_EXIT' && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-indigo-300 border border-indigo-500/30">
+                              🌊 DONCHIAN
+                            </span>
+                          )}
+                          {t.status === 'TIME_EXIT' && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-300 border border-amber-500/30">
+                              ⏳ TIME EXIT
+                            </span>
+                          )}
+                          {t.status === 'EMA_EXIT' && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-teal-300 border border-teal-500/30">
+                              📉 EMA EXIT
+                            </span>
+                          )}
+                          {t.status === 'EOD_EXIT' && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-cyan-300 border border-cyan-500/30">
+                              🌅 EOD EXIT
+                            </span>
+                          )}
                           {t.status === 'MANUALLY_CLOSED' && (
-                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300">
+                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700">
                               CLOSED
                             </span>
                           )}
