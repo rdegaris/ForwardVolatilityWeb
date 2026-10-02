@@ -39,6 +39,8 @@ function StatCard({
   sub,
   accent,
   badge,
+  mtdPct,
+  allTimePct,
 }: {
   label?: string;
   title?: string;
@@ -46,20 +48,57 @@ function StatCard({
   sub?: React.ReactNode;
   accent: string;
   badge?: string;
+  mtdPct?: number;
+  allTimePct?: number;
 }) {
   const cardTitle = label || title || '';
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-slate-700">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{cardTitle}</span>
-        {badge && (
-          <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 border border-slate-700">
-            {badge}
-          </span>
-        )}
+    <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-slate-700 flex flex-col justify-between">
+      <div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{cardTitle}</span>
+          {badge && (
+            <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 border border-slate-700">
+              {badge}
+            </span>
+          )}
+        </div>
+        <div className={`mt-2 text-3xl font-black tracking-tight ${accent}`}>{value}</div>
+        {sub && <div className="mt-1 text-xs text-slate-400 font-medium">{sub}</div>}
       </div>
-      <div className={`mt-2 text-3xl font-black tracking-tight ${accent}`}>{value}</div>
-      {sub && <div className="mt-1 text-xs text-slate-400 font-medium">{sub}</div>}
+
+      {(mtdPct !== undefined || allTimePct !== undefined) && (
+        <div className="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2">
+          {mtdPct !== undefined && (
+            <div
+              className={`rounded-xl px-2.5 py-1.5 text-center border ${
+                mtdPct >= 0
+                  ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                  : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+              }`}
+            >
+              <div className="text-[9px] font-bold uppercase tracking-wider opacity-80">MTD</div>
+              <div className="text-xs font-black font-mono">
+                {mtdPct >= 0 ? `+${mtdPct.toFixed(1)}%` : `${mtdPct.toFixed(1)}%`}
+              </div>
+            </div>
+          )}
+          {allTimePct !== undefined && (
+            <div
+              className={`rounded-xl px-2.5 py-1.5 text-center border ${
+                allTimePct >= 0
+                  ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                  : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+              }`}
+            >
+              <div className="text-[9px] font-bold uppercase tracking-wider opacity-80">All Time</div>
+              <div className="text-xs font-black font-mono">
+                {allTimePct >= 0 ? `+${allTimePct.toFixed(1)}%` : `${allTimePct.toFixed(1)}%`}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -221,6 +260,46 @@ export default function Home() {
       openCount: open.length,
     };
   }, [allTrades, paperPerformance, selectedPerfStrategy]);
+
+  // Per-strategy MTD % and All Time % for the 5 Strategy StatCards
+  const strategyPerfSummary = useMemo(() => {
+    const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda'];
+    const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
+    const nowPac = getTodayDatePacific();
+    const fallbackMonth = `${nowPac.getFullYear()}-${String(nowPac.getMonth() + 1).padStart(2, '0')}`;
+    const currentMonth = paperPerformance?.date ? paperPerformance.date.slice(0, 7) : fallbackMonth;
+
+    const map: Record<string, { mtdPct: number; allTimePct: number; mtdPnl: number; allTimePnl: number }> = {};
+    for (const strat of strategies) {
+      const stratTrades = sourceTrades.filter((t) => t.strategy === strat);
+      const allTimePnl =
+        stratTrades.length > 0
+          ? stratTrades.reduce(
+              (acc, t) => acc + (t.status === 'OPEN' ? (t.unrealized_pnl || 0) : (t.realized_pnl || 0)),
+              0
+            )
+          : (paperPerformance?.strategy_breakdown?.[strat]?.net_pnl ?? 0);
+
+      const mtdTrades = stratTrades.filter((t) => {
+        if (t.status === 'OPEN') return true;
+        if (t.exit_date && t.exit_date.slice(0, 7) === currentMonth) return true;
+        if (!t.exit_date && t.entry_date && t.entry_date.slice(0, 7) === currentMonth) return true;
+        return false;
+      });
+      const mtdPnl = mtdTrades.reduce(
+        (acc, t) => acc + (t.status === 'OPEN' ? (t.unrealized_pnl || 0) : (t.realized_pnl || 0)),
+        0
+      );
+
+      map[strat] = {
+        mtdPnl: Math.round(mtdPnl * 100) / 100,
+        allTimePnl: Math.round(allTimePnl * 100) / 100,
+        mtdPct: Math.round((mtdPnl / 100000) * 1000) / 10,
+        allTimePct: Math.round((allTimePnl / 100000) * 1000) / 10,
+      };
+    }
+    return map;
+  }, [allTrades, paperPerformance]);
 
   // Strategy & Timeframe Specific Metrics
   const activeMetrics = useMemo(() => {
@@ -436,6 +515,8 @@ export default function Home() {
               sub={`${turtleTriggeredEligible.length} eligible breakouts`}
               accent="text-fuchsia-400"
               badge="Donchian"
+              mtdPct={strategyPerfSummary['Trendorama']?.mtdPct}
+              allTimePct={strategyPerfSummary['Trendorama']?.allTimePct}
             />
             <StatCard
               label="The Bradman"
@@ -443,6 +524,8 @@ export default function Home() {
               sub={`of ${taylorSignals?.total_scanned ?? 0} scanned have actionable setups`}
               accent="text-amber-400"
               badge="3-Day"
+              mtdPct={strategyPerfSummary['The Bradman']?.mtdPct}
+              allTimePct={strategyPerfSummary['The Bradman']?.allTimePct}
             />
             <StatCard
               label="YouHaveChosenWisely"
@@ -450,6 +533,8 @@ export default function Home() {
               sub={`${grailTriggered.length} active setups`}
               accent="text-orange-400"
               badge="EMA"
+              mtdPct={strategyPerfSummary['YouHaveChosenWisely']?.mtdPct}
+              allTimePct={strategyPerfSummary['YouHaveChosenWisely']?.allTimePct}
             />
             <StatCard
               label="TooHot TooCold"
@@ -457,6 +542,8 @@ export default function Home() {
               sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
               accent="text-cyan-400"
               badge="Range Break"
+              mtdPct={strategyPerfSummary['TooHot TooCold']?.mtdPct}
+              allTimePct={strategyPerfSummary['TooHot TooCold']?.allTimePct}
             />
             <StatCard
               label="The Linda"
@@ -464,6 +551,8 @@ export default function Home() {
               sub={`of ${lindaSignals?.total_scanned ?? 0} scanned mean-revert today`}
               accent="text-rose-400"
               badge="Mean Rev"
+              mtdPct={strategyPerfSummary['The Linda']?.mtdPct}
+              allTimePct={strategyPerfSummary['The Linda']?.allTimePct}
             />
           </div>
         </div>
