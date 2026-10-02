@@ -1,24 +1,15 @@
 {
-  "timestamp": "2026-10-01T21:36:58.211308Z",
-  "date": "2026-10-01",
-  "total_alerts": 2,
+  "timestamp": "2026-10-02T01:10:37.928698Z",
+  "date": "2026-10-02",
+  "total_alerts": 1,
   "alerts": [
-    {
-      "symbol": "ES",
-      "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-09-30",
-      "high_trigger": 7782.0,
-      "low_trigger": 7705.5,
-      "last_close": 7725.0,
-      "severity": "high"
-    },
     {
       "symbol": "ZN",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
       "asof": "2026-09-30",
       "high_trigger": 104.7969,
       "low_trigger": 104.125,
-      "last_close": 104.6094,
+      "last_close": 104.5156,
       "severity": "high"
     }
   ]
