@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-02T01:10:37.928698Z",
+  "timestamp": "2026-10-02T21:36:07.223638Z",
   "date": "2026-10-02",
   "total_alerts": 1,
   "alerts": [
     {
       "symbol": "ZN",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-09-30",
-      "high_trigger": 104.7969,
-      "low_trigger": 104.125,
-      "last_close": 104.5156,
+      "asof": "2026-10-01",
+      "high_trigger": 104.8594,
+      "low_trigger": 103.8906,
+      "last_close": 104.375,
       "severity": "high"
     }
   ]
