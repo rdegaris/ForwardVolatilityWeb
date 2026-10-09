@@ -1,8 +1,17 @@
 {
-  "timestamp": "2026-10-09T01:15:49.554084Z",
+  "timestamp": "2026-10-09T21:37:21.244144Z",
   "date": "2026-10-09",
-  "total_armed": 1,
+  "total_armed": 3,
   "triggered": [
+    {
+      "symbol": "GC",
+      "side": "long",
+      "asof": "2026-10-09",
+      "entry_stop": 4170.7002,
+      "stop_loss": 4128.1001,
+      "eligible": true,
+      "notes": "Confirmed TOO_COLD (INSIDE_DAY) upside breakout"
+    },
     {
       "symbol": "6E",
       "side": "long",
