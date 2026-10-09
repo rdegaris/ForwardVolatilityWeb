@@ -1,6 +1,16 @@
 {
-  "timestamp": "2026-10-08T21:37:54.832744Z",
-  "date": "2026-10-08",
-  "total_alerts": 0,
-  "alerts": []
+  "timestamp": "2026-10-09T01:15:49.554086Z",
+  "date": "2026-10-09",
+  "total_alerts": 1,
+  "alerts": [
+    {
+      "symbol": "6E",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-10-08",
+      "high_trigger": 1.1226,
+      "low_trigger": 1.1178,
+      "last_close": 1.1249,
+      "severity": "medium"
+    }
+  ]
 }
