@@ -1,37 +1,48 @@
 {
-  "timestamp": "2026-10-16T01:01:12.556557Z",
+  "timestamp": "2026-10-16T21:33:03.787328Z",
   "date": "2026-10-16",
   "system": "S2",
   "total_scanned": 12,
-  "triggered": [],
+  "triggered": [
+    {
+      "symbol": "RTY",
+      "side": "short",
+      "asof": "2026-10-16",
+      "last_close": 2737.0,
+      "entry_stop": 2734.8999,
+      "stop_loss": 2820.982,
+      "eligible": true,
+      "notes": "Donchian downside breakout hit on latest bar"
+    }
+  ],
   "signals": [
     {
       "symbol": "ES",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 73.6871,
-      "last_close": 7787.25,
+      "N": 79.5634,
+      "last_close": 7703.0,
       "long_entry": 7897.5,
-      "short_entry": 7324.0
+      "short_entry": 7331.0
     },
     {
       "symbol": "NQ",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 468.8944,
-      "last_close": 30045.75,
+      "N": 509.9228,
+      "last_close": 29391.25,
       "long_entry": 31616.5,
-      "short_entry": 27201.5
+      "short_entry": 27202.0
     },
     {
       "symbol": "RTY",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 41.4114,
-      "last_close": 2780.8,
+      "N": 43.041,
+      "last_close": 2737.0,
       "long_entry": 3079.8999,
       "short_entry": 2734.8999
     },
@@ -40,8 +51,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 586.7095,
-      "last_close": 52456.0,
+      "N": 598.2665,
+      "last_close": 52200.0,
       "long_entry": 54884.0,
       "short_entry": 50859.0
     },
@@ -50,18 +61,18 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 89.9691,
-      "last_close": 4175.5,
+      "N": 88.2912,
+      "last_close": 4186.7002,
       "long_entry": 4755.0,
-      "short_entry": 3993.8
+      "short_entry": 4028.5
     },
     {
       "symbol": "SI",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 1.5763,
-      "last_close": 57.355,
+      "N": 1.5237,
+      "last_close": 57.135,
       "long_entry": 71.16,
       "short_entry": 55.5
     },
@@ -70,8 +81,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 4.0067,
-      "last_close": 96.04,
+      "N": 4.1723,
+      "last_close": 99.04,
       "long_entry": 106.75,
       "short_entry": 74.24
     },
@@ -80,8 +91,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.1282,
-      "last_close": 3.212,
+      "N": 0.1356,
+      "last_close": 3.117,
       "long_entry": 3.334,
       "short_entry": 2.616
     },
@@ -90,8 +101,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.0059,
-      "last_close": 1.1238,
+      "N": 0.006,
+      "last_close": 1.1265,
       "long_entry": 1.1722,
       "short_entry": 1.1117
     },
@@ -100,8 +111,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.0061,
-      "last_close": 1.3274,
+      "N": 0.0063,
+      "last_close": 1.3328,
       "long_entry": 1.3676,
       "short_entry": 1.3145
     },
@@ -110,9 +121,9 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 1.1294,
+      "N": 1.1344,
       "last_close": 105.6562,
-      "long_entry": 110.8125,
+      "long_entry": 110.5,
       "short_entry": 101.1562
     },
     {
@@ -120,8 +131,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.5983,
-      "last_close": 105.5,
+      "N": 0.6038,
+      "last_close": 105.625,
       "long_entry": 109.1094,
       "short_entry": 103.8906
     }
@@ -132,28 +143,28 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 73.6871,
-      "last_close": 7787.25,
+      "N": 79.5634,
+      "last_close": 7703.0,
       "long_entry": 7897.5,
-      "short_entry": 7324.0
+      "short_entry": 7331.0
     },
     {
       "symbol": "NQ",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 468.8944,
-      "last_close": 30045.75,
+      "N": 509.9228,
+      "last_close": 29391.25,
       "long_entry": 31616.5,
-      "short_entry": 27201.5
+      "short_entry": 27202.0
     },
     {
       "symbol": "RTY",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 41.4114,
-      "last_close": 2780.8,
+      "N": 43.041,
+      "last_close": 2737.0,
       "long_entry": 3079.8999,
       "short_entry": 2734.8999
     },
@@ -162,8 +173,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 586.7095,
-      "last_close": 52456.0,
+      "N": 598.2665,
+      "last_close": 52200.0,
       "long_entry": 54884.0,
       "short_entry": 50859.0
     },
@@ -172,18 +183,18 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 89.9691,
-      "last_close": 4175.5,
+      "N": 88.2912,
+      "last_close": 4186.7002,
       "long_entry": 4755.0,
-      "short_entry": 3993.8
+      "short_entry": 4028.5
     },
     {
       "symbol": "SI",
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 1.5763,
-      "last_close": 57.355,
+      "N": 1.5237,
+      "last_close": 57.135,
       "long_entry": 71.16,
       "short_entry": 55.5
     },
@@ -192,8 +203,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 4.0067,
-      "last_close": 96.04,
+      "N": 4.1723,
+      "last_close": 99.04,
       "long_entry": 106.75,
       "short_entry": 74.24
     },
@@ -202,8 +213,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.1282,
-      "last_close": 3.212,
+      "N": 0.1356,
+      "last_close": 3.117,
       "long_entry": 3.334,
       "short_entry": 2.616
     },
@@ -212,8 +223,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.0059,
-      "last_close": 1.1238,
+      "N": 0.006,
+      "last_close": 1.1265,
       "long_entry": 1.1722,
       "short_entry": 1.1117
     },
@@ -222,8 +233,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.0061,
-      "last_close": 1.3274,
+      "N": 0.0063,
+      "last_close": 1.3328,
       "long_entry": 1.3676,
       "short_entry": 1.3145
     },
@@ -232,9 +243,9 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 1.1294,
+      "N": 1.1344,
       "last_close": 105.6562,
-      "long_entry": 110.8125,
+      "long_entry": 110.5,
       "short_entry": 101.1562
     },
     {
@@ -242,8 +253,8 @@
       "exchange": "CME",
       "currency": "USD",
       "asof": "2026-10-16",
-      "N": 0.5983,
-      "last_close": 105.5,
+      "N": 0.6038,
+      "last_close": 105.625,
       "long_entry": 109.1094,
       "short_entry": 103.8906
     }
