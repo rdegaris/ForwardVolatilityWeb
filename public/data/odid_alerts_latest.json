@@ -1,33 +1,51 @@
 {
-  "timestamp": "2026-10-17T01:02:14.149295Z",
-  "date": "2026-10-16",
-  "total_alerts": 3,
+  "timestamp": "2026-10-19T21:34:46.701396Z",
+  "date": "2026-10-19",
+  "total_alerts": 5,
   "alerts": [
     {
-      "symbol": "RTY",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-10-15",
-      "high_trigger": 2785.1001,
-      "low_trigger": 2736.6001,
-      "last_close": 2737.0,
-      "severity": "medium"
-    },
-    {
-      "symbol": "CL",
+      "symbol": "ES",
       "pattern": "TOO_HOT (OUTSIDE_DAY)",
-      "asof": "2026-10-15",
-      "high_trigger": 98.32,
-      "low_trigger": 93.58,
-      "last_close": 99.04,
+      "asof": "2026-10-16",
+      "high_trigger": 7809.5,
+      "low_trigger": 7676.0,
+      "last_close": 7739.75,
       "severity": "high"
     },
     {
-      "symbol": "NG",
+      "symbol": "NQ",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-10-16",
+      "high_trigger": 30225.0,
+      "low_trigger": 29268.75,
+      "last_close": 29743.75,
+      "severity": "high"
+    },
+    {
+      "symbol": "RTY",
+      "pattern": "TOO_HOT (OUTSIDE_DAY)",
+      "asof": "2026-10-16",
+      "high_trigger": 2795.3999,
+      "low_trigger": 2728.8999,
+      "last_close": 2744.7,
+      "severity": "high"
+    },
+    {
+      "symbol": "ZB",
       "pattern": "TOO_COLD (INSIDE_DAY)",
-      "asof": "2026-10-15",
-      "high_trigger": 3.323,
-      "low_trigger": 3.195,
-      "last_close": 3.117,
+      "asof": "2026-10-16",
+      "high_trigger": 105.875,
+      "low_trigger": 105.0312,
+      "last_close": 104.9375,
+      "severity": "medium"
+    },
+    {
+      "symbol": "ZN",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-10-16",
+      "high_trigger": 105.6875,
+      "low_trigger": 105.2031,
+      "last_close": 105.1875,
       "severity": "medium"
     }
   ]
