@@ -231,7 +231,7 @@ export default function LindaTrade() {
               </div>
               <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
                 <span className="font-bold text-slate-200 block text-xs uppercase mb-1">Trend Day Qualifier</span>
-                Daily Range/ATR ≥ 1.25× and Close in top/bottom 25% of range without touching 20-period 15m EMA.
+                Pit Session Range/ATR ≥ {(data.trend_day_atr_multiple ?? 0.70).toFixed(2)}× and Close in top/bottom 25% of range without touching 20-period 15m EMA.
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@ export default function LindaTrade() {
                         <span className={sig.gap_pct >= 2 ? 'text-amber-400 font-bold' : 'text-slate-400'}>{fmt(sig.gap_pct)}%</span>
                       </td>
                       <td className="px-4 py-3 text-right font-mono">
-                        <span className={sig.range_vs_atr >= 1.25 ? 'text-amber-300 font-bold' : 'text-slate-400'}>{fmt(sig.range_vs_atr)}×</span>
+                        <span className={sig.range_vs_atr >= (data.trend_day_atr_multiple ?? 0.70) ? 'text-amber-300 font-bold' : 'text-slate-400'}>{fmt(sig.range_vs_atr)}×</span>
                       </td>
                       <td className="px-4 py-3">
                         <TrendBar value={sig.trend_strength} />

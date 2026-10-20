@@ -1,6 +1,20 @@
 {
-  "timestamp": "2026-09-01T16:52:20.269138Z",
-  "date": "2026-09-01",
+  "timestamp": "2026-10-20T18:07:41.973700Z",
+  "date": "2026-10-20",
   "system": "S2",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "RTY",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini Russell 2000 (M2K)",
+      "side": "short",
+      "qty": 6,
+      "avg_price": 2734.8999,
+      "stop_price": 2799.4614,
+      "units": 1,
+      "unrealized_pnl": -1604.1,
+      "asof": "2026-10-20"
+    }
+  ]
 }

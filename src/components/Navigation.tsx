@@ -218,7 +218,7 @@ function OzCtaMark({ className }: { className?: string }) {
 
 type TopGroup = 'futures' | null;
 
-const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid', 'taylor'];
+const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid', 'taylor', 'linda'];
 
 function getActiveGroup(section: NavSectionKey | null): TopGroup {
   if (section && FUTURES_KEYS.includes(section)) return 'futures';

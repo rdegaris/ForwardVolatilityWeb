@@ -21,6 +21,10 @@ export interface LindaSignalRow {
 export interface LindaSignalsPayload {
   timestamp: string;
   date: string;
+  system?: string;
+  atr_period?: number;
+  ema_period?: number;
+  trend_day_atr_multiple?: number;
   total_scanned: number;
   total_triggered: number;
   signals: LindaSignalRow[];

@@ -196,21 +196,19 @@ export default function Home() {
   const [selectedPerfStrategy, setSelectedPerfStrategy] = useState<string>('ALL');
   const [selectedPerfTimeframe, setSelectedPerfTimeframe] = useState<'QTD' | 'YTD' | 'INCEPTION'>('INCEPTION');
 
-  const isTradeInTimeframe = (entryDateStr?: string | null, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
-    if (tf === 'INCEPTION' || !entryDateStr) return true;
-    const d = new Date(entryDateStr.slice(0, 10));
-    if (isNaN(d.getTime())) return true;
-    const now = new Date();
-    const currentYear = now.getFullYear();
+  const isTradeInTimeframe = (t: PaperTrade, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
+    if (tf === 'INCEPTION') return true;
+    const refDateStr = (t.status === 'OPEN' ? t.entry_date : (t.exit_date || t.entry_date))?.slice(0, 10);
+    if (!refDateStr) return true;
+    const nowPac = getTodayDatePacific();
+    const currentYear = nowPac.getFullYear();
     if (tf === 'YTD') {
-      const ytdStart = new Date(currentYear, 0, 1);
-      return d >= ytdStart;
+      return refDateStr >= `${currentYear}-01-01`;
     }
     if (tf === 'QTD') {
-      const currentMonth = now.getMonth();
-      const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
-      const qtdStart = new Date(currentYear, quarterStartMonth, 1);
-      return d >= qtdStart;
+      const quarterStartMonth = Math.floor(nowPac.getMonth() / 3) * 3 + 1;
+      const qStartStr = `${currentYear}-${String(quarterStartMonth).padStart(2, '0')}-01`;
+      return refDateStr >= qStartStr;
     }
     return true;
   };
@@ -222,7 +220,7 @@ export default function Home() {
     return sourceTrades
       .filter((t) => {
         const matchStrat = selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy;
-        const matchTf = isTradeInTimeframe(t.entry_date, selectedPerfTimeframe);
+        const matchTf = isTradeInTimeframe(t, selectedPerfTimeframe);
         return matchStrat && matchTf;
       })
       .sort((a, b) => {
@@ -451,7 +449,7 @@ export default function Home() {
           </div>
 
           {/* Quick-Nav Strategy Cards */}
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
               {
                 label: 'Trendorama',
@@ -488,6 +486,15 @@ export default function Home() {
                 border: 'hover:border-cyan-500/50 hover:shadow-cyan-500/10',
                 text: 'text-cyan-300',
                 bg: 'from-cyan-950/40 to-slate-900/40',
+              },
+              {
+                label: 'The Linda',
+                desc: 'Intraday Trend Day EMA Fade',
+                to: '/linda',
+                dot: 'bg-emerald-500',
+                border: 'hover:border-emerald-500/50 hover:shadow-emerald-500/10',
+                text: 'text-emerald-300',
+                bg: 'from-emerald-950/40 to-slate-900/40',
               },
             ].map((s) => (
               <Link

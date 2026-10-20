@@ -141,23 +141,36 @@ export default function ExecutedTrades() {
   const [newTarget, setNewTarget] = useState<string>('');
   const [newStop, setNewStop] = useState<string>('');
 
-  const isTradeInTimeframe = (entryDateStr?: string | null, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
-    if (tf === 'INCEPTION' || !entryDateStr) return true;
-    const d = new Date(entryDateStr.slice(0, 10));
-    if (isNaN(d.getTime())) return true;
+  const OVERRIDES_STORAGE_KEY = 'ozcta_trade_overrides_v1';
+
+  const getTimeframeStartDateStr = (tf: 'QTD' | 'YTD' | 'INCEPTION'): string | null => {
+    if (tf === 'INCEPTION') return null;
     const now = new Date();
     const currentYear = now.getFullYear();
     if (tf === 'YTD') {
-      const ytdStart = new Date(currentYear, 0, 1);
-      return d >= ytdStart;
+      return `${currentYear}-01-01`;
     }
-    if (tf === 'QTD') {
-      const currentMonth = now.getMonth();
-      const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
-      const qtdStart = new Date(currentYear, quarterStartMonth, 1);
-      return d >= qtdStart;
+    const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3 + 1;
+    return `${currentYear}-${String(quarterStartMonth).padStart(2, '0')}-01`;
+  };
+
+  const isTradeInTimeframe = (t: PaperTrade, tf: 'QTD' | 'YTD' | 'INCEPTION' = 'INCEPTION'): boolean => {
+    const startStr = getTimeframeStartDateStr(tf);
+    if (!startStr) return true;
+    const refDateStr = (t.status === 'OPEN' ? t.entry_date : (t.exit_date || t.entry_date))?.slice(0, 10);
+    if (!refDateStr) return true;
+    return refDateStr >= startStr;
+  };
+
+  const saveTradeOverride = (tradeId: string, patch: Partial<PaperTrade>) => {
+    try {
+      const raw = localStorage.getItem(OVERRIDES_STORAGE_KEY);
+      const map: Record<string, Partial<PaperTrade>> = raw ? JSON.parse(raw) : {};
+      map[tradeId] = { ...(map[tradeId] || {}), ...patch };
+      localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(map));
+    } catch {
+      // Ignore storage quota / privacy mode errors
     }
-    return true;
   };
 
   useEffect(() => {
@@ -195,7 +208,19 @@ export default function ExecutedTrades() {
         ]);
 
         if (tradesRes.status === 'fulfilled' && tradesRes.value?.trades) {
-          setTrades(tradesRes.value.trades);
+          let loadedTrades = tradesRes.value.trades;
+          try {
+            const rawOverrides = localStorage.getItem(OVERRIDES_STORAGE_KEY);
+            if (rawOverrides) {
+              const overrides: Record<string, Partial<PaperTrade>> = JSON.parse(rawOverrides);
+              loadedTrades = loadedTrades.map((t) =>
+                overrides[t.id] ? { ...t, ...overrides[t.id] } : t
+              );
+            }
+          } catch {
+            // Ignore malformed localStorage
+          }
+          setTrades(loadedTrades);
         }
         if (perfRes.status === 'fulfilled' && perfRes.value) {
           setPerformance(perfRes.value);
@@ -214,7 +239,7 @@ export default function ExecutedTrades() {
       .filter((t) => {
         if (selectedStrategy !== 'ALL' && t.strategy !== selectedStrategy)
           return false;
-        if (!isTradeInTimeframe(t.entry_date, selectedTimeframe))
+        if (!isTradeInTimeframe(t, selectedTimeframe))
           return false;
         if (selectedStatus === 'OPEN' && t.status !== 'OPEN') return false;
         if (selectedStatus === 'CLOSED' && t.status === 'OPEN') return false;
@@ -246,7 +271,7 @@ export default function ExecutedTrades() {
   const biggestWinners = useMemo(() => {
     const pool = trades.filter((t) => {
       const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
-      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
     return [...pool]
@@ -262,7 +287,7 @@ export default function ExecutedTrades() {
   const biggestLosers = useMemo(() => {
     const pool = trades.filter((t) => {
       const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
-      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
     return [...pool]
@@ -296,10 +321,58 @@ export default function ExecutedTrades() {
     };
   }, [trades, selectedStrategy]);
 
+  const equityCurveData = useMemo(() => {
+    if (selectedStrategy === 'ALL' && selectedTimeframe === 'INCEPTION' && performance?.equity_curve?.length) {
+      return performance.equity_curve;
+    }
+    const pool = trades.filter((t) => {
+      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchTf = isTradeInTimeframe(t, selectedTimeframe);
+      return matchStrat && matchTf;
+    });
+    if (pool.length === 0) return [];
+
+    const dateSet = new Set<string>();
+    for (const t of pool) {
+      if (t.entry_date) dateSet.add(t.entry_date.slice(0, 10));
+      if (t.exit_date) dateSet.add(t.exit_date.slice(0, 10));
+    }
+    if (performance?.date) dateSet.add(performance.date.slice(0, 10));
+
+    const startStr = getTimeframeStartDateStr(selectedTimeframe);
+    const sortedDates = Array.from(dateSet)
+      .filter((d) => !startStr || d >= startStr)
+      .sort();
+
+    let peakEq = 100000;
+    const latestDateStr = sortedDates[sortedDates.length - 1];
+    return sortedDates.map((d) => {
+      const realizedUpToD = pool
+        .filter((t) => t.status !== 'OPEN' && (t.exit_date || t.entry_date)?.slice(0, 10) <= d)
+        .reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+      const unrealizedOnD =
+        d === latestDateStr
+          ? pool
+              .filter((t) => t.status === 'OPEN' && (t.entry_date || '').slice(0, 10) <= d)
+              .reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0)
+          : 0;
+      const cumPnl = Math.round((realizedUpToD + unrealizedOnD) * 100) / 100;
+      const equity = Math.round((100000 + cumPnl) * 100) / 100;
+      if (equity > peakEq) peakEq = equity;
+      const ddPct = peakEq > 0 ? Math.round(((peakEq - equity) / peakEq) * 10000) / 100 : 0;
+      return {
+        date: d,
+        cum_pnl: cumPnl,
+        equity,
+        drawdown_pct: ddPct,
+      };
+    });
+  }, [trades, selectedStrategy, selectedTimeframe, performance]);
+
   const activeMetrics = useMemo(() => {
     const pool = trades.filter((t) => {
       const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
-      const matchTf = isTradeInTimeframe(t.entry_date, selectedTimeframe);
+      const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
 
@@ -332,6 +405,7 @@ export default function ExecutedTrades() {
       : (winDollars > 0 ? 99.9 : 1.0);
 
     const avgWin = wins.length > 0 ? winDollars / wins.length : 0;
+    const maxCurveDd = equityCurveData.reduce((max, pt) => Math.max(max, pt.drawdown_pct || 0), 0);
 
     return {
       netPnl: Math.round(netPnl * 100) / 100,
@@ -350,23 +424,21 @@ export default function ExecutedTrades() {
       totalTrades: pool.length,
       closedCount: closed.length,
       avgWin: Math.round(avgWin * 100) / 100,
-      maxDrawdown: performance?.max_drawdown_pct || 0,
+      maxDrawdown: selectedStrategy === 'ALL' && selectedTimeframe === 'INCEPTION'
+        ? (performance?.max_drawdown_pct || maxCurveDd)
+        : maxCurveDd,
     };
-  }, [trades, selectedStrategy, selectedTimeframe, performance]);
+  }, [trades, selectedStrategy, selectedTimeframe, performance, equityCurveData]);
 
   const handleEditSave = () => {
     if (!editingTrade) return;
-    const updated = trades.map((t) => {
-      if (t.id === editingTrade.id) {
-        return {
-          ...t,
-          profit_target: newTarget ? parseFloat(newTarget) : t.profit_target,
-          stop_loss: newStop ? parseFloat(newStop) : t.stop_loss,
-          updated_at: new Date().toISOString(),
-        };
-      }
-      return t;
-    });
+    const patch: Partial<PaperTrade> = {
+      profit_target: newTarget ? parseFloat(newTarget) : editingTrade.profit_target,
+      stop_loss: newStop ? parseFloat(newStop) : editingTrade.stop_loss,
+      updated_at: new Date().toISOString(),
+    };
+    saveTradeOverride(editingTrade.id, patch);
+    const updated = trades.map((t) => (t.id === editingTrade.id ? { ...t, ...patch } : t));
     setTrades(updated);
     setEditingTrade(null);
   };
@@ -381,8 +453,7 @@ export default function ExecutedTrades() {
         const fullComm = (t.commission || 0) * 2;
         const fullSlip = (t.slippage || 0) * 2;
         const netPnlCalc = grossPnl - fullComm - fullSlip;
-        return {
-          ...t,
+        const patch: Partial<PaperTrade> = {
           status: 'MANUALLY_CLOSED' as const,
           exit_price: exit,
           exit_date: new Date().toISOString().split('T')[0],
@@ -393,8 +464,15 @@ export default function ExecutedTrades() {
           realized_pnl: Math.round(netPnlCalc * 100) / 100,
           unrealized_pnl: 0,
           return_pct:
-            Math.round(((exit - t.entry_price) / t.entry_price) * 10000) / 100,
+            t.entry_price > 0
+              ? Math.round((diff / t.entry_price) * 10000) / 100
+              : 0,
           updated_at: new Date().toISOString(),
+        };
+        saveTradeOverride(tradeId, patch);
+        return {
+          ...t,
+          ...patch,
         };
       }
       return t;
@@ -653,10 +731,10 @@ export default function ExecutedTrades() {
           </div>
 
           <div className="h-64 w-full">
-            {performance?.equity_curve && performance.equity_curve.length > 0 ? (
+            {equityCurveData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
-                  data={performance.equity_curve}
+                  data={equityCurveData}
                   margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                 >
                   <defs>

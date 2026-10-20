@@ -18,9 +18,10 @@ import sys
 import time
 import urllib.request
 from dataclasses import asdict, dataclass
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from zoneinfo import ZoneInfo
 
 # -------------------------------------------------------------------
 # Configurations & Ticker Map
@@ -40,6 +41,76 @@ FUTURES_MAP = {
     "ZB": "ZB=F",   # 30-Yr T-Bond Futures
     "ZN": "ZN=F",   # 10-Yr T-Note Futures
 }
+
+POINT_VALUES = {
+    "ES": 5.0,        # Micro E-mini S&P 500 (MES)
+    "NQ": 2.0,        # Micro E-mini Nasdaq 100 (MNQ)
+    "RTY": 5.0,       # Micro E-mini Russell 2000 (M2K)
+    "YM": 0.5,        # Micro E-mini Dow Jones (MYM)
+    "GC": 10.0,       # Micro Gold (MGC, 10 oz)
+    "SI": 1000.0,     # Micro Silver (SIL, 1000 oz)
+    "CL": 100.0,      # Micro WTI Crude Oil (MCL, 100 bbl)
+    "NG": 2500.0,     # E-mini Natural Gas (QG)
+    "6E": 12500.0,    # Micro Euro FX (M6E)
+    "6B": 6250.0,     # Micro British Pound (M6B)
+    "ZB": 1000.0,     # 30-Year T-Bond Futures
+    "ZN": 1000.0,     # 10-Year T-Note Futures
+}
+
+SYMBOL_NAMES = {
+    "ES": "Micro E-mini S&P 500 (MES)",
+    "NQ": "Micro E-mini Nasdaq 100 (MNQ)",
+    "RTY": "Micro E-mini Russell 2000 (M2K)",
+    "YM": "Micro E-mini Dow Jones (MYM)",
+    "GC": "Micro Gold Futures (MGC)",
+    "SI": "Micro Silver Futures (SIL)",
+    "CL": "Micro WTI Crude Oil (MCL)",
+    "NG": "E-mini Natural Gas (QG)",
+    "6E": "Micro Euro FX (M6E)",
+    "6B": "Micro British Pound (M6B)",
+    "ZB": "30-Year T-Bond Futures",
+    "ZN": "10-Year T-Note Futures",
+}
+
+CLUSTERS = {
+    "equities": {"ES", "NQ", "RTY", "YM"},
+    "rates": {"ZB", "ZN", "ZF", "ZT"},
+    "energies": {"CL", "NG", "HO", "RB"},
+    "metals": {"GC", "SI", "HG"},
+    "fx": {"6E", "6B", "6A", "6C", "EUR", "GBP", "CAD", "AUD"},
+    "grains": {"ZC", "ZW", "ZS", "ZL"},
+    "softs": {"KC", "SB", "CT"},
+    "livestock": {"HE", "LE"},
+}
+
+CLUSTER_CAPS = {
+    "equities": 2,
+    "rates": 2,
+    "energies": 2,
+    "metals": 1,
+    "fx": 2,
+    "grains": 2,
+    "softs": 2,
+    "livestock": 1,
+    "other": 2,
+}
+
+STARTING_PORTFOLIO_CAPITAL = 100000.0
+RISK_PER_TRADE_DOLLARS = STARTING_PORTFOLIO_CAPITAL * 0.02
+
+def get_sym_cluster(symbol: str) -> str:
+    s = symbol.upper().strip()
+    for cl, syms in CLUSTERS.items():
+        if s in syms:
+            return cl
+    return "other"
+
+def calc_capped_qty(symbol: str, risk_per_contract: float) -> int:
+    if risk_per_contract <= 0:
+        return 1
+    raw_qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_per_contract))
+    max_cap = 8 if symbol in ("6E", "6B") else 10
+    return min(raw_qty, max_cap)
 
 @dataclass
 class Bar:
@@ -83,7 +154,7 @@ def fetch_yahoo_bars(symbol: str, ticker: str) -> List[Bar]:
                     o, h, l, c, v = opens[i], highs[i], lows[i], closes[i], volumes[i]
                     if None in (ts, o, h, l, c):
                         continue
-                    dt_str = datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d")
+                    dt_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
                     bars.append(Bar(dt=dt_str, open=float(o), high=float(h), low=float(l), close=float(c), volume=float(v or 0)))
                 if bars:
                     return bars
@@ -96,6 +167,7 @@ def fetch_yahoo_bars(symbol: str, ticker: str) -> List[Bar]:
 def fetch_yahoo_15m_bars(symbol: str, ticker: str) -> List[dict]:
     url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=15m"
     headers = {"User-Agent": "Mozilla/5.0"}
+    ny_tz = ZoneInfo("America/New_York")
     try:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=15) as resp:
@@ -110,11 +182,11 @@ def fetch_yahoo_15m_bars(symbol: str, ticker: str) -> List[dict]:
             ts = timestamps[i]
             o, h, l, c = opens[i], highs[i], lows[i], closes[i]
             if None in (ts, o, h, l, c): continue
-            dt_obj = datetime.utcfromtimestamp(ts)
+            dt_ny = datetime.fromtimestamp(ts, tz=timezone.utc).astimezone(ny_tz)
             bars.append({
                 "ts": ts,
-                "dt": dt_obj.strftime("%Y-%m-%d"),
-                "time": dt_obj.strftime("%H:%M"),
+                "dt": dt_ny.strftime("%Y-%m-%d"),
+                "time_et": dt_ny.strftime("%H:%M"),
                 "open": float(o), "high": float(h), "low": float(l), "close": float(c)
             })
         return bars
@@ -209,11 +281,16 @@ def compute_adx(bars: List[Bar], period: int = 14) -> Tuple[List[float], List[fl
 # -------------------------------------------------------------------
 
 def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
-    if len(bars) < 5:
+    if len(bars) < 25:
         return None
     b0 = bars[-1] # Today
     b1 = bars[-2] # Yesterday
     b2 = bars[-3] # Day before
+
+    atrs = compute_atr(bars, 20)
+    atr = atrs[-1] if atrs[-1] > 0 else (b0.high - b0.low)
+    adx_list, _, _ = compute_adx(bars, 14)
+    cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
 
     buying_pressure = b1.close - b1.low
     selling_pressure = b1.high - b1.close
@@ -223,24 +300,28 @@ def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
     high_resistance = b0.high + (b1.high - b1.low)
     low_support = b0.low - (b1.high - b1.low)
 
-    # 3-Day Cycle logic
+    # 3-Day Cycle logic aligned with execution engine (0.80x ATR stop, 1.50x ATR target)
     is_declining = b1.close < b2.close and b0.close <= b1.close
     is_advancing = b1.close > b2.close and b0.close >= b1.close
 
-    if is_declining or (b0.close < b1.close):
+    if is_declining:
         cycle_phase = "BUY_DAY"
         cycle_day = 1
-        action = "BUY_LONG"
-        entry_target = round(b0.low + (buying_pressure * 0.5), 4)
-        profit_target = round(selling_objective, 4)
-        stop_loss = round(low_support, 4)
+        action = "BUY_LONG" if cur_adx < 35.0 else "WATCH"
+        entry_val = b0.low + (buying_pressure * 0.5)
+        entry_target = round(entry_val, 4)
+        profit_target = round(entry_val + 1.50 * atr, 4)
+        stop_loss = round(entry_val - 0.80 * atr, 4)
+        notes = "2-day decline into Day 1 Buy zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
     elif is_advancing:
         cycle_phase = "SELL_SHORT_DAY"
         cycle_day = 3
-        action = "SELL_SHORT"
-        entry_target = round(b0.high - (selling_pressure * 0.5), 4)
-        profit_target = round(buying_objective, 4)
-        stop_loss = round(high_resistance, 4)
+        action = "SELL_SHORT" if cur_adx < 35.0 else "WATCH"
+        entry_val = b0.high - (selling_pressure * 0.5)
+        entry_target = round(entry_val, 4)
+        profit_target = round(entry_val - 1.50 * atr, 4)
+        stop_loss = round(entry_val + 0.80 * atr, 4)
+        notes = "2-day advance into Day 3 Sell Short zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
     else:
         cycle_phase = "SELL_DAY"
         cycle_day = 2
@@ -248,6 +329,7 @@ def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
         entry_target = round(b0.high, 4)
         profit_target = round(high_resistance, 4)
         stop_loss = round(b0.low, 4)
+        notes = "Mid-cycle Day 2 rotation — manage existing positions or trail stops"
 
     return {
         "symbol": symbol,
@@ -265,6 +347,7 @@ def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
         "entry_target": entry_target,
         "profit_target": profit_target,
         "stop_loss": stop_loss,
+        "notes": notes,
     }
 
 # -------------------------------------------------------------------
@@ -276,53 +359,59 @@ def analyze_wisely(bars: List[Bar], symbol: str) -> Optional[dict]:
         return None
     closes = [b.close for b in bars]
     emas = compute_ema(closes, 20)
+    atrs = compute_atr(bars, 20)
     adx, plus_di, minus_di = compute_adx(bars, 14)
 
     b0 = bars[-1]
     last_ema = emas[-1]
+    last_atr = atrs[-1]
     last_adx = adx[-1]
     last_pdi = plus_di[-1]
     last_mdi = minus_di[-1]
+    cluster = get_sym_cluster(symbol)
 
     recent_high = max(b.high for b in bars[-20:])
     recent_low = min(b.low for b in bars[-20:])
     dist_pct = abs(b0.close - last_ema) / last_ema * 100
 
     is_uptrend = last_pdi > last_mdi
-    adx_strong = last_adx >= 30.0
+    adx_strong = last_adx >= 25.0
     near_ema = dist_pct <= 2.5
 
     side = "none"
     eligible = False
-    entry_zone = round(last_ema, 4)
+    entry_zone = round(b0.close if near_ema else last_ema, 4)
     stop_loss = None
     target = None
-    reason = "ADX below 30 threshold (LBR Holy Grail spec)"
+    reason = "ADX below 25 threshold (trend strength filter)"
 
     if adx_strong:
         if is_uptrend:
             side = "long"
-            target = round(recent_high, 4)
-            stop_loss = round(recent_low * 0.995, 4)
+            ref_entry = b0.close if near_ema else last_ema
+            target = round(ref_entry + 2.5 * last_atr, 4)
+            stop_loss = round(ref_entry - 1.25 * last_atr, 4)
             if near_ema:
                 eligible = True
-                reason = "Uptrend pullback to 20 EMA - enter long"
+                reason = "Uptrend pullback to 20 EMA (ADX >= 25) - enter long"
             else:
-                reason = f"Waiting for pullback to 20 EMA ({dist_pct:.1f}% away)"
+                reason = f"Strong uptrend, waiting for pullback to 20 EMA ({dist_pct:.1f}% away)"
         else:
             side = "short"
-            target = round(recent_low, 4)
-            stop_loss = round(recent_high * 1.005, 4)
+            ref_entry = b0.close if near_ema else last_ema
+            target = round(ref_entry - 2.5 * last_atr, 4)
+            stop_loss = round(ref_entry + 1.25 * last_atr, 4)
             if near_ema:
                 eligible = True
-                reason = "Downtrend rally to 20 EMA - enter short"
+                reason = "Downtrend rally to 20 EMA (ADX >= 25) - enter short"
             else:
-                reason = f"Waiting for rally to 20 EMA ({dist_pct:.1f}% away)"
+                reason = f"Strong downtrend, waiting for rally to 20 EMA ({dist_pct:.1f}% away)"
 
     return {
         "symbol": symbol,
         "exchange": "CME",
         "currency": "USD",
+        "cluster": cluster,
         "side": side,
         "asof": b0.dt,
         "close": round(b0.close, 4),
@@ -354,6 +443,18 @@ def analyze_trendorama(bars: List[Bar], symbol: str) -> Tuple[dict, Optional[dic
 
     atrs = compute_atr(bars, 20)
     N = atrs[-1]
+    adx_list, _, _ = compute_adx(bars, 14)
+    cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
+    smas200 = compute_sma([b.close for b in bars], 200)
+    sma200 = smas200[-1] if smas200 else b0.close
+
+    pt_val = POINT_VALUES.get(symbol, 1.0)
+    cluster = get_sym_cluster(symbol)
+    stop_dist = 1.5 * N
+    unit_qty = calc_capped_qty(symbol, stop_dist * pt_val)
+
+    long_stop_loss = round(long_entry - stop_dist, 4)
+    short_stop_loss = round(short_entry + stop_dist, 4)
 
     long_trig = b0.high >= long_entry
     short_trig = b0.low <= short_entry
@@ -362,35 +463,60 @@ def analyze_trendorama(bars: List[Bar], symbol: str) -> Tuple[dict, Optional[dic
         "symbol": symbol,
         "exchange": "CME",
         "currency": "USD",
+        "cluster": cluster,
         "asof": b0.dt,
         "N": round(N, 4),
+        "last_open": round(b0.open, 4),
+        "last_high": round(b0.high, 4),
+        "last_low": round(b0.low, 4),
         "last_close": round(b0.close, 4),
         "long_entry": round(long_entry, 4),
         "short_entry": round(short_entry, 4),
+        "long_stop_loss": long_stop_loss,
+        "short_stop_loss": short_stop_loss,
+        "unit_qty": unit_qty,
+        "long_triggered": long_trig,
+        "short_triggered": short_trig,
     }
 
     trig = None
     if long_trig:
+        eligible = (b0.close >= sma200) and (cur_adx >= 20.0)
+        blocked_reason = None if eligible else ("Below 200 SMA" if b0.close < sma200 else f"ADX {cur_adx:.1f} < 20")
         trig = {
             "symbol": symbol,
+            "exchange": "CME",
+            "currency": "USD",
+            "cluster": cluster,
             "side": "long",
             "asof": b0.dt,
             "last_close": round(b0.close, 4),
             "entry_stop": round(long_entry, 4),
-            "stop_loss": round(long_entry - 2 * N, 4),
-            "eligible": True,
-            "notes": "Donchian upside breakout hit on latest bar",
+            "stop_loss": long_stop_loss,
+            "unit_qty": unit_qty,
+            "N": round(N, 4),
+            "eligible": eligible,
+            "blocked_reason": blocked_reason,
+            "notes": "55-day Donchian upside breakout",
         }
     elif short_trig:
+        eligible = (b0.close <= sma200) and (cur_adx >= 20.0)
+        blocked_reason = None if eligible else ("Above 200 SMA" if b0.close > sma200 else f"ADX {cur_adx:.1f} < 20")
         trig = {
             "symbol": symbol,
+            "exchange": "CME",
+            "currency": "USD",
+            "cluster": cluster,
             "side": "short",
             "asof": b0.dt,
             "last_close": round(b0.close, 4),
             "entry_stop": round(short_entry, 4),
-            "stop_loss": round(short_entry + 2 * N, 4),
-            "eligible": True,
-            "notes": "Donchian downside breakout hit on latest bar",
+            "stop_loss": short_stop_loss,
+            "unit_qty": unit_qty,
+            "N": round(N, 4),
+            "eligible": eligible,
+            "blocked_reason": blocked_reason,
+            "notes": "55-day Donchian downside breakout",
         }
 
     return row, trig
@@ -399,51 +525,157 @@ def analyze_trendorama(bars: List[Bar], symbol: str) -> Tuple[dict, Optional[dic
 # Strategy 4: Too Hot / Too Cold (OD/ID Breakout)
 # -------------------------------------------------------------------
 
-def analyze_toohot_toocold(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Optional[dict]]:
-    if len(bars) < 3:
-        return None, None
+def analyze_toohot_toocold(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Optional[dict], Optional[dict]]:
+    if len(bars) < 25:
+        return None, None, None
     b0, b1, b2 = bars[-1], bars[-2], bars[-3]
+    atrs = compute_atr(bars, 20)
+    atr = atrs[-1] if atrs[-1] > 0 else (b1.high - b1.low)
+    adx_list, _, _ = compute_adx(bars, 14)
+    cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
+    cluster = get_sym_cluster(symbol)
 
-    is_inside = (b1.high <= b2.high) and (b1.low >= b2.low)
-    is_outside = (b1.high > b2.high) and (b1.low < b2.low)
+    # Check if yesterday (b1) or today (b0) formed an Inside/Outside Day
+    b1_inside = (b1.high <= b2.high) and (b1.low >= b2.low)
+    b1_outside = (b1.high > b2.high) and (b1.low < b2.low)
+    b0_inside = (b0.high <= b1.high) and (b0.low >= b1.low)
+    b0_outside = (b0.high > b1.high) and (b0.low < b1.low)
+
+    is_armed_b1 = b1_inside or b1_outside
+    is_armed_b0 = b0_inside or b0_outside
+
+    breakout_up_lvl = round(b0.high if is_armed_b0 else b1.high, 4)
+    breakout_dn_lvl = round(b0.low if is_armed_b0 else b1.low, 4)
+    dist_up_pct = round(max(0.0, (breakout_up_lvl - b0.close) / b0.close * 100), 2) if b0.close > 0 else 0.0
+    dist_dn_pct = round(max(0.0, (b0.close - breakout_dn_lvl) / b0.close * 100), 2) if b0.close > 0 else 0.0
 
     alert = None
     triggered = None
+    breakout_confirmed = False
+    breakout_side = None
+    breakout_entry = None
+    breakout_stop = None
 
-    if is_inside or is_outside:
-        pattern = "TOO_COLD (INSIDE_DAY)" if is_inside else "TOO_HOT (OUTSIDE_DAY)"
-        alert = {
-            "symbol": symbol,
-            "pattern": pattern,
-            "asof": b1.dt,
-            "high_trigger": round(b1.high, 4),
-            "low_trigger": round(b1.low, 4),
-            "last_close": round(b0.close, 4),
-            "severity": "high" if is_outside else "medium",
-        }
+    if is_armed_b1:
+        pattern = "TOO_COLD (INSIDE_DAY)" if b1_inside else "TOO_HOT (OUTSIDE_DAY)"
+        eligible = cur_adx < 35.0
+        blocked_reason = None if eligible else f"ADX {cur_adx:.1f} >= 35"
 
         if b0.high > b1.high:
+            breakout_confirmed = True
+            breakout_side = "long"
+            breakout_entry = round(b1.high, 4)
+            breakout_stop = round(b1.high - 1.0 * atr, 4)
             triggered = {
                 "symbol": symbol,
+                "exchange": "CME",
+                "currency": "USD",
+                "cluster": cluster,
                 "side": "long",
                 "asof": b0.dt,
-                "entry_stop": round(b1.high, 4),
-                "stop_loss": round(b1.low, 4),
-                "eligible": True,
+                "od_date": b1.dt if b1_outside else None,
+                "id_date": b1.dt if b1_inside else None,
+                "last_close": round(b0.close, 4),
+                "entry_stop": breakout_entry,
+                "stop_loss": breakout_stop,
+                "eligible": eligible,
+                "blocked_reason": blocked_reason,
                 "notes": f"Confirmed {pattern} upside breakout",
             }
         elif b0.low < b1.low:
+            breakout_confirmed = True
+            breakout_side = "short"
+            breakout_entry = round(b1.low, 4)
+            breakout_stop = round(b1.low + 1.0 * atr, 4)
             triggered = {
                 "symbol": symbol,
+                "exchange": "CME",
+                "currency": "USD",
+                "cluster": cluster,
                 "side": "short",
                 "asof": b0.dt,
-                "entry_stop": round(b1.low, 4),
-                "stop_loss": round(b1.high, 4),
-                "eligible": True,
+                "od_date": b1.dt if b1_outside else None,
+                "id_date": b1.dt if b1_inside else None,
+                "last_close": round(b0.close, 4),
+                "entry_stop": breakout_entry,
+                "stop_loss": breakout_stop,
+                "eligible": eligible,
+                "blocked_reason": blocked_reason,
                 "notes": f"Confirmed {pattern} downside breakout",
             }
 
-    return alert, triggered
+        alert_side = breakout_side or ("long" if b0.close >= (b1.high + b1.low) / 2 else "short")
+        alert_entry = breakout_entry if breakout_entry is not None else round(b1.high if alert_side == "long" else b1.low, 4)
+        alert_stop = breakout_stop if breakout_stop is not None else round((alert_entry - 1.0 * atr) if alert_side == "long" else (alert_entry + 1.0 * atr), 4)
+        alert = {
+            "symbol": symbol,
+            "pattern": pattern,
+            "type": pattern,
+            "side": alert_side,
+            "asof": b0.dt if breakout_confirmed else b1.dt,
+            "high_trigger": round(b1.high, 4),
+            "low_trigger": round(b1.low, 4),
+            "entry_stop": alert_entry,
+            "stop_loss": alert_stop,
+            "last_close": round(b0.close, 4),
+            "severity": "high" if b1_outside else "medium",
+            "eligible": eligible,
+            "blocked_reason": blocked_reason,
+            "message": f"{pattern} on {b1.dt} — {'Breakout triggered ' + breakout_side.upper() if breakout_confirmed and breakout_side else f'Watching range {b1.low:.2f}–{b1.high:.2f}'}",
+        }
+    elif is_armed_b0:
+        pattern = "TOO_COLD (INSIDE_DAY)" if b0_inside else "TOO_HOT (OUTSIDE_DAY)"
+        eligible = cur_adx < 35.0
+        blocked_reason = None if eligible else f"ADX {cur_adx:.1f} >= 35"
+        alert_side = "long" if b0.close >= (b0.high + b0.low) / 2 else "short"
+        alert_entry = round(b0.high if alert_side == "long" else b0.low, 4)
+        alert_stop = round((alert_entry - 1.0 * atr) if alert_side == "long" else (alert_entry + 1.0 * atr), 4)
+        alert = {
+            "symbol": symbol,
+            "pattern": pattern,
+            "type": pattern,
+            "side": alert_side,
+            "asof": b0.dt,
+            "high_trigger": round(b0.high, 4),
+            "low_trigger": round(b0.low, 4),
+            "entry_stop": alert_entry,
+            "stop_loss": alert_stop,
+            "last_close": round(b0.close, 4),
+            "severity": "high" if b0_outside else "medium",
+            "eligible": eligible,
+            "blocked_reason": blocked_reason,
+            "message": f"Armed {pattern} on {b0.dt} — Breakout levels: Up {b0.high:.2f} / Down {b0.low:.2f}",
+        }
+
+    sig_row = {
+        "symbol": symbol,
+        "exchange": "CME",
+        "currency": "USD",
+        "cluster": cluster,
+        "asof": b0.dt,
+        "last_open": round(b0.open, 4),
+        "last_high": round(b0.high, 4),
+        "last_low": round(b0.low, 4),
+        "last_close": round(b0.close, 4),
+        "odid_setup_armed": bool(is_armed_b0 or is_armed_b1),
+        "armed_od_date": b0.dt if b0_outside else (b1.dt if b1_outside else None),
+        "armed_id_date": b0.dt if b0_inside else (b1.dt if b1_inside else None),
+        "armed_breakout_up": breakout_up_lvl if (is_armed_b0 or is_armed_b1) else None,
+        "armed_breakout_down": breakout_dn_lvl if (is_armed_b0 or is_armed_b1) else None,
+        "distance_to_up_pct": dist_up_pct if (is_armed_b0 or is_armed_b1) else None,
+        "distance_to_down_pct": dist_dn_pct if (is_armed_b0 or is_armed_b1) else None,
+        "breakout_window": bool(is_armed_b1),
+        "breakout_confirmed": breakout_confirmed,
+        "breakout_side": breakout_side,
+        "breakout_entry": breakout_entry,
+        "breakout_stop": breakout_stop,
+        "breakout_od_date": b1.dt if (breakout_confirmed and b1_outside) else None,
+        "breakout_id_date": b1.dt if (breakout_confirmed and b1_inside) else None,
+        "has_open_position": False,
+        "open_position_qty": 0,
+    }
+
+    return sig_row, alert, triggered
 
 # -------------------------------------------------------------------
 # Strategy 5: The Linda (Trend Day / No EMA Touch / Mean Reversion)
@@ -475,8 +707,8 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
         ema = c if ema is None else (c - ema) * mult + ema
         b["ema"] = ema
 
-    # Group 15m bars by UTC date
-    by_date = {}
+    # Group 15m bars by New York date
+    by_date: Dict[str, List[dict]] = {}
     for b in intraday_15m:
         by_date.setdefault(b["dt"], []).append(b)
 
@@ -484,12 +716,19 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
     if len(dates) < 2:
         return None
 
-    # Use yesterday's completed date (second to last date in dates if today is active)
-    # E.g. if dates ends in today (2026-07-31), yesterday is dates[-2]
-    today_utc = datetime.utcnow().strftime("%Y-%m-%d")
-    target_date = dates[-2] if dates[-1] == today_utc else dates[-1]
+    # Use most recent completed RTH session (if today's RTH is still in progress before 16:00 ET, use prior date)
+    now_ny = datetime.now(ZoneInfo("America/New_York"))
+    today_ny = now_ny.strftime("%Y-%m-%d")
+    current_time_et = now_ny.strftime("%H:%M")
+    if dates[-1] == today_ny and current_time_et < "16:00":
+        target_date = dates[-2]
+    else:
+        target_date = dates[-1]
 
-    rth_bars = [b for b in by_date.get(target_date, []) if "13:30" <= b["time"] <= "20:00"]
+    rth_bars = [b for b in by_date.get(target_date, []) if "09:30" <= b["time_et"] <= "16:00"]
+    if not rth_bars and len(dates) >= 2:
+        target_date = dates[-2]
+        rth_bars = [b for b in by_date.get(target_date, []) if "09:30" <= b["time_et"] <= "16:00"]
     if not rth_bars:
         return None
 
@@ -497,7 +736,6 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
     atrs = compute_atr(daily_bars, 20)
     atr = atrs[-2] if len(atrs) >= 2 else atrs[-1]
 
-    day_open = rth_bars[0]["open"]
     day_close = rth_bars[-1]["close"]
     day_high = max(b["high"] for b in rth_bars)
     day_low = min(b["low"] for b in rth_bars)
@@ -577,7 +815,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "target": round(last_15m_ema, 4),
                 "stop": None,
                 "triggered": False,
-                "reason": f"Bullish trend day, but 15m EMA was touched during RTH pit session",
+                "reason": "Bullish trend day, but 15m EMA was touched during RTH pit session",
             }
     else:
         if bear_no_touch:
@@ -616,7 +854,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
                 "target": round(last_15m_ema, 4),
                 "stop": None,
                 "triggered": False,
-                "reason": f"Bearish trend day, but 15m EMA was touched during RTH pit session",
+                "reason": "Bearish trend day, but 15m EMA was touched during RTH pit session",
             }
 
 # -------------------------------------------------------------------
@@ -633,13 +871,15 @@ def main():
     wisely_triggered = []
     trendorama_rows = []
     trendorama_trig = []
+    toohot_rows = []
     toohot_alerts = []
     toohot_trig = []
     linda_signals = []
     linda_triggered = []
     bars_by_symbol: Dict[str, List[Bar]] = {}
 
-    latest_date = datetime.utcnow().strftime("%Y-%m-%d")
+    now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    latest_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     for symbol, ticker in FUTURES_MAP.items():
         print(f"Fetching {symbol} ({ticker})...")
@@ -670,7 +910,9 @@ def main():
             trendorama_trig.append(t_trig)
 
         # 4. Too Hot / Too Cold
-        th_alert, th_trig = analyze_toohot_toocold(bars, symbol)
+        th_row, th_alert, th_trig = analyze_toohot_toocold(bars, symbol)
+        if th_row:
+            toohot_rows.append(th_row)
         if th_alert:
             toohot_alerts.append(th_alert)
         if th_trig:
@@ -687,6 +929,16 @@ def main():
     if not taylor_signals:
         raise RuntimeError("ERROR: Failed to fetch daily market data for any futures symbols. Aborting signal update.")
 
+    # 6. Update Paper Trades & Performance Ledger first so open positions can be reflected in signal feeds
+    open_trades = update_standalone_paper_trades(web_data_dir, bars_by_symbol, latest_date)
+    open_by_sym = {t["symbol"]: t for t in open_trades}
+
+    for r in toohot_rows:
+        sym = r["symbol"]
+        if sym in open_by_sym and open_by_sym[sym].get("strategy") == "TooHot TooCold":
+            r["has_open_position"] = True
+            r["open_position_qty"] = open_by_sym[sym].get("qty", 1)
+
     # -------------------------------------------------------------------
     # Write JSON Artifacts to public/data/
     # -------------------------------------------------------------------
@@ -694,7 +946,7 @@ def main():
     # 1. Taylor / Bradman JSON
     taylor_payload = {
         "date": latest_date,
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "total_scanned": len(taylor_signals),
         "summary": {
             "buy_day_count": sum(1 for s in taylor_signals if s["cycle_phase"] == "BUY_DAY"),
@@ -703,24 +955,24 @@ def main():
         },
         "signals": taylor_signals,
     }
-    (web_data_dir / "taylor_signals_latest.json").write_text(json.dumps(taylor_payload, indent=2))
+    (web_data_dir / "taylor_signals_latest.json").write_text(json.dumps(taylor_payload, indent=2), encoding="utf-8")
 
     # 2. Grail / YouHaveChosenWisely JSON
     wisely_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
         "system": "YouHaveChosenWisely",
-        "adx_threshold": 30.0,
+        "adx_threshold": 25.0,
         "total_scanned": len(wisely_signals),
         "total_triggered": len(wisely_triggered),
         "signals": wisely_signals,
         "triggered": wisely_triggered,
     }
-    (web_data_dir / "grail_signals_latest.json").write_text(json.dumps(wisely_payload, indent=2))
+    (web_data_dir / "grail_signals_latest.json").write_text(json.dumps(wisely_payload, indent=2), encoding="utf-8")
 
     # 3. Trendorama JSON
     trend_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
         "system": "S2",
         "total_scanned": len(trendorama_rows),
@@ -728,105 +980,95 @@ def main():
         "signals": trendorama_rows,
         "rows": trendorama_rows,
     }
-    (web_data_dir / "turtle_signals_latest.json").write_text(json.dumps(trend_payload, indent=2))
+    (web_data_dir / "turtle_signals_latest.json").write_text(json.dumps(trend_payload, indent=2), encoding="utf-8")
 
     # 4. Too Hot / Too Cold JSON
     odid_sig_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
-        "total_armed": len(toohot_alerts),
+        "system": "odid",
+        "total_scanned": len(toohot_rows),
+        "total_armed": sum(1 for r in toohot_rows if r.get("odid_setup_armed")),
+        "total_triggered": len(toohot_trig),
+        "signals": toohot_rows,
         "triggered": toohot_trig,
     }
     odid_alrt_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
+        "system": "odid",
         "total_alerts": len(toohot_alerts),
         "alerts": toohot_alerts,
     }
-    (web_data_dir / "odid_signals_latest.json").write_text(json.dumps(odid_sig_payload, indent=2))
-    (web_data_dir / "odid_alerts_latest.json").write_text(json.dumps(odid_alrt_payload, indent=2))
+    (web_data_dir / "odid_signals_latest.json").write_text(json.dumps(odid_sig_payload, indent=2), encoding="utf-8")
+    (web_data_dir / "odid_alerts_latest.json").write_text(json.dumps(odid_alrt_payload, indent=2), encoding="utf-8")
 
     # 5. The Linda JSON
     linda_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
         "system": "TheLinda",
         "atr_period": 20,
         "ema_period": 20,
-        "trend_day_atr_multiple": 1.25,
+        "trend_day_atr_multiple": 0.70,
         "total_scanned": len(linda_signals),
         "total_triggered": len(linda_triggered),
         "signals": linda_signals,
     }
-    (web_data_dir / "linda_signals_latest.json").write_text(json.dumps(linda_payload, indent=2))
-
-    # 6. Update Paper Trades & Performance Ledger
-    update_standalone_paper_trades(web_data_dir, bars_by_symbol, latest_date)
+    (web_data_dir / "linda_signals_latest.json").write_text(json.dumps(linda_payload, indent=2), encoding="utf-8")
 
     print(f"=== SUCCESSFULLY UPDATED ALL FUTURES SIGNAL FEEDS FOR {latest_date} ===")
-def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Bar]], latest_date: str, start_date: str = "2026-06-01"):
-    point_values = {
-        "ES": 5.0,        # Micro E-mini S&P 500 (MES)
-        "NQ": 2.0,        # Micro E-mini Nasdaq 100 (MNQ)
-        "RTY": 5.0,       # Micro E-mini Russell 2000 (M2K)
-        "YM": 0.5,        # Micro E-mini Dow Jones (MYM)
-        "GC": 10.0,       # Micro Gold (MGC, 10 oz)
-        "SI": 1000.0,     # Micro Silver (SIL, 1000 oz)
-        "CL": 100.0,      # Micro WTI Crude Oil (MCL, 100 bbl)
-        "NG": 2500.0,     # E-mini Natural Gas (QG)
-        "6E": 12500.0,    # Micro Euro FX (M6E)
-        "6B": 6250.0,     # Micro British Pound (M6B)
-        "ZB": 1000.0,     # 30-Year T-Bond Futures
-        "ZN": 1000.0      # 10-Year T-Note Futures
-    }
-    symbol_names = {
-        "ES": "Micro E-mini S&P 500 (MES)",
-        "NQ": "Micro E-mini Nasdaq 100 (MNQ)",
-        "RTY": "Micro E-mini Russell 2000 (M2K)",
-        "YM": "Micro E-mini Dow Jones (MYM)",
-        "GC": "Micro Gold Futures (MGC)",
-        "SI": "Micro Silver Futures (SIL)",
-        "CL": "Micro WTI Crude Oil (MCL)",
-        "NG": "E-mini Natural Gas (QG)",
-        "6E": "Micro Euro FX (M6E)",
-        "6B": "Micro British Pound (M6B)",
-        "ZB": "30-Year T-Bond Futures",
-        "ZN": "10-Year T-Note Futures"
-    }
 
+
+def update_standalone_paper_trades(
+    data_dir: Path,
+    daily_bars: Dict[str, List[Bar]],
+    latest_date: str,
+    start_date: str = "2026-06-01",
+) -> List[Dict[str, Any]]:
     trades_file = data_dir / "executed_trades.json"
     MAX_PORTFOLIO_OPEN_TRADES = 8
-    STARTING_PORTFOLIO_CAPITAL = 100000.0
-    RISK_PER_TRADE_DOLLARS = 100000.0 * 0.02
 
-    CLUSTERS = {
-        "equities": {"ES", "NQ", "RTY", "YM"},
-        "rates": {"ZB", "ZN", "ZF", "ZT"},
-        "energies": {"CL", "NG", "HO", "RB"},
-        "metals": {"GC", "SI", "HG"},
-        "fx": {"6E", "6B", "6A", "6C", "EUR", "GBP", "CAD", "AUD"},
-        "grains": {"ZC", "ZW", "ZS", "ZL"},
-        "softs": {"KC", "SB", "CT"},
-        "livestock": {"HE", "LE"},
+    # Institutional round-turn commission and slippage per contract ($)
+    commission_rt_per_contract = {
+        "ES": 1.20, "NQ": 1.20, "RTY": 1.20, "YM": 1.20,
+        "GC": 1.50, "SI": 1.50, "CL": 1.50, "NG": 2.50,
+        "6E": 0.50, "6B": 0.50, "ZB": 2.50, "ZN": 2.50,
     }
-    CLUSTER_CAPS = {
-        "equities": 2,
-        "rates": 2,
-        "energies": 2,
-        "metals": 1,
-        "fx": 2,
-        "grains": 2,
-        "softs": 2,
-        "livestock": 1,
-        "other": 2,
+    slippage_rt_per_contract = {
+        "ES": 1.25, "NQ": 0.50, "RTY": 0.50, "YM": 0.50,
+        "GC": 1.00, "SI": 2.50, "CL": 1.00, "NG": 2.50,
+        "6E": 0.62, "6B": 0.62, "ZB": 3.12, "ZN": 1.56,
     }
 
-    def get_sym_cluster(symbol: str) -> str:
-        s = symbol.upper().strip()
-        for cl, syms in CLUSTERS.items():
-            if s in syms:
-                return cl
-        return "other"
+    def apply_trade_accounting(t: Dict[str, Any], is_open: bool, gross_pnl: float, ref_price: float) -> None:
+        sym = t.get("symbol", "")
+        qty = max(1, int(t.get("qty", 1)))
+        entry = float(t.get("entry_price", 0.0))
+        side = t.get("side", "long")
+        c_rt = commission_rt_per_contract.get(sym, 1.50)
+        s_rt = slippage_rt_per_contract.get(sym, 1.25)
+
+        eff_qty = min(qty, 8) if sym in ("6E", "6B") else min(qty, 10)
+        factor = 0.5 if is_open else 1.0
+        comm = round(c_rt * eff_qty * factor, 2)
+        slip = round(s_rt * eff_qty * factor, 2)
+        gross = round(gross_pnl, 2)
+        net = round(gross - comm - slip, 2)
+
+        t["gross_pnl"] = gross
+        t["commission"] = comm
+        t["slippage"] = slip
+        t["fees_and_slippage"] = round(comm + slip, 2)
+        if is_open:
+            t["unrealized_pnl"] = net
+            t["realized_pnl"] = 0.0
+        else:
+            t["realized_pnl"] = net
+            t["unrealized_pnl"] = 0.0
+
+        price_diff = (ref_price - entry) if side == "long" else (entry - ref_price)
+        t["return_pct"] = round((price_diff / entry) * 100, 2) if entry > 0 else 0.0
 
     # Collect all sorted dates for simulation
     all_dates_set = set()
@@ -839,6 +1081,9 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
 
     trades: List[Dict[str, Any]] = []
     trade_id_seq = 1
+    eq_curve: List[Dict[str, Any]] = []
+    peak_eq = STARTING_PORTFOLIO_CAPITAL
+    max_dd = 0.0
 
     def can_open_trade(sym: str) -> bool:
         s = sym.upper().strip()
@@ -888,7 +1133,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             atrs_cur = compute_atr(bars, 20)
             atr_cur = atrs_cur[-1] if atrs_cur else 1.0
 
-            # Dynamic Breakeven & Trailing Stops
+            # Dynamic Breakeven & Trailing Stop Ratchet after +1.0x ATR favorable excursion
             if strat == "Trendorama":
                 if side == "long" and high >= entry + 1.0 * atr_cur:
                     stop = max(stop, entry, high - 2.0 * atr_cur)
@@ -896,8 +1141,7 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 elif side == "short" and low <= entry - 1.0 * atr_cur:
                     stop = min(stop, entry, low + 2.0 * atr_cur)
                     t["stop_loss"] = round(stop, 4)
-
-            if strat == "TooHot TooCold":
+            elif strat == "TooHot TooCold":
                 if side == "long" and high >= entry + 1.0 * atr_cur:
                     stop = max(stop, entry)
                     t["stop_loss"] = round(stop, 4)
@@ -927,10 +1171,8 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     exit_p = close
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
                 t["updated_at"] = cur_date + "T20:00:00Z"
                 continue
 
@@ -956,50 +1198,39 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 exit_p = stop
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
             elif hit_target:
                 t["status"] = "HIT_TARGET"
                 exit_p = target
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
             elif donchian_exit:
                 t["status"] = "DONCHIAN_EXIT"
                 exit_p = donchian_low_20 if side == "long" else donchian_high_20
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
             elif ema_exit:
                 t["status"] = "EMA_EXIT"
                 exit_p = close
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
             elif time_exit:
                 t["status"] = "TIME_EXIT"
                 exit_p = close
                 t["exit_price"] = round(exit_p, 4)
                 t["exit_date"] = cur_date
-                pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
-                t["realized_pnl"] = round(pnl, 2)
-                t["unrealized_pnl"] = 0.0
-                t["return_pct"] = round(((exit_p - entry) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (exit_p - entry if side == "long" else entry - exit_p) * pt_val * qty
+                apply_trade_accounting(t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
             else:
-                pnl = (close - entry if side == "long" else entry - close) * pt_val * qty
-                t["unrealized_pnl"] = round(pnl, 2)
-                t["return_pct"] = round(((close - entry if side == "long" else entry - close) / entry) * 100, 2) if entry > 0 else 0.0
+                gross_pnl = (close - entry if side == "long" else entry - close) * pt_val * qty
+                apply_trade_accounting(t, is_open=True, gross_pnl=gross_pnl, ref_price=close)
 
             t["updated_at"] = cur_date + "T20:00:00Z"
 
@@ -1010,10 +1241,11 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 continue
             b0 = bars[-1]
             b1, b2 = bars[-2], bars[-3]
-            pt_val = point_values.get(sym, 1.0)
-            sym_name = symbol_names.get(sym, sym)
+            pt_val = POINT_VALUES.get(sym, 1.0)
+            sym_name = SYMBOL_NAMES.get(sym, sym)
             atrs = compute_atr(bars, 20)
             atr = atrs[-1]
+            atr_prev = atrs[-2] if len(atrs) >= 2 else atr
             adx_list, pdi_list, mdi_list = compute_adx(bars, 14)
             cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
             smas200 = compute_sma([b.close for b in bars], 200)
@@ -1028,35 +1260,37 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 stop_p = entry_p - 1.5 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                trades.append({
+                new_t = {
                     "id": f"pt_{sym}_Tren_{cur_date.replace('-','')}_{trade_id_seq}",
                     "symbol": sym, "symbol_name": sym_name, "strategy": "Trendorama", "side": "long",
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(entry_p + 3 * (entry_p - stop_p), 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                    "unrealized_pnl": round((b0.close - entry_p) * pt_val * qty, 2), "realized_pnl": 0.0,
-                    "return_pct": round(((b0.close - entry_p) / entry_p) * 100, 2), "duration_days": 0,
-                    "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                })
+                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                }
+                apply_trade_accounting(new_t, is_open=True, gross_pnl=(b0.close - entry_p) * pt_val * qty, ref_price=b0.close)
+                trades.append(new_t)
                 trade_id_seq += 1
             elif b0.low <= donchian_low_55 and b0.close <= sma200 and cur_adx >= 20.0 and can_open_trade(sym):
                 entry_p = donchian_low_55
                 stop_p = entry_p + 1.5 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                trades.append({
+                new_t = {
                     "id": f"pt_{sym}_Tren_{cur_date.replace('-','')}_{trade_id_seq}",
                     "symbol": sym, "symbol_name": sym_name, "strategy": "Trendorama", "side": "short",
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(entry_p - 3 * (stop_p - entry_p), 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                    "unrealized_pnl": round((entry_p - b0.close) * pt_val * qty, 2), "realized_pnl": 0.0,
-                    "return_pct": round(((entry_p - b0.close) / entry_p) * 100, 2), "duration_days": 0,
-                    "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                })
+                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                }
+                apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
+                trades.append(new_t)
                 trade_id_seq += 1
 
-            # Strategy 2: The Bradman (Taylor 3-day cycle with 0.80x ATR Risk Optimization)
+            # Strategy 2: The Bradman (Taylor 3-day cycle with ADX < 35 filter & 0.8x ATR Stop)
             is_declining = b1.close < b2.close and b0.close <= b1.close
             is_advancing = b1.close > b2.close and b0.close >= b1.close
             buy_press = b1.close - b1.low
@@ -1067,16 +1301,17 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 target_p = entry_p + 1.50 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                trades.append({
+                new_t = {
                     "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
                     "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "long",
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                    "unrealized_pnl": round((b0.close - entry_p) * pt_val * qty, 2), "realized_pnl": 0.0,
-                    "return_pct": round(((b0.close - entry_p) / entry_p) * 100, 2), "duration_days": 0,
-                    "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                })
+                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                }
+                apply_trade_accounting(new_t, is_open=True, gross_pnl=(b0.close - entry_p) * pt_val * qty, ref_price=b0.close)
+                trades.append(new_t)
                 trade_id_seq += 1
             elif is_advancing and cur_adx < 35.0 and can_open_trade(sym):
                 entry_p = b0.high - (sell_press * 0.5)
@@ -1084,16 +1319,17 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                 target_p = entry_p - 1.50 * atr
                 risk_d = abs(entry_p - stop_p) * pt_val
                 qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                trades.append({
+                new_t = {
                     "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
                     "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "short",
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                    "unrealized_pnl": round((entry_p - b0.close) * pt_val * qty, 2), "realized_pnl": 0.0,
-                    "return_pct": round(((entry_p - b0.close) / entry_p) * 100, 2), "duration_days": 0,
-                    "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                })
+                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                }
+                apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
+                trades.append(new_t)
                 trade_id_seq += 1
 
             # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA Pullback)
@@ -1112,16 +1348,17 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     target_p = entry_p + 2.5 * atr if side == "long" else entry_p - 2.5 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                    trades.append({
+                    new_t = {
                         "id": f"pt_{sym}_Wisely_{cur_date.replace('-','')}_{trade_id_seq}",
                         "symbol": sym, "symbol_name": sym_name, "strategy": "YouHaveChosenWisely", "side": side,
                         "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                         "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                         "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                        "unrealized_pnl": 0.0, "realized_pnl": 0.0,
-                        "return_pct": 0.0, "duration_days": 0,
-                        "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                    })
+                        "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                        "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    }
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=0.0, ref_price=b0.close)
+                    trades.append(new_t)
                     trade_id_seq += 1
 
             # Strategy 4: TooHot TooCold (OD/ID Breakout with 1.0x ATR Stop & Dynamic BE)
@@ -1134,16 +1371,17 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     target_p = entry_p + 2.0 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                    trades.append({
+                    new_t = {
                         "id": f"pt_{sym}_THTC_{cur_date.replace('-','')}_{trade_id_seq}",
                         "symbol": sym, "symbol_name": sym_name, "strategy": "TooHot TooCold", "side": "long",
                         "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                         "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                         "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                        "unrealized_pnl": round((b0.close - entry_p) * pt_val * qty, 2), "realized_pnl": 0.0,
-                        "return_pct": round(((b0.close - entry_p) / entry_p) * 100, 2), "duration_days": 0,
-                        "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                    })
+                        "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                        "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    }
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=(b0.close - entry_p) * pt_val * qty, ref_price=b0.close)
+                    trades.append(new_t)
                     trade_id_seq += 1
                 elif b0.low < b1.low:
                     entry_p = b1.low
@@ -1151,16 +1389,17 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                     target_p = entry_p - 2.0 * atr
                     risk_d = abs(entry_p - stop_p) * pt_val
                     qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                    trades.append({
+                    new_t = {
                         "id": f"pt_{sym}_THTC_{cur_date.replace('-','')}_{trade_id_seq}",
                         "symbol": sym, "symbol_name": sym_name, "strategy": "TooHot TooCold", "side": "short",
                         "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                         "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                         "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                        "unrealized_pnl": round((entry_p - b0.close) * pt_val * qty, 2), "realized_pnl": 0.0,
-                        "return_pct": round(((entry_p - b0.close) / entry_p) * 100, 2), "duration_days": 0,
-                        "initial_risk": round(risk_d * qty, 2), "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                    })
+                        "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                        "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    }
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
+                    trades.append(new_t)
                     trade_id_seq += 1
 
             # Strategy 5: The Linda (Trend Day No-Touch Fade at Opening Bell)
@@ -1168,7 +1407,6 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
             if len(emas20) >= 20:
                 ema20_prev = emas20[-1]
                 b1_range = b1.high - b1.low
-                atr_prev = atrs[-2] if len(atrs) >= 2 else atr
                 if b1_range > 0 and atr_prev > 0 and (b1_range / atr_prev) >= 0.55:
                     trend_strength = (b1.close - b1.low) / b1_range
                     is_bull_thrust = trend_strength >= 0.70 and b1.low > ema20_prev
@@ -1196,64 +1434,45 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
                             stat = "EOD_EXIT"
                             exit_p = b0.close
                             
-                        pnl = (exit_p - entry_p if side == "long" else entry_p - exit_p) * pt_val * qty
-                        
-                        trades.append({
+                        gross_pnl = (exit_p - entry_p if side == "long" else entry_p - exit_p) * pt_val * qty
+                        new_t = {
                             "id": f"pt_{sym}_Linda_{cur_date.replace('-','')}_{trade_id_seq}",
                             "symbol": sym, "symbol_name": sym_name, "strategy": "The Linda", "side": side,
                             "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                             "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                             "point_value": pt_val, "status": stat, "exit_date": cur_date, "exit_price": round(exit_p, 4),
-                            "current_price": round(b0.close, 4), "unrealized_pnl": 0.0, "realized_pnl": round(pnl, 2),
-                            "return_pct": round(((exit_p - entry_p) / entry_p) * 100, 2) if entry_p > 0 else 0.0,
-                            "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                            "current_price": round(b0.close, 4), "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
                             "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                        })
+                        }
+                        apply_trade_accounting(new_t, is_open=False, gross_pnl=gross_pnl, ref_price=exit_p)
+                        trades.append(new_t)
                         trade_id_seq += 1
 
-    # Apply institutional commissions and slippage to all trades
-    # Round-turn commission per contract ($) and round-turn slippage per contract ($)
-    commission_rt_per_contract = {
-        "ES": 1.20, "NQ": 1.20, "RTY": 1.20, "YM": 1.20,
-        "GC": 1.50, "SI": 1.50, "CL": 1.50, "NG": 2.50,
-        "6E": 0.50, "6B": 0.50, "ZB": 2.50, "ZN": 2.50,
-    }
-    slippage_rt_per_contract = {
-        "ES": 1.25, "NQ": 0.50, "RTY": 0.50, "YM": 0.50,
-        "GC": 1.00, "SI": 2.50, "CL": 1.00, "NG": 2.50,
-        "6E": 0.62, "6B": 0.62, "ZB": 3.12, "ZN": 1.56,
-    }
+        # 3. RECORD DAILY MARK-TO-MARKET PORTFOLIO EQUITY SNAPSHOT
+        if trades:
+            realized_to_date = sum(float(t.get("realized_pnl", 0.0)) for t in trades if t.get("status") != "OPEN")
+            unrealized_today = sum(float(t.get("unrealized_pnl", 0.0)) for t in trades if t.get("status") == "OPEN")
+            cum_pnl_day = round(realized_to_date + unrealized_today, 2)
+            cur_eq = round(STARTING_PORTFOLIO_CAPITAL + cum_pnl_day, 2)
+            if cur_eq > peak_eq:
+                peak_eq = cur_eq
+            dd_pct = round(((peak_eq - cur_eq) / peak_eq) * 100, 2) if peak_eq > 0 else 0.0
+            if dd_pct > max_dd:
+                max_dd = dd_pct
+            eq_curve.append({
+                "date": cur_date,
+                "cum_pnl": cum_pnl_day,
+                "equity": cur_eq,
+                "drawdown_pct": dd_pct,
+            })
 
-    for t in trades:
-        sym = t.get("symbol", "")
-        raw_qty = max(1, int(t.get("qty", 1)))
-        # For micro FX/contracts with large unit counts, 10 micros route as 1 standard lot equivalent
-        eff_qty = min(raw_qty, 8) if sym in ("6E", "6B") else min(raw_qty, 10)
-        c_rt = commission_rt_per_contract.get(sym, 1.50)
-        s_rt = slippage_rt_per_contract.get(sym, 1.25)
-
-        if t.get("status") == "OPEN":
-            gross = round(float(t.get("unrealized_pnl", 0.0)), 2)
-            comm = round(c_rt * eff_qty * 0.5, 2)
-            slip = round(s_rt * eff_qty * 0.5, 2)
-            net_u = round(gross - comm - slip, 2)
-            t["gross_pnl"] = gross
-            t["commission"] = comm
-            t["slippage"] = slip
-            t["fees_and_slippage"] = round(comm + slip, 2)
-            t["unrealized_pnl"] = net_u
-            t["realized_pnl"] = 0.0
-        else:
-            gross = round(float(t.get("realized_pnl", 0.0)), 2)
-            comm = round(c_rt * eff_qty, 2)
-            slip = round(s_rt * eff_qty, 2)
-            net_r = round(gross - comm - slip, 2)
-            t["gross_pnl"] = gross
-            t["commission"] = comm
-            t["slippage"] = slip
-            t["fees_and_slippage"] = round(comm + slip, 2)
-            t["realized_pnl"] = net_r
-            t["unrealized_pnl"] = 0.0
+    if not eq_curve:
+        eq_curve.append({
+            "date": latest_date,
+            "cum_pnl": 0.0,
+            "equity": STARTING_PORTFOLIO_CAPITAL,
+            "drawdown_pct": 0.0,
+        })
 
     # Calculate summary metrics (Net of Commissions & Slippage)
     closed_trades = [t for t in trades if t.get("status") in ("HIT_TARGET", "STOPPED_OUT", "MANUALLY_CLOSED", "DONCHIAN_EXIT", "TIME_EXIT", "EMA_EXIT", "EOD_EXIT")]
@@ -1311,52 +1530,9 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         cl = sb["closed_trades"]
         sb["win_rate_pct"] = round((sb["wins"] / cl * 100), 1) if cl > 0 else 0.0
 
-    # Equity Curve (Accurate Mark-to-Market Timeline)
-    all_dates = sorted(list(set(
-        [t.get("entry_date") for t in trades if t.get("entry_date")] +
-        [t.get("exit_date") for t in trades if t.get("exit_date")]
-    )))
-    eq_curve = []
-    running_eq = STARTING_PORTFOLIO_CAPITAL  # $100k starting portfolio capital
-    peak_eq = running_eq
-    max_dd = 0.0
-    if not all_dates:
-        eq_curve.append({
-            "date": latest_date, "cum_pnl": 0.0, "equity": running_eq, "drawdown_pct": 0.0
-        })
-    else:
-        for d in all_dates:
-            # Realized PnL of all trades closed on or before date d
-            realized_up_to_d = sum(
-                float(t.get("realized_pnl", 0.0))
-                for t in trades
-                if t.get("status") != "OPEN" and t.get("exit_date") and t.get("exit_date") <= d
-            )
-            # Unrealized PnL of active trades on date d
-            active_on_d = [
-                t for t in trades
-                if t.get("entry_date") and t.get("entry_date") <= d and (
-                    t.get("status") == "OPEN" or (t.get("exit_date") and t.get("exit_date") > d)
-                )
-            ]
-            unrealized_d = sum(float(t.get("unrealized_pnl", 0.0)) for t in active_on_d if t.get("status") == "OPEN")
-            
-            cum_pnl = realized_up_to_d + unrealized_d
-            c_eq = running_eq + cum_pnl
-            if c_eq > peak_eq:
-                peak_eq = c_eq
-            dd = ((peak_eq - c_eq) / peak_eq * 100) if peak_eq > 0 else 0.0
-            if dd > max_dd:
-                max_dd = dd
-            eq_curve.append({
-                "date": d,
-                "cum_pnl": round(cum_pnl, 2),
-                "equity": round(c_eq, 2),
-                "drawdown_pct": round(dd, 2)
-            })
-
+    now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     perf_payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now_iso,
         "date": latest_date,
         "total_trades": len(trades),
         "open_trades_count": len(open_trades),
@@ -1382,10 +1558,56 @@ def update_standalone_paper_trades(data_dir: Path, daily_bars: Dict[str, List[Ba
         "recent_trades": sorted(trades, key=lambda x: (x.get("status") == "OPEN", x.get("entry_date", ""), x.get("updated_at", "")), reverse=True)[:50]
     }
 
+    # Sync strategy-specific open trade feeds for /odid and /trendorama/open-trades
+    odid_open_payload = {
+        "timestamp": now_iso,
+        "date": latest_date,
+        "system": "odid",
+        "open_trades": [
+            {
+                "symbol": t["symbol"],
+                "exchange": "CME",
+                "currency": "USD",
+                "contract_local_symbol": t.get("symbol_name", t["symbol"]),
+                "side": t["side"],
+                "qty": t["qty"],
+                "net_qty": t["qty"] if t["side"] == "long" else -t["qty"],
+                "avg_price": t["entry_price"],
+            }
+            for t in open_trades
+            if t.get("strategy") == "TooHot TooCold"
+        ],
+    }
+    turtle_open_payload = {
+        "timestamp": now_iso,
+        "date": latest_date,
+        "system": "S2",
+        "open_trades": [
+            {
+                "symbol": t["symbol"],
+                "exchange": "CME",
+                "currency": "USD",
+                "contract_local_symbol": t.get("symbol_name", t["symbol"]),
+                "side": t["side"],
+                "qty": t["qty"],
+                "avg_price": t["entry_price"],
+                "stop_price": t["stop_loss"],
+                "units": 1,
+                "unrealized_pnl": t["unrealized_pnl"],
+                "asof": latest_date,
+            }
+            for t in open_trades
+            if t.get("strategy") == "Trendorama"
+        ],
+    }
+
     trades_file.write_text(json.dumps(trades, indent=2), encoding="utf-8")
-    (data_dir / "paper_trades_latest.json").write_text(json.dumps({"timestamp": datetime.utcnow().isoformat() + "Z", "date": latest_date, "trades": trades}, indent=2), encoding="utf-8")
+    (data_dir / "paper_trades_latest.json").write_text(json.dumps({"timestamp": now_iso, "date": latest_date, "trades": trades}, indent=2), encoding="utf-8")
     (data_dir / "paper_trade_performance.json").write_text(json.dumps(perf_payload, indent=2), encoding="utf-8")
+    (data_dir / "odid_open_trades_latest.json").write_text(json.dumps(odid_open_payload, indent=2), encoding="utf-8")
+    (data_dir / "turtle_open_trades_latest.json").write_text(json.dumps(turtle_open_payload, indent=2), encoding="utf-8")
     print(f"  [PAPER TRADES] Updated {len(trades)} executed trades ({len(closed_trades)} closed, {len(open_trades)} open, Gross PnL: ${tot_gross_realized+tot_gross_unrealized:,.2f}, Comm+Slip: -${tot_fees_and_slippage:,.2f}, Net PnL: ${net_pnl:,.2f})")
+    return open_trades
 
 
 if __name__ == "__main__":
