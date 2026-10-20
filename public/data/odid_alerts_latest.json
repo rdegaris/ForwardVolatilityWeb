@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-10-19T21:34:46.701396Z",
-  "date": "2026-10-19",
-  "total_alerts": 5,
+  "timestamp": "2026-10-20T01:03:43.543242Z",
+  "date": "2026-10-20",
+  "total_alerts": 6,
   "alerts": [
     {
       "symbol": "ES",
@@ -9,7 +9,7 @@
       "asof": "2026-10-16",
       "high_trigger": 7809.5,
       "low_trigger": 7676.0,
-      "last_close": 7739.75,
+      "last_close": 7734.25,
       "severity": "high"
     },
     {
@@ -18,7 +18,7 @@
       "asof": "2026-10-16",
       "high_trigger": 30225.0,
       "low_trigger": 29268.75,
-      "last_close": 29743.75,
+      "last_close": 29641.75,
       "severity": "high"
     },
     {
@@ -27,8 +27,17 @@
       "asof": "2026-10-16",
       "high_trigger": 2795.3999,
       "low_trigger": 2728.8999,
-      "last_close": 2744.7,
+      "last_close": 2740.7,
       "severity": "high"
+    },
+    {
+      "symbol": "6B",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "asof": "2026-10-19",
+      "high_trigger": 1.3327,
+      "low_trigger": 1.3317,
+      "last_close": 1.3317,
+      "severity": "medium"
     },
     {
       "symbol": "ZB",
@@ -36,7 +45,7 @@
       "asof": "2026-10-16",
       "high_trigger": 105.875,
       "low_trigger": 105.0312,
-      "last_close": 104.9375,
+      "last_close": 104.875,
       "severity": "medium"
     },
     {
@@ -45,7 +54,7 @@
       "asof": "2026-10-16",
       "high_trigger": 105.6875,
       "low_trigger": 105.2031,
-      "last_close": 105.1875,
+      "last_close": 105.25,
       "severity": "medium"
     }
   ]
