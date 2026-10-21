@@ -395,6 +395,94 @@ export default function Home() {
     timeZone: 'America/Los_Angeles',
   });
 
+  // Compute Last Scan Run and Next Scheduled Run times
+  const scanScheduleStatus = useMemo(() => {
+    const rawTs =
+      paperPerformance?.timestamp ||
+      taylorSignals?.timestamp ||
+      turtleSignals?.timestamp ||
+      odidSignals?.timestamp ||
+      lindaSignals?.timestamp;
+
+    let lastRunDisplay = '—';
+    if (rawTs) {
+      const dt = new Date(rawTs);
+      if (!isNaN(dt.getTime())) {
+        const ptTime = dt.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          timeZone: 'America/Los_Angeles',
+        });
+        const etTime = dt.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          timeZone: 'America/New_York',
+        });
+        lastRunDisplay = `${ptTime} PT (${etTime} ET)`;
+      }
+    }
+
+    // Scheduled UTC slots matching .github/workflows/daily_futures_scan.yml:
+    // Mon-Fri: 14:00 (Morning Open), 17:30 (Mid-Session), 20:05 (RTH Pit Close), 21:15 (Globex Close)
+    // Tue-Sat: 00:30 (Final Settlement)
+    const now = new Date();
+    const dailySlots: { hourUtc: number; minUtc: number; label: string; daysUtc: number[] }[] = [
+      { hourUtc: 0, minUtc: 30, label: 'Settlement Sync', daysUtc: [2, 3, 4, 5, 6] },
+      { hourUtc: 14, minUtc: 0, label: 'Morning Open', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 17, minUtc: 30, label: 'Mid-Session', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 20, minUtc: 5, label: 'RTH Pit Close', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 21, minUtc: 15, label: 'Globex Close', daysUtc: [1, 2, 3, 4, 5] },
+    ];
+
+    let nextCandidate: { dt: Date; label: string } | null = null;
+    for (let dayOffset = 0; dayOffset <= 7; dayOffset++) {
+      const base = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + dayOffset));
+      const dow = base.getUTCDay();
+      for (const slot of dailySlots) {
+        if (!slot.daysUtc.includes(dow)) continue;
+        const slotDt = new Date(Date.UTC(
+          base.getUTCFullYear(),
+          base.getUTCMonth(),
+          base.getUTCDate(),
+          slot.hourUtc,
+          slot.minUtc,
+          0
+        ));
+        if (slotDt.getTime() > now.getTime()) {
+          if (!nextCandidate || slotDt.getTime() < nextCandidate.dt.getTime()) {
+            nextCandidate = { dt: slotDt, label: slot.label };
+          }
+        }
+      }
+      if (nextCandidate) break;
+    }
+
+    let nextRunDisplay = '—';
+    let nextRunLabel = '';
+    if (nextCandidate) {
+      const isSameDayPt =
+        nextCandidate.dt.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' }) ===
+        now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' });
+      const ptStr = nextCandidate.dt.toLocaleString('en-US', {
+        ...(isSameDayPt ? {} : { weekday: 'short' }),
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Los_Angeles',
+      });
+      const etStr = nextCandidate.dt.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/New_York',
+      });
+      nextRunDisplay = `${ptStr} PT (${etStr} ET)`;
+      nextRunLabel = nextCandidate.label;
+    }
+
+    return { lastRunDisplay, nextRunDisplay, nextRunLabel };
+  }, [paperPerformance, taylorSignals, turtleSignals, odidSignals, lindaSignals]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
@@ -429,7 +517,28 @@ export default function Home() {
               <span className="text-slate-500">|</span>
               <span className="font-mono text-slate-300">{todayShort}</span>
             </div>
-            <div className="text-xs font-semibold tracking-wide text-slate-400">{todayStr}</div>
+
+            {/* Scan Run Timestamps (Current Run & Next Scheduled Run) */}
+            <div className="flex flex-wrap items-center gap-2.5 text-xs">
+              <div className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Scan:</span>
+                <span className="font-mono font-bold text-slate-200">{scanScheduleStatus.lastRunDisplay}</span>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">Next Scan:</span>
+                <span className="font-mono font-bold text-cyan-100">{scanScheduleStatus.nextRunDisplay}</span>
+                {scanScheduleStatus.nextRunLabel && (
+                  <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cyan-300 border border-cyan-500/30">
+                    {scanScheduleStatus.nextRunLabel}
+                  </span>
+                )}
+              </div>
+              <div className="hidden xl:block text-xs font-semibold tracking-wide text-slate-400 ml-1">
+                {todayStr}
+              </div>
+            </div>
           </div>
 
           {/* Headline */}
