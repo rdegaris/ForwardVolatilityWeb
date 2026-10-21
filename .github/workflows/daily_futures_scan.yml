@@ -2,9 +2,15 @@ name: Daily Futures Strategy Scan
 
 on:
   schedule:
-    # Run 1: 21:30 UTC (5:30 PM ET / 2:30 PM PT) - initial post-close scan
-    - cron: '30 21 * * 1-5'
-    # Run 2: 00:30 UTC Tue-Sat (8:30 PM ET Mon-Fri) - catches finalized settlement bars from Yahoo Finance
+    # Run 1: 14:00 UTC (10:00 AM ET / 7:00 AM PT) - Morning RTH open & early breakout scan
+    - cron: '0 14 * * 1-5'
+    # Run 2: 17:30 UTC (1:30 PM ET / 10:30 AM PT) - Mid-session intraday breakout & MTM update
+    - cron: '30 17 * * 1-5'
+    # Run 3: 20:05 UTC (4:05 PM EDT / 1:05 PM PDT) - Immediate US RTH Pit Close scan (EDT)
+    - cron: '5 20 * * 1-5'
+    # Run 4: 21:15 UTC (5:15 PM EDT / 4:15 PM EST) - CME Globex Close & EST RTH Close scan
+    - cron: '15 21 * * 1-5'
+    # Run 5: 00:30 UTC Tue-Sat (8:30 PM ET Mon-Fri) - Finalized CME settlement bars
     - cron: '30 0 * * 2-6'
   workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
 
@@ -39,8 +45,9 @@ jobs:
           if git diff --staged --quiet; then
             echo "No signal changes today — skipping commit."
           else
-            git commit -m "Auto-update daily futures signals [skip ci]"
-            git pull --rebase origin main
+            git commit -m "Auto-update daily futures signals and executed trades"
+            git pull --rebase -X theirs origin main
             git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
           fi
+
 
