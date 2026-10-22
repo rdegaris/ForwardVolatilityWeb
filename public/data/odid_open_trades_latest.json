@@ -1,6 +1,17 @@
 {
-  "timestamp": "2026-10-22T01:02:17.518272Z",
+  "timestamp": "2026-10-22T14:08:18.514671Z",
   "date": "2026-10-22",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "NQ",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini Nasdaq 100 (MNQ)",
+      "side": "long",
+      "qty": 1,
+      "net_qty": 1,
+      "avg_price": 29903.5
+    }
+  ]
 }
