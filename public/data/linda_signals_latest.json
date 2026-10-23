@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-10-22T21:25:57.889045Z",
-  "date": "2026-10-22",
+  "timestamp": "2026-10-23T01:05:57.273736Z",
+  "date": "2026-10-23",
   "system": "TheLinda",
   "atr_period": 20,
   "ema_period": 20,
@@ -157,13 +157,13 @@
       "gap_pct": 0.04,
       "day_range": 0.0043,
       "atr20": 0.0057,
-      "range_vs_atr": 0.76,
+      "range_vs_atr": 0.75,
       "trend_strength": 0.57,
       "entry": null,
       "target": 1.1241,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.76x ATR, close at 57% of range)"
+      "reason": "Not a trend day (RTH range 0.75x ATR, close at 57% of range)"
     },
     {
       "symbol": "6B",
@@ -174,13 +174,13 @@
       "gap_pct": 0.02,
       "day_range": 0.0051,
       "atr20": 0.006,
-      "range_vs_atr": 0.85,
+      "range_vs_atr": 0.86,
       "trend_strength": 0.725,
       "entry": null,
       "target": 1.3396,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.85x ATR, close at 73% of range)"
+      "reason": "Not a trend day (RTH range 0.86x ATR, close at 73% of range)"
     },
     {
       "symbol": "ZB",
