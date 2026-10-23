@@ -109,6 +109,8 @@ function StatCard({
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [winnersOpen, setWinnersOpen] = useState(false);
+  const [losersOpen, setLosersOpen] = useState(false);
   const [turtleSignals, setTurtleSignals] = useState<TurtleSignalsPayload | null>(null);
   const [turtleOpen, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
   const [turtleSuggested, setTurtleSuggested] = useState<TurtleSuggestedTradesPayload | null>(null);
@@ -1275,16 +1277,22 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Top Winners */}
           <div className="rounded-2xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
-            <div className="flex items-center justify-between border-b border-emerald-900/30 pb-3">
+            <button
+              type="button"
+              onClick={() => setWinnersOpen((o) => !o)}
+              aria-expanded={winnersOpen}
+              className={`flex w-full items-center justify-between text-left ${winnersOpen ? 'border-b border-emerald-900/30 pb-3' : ''}`}
+            >
               <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-300">
                 <span>🏆</span> Top Winners {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
               </span>
-              <span className="text-[11px] font-bold text-emerald-400">
+              <span className="flex items-center gap-2 text-[11px] font-bold text-emerald-400">
                 {biggestWinners.length} Top Performing
+                <span className={`transition-transform ${winnersOpen ? 'rotate-180' : ''}`}>▾</span>
               </span>
-            </div>
+            </button>
 
-            {biggestWinners.length === 0 ? (
+            {!winnersOpen ? null : biggestWinners.length === 0 ? (
               <p className="text-xs text-slate-500 italic py-2">No winning trades recorded for this selection.</p>
             ) : (
               <div className="space-y-2">
@@ -1328,16 +1336,22 @@ export default function Home() {
 
           {/* Top Losers */}
           <div className="rounded-2xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
-            <div className="flex items-center justify-between border-b border-rose-900/30 pb-3">
+            <button
+              type="button"
+              onClick={() => setLosersOpen((o) => !o)}
+              aria-expanded={losersOpen}
+              className={`flex w-full items-center justify-between text-left ${losersOpen ? 'border-b border-rose-900/30 pb-3' : ''}`}
+            >
               <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-rose-300">
                 <span>⚠️</span> Top Drawdowns / Losers {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
               </span>
-              <span className="text-[11px] font-bold text-rose-400">
+              <span className="flex items-center gap-2 text-[11px] font-bold text-rose-400">
                 {biggestLosers.length} Trailing Trades
+                <span className={`transition-transform ${losersOpen ? 'rotate-180' : ''}`}>▾</span>
               </span>
-            </div>
+            </button>
 
-            {biggestLosers.length === 0 ? (
+            {!losersOpen ? null : biggestLosers.length === 0 ? (
               <p className="text-xs text-slate-500 italic py-2">No drawdown trades recorded for this selection.</p>
             ) : (
               <div className="space-y-2">
