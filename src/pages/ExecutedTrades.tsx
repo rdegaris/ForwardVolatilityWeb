@@ -140,6 +140,8 @@ export default function ExecutedTrades() {
   const [editingTrade, setEditingTrade] = useState<PaperTrade | null>(null);
   const [newTarget, setNewTarget] = useState<string>('');
   const [newStop, setNewStop] = useState<string>('');
+  const [winnersOpen, setWinnersOpen] = useState<boolean>(false);
+  const [losersOpen, setLosersOpen] = useState<boolean>(false);
 
   const OVERRIDES_STORAGE_KEY = 'ozcta_trade_overrides_v1';
 
@@ -838,16 +840,22 @@ export default function ExecutedTrades() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Top Winners */}
         <div className="rounded-3xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-900/80 to-slate-950/90 p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-emerald-900/30 pb-3">
+          <button
+            type="button"
+            onClick={() => setWinnersOpen((o) => !o)}
+            aria-expanded={winnersOpen}
+            className={`flex w-full items-center justify-between text-left ${winnersOpen ? 'border-b border-emerald-900/30 pb-3' : ''}`}
+          >
             <span className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-emerald-300">
               <span className="text-base">🏆</span> Top Profit Winners
             </span>
-            <span className="text-xs font-bold text-emerald-400">
+            <span className="flex items-center gap-2 text-xs font-bold text-emerald-400">
               Top {biggestWinners.length} Trades
+              <span className={`transition-transform ${winnersOpen ? 'rotate-180' : ''}`}>▾</span>
             </span>
-          </div>
+          </button>
 
-          {biggestWinners.length === 0 ? (
+          {!winnersOpen ? null : biggestWinners.length === 0 ? (
             <p className="text-xs text-slate-500 italic py-4 text-center">No winning trades recorded yet.</p>
           ) : (
             <div className="space-y-2.5">
@@ -889,16 +897,22 @@ export default function ExecutedTrades() {
 
         {/* Top Losers */}
         <div className="rounded-3xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-900/80 to-slate-950/90 p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-rose-900/30 pb-3">
+          <button
+            type="button"
+            onClick={() => setLosersOpen((o) => !o)}
+            aria-expanded={losersOpen}
+            className={`flex w-full items-center justify-between text-left ${losersOpen ? 'border-b border-rose-900/30 pb-3' : ''}`}
+          >
             <span className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-rose-300">
               <span className="text-base">⚠️</span> Top Drawdown / Losers
             </span>
-            <span className="text-xs font-bold text-rose-400">
+            <span className="flex items-center gap-2 text-xs font-bold text-rose-400">
               Top {biggestLosers.length} Trades
+              <span className={`transition-transform ${losersOpen ? 'rotate-180' : ''}`}>▾</span>
             </span>
-          </div>
+          </button>
 
-          {biggestLosers.length === 0 ? (
+          {!losersOpen ? null : biggestLosers.length === 0 ? (
             <p className="text-xs text-slate-500 italic py-4 text-center">No drawdown trades recorded.</p>
           ) : (
             <div className="space-y-2.5">
