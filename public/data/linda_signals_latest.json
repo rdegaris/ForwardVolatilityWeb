@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-27T01:07:28.434705Z",
+  "timestamp": "2026-10-27T14:09:45.053226Z",
   "date": "2026-10-27",
   "system": "TheLinda",
   "atr_period": 20,
@@ -16,7 +16,7 @@
       "ema20": 7713.6278,
       "gap_pct": 0.0,
       "day_range": 62.5,
-      "atr20": 81.1317,
+      "atr20": 81.4626,
       "range_vs_atr": 0.77,
       "trend_strength": 0.58,
       "entry": null,
@@ -33,7 +33,7 @@
       "ema20": 29457.5669,
       "gap_pct": 0.01,
       "day_range": 406.75,
-      "atr20": 530.3245,
+      "atr20": 531.1958,
       "range_vs_atr": 0.77,
       "trend_strength": 0.715,
       "entry": null,
@@ -50,14 +50,14 @@
       "ema20": 2800.1432,
       "gap_pct": 0.17,
       "day_range": 28.5,
-      "atr20": 42.4778,
-      "range_vs_atr": 0.67,
+      "atr20": 41.9089,
+      "range_vs_atr": 0.68,
       "trend_strength": 0.291,
       "entry": null,
       "target": 2800.1432,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.67x ATR, close at 29% of range)"
+      "reason": "Not a trend day (RTH range 0.68x ATR, close at 29% of range)"
     },
     {
       "symbol": "YM",
@@ -67,14 +67,14 @@
       "ema20": 52544.6668,
       "gap_pct": 0.02,
       "day_range": 371.0,
-      "atr20": 613.8095,
-      "range_vs_atr": 0.6,
+      "atr20": 605.119,
+      "range_vs_atr": 0.61,
       "trend_strength": 0.229,
       "entry": null,
       "target": 52544.6668,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.60x ATR, close at 23% of range)"
+      "reason": "Not a trend day (RTH range 0.61x ATR, close at 23% of range)"
     },
     {
       "symbol": "GC",
@@ -84,14 +84,14 @@
       "ema20": 4029.1939,
       "gap_pct": 0.08,
       "day_range": 41.7,
-      "atr20": 83.8563,
-      "range_vs_atr": 0.5,
+      "atr20": 82.3184,
+      "range_vs_atr": 0.51,
       "trend_strength": 0.566,
       "entry": null,
       "target": 4029.1939,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.50x ATR, close at 57% of range)"
+      "reason": "Not a trend day (RTH range 0.51x ATR, close at 57% of range)"
     },
     {
       "symbol": "SI",
@@ -101,14 +101,14 @@
       "ema20": 54.0471,
       "gap_pct": 0.2,
       "day_range": 1.355,
-      "atr20": 1.4054,
-      "range_vs_atr": 0.96,
+      "atr20": 1.355,
+      "range_vs_atr": 1.0,
       "trend_strength": 0.672,
       "entry": null,
       "target": 54.0471,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.96x ATR, close at 67% of range)"
+      "reason": "Not a trend day (RTH range 1.00x ATR, close at 67% of range)"
     },
     {
       "symbol": "CL",
@@ -118,14 +118,14 @@
       "ema20": 101.9579,
       "gap_pct": 0.37,
       "day_range": 2.8,
-      "atr20": 4.52,
-      "range_vs_atr": 0.62,
+      "atr20": 4.441,
+      "range_vs_atr": 0.63,
       "trend_strength": 0.446,
       "entry": null,
       "target": 101.9579,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.62x ATR, close at 45% of range)"
+      "reason": "Not a trend day (RTH range 0.63x ATR, close at 45% of range)"
     },
     {
       "symbol": "NG",
@@ -135,7 +135,7 @@
       "ema20": 3.0363,
       "gap_pct": 0.35,
       "day_range": 0.091,
-      "atr20": 0.1405,
+      "atr20": 0.1411,
       "range_vs_atr": 0.65,
       "trend_strength": 0.78,
       "entry": null,
@@ -186,7 +186,7 @@
       "ema20": 107.4938,
       "gap_pct": 0.02,
       "day_range": 0.4062,
-      "atr20": 1.1742,
+      "atr20": 1.1546,
       "range_vs_atr": 0.35,
       "trend_strength": 0.231,
       "entry": null,
@@ -203,14 +203,14 @@
       "ema20": 106.1168,
       "gap_pct": 0.02,
       "day_range": 0.25,
-      "atr20": 0.6245,
-      "range_vs_atr": 0.4,
+      "atr20": 0.6112,
+      "range_vs_atr": 0.41,
       "trend_strength": 0.25,
       "entry": null,
       "target": 106.1168,
       "stop": null,
       "triggered": false,
-      "reason": "Not a trend day (RTH range 0.40x ATR, close at 25% of range)"
+      "reason": "Not a trend day (RTH range 0.41x ATR, close at 25% of range)"
     }
   ]
 }
