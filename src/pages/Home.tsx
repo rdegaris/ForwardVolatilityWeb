@@ -14,6 +14,7 @@ import type { LindaSignalsPayload } from '../types/linda';
 import type { PaperTrade, PaperTradesPayload, PaperTradePerformancePayload } from '../types/paperTrade';
 import { fmt$ } from '../lib/formatCurrency';
 import SignalChartModal from '../components/SignalChartModal';
+import IraPortfolioWidget from '../components/IraPortfolioWidget';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -675,6 +676,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* ──────────────── PRIVATE IRA WIDGET (owner only) ──────────────── */}
+      <IraPortfolioWidget />
 
       {/* ──────────────── STRATEGY DETAIL GRID ──────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">

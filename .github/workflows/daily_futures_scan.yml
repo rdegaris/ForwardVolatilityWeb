@@ -37,6 +37,11 @@ jobs:
         run: |
           python scripts/daily_futures_scan.py
 
+      - name: Update IRA Portfolio Prices
+        continue-on-error: true
+        run: |
+          python scripts/update_ira_portfolio.py
+
       - name: Commit and Push Updated Signals
         run: |
           git config --global user.name "OzCTA Automation"
