@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-10-30T17:34:04.222316+00:00",
+  "timestamp": "2026-10-30T20:12:41.751492+00:00",
   "model": "Prime Aggressive Model",
   "inception_date": "2026-10-28",
   "starting_balance": 45000.0,
   "price_date": "2026-10-29",
-  "total_value": 45215.47,
-  "day_change": 69.04,
-  "day_change_pct": 0.153,
-  "total_gain": 215.47,
-  "total_gain_pct": 0.479,
+  "total_value": 45221.68,
+  "day_change": 75.25,
+  "day_change_pct": 0.167,
+  "total_gain": 221.68,
+  "total_gain_pct": 0.493,
   "positions": [
     {
       "ticker": "ANODX",
@@ -143,16 +143,16 @@
       "shares": 155.1724,
       "basis_price": 11.6,
       "cost_basis": 1800.0,
-      "price": 11.57,
+      "price": 11.61,
       "prev_close": 11.57,
       "price_date": "2026-10-29",
-      "value": 1795.34,
-      "day_change": 0.0,
-      "day_change_pct": 0.0,
-      "gain": -4.66,
-      "gain_pct": -0.259,
+      "value": 1801.55,
+      "day_change": 6.21,
+      "day_change_pct": 0.346,
+      "gain": 1.55,
+      "gain_pct": 0.086,
       "stale": false,
-      "current_pct": 3.97
+      "current_pct": 3.98
     },
     {
       "ticker": "VEIRX",
@@ -292,7 +292,7 @@
     },
     {
       "date": "2026-10-29",
-      "value": 45215.47
+      "value": 45221.68
     }
   ]
 }
