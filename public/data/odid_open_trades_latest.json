@@ -1,6 +1,17 @@
 {
-  "timestamp": "2026-11-03T14:06:13.630169Z",
+  "timestamp": "2026-11-03T17:33:29.884348Z",
   "date": "2026-11-03",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "GC",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro Gold Futures (MGC)",
+      "side": "long",
+      "qty": 2,
+      "net_qty": 2,
+      "avg_price": 3980.8
+    }
+  ]
 }
