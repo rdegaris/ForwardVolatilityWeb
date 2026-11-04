@@ -178,10 +178,18 @@ export default function Home() {
   const odidAlertsCount = odidAlerts?.total_alerts ?? 0;
   const odidOpenCount = odidOpen?.open_trades?.length ?? 0;
 
-  // Actionable Bradman signals
+  // Actionable Bradman signals (prioritize EC/$ confirmed & overnight Asia/London 1H divergences first)
   const bradmanActionable = useMemo(() => {
     if (!taylorSignals?.signals) return [];
-    return taylorSignals.signals.filter((s) => s.action !== 'WATCH');
+    return [...taylorSignals.signals]
+      .filter((s) => s.action !== 'WATCH' && s.action !== 'SELL_EXIT')
+      .sort((a, b) => {
+        const score = (x: typeof a) =>
+          (x.fx_pair_confirmed ? 8 : 0) +
+          (x.entry_session === 'ASIA' || x.entry_session === 'LONDON' ? 4 : 0) +
+          (x.hourly_divergence ? 2 : 0);
+        return score(b) - score(a);
+      });
   }, [taylorSignals]);
 
   // Actionable YouHaveChosenWisely signals
@@ -433,6 +441,8 @@ export default function Home() {
     const now = new Date();
     const dailySlots: { hourUtc: number; minUtc: number; label: string; daysUtc: number[] }[] = [
       { hourUtc: 0, minUtc: 30, label: 'Settlement Sync', daysUtc: [2, 3, 4, 5, 6] },
+      { hourUtc: 3, minUtc: 30, label: 'Asia Session', daysUtc: [2, 3, 4, 5, 6] },
+      { hourUtc: 8, minUtc: 15, label: 'London Open', daysUtc: [1, 2, 3, 4, 5] },
       { hourUtc: 14, minUtc: 0, label: 'Morning Open', daysUtc: [1, 2, 3, 4, 5] },
       { hourUtc: 17, minUtc: 30, label: 'Mid-Session', daysUtc: [1, 2, 3, 4, 5] },
       { hourUtc: 20, minUtc: 5, label: 'RTH Pit Close', daysUtc: [1, 2, 3, 4, 5] },
@@ -793,8 +803,8 @@ export default function Home() {
                       onClick={() => setChartItem({
                         symbol: sig.symbol,
                         strategy: 'taylor',
-                        interval: 'D',
-                        signalLabel: `BRADMAN — ${sig.action.replaceAll('_', ' ')}`,
+                        interval: sig.hourly_divergence ? '60' : 'D',
+                        signalLabel: `BRADMAN (${sig.hourly_divergence ? '60M GLOBEX' : 'DAILY'}) — ${sig.action.replaceAll('_', ' ')}`,
                         direction: sig.action === 'BUY_LONG' ? 'long' : sig.action === 'SELL_SHORT' ? 'short' : null,
                         entryPrice: sig.entry_target,
                         targetPrice: sig.profit_target,
@@ -803,9 +813,22 @@ export default function Home() {
                       className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
                       title="View Interactive Chart"
                     >
-                      📈 Chart
+                      {sig.hourly_divergence ? '⚡ 60m' : '📈 Chart'}
                     </button>
                   </div>
+
+                  {sig.hourly_divergence && (
+                    <div className="flex flex-wrap items-center gap-1 text-[10px] font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 uppercase">
+                        1H 3/10 · {sig.entry_session}
+                      </span>
+                      {sig.fx_pair_confirmed && (
+                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase">
+                          EC/$ Div
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
                     <span className="text-slate-400">Entry:</span>

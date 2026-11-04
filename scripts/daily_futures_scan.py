@@ -18,7 +18,7 @@ import sys
 import time
 import urllib.request
 from dataclasses import asdict, dataclass
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
@@ -28,18 +28,19 @@ from zoneinfo import ZoneInfo
 # -------------------------------------------------------------------
 
 FUTURES_MAP = {
-    "ES": "ES=F",   # E-mini S&P 500
-    "NQ": "NQ=F",   # E-mini Nasdaq 100
-    "RTY": "RTY=F", # E-mini Russell 2000
-    "YM": "YM=F",   # E-mini Dow Jones
-    "GC": "GC=F",   # Gold Futures
-    "SI": "SI=F",   # Silver Futures
-    "CL": "CL=F",   # Crude Oil Futures
-    "NG": "NG=F",   # Natural Gas Futures
-    "6E": "6E=F",   # Euro FX Futures
-    "6B": "6B=F",   # British Pound Futures
-    "ZB": "ZB=F",   # 30-Yr T-Bond Futures
-    "ZN": "ZN=F",   # 10-Yr T-Note Futures
+    "ES": "ES=F",       # E-mini S&P 500
+    "NQ": "NQ=F",       # E-mini Nasdaq 100
+    "RTY": "RTY=F",     # E-mini Russell 2000
+    "YM": "YM=F",       # E-mini Dow Jones
+    "GC": "GC=F",       # Gold Futures
+    "SI": "SI=F",       # Silver Futures
+    "CL": "CL=F",       # Crude Oil Futures
+    "NG": "NG=F",       # Natural Gas Futures
+    "6E": "6E=F",       # Euro FX Futures (EC)
+    "6B": "6B=F",       # British Pound Futures
+    "DX": "DX-Y.NYB",   # US Dollar Index Futures ($)
+    "ZB": "ZB=F",       # 30-Yr T-Bond Futures
+    "ZN": "ZN=F",       # 10-Yr T-Note Futures
 }
 
 POINT_VALUES = {
@@ -53,6 +54,7 @@ POINT_VALUES = {
     "NG": 2500.0,     # E-mini Natural Gas (QG)
     "6E": 12500.0,    # Micro Euro FX (M6E)
     "6B": 6250.0,     # Micro British Pound (M6B)
+    "DX": 1000.0,     # US Dollar Index Futures (DX)
     "ZB": 1000.0,     # 30-Year T-Bond Futures
     "ZN": 1000.0,     # 10-Year T-Note Futures
 }
@@ -68,6 +70,7 @@ SYMBOL_NAMES = {
     "NG": "E-mini Natural Gas (QG)",
     "6E": "Micro Euro FX (M6E)",
     "6B": "Micro British Pound (M6B)",
+    "DX": "US Dollar Index Futures (DX)",
     "ZB": "30-Year T-Bond Futures",
     "ZN": "10-Year T-Note Futures",
 }
@@ -77,7 +80,7 @@ CLUSTERS = {
     "rates": {"ZB", "ZN", "ZF", "ZT"},
     "energies": {"CL", "NG", "HO", "RB"},
     "metals": {"GC", "SI", "HG"},
-    "fx": {"6E", "6B", "6A", "6C", "EUR", "GBP", "CAD", "AUD"},
+    "fx": {"6E", "6B", "DX", "6A", "6C", "EUR", "GBP", "CAD", "AUD"},
     "grains": {"ZC", "ZW", "ZS", "ZL"},
     "softs": {"KC", "SB", "CT"},
     "livestock": {"HE", "LE"},
@@ -109,7 +112,7 @@ def calc_capped_qty(symbol: str, risk_per_contract: float) -> int:
     if risk_per_contract <= 0:
         return 1
     raw_qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_per_contract))
-    max_cap = 8 if symbol in ("6E", "6B") else 10
+    max_cap = 5 if symbol == "DX" else (8 if symbol in ("6E", "6B") else 10)
     return min(raw_qty, max_cap)
 
 @dataclass
@@ -194,6 +197,62 @@ def fetch_yahoo_15m_bars(symbol: str, ticker: str) -> List[dict]:
         print(f"  [ERROR] {symbol} ({ticker}): Failed to fetch 15m bars: {e}")
         return []
 
+
+def fetch_yahoo_1h_bars(symbol: str, ticker: str) -> List[dict]:
+    """Fetch 6 months of 24-hour Globex/ICE 60-minute bars tagged with futures trade_date and session."""
+    endpoints = [
+        f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?range=6mo&interval=1h",
+        f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=6mo&interval=1h",
+    ]
+    headers = {"User-Agent": "Mozilla/5.0"}
+    ny_tz = ZoneInfo("America/New_York")
+
+    for url in endpoints:
+        for _ in range(2):
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                result = data["chart"]["result"][0]
+                timestamps = result.get("timestamp", [])
+                quote = result["indicators"]["quote"][0]
+                opens = quote.get("open", [])
+                highs = quote.get("high", [])
+                lows = quote.get("low", [])
+                closes = quote.get("close", [])
+
+                bars: List[dict] = []
+                for i in range(len(timestamps)):
+                    ts = timestamps[i]
+                    o, h, l, c = opens[i], highs[i], lows[i], closes[i]
+                    if None in (ts, o, h, l, c):
+                        continue
+                    dt_utc = datetime.fromtimestamp(ts, tz=timezone.utc)
+                    dt_ny = dt_utc.astimezone(ny_tz)
+                    hr = dt_ny.hour
+                    # CME/ICE Globex evening open (18:00-23:59 ET) belongs to next trading day
+                    trade_dt = (dt_ny + timedelta(days=1)).strftime("%Y-%m-%d") if hr >= 18 else dt_ny.strftime("%Y-%m-%d")
+                    session = "ASIA" if (hr >= 18 or hr < 3) else ("LONDON" if hr < 8 else "US")
+                    bars.append({
+                        "ts": ts,
+                        "dt_utc": dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "trade_date": trade_dt,
+                        "time_et": dt_ny.strftime("%m-%d %H:%M ET"),
+                        "hour_et": hr,
+                        "session": session,
+                        "open": float(o),
+                        "high": float(h),
+                        "low": float(l),
+                        "close": float(c),
+                    })
+                if bars:
+                    return bars
+            except Exception:
+                time.sleep(0.5)
+                continue
+    print(f"  [ERROR] {symbol} ({ticker}): Failed to fetch 1h Globex bars")
+    return []
+
 # -------------------------------------------------------------------
 # Indicator Utilities
 # -------------------------------------------------------------------
@@ -277,18 +336,147 @@ def compute_adx(bars: List[Bar], period: int = 14) -> Tuple[List[float], List[fl
     return adx, plus_di, minus_di
 
 # -------------------------------------------------------------------
-# Strategy 1: The Bradman (3-Day Cycle)
+# Strategy 1: The Bradman (Taylor 3-Day Cycle + Overnight 1H LBR 3/10 Divergence)
 # -------------------------------------------------------------------
 
-def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
+def compute_atr_1h(bars_1h: List[dict], period: int = 20) -> List[float]:
+    n = len(bars_1h)
+    if n < 2:
+        return [0.0] * n
+    trs = [bars_1h[0]["high"] - bars_1h[0]["low"]]
+    for i in range(1, n):
+        h, l, pc = bars_1h[i]["high"], bars_1h[i]["low"], bars_1h[i - 1]["close"]
+        trs.append(max(h - l, abs(h - pc), abs(l - pc)))
+    atrs = [0.0] * n
+    if n < period:
+        return atrs
+    atrs[period - 1] = sum(trs[:period]) / period
+    for i in range(period, n):
+        atrs[i] = (atrs[i - 1] * (period - 1) + trs[i]) / period
+    return atrs
+
+
+def compute_lbr_310(closes: List[float]) -> Tuple[List[float], List[float]]:
+    """LBR 3/10 Oscillator: Fast = SMA(3) - SMA(10), Slow Signal = SMA(Fast, 16)."""
+    sma3 = compute_sma(closes, 3)
+    sma10 = compute_sma(closes, 10)
+    fast = [0.0] * len(closes)
+    for i in range(9, len(closes)):
+        fast[i] = sma3[i] - sma10[i]
+    slow = compute_sma(fast, 16)
+    return fast, slow
+
+
+def check_hourly_310_div_at(
+    bars_1h: List[dict],
+    fast: List[float],
+    ema20: List[float],
+    atr20: List[float],
+    k: int,
+    allow_buy: bool = True,
+    allow_sell: bool = True,
+) -> Optional[dict]:
+    """Detect completed 60-minute LBR 3/10 momentum divergence hook at bar index k."""
+    if k < 30 or atr20[k] <= 0:
+        return None
+    win_start = max(25, k - 26)
+
+    # Hourly SELL divergence: impulse peak i1 -> oscillator pullback -> higher price high + lower 3/10 peak -> hook down
+    if allow_sell and fast[k] < fast[k - 1]:
+        i1 = max(range(win_start, k - 2), key=lambda j: fast[j])
+        f1 = fast[i1]
+        h1 = max(bars_1h[j]["high"] for j in range(max(0, i1 - 1), min(len(bars_1h), i1 + 2)))
+        keltner_stretch = h1 >= ema20[i1] + 1.5 * atr20[i1] or bars_1h[k - 1]["high"] >= ema20[k - 1] + 1.8 * atr20[k - 1]
+        if f1 > 0.30 * atr20[i1] and keltner_stretch and (k - i1) >= 4:
+            mid_min = min(fast[i1 + 1 : k - 1])
+            h2 = max(bars_1h[j]["high"] for j in range(k - 2, k + 1))
+            f2 = max(fast[j] for j in range(k - 2, k + 1))
+            if mid_min <= 0.60 * f1 and h2 >= h1 and f2 <= 0.75 * f1 and fast[k - 1] > 0:
+                keltner_outside = h2 >= ema20[k - 1] + 2.5 * atr20[k - 1]
+                return {
+                    "type": "SELL_DIV",
+                    "bar_idx": k,
+                    "time_et": bars_1h[k]["time_et"],
+                    "dt_utc": bars_1h[k]["dt_utc"],
+                    "session": bars_1h[k]["session"],
+                    "impulse_session": bars_1h[i1]["session"],
+                    "entry_price": bars_1h[k]["close"],
+                    "swing_extreme": h2,
+                    "prior_peak_price": h1,
+                    "osc_1": round(f1, 5),
+                    "osc_2": round(f2, 5),
+                    "keltner_pierce": keltner_outside,
+                }
+
+    # Hourly BUY divergence: impulse trough i1 -> oscillator bounce -> lower price low + higher 3/10 trough -> hook up
+    if allow_buy and fast[k] > fast[k - 1]:
+        i1 = min(range(win_start, k - 2), key=lambda j: fast[j])
+        f1 = fast[i1]
+        l1 = min(bars_1h[j]["low"] for j in range(max(0, i1 - 1), min(len(bars_1h), i1 + 2)))
+        keltner_stretch = l1 <= ema20[i1] - 1.5 * atr20[i1] or bars_1h[k - 1]["low"] <= ema20[k - 1] - 1.8 * atr20[k - 1]
+        if f1 < -0.30 * atr20[i1] and keltner_stretch and (k - i1) >= 4:
+            mid_max = max(fast[i1 + 1 : k - 1])
+            l2 = min(bars_1h[j]["low"] for j in range(k - 2, k + 1))
+            f2 = min(fast[j] for j in range(k - 2, k + 1))
+            if mid_max >= 0.60 * f1 and l2 <= l1 and f2 >= 0.75 * f1 and fast[k - 1] < 0:
+                keltner_outside = l2 <= ema20[k - 1] - 2.5 * atr20[k - 1]
+                return {
+                    "type": "BUY_DIV",
+                    "bar_idx": k,
+                    "time_et": bars_1h[k]["time_et"],
+                    "dt_utc": bars_1h[k]["dt_utc"],
+                    "session": bars_1h[k]["session"],
+                    "impulse_session": bars_1h[i1]["session"],
+                    "entry_price": bars_1h[k]["close"],
+                    "swing_extreme": l2,
+                    "prior_peak_price": l1,
+                    "osc_1": round(f1, 5),
+                    "osc_2": round(f2, 5),
+                    "keltner_pierce": keltner_outside,
+                }
+    return None
+
+
+def find_taylor_hourly_trigger_for_date(
+    trade_date: str,
+    prev_day_bar: Bar,
+    bars_1h: List[dict],
+    fast: List[float],
+    ema20: List[float],
+    atr20: List[float],
+    idxs: List[int],
+    max_valid_idx: int,
+) -> Optional[dict]:
+    """Scan Globex Asia -> London -> US hourly bars on trade_date for the first Taylor H/L test + Keltner + 3/10 divergence."""
+    sess_high = -1e18
+    sess_low = 1e18
+    for idx in idxs:
+        if idx > max_valid_idx or idx < 30:
+            continue
+        sess_high = max(sess_high, bars_1h[idx]["high"])
+        sess_low = min(sess_low, bars_1h[idx]["low"])
+        can_sell = (sess_high > prev_day_bar.high) and (
+            max(bars_1h[j]["high"] for j in range(idx - 2, idx + 1)) >= ema20[idx - 1] + 2.0 * atr20[idx - 1]
+        )
+        can_buy = (sess_low < prev_day_bar.low) and (
+            min(bars_1h[j]["low"] for j in range(idx - 2, idx + 1)) <= ema20[idx - 1] - 2.0 * atr20[idx - 1]
+        )
+        dv = check_hourly_310_div_at(bars_1h, fast, ema20, atr20, idx, allow_buy=can_buy, allow_sell=can_sell)
+        if dv:
+            return dv
+    return None
+
+
+def analyze_bradman(bars: List[Bar], symbol: str, bars_1h: Optional[List[dict]] = None) -> Optional[dict]:
     if len(bars) < 25:
         return None
-    b0 = bars[-1] # Today
-    b1 = bars[-2] # Yesterday
-    b2 = bars[-3] # Day before
+    b0 = bars[-1]  # Today
+    b1 = bars[-2]  # Yesterday
+    b2 = bars[-3]  # Day before
 
     atrs = compute_atr(bars, 20)
     atr = atrs[-1] if atrs[-1] > 0 else (b0.high - b0.low)
+    prev_atr = atrs[-2] if len(atrs) >= 2 and atrs[-2] > 0 else atr
     adx_list, _, _ = compute_adx(bars, 14)
     cur_adx = adx_list[-1] if len(adx_list) >= 14 else 20.0
 
@@ -300,36 +488,79 @@ def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
     high_resistance = b0.high + (b1.high - b1.low)
     low_support = b0.low - (b1.high - b1.low)
 
-    # 3-Day Cycle logic aligned with execution engine (0.80x ATR stop, 1.50x ATR target)
-    is_declining = b1.close < b2.close and b0.close <= b1.close
-    is_advancing = b1.close > b2.close and b0.close >= b1.close
+    # 1. Check 24h Globex (Asia / London / US) 60m LBR 3/10 Divergence + Keltner Stretch
+    hourly_div: Optional[dict] = None
+    if bars_1h and len(bars_1h) >= 35:
+        closes_1h = [hb["close"] for hb in bars_1h]
+        fast_1h, _ = compute_lbr_310(closes_1h)
+        ema20_1h = compute_ema(closes_1h, 20)
+        atr20_1h = compute_atr_1h(bars_1h, 20)
+        now_ts = int(datetime.now(timezone.utc).timestamp())
+        # Exclude unclosed partial hourly bar if less than 55 minutes elapsed
+        max_valid_idx = len(bars_1h) - 1 if (now_ts - bars_1h[-1]["ts"]) >= 3300 else len(bars_1h) - 2
+        today_idxs = [idx for idx, hb in enumerate(bars_1h) if hb["trade_date"] == b0.dt]
+        if today_idxs:
+            hourly_div = find_taylor_hourly_trigger_for_date(
+                b0.dt, b1, bars_1h, fast_1h, ema20_1h, atr20_1h, today_idxs, max_valid_idx
+            )
 
-    if is_declining:
+    if hourly_div and hourly_div["type"] == "BUY_DIV":
         cycle_phase = "BUY_DAY"
         cycle_day = 1
-        action = "BUY_LONG" if cur_adx < 35.0 else "WATCH"
-        entry_val = b0.low + (buying_pressure * 0.5)
+        action = "BUY_LONG"
+        entry_val = hourly_div["entry_price"]
         entry_target = round(entry_val, 4)
-        profit_target = round(entry_val + 1.50 * atr, 4)
-        stop_loss = round(entry_val - 0.80 * atr, 4)
-        notes = "2-day decline into Day 1 Buy zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
-    elif is_advancing:
+        profit_target = round(entry_val + 1.50 * prev_atr, 4)
+        stop_loss = round(entry_val - 0.80 * prev_atr, 4)
+        kc_txt = "outside lower Keltner" if hourly_div["keltner_pierce"] else "at Keltner support"
+        notes = (
+            f"Overnight/Intraday 1H LBR 3/10 Buy Divergence ({hourly_div['session']} session @ {hourly_div['time_et']}, "
+            f"impulse in {hourly_div['impulse_session']}) {kc_txt} after undercutting prior low."
+        )
+    elif hourly_div and hourly_div["type"] == "SELL_DIV":
         cycle_phase = "SELL_SHORT_DAY"
         cycle_day = 3
-        action = "SELL_SHORT" if cur_adx < 35.0 else "WATCH"
-        entry_val = b0.high - (selling_pressure * 0.5)
+        action = "SELL_SHORT"
+        entry_val = hourly_div["entry_price"]
         entry_target = round(entry_val, 4)
-        profit_target = round(entry_val - 1.50 * atr, 4)
-        stop_loss = round(entry_val + 0.80 * atr, 4)
-        notes = "2-day advance into Day 3 Sell Short zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
+        profit_target = round(entry_val - 1.50 * prev_atr, 4)
+        stop_loss = round(entry_val + 0.80 * prev_atr, 4)
+        kc_txt = "outside upper Keltner" if hourly_div["keltner_pierce"] else "at Keltner resistance"
+        notes = (
+            f"Overnight/Intraday 1H LBR 3/10 Sell Divergence ({hourly_div['session']} session @ {hourly_div['time_et']}, "
+            f"impulse in {hourly_div['impulse_session']}) {kc_txt} after piercing prior high."
+        )
     else:
-        cycle_phase = "SELL_DAY"
-        cycle_day = 2
-        action = "SELL_EXIT"
-        entry_target = round(b0.high, 4)
-        profit_target = round(high_resistance, 4)
-        stop_loss = round(b0.low, 4)
-        notes = "Mid-cycle Day 2 rotation — manage existing positions or trail stops"
+        # 2. Fallback Daily 3-Day Cycle logic (0.80x ATR stop, 1.50x ATR target, ADX < 35 filter)
+        is_declining = b1.close < b2.close and b0.close <= b1.close
+        is_advancing = b1.close > b2.close and b0.close >= b1.close
+
+        if is_declining:
+            cycle_phase = "BUY_DAY"
+            cycle_day = 1
+            action = "BUY_LONG" if cur_adx < 35.0 else "WATCH"
+            entry_val = b0.low + (buying_pressure * 0.5)
+            entry_target = round(entry_val, 4)
+            profit_target = round(entry_val + 1.50 * atr, 4)
+            stop_loss = round(entry_val - 0.80 * atr, 4)
+            notes = "2-day decline into Day 1 Buy zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
+        elif is_advancing:
+            cycle_phase = "SELL_SHORT_DAY"
+            cycle_day = 3
+            action = "SELL_SHORT" if cur_adx < 35.0 else "WATCH"
+            entry_val = b0.high - (selling_pressure * 0.5)
+            entry_target = round(entry_val, 4)
+            profit_target = round(entry_val - 1.50 * atr, 4)
+            stop_loss = round(entry_val + 0.80 * atr, 4)
+            notes = "2-day advance into Day 3 Sell Short zone (0.8x ATR stop / 1.5x ATR target)" if cur_adx < 35.0 else f"ADX {cur_adx:.1f} >= 35 trend filter — watching only"
+        else:
+            cycle_phase = "SELL_DAY"
+            cycle_day = 2
+            action = "SELL_EXIT"
+            entry_target = round(b0.high, 4)
+            profit_target = round(high_resistance, 4)
+            stop_loss = round(b0.low, 4)
+            notes = "Mid-cycle Day 2 rotation — manage existing positions or trail stops"
 
     return {
         "symbol": symbol,
@@ -347,6 +578,12 @@ def analyze_bradman(bars: List[Bar], symbol: str) -> Optional[dict]:
         "entry_target": entry_target,
         "profit_target": profit_target,
         "stop_loss": stop_loss,
+        "entry_session": hourly_div["session"] if hourly_div else "DAILY",
+        "impulse_session": hourly_div["impulse_session"] if hourly_div else None,
+        "hourly_divergence": hourly_div["type"] if hourly_div else None,
+        "divergence_time_et": hourly_div["time_et"] if hourly_div else None,
+        "keltner_pierce": hourly_div["keltner_pierce"] if hourly_div else False,
+        "fx_pair_confirmed": False,
         "notes": notes,
     }
 
@@ -877,6 +1114,7 @@ def main():
     linda_signals = []
     linda_triggered = []
     bars_by_symbol: Dict[str, List[Bar]] = {}
+    hourly_by_symbol: Dict[str, List[dict]] = {}
 
     now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     latest_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -890,8 +1128,12 @@ def main():
         bars_by_symbol[symbol] = bars
         latest_date = bars[-1].dt
 
-        # 1. Bradman Cycle
-        brad_sig = analyze_bradman(bars, symbol)
+        bars_1h = fetch_yahoo_1h_bars(symbol, ticker)
+        if bars_1h:
+            hourly_by_symbol[symbol] = bars_1h
+
+        # 1. Bradman Cycle (24h Globex 1H LBR 3/10 Divergence + Daily 3-Day Cycle)
+        brad_sig = analyze_bradman(bars, symbol, bars_1h=bars_1h)
         if brad_sig:
             taylor_signals.append(brad_sig)
 
@@ -929,8 +1171,24 @@ def main():
     if not taylor_signals:
         raise RuntimeError("ERROR: Failed to fetch daily market data for any futures symbols. Aborting signal update.")
 
+    # Cross-confirm inverse Hourly 3/10 Divergences between Euro/GBP FX (6E, 6B) and US Dollar Index (DX)
+    sig_by_sym = {s["symbol"]: s for s in taylor_signals}
+    dx_div = sig_by_sym.get("DX", {}).get("hourly_divergence")
+    for fx_sym in ("6E", "6B"):
+        fx_sig = sig_by_sym.get(fx_sym)
+        if not fx_sig or not dx_div:
+            continue
+        fx_div = fx_sig.get("hourly_divergence")
+        if (fx_div == "SELL_DIV" and dx_div == "BUY_DIV") or (fx_div == "BUY_DIV" and dx_div == "SELL_DIV"):
+            fx_sig["fx_pair_confirmed"] = True
+            fx_sig["notes"] = f"{fx_sig['notes']} [Confirmed by opposing {dx_div.replace('_', ' ')} in DX ($)]"
+            sig_by_sym["DX"]["fx_pair_confirmed"] = True
+    if sig_by_sym.get("DX", {}).get("fx_pair_confirmed"):
+        dx_s = sig_by_sym["DX"]
+        dx_s["notes"] = f"{dx_s['notes']} [Confirmed by opposing 1H divergence in Euro/FX]"
+
     # 6. Update Paper Trades & Performance Ledger first so open positions can be reflected in signal feeds
-    open_trades = update_standalone_paper_trades(web_data_dir, bars_by_symbol, latest_date)
+    open_trades = update_standalone_paper_trades(web_data_dir, bars_by_symbol, latest_date, hourly_bars=hourly_by_symbol)
     open_by_sym = {t["symbol"]: t for t in open_trades}
 
     for r in toohot_rows:
@@ -952,6 +1210,8 @@ def main():
             "buy_day_count": sum(1 for s in taylor_signals if s["cycle_phase"] == "BUY_DAY"),
             "sell_day_count": sum(1 for s in taylor_signals if s["cycle_phase"] == "SELL_DAY"),
             "sell_short_day_count": sum(1 for s in taylor_signals if s["cycle_phase"] == "SELL_SHORT_DAY"),
+            "hourly_div_count": sum(1 for s in taylor_signals if s.get("hourly_divergence")),
+            "overnight_div_count": sum(1 for s in taylor_signals if s.get("entry_session") in ("ASIA", "LONDON")),
         },
         "signals": taylor_signals,
     }
@@ -1025,20 +1285,45 @@ def update_standalone_paper_trades(
     daily_bars: Dict[str, List[Bar]],
     latest_date: str,
     start_date: str = "2026-06-01",
+    hourly_bars: Optional[Dict[str, List[dict]]] = None,
 ) -> List[Dict[str, Any]]:
     trades_file = data_dir / "executed_trades.json"
     MAX_PORTFOLIO_OPEN_TRADES = 8
+
+    # Precompute 1H LBR 3/10 & Keltner series per symbol for fast zero-lookahead overnight Taylor replay
+    now_ts = int(datetime.now(timezone.utc).timestamp())
+    hourly_ctx: Dict[str, dict] = {}
+    if hourly_bars:
+        for sym_k, b1h in hourly_bars.items():
+            if len(b1h) < 35:
+                continue
+            c1h = [hb["close"] for hb in b1h]
+            f1h, _ = compute_lbr_310(c1h)
+            e1h = compute_ema(c1h, 20)
+            a1h = compute_atr_1h(b1h, 20)
+            by_td: Dict[str, List[int]] = {}
+            for idx_h, hb in enumerate(b1h):
+                by_td.setdefault(hb["trade_date"], []).append(idx_h)
+            max_v = len(b1h) - 1 if (now_ts - b1h[-1]["ts"]) >= 3300 else len(b1h) - 2
+            hourly_ctx[sym_k] = {
+                "bars": b1h,
+                "fast": f1h,
+                "ema20": e1h,
+                "atr20": a1h,
+                "by_tdate": by_td,
+                "max_valid_idx": max_v,
+            }
 
     # Institutional round-turn commission and slippage per contract ($)
     commission_rt_per_contract = {
         "ES": 1.20, "NQ": 1.20, "RTY": 1.20, "YM": 1.20,
         "GC": 1.50, "SI": 1.50, "CL": 1.50, "NG": 2.50,
-        "6E": 0.50, "6B": 0.50, "ZB": 2.50, "ZN": 2.50,
+        "6E": 0.50, "6B": 0.50, "DX": 1.50, "ZB": 2.50, "ZN": 2.50,
     }
     slippage_rt_per_contract = {
         "ES": 1.25, "NQ": 0.50, "RTY": 0.50, "YM": 0.50,
         "GC": 1.00, "SI": 2.50, "CL": 1.00, "NG": 2.50,
-        "6E": 0.62, "6B": 0.62, "ZB": 3.12, "ZN": 1.56,
+        "6E": 0.62, "6B": 0.62, "DX": 1.00, "ZB": 3.12, "ZN": 1.56,
     }
 
     def apply_trade_accounting(t: Dict[str, Any], is_open: bool, gross_pnl: float, ref_price: float) -> None:
@@ -1049,7 +1334,7 @@ def update_standalone_paper_trades(
         c_rt = commission_rt_per_contract.get(sym, 1.50)
         s_rt = slippage_rt_per_contract.get(sym, 1.25)
 
-        eff_qty = min(qty, 8) if sym in ("6E", "6B") else min(qty, 10)
+        eff_qty = min(qty, 5) if sym == "DX" else (min(qty, 8) if sym in ("6E", "6B") else min(qty, 10))
         factor = 0.5 if is_open else 1.0
         comm = round(c_rt * eff_qty * factor, 2)
         slip = round(s_rt * eff_qty * factor, 2)
@@ -1290,47 +1575,120 @@ def update_standalone_paper_trades(
                 trades.append(new_t)
                 trade_id_seq += 1
 
-            # Strategy 2: The Bradman (Taylor 3-day cycle with ADX < 35 filter & 0.8x ATR Stop)
-            is_declining = b1.close < b2.close and b0.close <= b1.close
-            is_advancing = b1.close > b2.close and b0.close >= b1.close
-            buy_press = b1.close - b1.low
-            sell_press = b1.high - b1.close
-            if is_declining and cur_adx < 35.0 and can_open_trade(sym):
-                entry_p = b0.low + (buy_press * 0.5)
-                stop_p = entry_p - 0.80 * atr
-                target_p = entry_p + 1.50 * atr
+            # Strategy 2: The Bradman (Overnight/Globex 1H LBR 3/10 Divergence primary; Daily 3-day cycle fallback)
+            brad_h_div: Optional[dict] = None
+            h_ctx = hourly_ctx.get(sym)
+            if h_ctx and cur_date in h_ctx["by_tdate"]:
+                brad_h_div = find_taylor_hourly_trigger_for_date(
+                    cur_date,
+                    b1,
+                    h_ctx["bars"],
+                    h_ctx["fast"],
+                    h_ctx["ema20"],
+                    h_ctx["atr20"],
+                    h_ctx["by_tdate"][cur_date],
+                    h_ctx["max_valid_idx"],
+                )
+
+            qualifies_overnight_div = (
+                brad_h_div is not None
+                and brad_h_div.get("keltner_pierce")
+                and (brad_h_div.get("session") in ("ASIA", "LONDON") or brad_h_div.get("impulse_session") in ("ASIA", "LONDON"))
+            )
+            if qualifies_overnight_div and can_open_trade(sym):
+                side_b = "long" if brad_h_div["type"] == "BUY_DIV" else "short"
+                entry_p = brad_h_div["entry_price"]
+                ref_atr = atr_prev if atr_prev > 0 else atr
+                stop_p = entry_p - 0.80 * ref_atr if side_b == "long" else entry_p + 0.80 * ref_atr
+                target_p = entry_p + 1.50 * ref_atr if side_b == "long" else entry_p - 1.50 * ref_atr
                 risk_d = abs(entry_p - stop_p) * pt_val
-                qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                raw_q = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                qty = min(raw_q, 5) if sym == "DX" else raw_q
                 new_t = {
                     "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
-                    "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "long",
+                    "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": side_b,
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
                     "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
-                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    "entry_session": brad_h_div["session"],
+                    "created_at": brad_h_div["dt_utc"], "updated_at": cur_date + "T20:00:00Z"
                 }
-                apply_trade_accounting(new_t, is_open=True, gross_pnl=(b0.close - entry_p) * pt_val * qty, ref_price=b0.close)
+                # Check remaining hourly bars on cur_date after entry bar for same-day stop/target
+                same_day_exit = None
+                same_day_status = None
+                for r_idx in h_ctx["by_tdate"][cur_date]:
+                    if r_idx <= brad_h_div["bar_idx"] or r_idx > h_ctx["max_valid_idx"]:
+                        continue
+                    rh, rl = h_ctx["bars"][r_idx]["high"], h_ctx["bars"][r_idx]["low"]
+                    if side_b == "long" and rl <= stop_p:
+                        same_day_exit, same_day_status = stop_p, "STOPPED_OUT"
+                        break
+                    if side_b == "short" and rh >= stop_p:
+                        same_day_exit, same_day_status = stop_p, "STOPPED_OUT"
+                        break
+                    if side_b == "long" and rh >= target_p:
+                        same_day_exit, same_day_status = target_p, "HIT_TARGET"
+                        break
+                    if side_b == "short" and rl <= target_p:
+                        same_day_exit, same_day_status = target_p, "HIT_TARGET"
+                        break
+                if same_day_exit is not None and same_day_status is not None:
+                    new_t["status"] = same_day_status
+                    new_t["exit_price"] = round(same_day_exit, 4)
+                    new_t["exit_date"] = cur_date
+                    g_pnl = (same_day_exit - entry_p if side_b == "long" else entry_p - same_day_exit) * pt_val * qty
+                    apply_trade_accounting(new_t, is_open=False, gross_pnl=g_pnl, ref_price=same_day_exit)
+                else:
+                    g_pnl = (b0.close - entry_p if side_b == "long" else entry_p - b0.close) * pt_val * qty
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=g_pnl, ref_price=b0.close)
                 trades.append(new_t)
                 trade_id_seq += 1
-            elif is_advancing and cur_adx < 35.0 and can_open_trade(sym):
-                entry_p = b0.high - (sell_press * 0.5)
-                stop_p = entry_p + 0.80 * atr
-                target_p = entry_p - 1.50 * atr
-                risk_d = abs(entry_p - stop_p) * pt_val
-                qty = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
-                new_t = {
-                    "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
-                    "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "short",
-                    "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
-                    "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
-                    "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
-                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
-                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
-                }
-                apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
-                trades.append(new_t)
-                trade_id_seq += 1
+            else:
+                is_declining = b1.close < b2.close and b0.close <= b1.close
+                is_advancing = b1.close > b2.close and b0.close >= b1.close
+                buy_press = b1.close - b1.low
+                sell_press = b1.high - b1.close
+                if is_declining and cur_adx < 35.0 and can_open_trade(sym):
+                    entry_p = b0.low + (buy_press * 0.5)
+                    stop_p = entry_p - 0.80 * atr
+                    target_p = entry_p + 1.50 * atr
+                    risk_d = abs(entry_p - stop_p) * pt_val
+                    raw_q = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                    qty = min(raw_q, 5) if sym == "DX" else raw_q
+                    new_t = {
+                        "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
+                        "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "long",
+                        "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
+                        "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
+                        "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
+                        "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                        "entry_session": "DAILY",
+                        "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    }
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=(b0.close - entry_p) * pt_val * qty, ref_price=b0.close)
+                    trades.append(new_t)
+                    trade_id_seq += 1
+                elif is_advancing and cur_adx < 35.0 and can_open_trade(sym):
+                    entry_p = b0.high - (sell_press * 0.5)
+                    stop_p = entry_p + 0.80 * atr
+                    target_p = entry_p - 1.50 * atr
+                    risk_d = abs(entry_p - stop_p) * pt_val
+                    raw_q = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                    qty = min(raw_q, 5) if sym == "DX" else raw_q
+                    new_t = {
+                        "id": f"pt_{sym}_Brad_{cur_date.replace('-','')}_{trade_id_seq}",
+                        "symbol": sym, "symbol_name": sym_name, "strategy": "The Bradman", "side": "short",
+                        "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
+                        "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
+                        "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
+                        "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                        "entry_session": "DAILY",
+                        "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                    }
+                    apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
+                    trades.append(new_t)
+                    trade_id_seq += 1
 
             # Strategy 3: YouHaveChosenWisely (Holy Grail 20 EMA Pullback)
             emas = compute_ema([b.close for b in bars], 20)

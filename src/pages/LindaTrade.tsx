@@ -11,7 +11,7 @@ async function fetchJson<T>(url: string, opts?: RequestInit): Promise<T> {
 const FULL_NAMES: Record<string, string> = {
   ES: 'E-mini S&P 500', NQ: 'E-mini Nasdaq 100', RTY: 'E-mini Russell 2000',
   YM: 'E-mini Dow Jones', GC: 'Gold', SI: 'Silver', CL: 'Crude Oil',
-  NG: 'Natural Gas', '6E': 'Euro FX', '6J': 'Japanese Yen', '6B': 'British Pound',
+  NG: 'Natural Gas', '6E': 'Euro FX', '6J': 'Japanese Yen', '6B': 'British Pound', DX: 'US Dollar Index',
   ZB: '30-Yr T-Bond', ZN: '10-Yr T-Note',
 };
 

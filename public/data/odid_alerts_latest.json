@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-04T14:06:24.966093Z",
+  "timestamp": "2026-11-04T17:07:07.179145Z",
   "date": "2026-11-04",
   "system": "odid",
-  "total_alerts": 7,
+  "total_alerts": 8,
   "alerts": [
     {
       "symbol": "ES",
@@ -10,15 +10,15 @@
       "type": "TOO_HOT (OUTSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-04",
-      "high_trigger": 7688.0,
+      "high_trigger": 7744.0,
       "low_trigger": 7490.0,
-      "entry_stop": 7688.0,
-      "stop_loss": 7595.2,
-      "last_close": 7687.5,
+      "entry_stop": 7744.0,
+      "stop_loss": 7648.4,
+      "last_close": 7741.0,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 7688.00 / Down 7490.00"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 7744.00 / Down 7490.00"
     },
     {
       "symbol": "NQ",
@@ -26,15 +26,15 @@
       "type": "TOO_HOT (OUTSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-04",
-      "high_trigger": 28661.25,
+      "high_trigger": 28969.0,
       "low_trigger": 27615.75,
-      "entry_stop": 28661.25,
-      "stop_loss": 28049.2131,
-      "last_close": 28428.5,
+      "entry_stop": 28969.0,
+      "stop_loss": 28341.5756,
+      "last_close": 28773.25,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 28661.25 / Down 27615.75"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 28969.00 / Down 27615.75"
     },
     {
       "symbol": "RTY",
@@ -42,15 +42,15 @@
       "type": "TOO_HOT (OUTSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-04",
-      "high_trigger": 2875.3999,
+      "high_trigger": 2888.7,
       "low_trigger": 2796.2,
-      "entry_stop": 2875.3999,
-      "stop_loss": 2830.433,
-      "last_close": 2874.8999,
+      "entry_stop": 2888.7,
+      "stop_loss": 2843.0681,
+      "last_close": 2869.6001,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 2875.40 / Down 2796.20"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 2888.70 / Down 2796.20"
     },
     {
       "symbol": "YM",
@@ -58,15 +58,15 @@
       "type": "TOO_HOT (OUTSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-04",
-      "high_trigger": 53031.0,
+      "high_trigger": 53483.0,
       "low_trigger": 51416.0,
-      "entry_stop": 53031.0,
-      "stop_loss": 52361.1106,
-      "last_close": 53029.0,
+      "entry_stop": 53483.0,
+      "stop_loss": 52790.5106,
+      "last_close": 53452.0,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 53031.00 / Down 51416.00"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 53483.00 / Down 51416.00"
     },
     {
       "symbol": "NG",
@@ -74,15 +74,15 @@
       "type": "TOO_HOT (OUTSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-04",
-      "high_trigger": 2.935,
+      "high_trigger": 2.952,
       "low_trigger": 2.839,
-      "entry_stop": 2.935,
-      "stop_loss": 2.7936,
-      "last_close": 2.927,
+      "entry_stop": 2.952,
+      "stop_loss": 2.8098,
+      "last_close": 2.947,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 2.93 / Down 2.84"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-04 \u2014 Breakout levels: Up 2.95 / Down 2.84"
     },
     {
       "symbol": "6E",
@@ -94,7 +94,7 @@
       "low_trigger": 1.1183,
       "entry_stop": 1.1211,
       "stop_loss": 1.1152,
-      "last_close": 1.1278,
+      "last_close": 1.1235,
       "severity": "medium",
       "eligible": false,
       "blocked_reason": "ADX 39.1 >= 35",
@@ -110,11 +110,27 @@
       "low_trigger": 1.3415,
       "entry_stop": 1.3427,
       "stop_loss": 1.3369,
-      "last_close": 1.3485,
+      "last_close": 1.3458,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
       "message": "TOO_COLD (INSIDE_DAY) on 2026-11-03 \u2014 Breakout triggered LONG"
+    },
+    {
+      "symbol": "DX",
+      "pattern": "TOO_COLD (INSIDE_DAY)",
+      "type": "TOO_COLD (INSIDE_DAY)",
+      "side": "short",
+      "asof": "2026-11-04",
+      "high_trigger": 101.94,
+      "low_trigger": 101.62,
+      "entry_stop": 101.62,
+      "stop_loss": 102.1091,
+      "last_close": 101.609,
+      "severity": "medium",
+      "eligible": true,
+      "blocked_reason": null,
+      "message": "TOO_COLD (INSIDE_DAY) on 2026-11-03 \u2014 Breakout triggered SHORT"
     }
   ]
 }

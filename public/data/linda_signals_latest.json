@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-11-04T14:06:24.966093Z",
+  "timestamp": "2026-11-04T17:07:07.179145Z",
   "date": "2026-11-04",
   "system": "TheLinda",
   "atr_period": 20,
   "ema_period": 20,
   "trend_day_atr_multiple": 0.7,
-  "total_scanned": 12,
+  "total_scanned": 13,
   "total_triggered": 0,
   "signals": [
     {
@@ -177,6 +177,23 @@
       "stop": null,
       "triggered": false,
       "reason": "Not a trend day (RTH range 0.44x ATR, close at 28% of range)"
+    },
+    {
+      "symbol": "DX",
+      "asof": "2026-11-03",
+      "direction": null,
+      "close": 101.859,
+      "ema20": 101.8409,
+      "gap_pct": 0.02,
+      "day_range": 0.185,
+      "atr20": 0.4742,
+      "range_vs_atr": 0.39,
+      "trend_strength": 0.551,
+      "entry": null,
+      "target": 101.8409,
+      "stop": null,
+      "triggered": false,
+      "reason": "Not a trend day (RTH range 0.39x ATR, close at 55% of range)"
     },
     {
       "symbol": "ZB",

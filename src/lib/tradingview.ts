@@ -14,12 +14,13 @@ export const TV_SYMBOLS: Record<string, string> = {
   '6E': 'FX:EURUSD',
   '6J': 'FX:USDJPY',
   '6B': 'FX:GBPUSD',
+  DX:  'TVC:DXY',
   ZB:  'TLT',
   ZN:  'IEF',
 };
 
 /**
- * CME futures continuous symbols for direct TradingView.com external links.
+ * CME / ICE futures continuous symbols for direct TradingView.com external links.
  */
 export const CME_FUTURES_SYMBOLS: Record<string, string> = {
   ES:  'CME:ES1!',
@@ -33,6 +34,7 @@ export const CME_FUTURES_SYMBOLS: Record<string, string> = {
   '6E': 'CME:6E1!',
   '6J': 'CME:6J1!',
   '6B': 'CME:6B1!',
+  DX:  'ICEUS:DX1!',
   ZB:  'CBOT:ZB1!',
   ZN:  'CBOT:ZN1!',
 };
@@ -46,7 +48,7 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
   the_linda:            '15',
   grail:                'D',    // Daily — ADX and 20 EMA pullback
   youhavechosenwisely:  'D',
-  taylor:               'D',    // Daily — 3-day cycle
+  taylor:               'D',    // Daily — 3-day cycle (60m used when 1H divergence active)
   bradman:              'D',
   the_bradman:          'D',
   trendorama:           'D',    // Daily — 55-day Donchian breakout

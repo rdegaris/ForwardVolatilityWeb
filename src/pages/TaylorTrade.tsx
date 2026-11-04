@@ -12,9 +12,10 @@ const SYMBOL_NAMES: Record<string, string> = {
   SI: 'Silver Futures',
   CL: 'Crude Oil Futures',
   NG: 'Natural Gas Futures',
-  '6E': 'Euro FX Futures',
+  '6E': 'Euro FX Futures (EC)',
   '6J': 'Japanese Yen Futures',
   '6B': 'British Pound Futures',
+  DX: 'US Dollar Index ($)',
   ZB: '30-Year T-Bond Futures',
   ZN: '10-Year T-Note Futures',
 };
@@ -26,14 +27,29 @@ function formatPrice(val: number) {
   return val.toFixed(2);
 }
 
+function sessionBadge(session?: string | null) {
+  if (session === 'ASIA') {
+    return { label: '🌙 Asia Session', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' };
+  }
+  if (session === 'LONDON') {
+    return { label: '🌍 London Session', cls: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' };
+  }
+  if (session === 'US') {
+    return { label: '🗽 US Session', cls: 'bg-blue-500/20 text-blue-300 border-blue-500/40' };
+  }
+  return { label: '📅 Daily RTH', cls: 'bg-slate-800 text-slate-300 border-slate-700' };
+}
+
 export default function TaylorTrade() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<TaylorSignalsPayload | null>(null);
-  const [filter, setFilter] = useState<'ALL' | 'BUY_DAY' | 'SELL_DAY' | 'SELL_SHORT_DAY'>('ALL');
-  const [chartItem, setChartItem] = useState<TaylorSignalItem | null>(null);
+  const [filter, setFilter] = useState<'ALL' | 'HOURLY_DIV' | 'BUY_DAY' | 'SELL_DAY' | 'SELL_SHORT_DAY'>('ALL');
+  const [chartState, setChartState] = useState<{ item: TaylorSignalItem; interval: '60' | 'D' } | null>(null);
 
-  const openChart = useCallback((item: TaylorSignalItem) => setChartItem(item), []);
-  const closeChart = useCallback(() => setChartItem(null), []);
+  const openChart = useCallback((item: TaylorSignalItem, interval: '60' | 'D') => {
+    setChartState({ item, interval });
+  }, []);
+  const closeChart = useCallback(() => setChartState(null), []);
 
   useEffect(() => {
     async function loadData() {
@@ -52,6 +68,7 @@ export default function TaylorTrade() {
   const filteredSignals = useMemo(() => {
     if (!data?.signals) return [];
     if (filter === 'ALL') return data.signals;
+    if (filter === 'HOURLY_DIV') return data.signals.filter((s) => !!s.hourly_divergence);
     return data.signals.filter((s) => s.cycle_phase === filter);
   }, [data, filter]);
 
@@ -79,6 +96,10 @@ export default function TaylorTrade() {
   }
 
   const summary = data?.summary || { buy_day_count: 0, sell_day_count: 0, sell_short_day_count: 0 };
+  const hourlyDivCount = summary.hourly_div_count ?? data.signals.filter((s) => !!s.hourly_divergence).length;
+  const overnightDivCount =
+    summary.overnight_div_count ??
+    data.signals.filter((s) => s.entry_session === 'ASIA' || s.entry_session === 'LONDON').length;
 
   return (
     <div className="space-y-8">
@@ -89,59 +110,74 @@ export default function TaylorTrade() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-400">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              The Bradman · 3-Day Cycle
+              The Bradman · 24h Globex + 3-Day Cycle
             </div>
             <h1 className="mt-3 text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
               The Bradman
             </h1>
             <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-              A systematic 3-day momentum and mean-reversion model. Customized across liquid commodity and financial futures markets using proprietary backtested parameters to identify high-probability cycle turning points and objective target levels.
+              Combines George Douglass Taylor&rsquo;s 3-day swing cycle with 24-hour Globex (Asia, London &amp; US) 60-minute{' '}
+              <span className="text-slate-200 font-semibold">LBR 3/10 oscillator divergences</span> and{' '}
+              <span className="text-slate-200 font-semibold">Keltner Channel (20 EMA &plusmn; 2.5 ATR)</span> exhaustion triggers, including Euro FX (<span className="font-mono">6E</span>) / US Dollar (<span className="font-mono">DX</span>) inverse swing confirmation.
             </p>
           </div>
           <div className="shrink-0 text-left md:text-right">
-            <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Today's Signals</div>
-            <div className="text-2xl font-extrabold text-amber-400">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</div>
+            <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Signal Session</div>
+            <div className="text-2xl font-extrabold text-amber-400">{data.date}</div>
           </div>
         </div>
 
         {/* Stat Cards Row */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
             <div className="text-xs font-semibold uppercase text-slate-400">Total Scanned</div>
             <div className="mt-1 text-2xl font-bold text-slate-100">{data?.total_scanned ?? 0}</div>
-            <div className="text-[11px] text-slate-400">Active Futures Contracts</div>
+            <div className="text-[11px] text-slate-400">Globex + ICE Futures</div>
+          </div>
+          <div className="bg-slate-950/40 rounded-xl p-4 border border-fuchsia-900/50">
+            <div className="text-xs font-semibold uppercase text-fuchsia-300">1H 3/10 Divergences</div>
+            <div className="mt-1 text-2xl font-bold text-fuchsia-300">{hourlyDivCount}</div>
+            <div className="text-[11px] text-slate-400">{overnightDivCount} entered in Asia / London</div>
           </div>
           <div className="bg-slate-950/40 rounded-xl p-4 border border-emerald-900/40">
             <div className="text-xs font-semibold uppercase text-emerald-400">Buy Days (Day 1)</div>
             <div className="mt-1 text-2xl font-bold text-emerald-400">{summary.buy_day_count}</div>
-            <div className="text-[11px] text-slate-400">Support / Long Setups</div>
+            <div className="text-[11px] text-slate-400">Support / Buy Div Setups</div>
           </div>
           <div className="bg-slate-950/40 rounded-xl p-4 border border-amber-900/40">
             <div className="text-xs font-semibold uppercase text-amber-400">Sell Days (Day 2)</div>
             <div className="mt-1 text-2xl font-bold text-amber-400">{summary.sell_day_count}</div>
-            <div className="text-[11px] text-slate-400">Target Rally Exits</div>
+            <div className="text-[11px] text-slate-400">Mid-Cycle Rotation</div>
           </div>
           <div className="bg-slate-950/40 rounded-xl p-4 border border-rose-900/40">
             <div className="text-xs font-semibold uppercase text-rose-400">Sell Short Days (Day 3)</div>
             <div className="mt-1 text-2xl font-bold text-rose-400">{summary.sell_short_day_count}</div>
-            <div className="text-[11px] text-slate-400">Resistance Short Entries</div>
+            <div className="text-[11px] text-slate-400">Resistance / Sell Div Setups</div>
           </div>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-        {(['ALL', 'BUY_DAY', 'SELL_DAY', 'SELL_SHORT_DAY'] as const).map((tab) => (
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+        {(
+          [
+            { id: 'ALL', label: 'All Contracts' },
+            { id: 'HOURLY_DIV', label: `⚡ 1H Divergences (${hourlyDivCount})` },
+            { id: 'BUY_DAY', label: 'BUY DAY' },
+            { id: 'SELL_DAY', label: 'SELL DAY' },
+            { id: 'SELL_SHORT_DAY', label: 'SELL SHORT DAY' },
+          ] as const
+        ).map((tab) => (
           <button
-            key={tab}
-            onClick={() => setFilter(tab)}
+            key={tab.id}
+            onClick={() => setFilter(tab.id)}
             className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-              filter === tab
+              filter === tab.id
                 ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
             }`}
           >
-            {tab === 'ALL' ? 'All Contracts' : tab.replaceAll('_', ' ')}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -152,7 +188,7 @@ export default function TaylorTrade() {
           const fullName = SYMBOL_NAMES[item.symbol] || item.symbol;
           const isBuy = item.cycle_phase === 'BUY_DAY';
           const isSell = item.cycle_phase === 'SELL_DAY';
-          const isShort = item.cycle_phase === 'SELL_SHORT_DAY';
+          const sBadge = sessionBadge(item.entry_session);
 
           return (
             <div
@@ -192,8 +228,37 @@ export default function TaylorTrade() {
                   </div>
                 </div>
 
+                {/* Overnight / 1H Divergence & Session Badges */}
+                <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                  <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${sBadge.cls}`}>
+                    {sBadge.label}
+                  </span>
+                  {item.hourly_divergence && (
+                    <span
+                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-extrabold uppercase border ${
+                        item.hourly_divergence === 'BUY_DIV'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                      }`}
+                    >
+                      1H 3/10 {item.hourly_divergence === 'BUY_DIV' ? 'Buy Div' : 'Sell Div'}
+                      {item.divergence_time_et ? ` · ${item.divergence_time_et}` : ''}
+                    </span>
+                  )}
+                  {item.keltner_pierce && (
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+                      Keltner &plusmn;2.5 Pierce
+                    </span>
+                  )}
+                  {item.fx_pair_confirmed && (
+                    <span className="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      ⚡ EC / $ Inverse Div Confirmed
+                    </span>
+                  )}
+                </div>
+
                 {/* Key Objectives Table */}
-                <div className="mt-5 grid grid-cols-2 gap-2 bg-slate-950/50 rounded-xl p-3 border border-slate-800/80 text-xs">
+                <div className="mt-4 grid grid-cols-2 gap-2 bg-slate-950/50 rounded-xl p-3 border border-slate-800/80 text-xs">
                   <div>
                     <span className="text-slate-400">Buying Objective:</span>
                     <div className="font-mono font-bold text-emerald-400 text-sm mt-0.5">
@@ -261,40 +326,59 @@ export default function TaylorTrade() {
                 )}
               </div>
 
-              {/* View Chart Button */}
-              <button
-                onClick={() => openChart(item)}
-                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-                  bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
-                  text-slate-300 hover:text-white transition-all duration-150 group"
-              >
-                <svg className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
-                </svg>
-                View Daily Chart
-              </button>
+              {/* View Chart Buttons (60m Globex + Daily) */}
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => openChart(item, '60')}
+                  className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-150 ${
+                    item.hourly_divergence
+                      ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/50 text-amber-200'
+                      : 'bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-blue-500/50 text-slate-300 hover:text-white'
+                  }`}
+                >
+                  ⚡ 60m Globex
+                </button>
+                <button
+                  onClick={() => openChart(item, 'D')}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold
+                    bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
+                    text-slate-300 hover:text-white transition-all duration-150"
+                >
+                  📈 Daily Chart
+                </button>
+              </div>
             </div>
           );
         })}
       </div>
 
       {/* Chart Modal */}
-      {chartItem && (
+      {chartState && (
         <SignalChartModal
-          isOpen={!!chartItem}
+          isOpen={!!chartState}
           onClose={closeChart}
-          symbol={chartItem.symbol}
+          symbol={chartState.item.symbol}
           strategy="taylor"
-          interval="D"
-          signalLabel={`BRADMAN — ${chartItem.cycle_phase.replaceAll('_', ' ')}`}
-          direction={chartItem.action === 'BUY_LONG' ? 'long' : chartItem.action === 'SELL_SHORT' ? 'short' : null}
-          entryPrice={chartItem.entry_target}
-          targetPrice={chartItem.profit_target}
-          stopPrice={chartItem.stop_loss}
+          interval={chartState.interval}
+          signalLabel={`BRADMAN (${chartState.interval === '60' ? '60M GLOBEX' : 'DAILY'}) — ${chartState.item.cycle_phase.replaceAll('_', ' ')}`}
+          direction={
+            chartState.item.action === 'BUY_LONG'
+              ? 'long'
+              : chartState.item.action === 'SELL_SHORT'
+                ? 'short'
+                : null
+          }
+          entryPrice={chartState.item.entry_target}
+          targetPrice={chartState.item.profit_target}
+          stopPrice={chartState.item.stop_loss}
           extraRows={[
-            { label: 'Cycle Day', value: `Day ${chartItem.cycle_day}` },
-            { label: 'Buy Objective', value: `$${formatPrice(chartItem.buying_objective)}` },
-            { label: 'Sell Objective', value: `$${formatPrice(chartItem.selling_objective)}` }
+            { label: 'Cycle Day', value: `Day ${chartState.item.cycle_day}` },
+            { label: 'Session', value: chartState.item.entry_session || 'DAILY', highlight: chartState.item.entry_session === 'ASIA' || chartState.item.entry_session === 'LONDON' },
+            ...(chartState.item.hourly_divergence
+              ? [{ label: '1H 3/10 Div', value: `${chartState.item.hourly_divergence.replace('_', ' ')} (${chartState.item.divergence_time_et || ''})`, highlight: true }]
+              : []),
+            { label: 'Buy Objective', value: `$${formatPrice(chartState.item.buying_objective)}` },
+            { label: 'Sell Objective', value: `$${formatPrice(chartState.item.selling_objective)}` },
           ]}
         />
       )}

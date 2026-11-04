@@ -19,6 +19,7 @@ const FUTURES_MAP: Record<string, string> = {
   '6E': '6E=F',
   '6J': '6J=F',
   '6B': '6B=F',
+  DX: 'DX-Y.NYB',
   ZB: 'ZB=F',
   ZN: 'ZN=F',
 };
