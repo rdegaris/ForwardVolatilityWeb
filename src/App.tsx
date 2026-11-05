@@ -57,7 +57,7 @@ function App() {
               <Route path="/grail" element={<ProtectedRoute><GrailTrade /></ProtectedRoute>} />
               <Route path="/odid" element={<ProtectedRoute><OdidBreakout /></ProtectedRoute>} />
               <Route path="/taylor" element={<ProtectedRoute><TaylorTrade /></ProtectedRoute>} />
-              <Route path="/linda" element={<ProtectedRoute><LindaTrade /></ProtectedRoute>} />
+              <Route path="/linda" element={<LindaTrade />} />
 
               <Route path="/pre-earnings" element={<ProtectedRoute><PreEarningsStraddles /></ProtectedRoute>} />
               <Route path="/pre-earnings/open-trades" element={<ProtectedRoute><PreEarningsTrades /></ProtectedRoute>} />
