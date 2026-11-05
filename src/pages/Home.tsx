@@ -467,12 +467,7 @@ export default function Home() {
           minute: '2-digit',
           timeZone: 'America/Los_Angeles',
         });
-        const etTime = dt.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-          timeZone: 'America/New_York',
-        });
-        lastRunDisplay = `${ptTime} PT (${etTime} ET)`;
+        lastRunDisplay = `${ptTime} PT`;
       }
     }
 
@@ -524,12 +519,7 @@ export default function Home() {
         minute: '2-digit',
         timeZone: 'America/Los_Angeles',
       });
-      const etStr = nextCandidate.dt.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/New_York',
-      });
-      nextRunDisplay = `${ptStr} PT (${etStr} ET)`;
+      nextRunDisplay = `${ptStr} PT`;
       nextRunLabel = nextCandidate.label;
     }
 
