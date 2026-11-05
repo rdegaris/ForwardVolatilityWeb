@@ -1,14 +1,9 @@
-/**
- * Live Price Estimator Component
- * Fetches live/after-hours prices and estimates calendar spread P&L
- * Supports post-earnings IV modeling with target IVs
- */
-
 import { useState, useCallback } from 'react';
 import type { CalendarSpreadTrade } from '../types/trade';
 import { fetchMultipleQuotes, formatMarketState, type YahooQuote } from '../lib/yahooFinance';
 import { estimateCalendarSpread, type CalendarSpreadEstimate, type CalendarSpreadOptions } from '../lib/optionPricing';
 import { fmt$ } from '../lib/formatCurrency';
+import { ChevronDownIcon, RefreshIcon } from './Icons';
 
 interface LiveEstimate {
   quote: YahooQuote;
@@ -21,57 +16,49 @@ interface LivePriceEstimatorProps {
   onUpdate?: (estimates: LiveEstimate[]) => void;
 }
 
-// Default post-earnings IV targets (typical normalized levels)
-const DEFAULT_FRONT_TARGET_IV = 35; // Front month normalizes to ~35% IV
-const DEFAULT_BACK_TARGET_IV = 40;  // Back month ~40% IV (slightly higher due to more time)
+const DEFAULT_FRONT_TARGET_IV = 35;
+const DEFAULT_BACK_TARGET_IV = 40;
 
 export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstimatorProps) {
   const [estimates, setEstimates] = useState<LiveEstimate[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
-  // Estimation mode
+
   const [estimationMode, setEstimationMode] = useState<'realtime' | 'post-earnings'>('post-earnings');
-  // Target IVs for post-earnings (as percentages, e.g., 35 = 35%)
   const [frontTargetIV, setFrontTargetIV] = useState(DEFAULT_FRONT_TARGET_IV);
   const [backTargetIV, setBackTargetIV] = useState(DEFAULT_BACK_TARGET_IV);
 
   const fetchLivePrices = useCallback(async () => {
     if (trades.length === 0) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-      // Get unique symbols
-      const symbols = [...new Set(trades.map(t => t.symbol))];
-      
-      // Fetch quotes
+      const symbols = [...new Set(trades.map((t) => t.symbol))];
       const quotes = await fetchMultipleQuotes(symbols);
-      
+
       if (quotes.size === 0) {
-        setError('Could not fetch live prices. Yahoo Finance may be blocked by CORS. Try using the manual price input below.');
+        setError('Could not fetch live quotes (CORS restriction). Use manual price entry below.');
         setLoading(false);
         return;
       }
-      
-      // Calculate estimates for each trade
+
       const newEstimates: LiveEstimate[] = [];
-      
-      // Build options based on estimation mode
-      const options: CalendarSpreadOptions = estimationMode === 'post-earnings' 
-        ? {
-            daysForward: 1,
-            frontTargetIV: frontTargetIV / 100, // Convert percentage to decimal
-            backTargetIV: backTargetIV / 100,
-          }
-        : {};
-      
+      const options: CalendarSpreadOptions =
+        estimationMode === 'post-earnings'
+          ? {
+              daysForward: 1,
+              frontTargetIV: frontTargetIV / 100,
+              backTargetIV: backTargetIV / 100,
+            }
+          : {};
+
       for (const trade of trades) {
         const quote = quotes.get(trade.symbol.toUpperCase());
         if (!quote) continue;
-        
+
         const estimate = estimateCalendarSpread(
           trade.underlyingCurrentPrice || trade.underlyingEntryPrice,
           quote.displayPrice,
@@ -84,233 +71,197 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
           trade.callOrPut === 'CALL',
           options
         );
-        
+
         newEstimates.push({ quote, estimate, trade });
       }
-      
+
       setEstimates(newEstimates);
       setLastUpdate(new Date());
       onUpdate?.(newEstimates);
-      
     } catch (err) {
       console.error('Error fetching live prices:', err);
-      setError('Failed to fetch live prices. Try using the manual price input below.');
+      setError('Failed to fetch live prices. Use manual price entry below.');
     } finally {
       setLoading(false);
     }
   }, [trades, onUpdate, estimationMode, frontTargetIV, backTargetIV]);
 
-  // Get total estimated P&L
   const totalEstimatedPnL = estimates.reduce((sum, e) => sum + e.estimate.estimatedPnL, 0);
   const currentPnL = trades.reduce((sum, t) => sum + (t.unrealizedPnL || 0), 0);
   const pnlChange = totalEstimatedPnL;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <span>📈</span> Post-Earnings P&L Estimator
-        </h2>
+    <div className="desk-surface rounded-2xl overflow-hidden">
+      <div className="px-5 py-4 border-b border-hairline flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-desk-text">
+            Post-earnings P&amp;L estimator
+          </h2>
+          <p className="text-xs text-desk-muted mt-0.5">
+            Black-Scholes calendar spread mark simulation
+          </p>
+        </div>
         <button
           onClick={fetchLivePrices}
           disabled={loading || trades.length === 0}
-          className="flex items-center gap-2 bg-white/20 hover:bg-white/30 disabled:bg-white/10 disabled:cursor-not-allowed text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+          className="desk-btn-secondary px-3.5 py-2 text-xs inline-flex items-center gap-1.5 disabled:opacity-50"
         >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Fetching...
-            </>
-          ) : (
-            <>
-              <span>🔄</span>
-              Get Live AH Prices
-            </>
-          )}
+          <RefreshIcon className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span>{loading ? 'Fetching…' : 'Fetch live AH quotes'}</span>
         </button>
       </div>
 
-      {/* Estimation Mode Settings */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+      <div className="p-4 bg-desk-deep/50 border-b border-hairline">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Mode:</span>
+            <span className="text-xs font-medium text-desk-secondary">Mode</span>
             <select
               value={estimationMode}
               onChange={(e) => setEstimationMode(e.target.value as 'realtime' | 'post-earnings')}
-              className="text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="desk-input text-xs px-2.5 py-1.5"
             >
-              <option value="post-earnings">📅 Tomorrow (Post-Earnings)</option>
-              <option value="realtime">⚡ Real-time (Current IV)</option>
+              <option value="post-earnings">Tomorrow (T+1 post-earnings)</option>
+              <option value="realtime">Real-time (current IV)</option>
             </select>
           </div>
-          
+
           {estimationMode === 'post-earnings' && (
             <>
               <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 dark:text-gray-400">Front Target IV:</label>
+                <label className="text-xs text-desk-secondary">Front target IV</label>
                 <input
                   type="number"
                   min="10"
                   max="100"
                   value={frontTargetIV}
                   onChange={(e) => setFrontTargetIV(parseFloat(e.target.value) || 35)}
-                  className="w-16 text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="desk-input w-16 text-xs px-2 py-1 font-mono tabular-nums"
                 />
-                <span className="text-sm text-gray-500">%</span>
+                <span className="text-xs text-desk-muted">%</span>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 dark:text-gray-400">Back Target IV:</label>
+                <label className="text-xs text-desk-secondary">Back target IV</label>
                 <input
                   type="number"
                   min="10"
                   max="100"
                   value={backTargetIV}
                   onChange={(e) => setBackTargetIV(parseFloat(e.target.value) || 40)}
-                  className="w-16 text-sm px-2 py-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="desk-input w-16 text-xs px-2 py-1 font-mono tabular-nums"
                 />
-                <span className="text-sm text-gray-500">%</span>
+                <span className="text-xs text-desk-muted">%</span>
               </div>
             </>
           )}
         </div>
-        
-        {estimationMode === 'post-earnings' && (
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            💡 <strong>Post-earnings mode:</strong> Simulates tomorrow (T+1) with normalized IV levels. 
-            Enter target IV after earnings (typically 30-50% for most stocks). Front month usually has slightly lower IV than back.
-          </p>
-        )}
       </div>
 
       {error && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4">
-          <p className="text-sm text-yellow-800 dark:text-yellow-200">
-            <strong>⚠️ Note:</strong> {error}
-          </p>
+        <div className="m-4 rounded-xl bg-desk-amber/10 border border-desk-amber/30 px-4 py-3 text-xs text-desk-amber">
+          {error}
         </div>
       )}
 
       {lastUpdate && estimates.length > 0 && (
-        <div className="p-4">
-          {/* Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-            <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Current P&L (IB)</div>
-              <div className={`text-xl font-bold ${currentPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <div className="desk-well rounded-xl p-3">
+              <div className="text-xs text-desk-muted">Current P&amp;L (IB)</div>
+              <div className={`mt-1 text-lg font-mono font-semibold tabular-nums ${currentPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                 {fmt$(currentPnL)}
               </div>
             </div>
-            <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                Est. P&L {estimationMode === 'post-earnings' ? 'Tomorrow' : 'at Live Price'}
+            <div className="desk-well rounded-xl p-3">
+              <div className="text-xs text-desk-muted">
+                Est. P&amp;L {estimationMode === 'post-earnings' ? 'tomorrow' : 'live'}
               </div>
-              <div className={`text-xl font-bold ${currentPnL + pnlChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <div className={`mt-1 text-lg font-mono font-semibold tabular-nums ${currentPnL + pnlChange >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                 {fmt$(currentPnL + pnlChange)}
               </div>
             </div>
-            <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Est. Change</div>
-              <div className={`text-xl font-bold ${pnlChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <div className="desk-well rounded-xl p-3">
+              <div className="text-xs text-desk-muted">Est. change</div>
+              <div className={`mt-1 text-lg font-mono font-semibold tabular-nums ${pnlChange >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                 {fmt$(pnlChange, 2, true)}
               </div>
             </div>
-            <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Scenario</div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                {estimationMode === 'post-earnings' 
-                  ? `T+1, IV: ${frontTargetIV}%/${backTargetIV}%`
-                  : 'Real-time'
-                }
+            <div className="desk-well rounded-xl p-3">
+              <div className="text-xs text-desk-muted">Scenario</div>
+              <div className="mt-1 text-xs font-mono text-desk-text">
+                {estimationMode === 'post-earnings'
+                  ? `T+1 · IV ${frontTargetIV}% / ${backTargetIV}%`
+                  : 'Real-time'}
               </div>
             </div>
-            <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Last Updated</div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="desk-well rounded-xl p-3">
+              <div className="text-xs text-desk-muted">Updated</div>
+              <div className="mt-1 text-xs font-mono text-desk-text tabular-nums">
                 {lastUpdate.toLocaleTimeString()}
               </div>
             </div>
           </div>
 
-          {/* Individual estimates */}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-gray-700">
-                <tr className="border-b border-gray-300 dark:border-gray-600">
-                  <th className="text-left py-2 px-3 font-semibold text-gray-900 dark:text-white">Symbol</th>
-                  <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Market</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">IB Price</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Live Price</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Stock Δ</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Est. Front</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Est. Back</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Est. Spread</th>
-                  <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Est. P&L</th>
+            <table className="w-full text-xs">
+              <thead className="border-b border-hairline text-desk-muted">
+                <tr>
+                  <th className="text-left py-2.5 px-3 font-medium">Symbol</th>
+                  <th className="text-center py-2.5 px-2 font-medium">Session</th>
+                  <th className="text-right py-2.5 px-2 font-medium">IB price</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Live price</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Delta</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Est. front</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Est. back</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Est. spread</th>
+                  <th className="text-right py-2.5 px-2 font-medium">Est. P&amp;L</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-hairline">
                 {estimates.map(({ quote, estimate, trade }) => {
                   const ibPrice = trade.underlyingCurrentPrice || trade.underlyingEntryPrice;
                   const priceChange = quote.displayPrice - ibPrice;
                   const priceChangePct = (priceChange / ibPrice) * 100;
-                  const currentSpread = trade.backCurrentPrice - trade.frontCurrentPrice;
                   const entrySpread = trade.backEntryPrice - trade.frontEntryPrice;
-                  
-                  // Calculate the total estimated P&L from entry (not just change)
                   const newSpreadChange = estimate.spreadPrice - entrySpread;
                   const totalEstPnL = newSpreadChange * trade.quantity * 100;
-                  
+
                   return (
-                    <tr 
-                      key={trade.id}
-                      className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                    >
-                      <td className="py-2 px-3">
-                        <div className="font-bold text-gray-900 dark:text-white">{trade.symbol}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <tr key={trade.id} className="hover:bg-desk-raised/30 transition-colors">
+                      <td className="py-2.5 px-3">
+                        <div className="font-mono font-semibold text-desk-text">{trade.symbol}</div>
+                        <div className="text-[11px] font-mono text-desk-muted">
                           ${trade.strike} {trade.callOrPut[0]} × {trade.quantity}
                         </div>
                       </td>
-                      <td className="text-center py-2 px-2">
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          quote.marketState === 'REGULAR' 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : quote.marketState === 'POST' || quote.marketState === 'POSTPOST'
-                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
-                        }`}>
-                          {formatMarketState(quote.marketState)}
-                        </span>
+                      <td className="text-center py-2.5 px-2">
+                        <span className="desk-tag">{formatMarketState(quote.marketState)}</span>
                       </td>
-                      <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-2.5 px-2 font-mono tabular-nums text-desk-secondary">
                         {fmt$(ibPrice)}
                       </td>
-                      <td className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">
+                      <td className="text-right py-2.5 px-2 font-mono tabular-nums font-medium text-desk-text">
                         {fmt$(quote.displayPrice)}
                       </td>
-                      <td className={`text-right py-2 px-2 font-medium ${priceChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-2.5 px-2 font-mono tabular-nums ${priceChange >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         <div>{priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}</div>
-                        <div className="text-xs">({priceChangePct >= 0 ? '+' : ''}{priceChangePct.toFixed(1)}%)</div>
+                        <div className="text-[11px]">({priceChangePct >= 0 ? '+' : ''}{priceChangePct.toFixed(1)}%)</div>
                       </td>
-                      <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-2.5 px-2 font-mono tabular-nums text-desk-secondary">
                         <div>{fmt$(estimate.frontPrice)}</div>
-                        <div className="text-xs text-gray-500">now {fmt$(trade.frontCurrentPrice)}</div>
+                        <div className="text-[11px] text-desk-muted">now {fmt$(trade.frontCurrentPrice)}</div>
                       </td>
-                      <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-2.5 px-2 font-mono tabular-nums text-desk-secondary">
                         <div>{fmt$(estimate.backPrice)}</div>
-                        <div className="text-xs text-gray-500">now {fmt$(trade.backCurrentPrice)}</div>
+                        <div className="text-[11px] text-desk-muted">now {fmt$(trade.backCurrentPrice)}</div>
                       </td>
-                      <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
-                        <div className="font-semibold">{fmt$(estimate.spreadPrice)}</div>
-                        <div className="text-xs text-gray-500">entry {fmt$(entrySpread)}</div>
+                      <td className="text-right py-2.5 px-2 font-mono tabular-nums text-desk-text">
+                        <div className="font-medium">{fmt$(estimate.spreadPrice)}</div>
+                        <div className="text-[11px] text-desk-muted">entry {fmt$(entrySpread)}</div>
                       </td>
-                      <td className={`text-right py-2 px-2 font-bold ${totalEstPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-2.5 px-2 font-mono tabular-nums font-semibold ${totalEstPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         <div>{fmt$(totalEstPnL, 0, true)}</div>
-                        <div className="text-xs font-normal text-gray-500">
-                          ({fmt$(totalEstPnL / trade.quantity, 0)}/contract × {trade.quantity})
+                        <div className="text-[11px] font-normal text-desk-muted">
+                          ({fmt$(totalEstPnL / trade.quantity, 0)}/ct × {trade.quantity})
                         </div>
                       </td>
                     </tr>
@@ -319,32 +270,17 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
               </tbody>
             </table>
           </div>
-
-          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-xs text-green-800 dark:text-green-300">
-            <p><strong>🎯 Calendar Spread Strategy:</strong> We profit when front month IV crushes more than back month. 
-            {estimationMode === 'post-earnings' && (
-              <> At target IVs of {frontTargetIV}% front / {backTargetIV}% back, the front option loses more time value, widening our spread.</>
-            )}
-            </p>
-          </div>
         </div>
       )}
 
       {!lastUpdate && !loading && (
-        <div className="p-8 text-center">
-          <div className="text-4xl mb-3">💹</div>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Click "Get Live AH Prices" to estimate tomorrow's P&L after earnings
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500">
-            Uses Black-Scholes with configurable target IV to model post-earnings scenarios
-          </p>
+        <div className="p-6 text-center text-xs text-desk-muted">
+          Select &ldquo;Fetch live AH quotes&rdquo; to model T+1 post-earnings calendar spread values.
         </div>
       )}
 
-      {/* Manual Price Entry */}
-      <ManualPriceEstimator 
-        trades={trades} 
+      <ManualPriceEstimator
+        trades={trades}
         estimationMode={estimationMode}
         frontTargetIV={frontTargetIV}
         backTargetIV={backTargetIV}
@@ -353,15 +289,12 @@ export default function LivePriceEstimator({ trades, onUpdate }: LivePriceEstima
   );
 }
 
-/**
- * Manual price entry for when Yahoo Finance is blocked
- */
-function ManualPriceEstimator({ 
-  trades, 
+function ManualPriceEstimator({
+  trades,
   estimationMode,
   frontTargetIV,
   backTargetIV,
-}: { 
+}: {
   trades: CalendarSpreadTrade[];
   estimationMode: 'realtime' | 'post-earnings';
   frontTargetIV: number;
@@ -372,21 +305,22 @@ function ManualPriceEstimator({
   const [estimates, setEstimates] = useState<{ trade: CalendarSpreadTrade; estimate: CalendarSpreadEstimate }[]>([]);
 
   const updateManualPrice = (symbol: string, price: number) => {
-    setManualPrices(prev => ({ ...prev, [symbol]: price }));
+    setManualPrices((prev) => ({ ...prev, [symbol]: price }));
   };
 
   const calculateEstimates = () => {
-    const options: CalendarSpreadOptions = estimationMode === 'post-earnings' 
-      ? {
-          daysForward: 1,
-          frontTargetIV: frontTargetIV / 100,
-          backTargetIV: backTargetIV / 100,
-        }
-      : {};
+    const options: CalendarSpreadOptions =
+      estimationMode === 'post-earnings'
+        ? {
+            daysForward: 1,
+            frontTargetIV: frontTargetIV / 100,
+            backTargetIV: backTargetIV / 100,
+          }
+        : {};
 
     const newEstimates = trades
-      .filter(t => manualPrices[t.symbol] && manualPrices[t.symbol] > 0)
-      .map(trade => {
+      .filter((t) => manualPrices[t.symbol] && manualPrices[t.symbol] > 0)
+      .map((trade) => {
         const estimate = estimateCalendarSpread(
           trade.underlyingCurrentPrice || trade.underlyingEntryPrice,
           manualPrices[trade.symbol],
@@ -401,13 +335,12 @@ function ManualPriceEstimator({
         );
         return { trade, estimate };
       });
-    
+
     setEstimates(newEstimates);
   };
 
-  const uniqueSymbols = [...new Set(trades.map(t => t.symbol))];
-  
-  // Calculate total P&L from entry
+  const uniqueSymbols = [...new Set(trades.map((t) => t.symbol))];
+
   const totalPnL = estimates.reduce((sum, { trade, estimate }) => {
     const entrySpread = trade.backEntryPrice - trade.frontEntryPrice;
     const newSpreadChange = estimate.spreadPrice - entrySpread;
@@ -417,28 +350,26 @@ function ManualPriceEstimator({
   if (trades.length === 0) return null;
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700">
+    <div className="border-t border-hairline">
       <button
         onClick={() => setShowManual(!showManual)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        className="w-full px-5 py-3 flex items-center justify-between hover:bg-desk-raised/30 transition-colors text-xs font-medium text-desk-secondary"
       >
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          ⌨️ Manual Price Entry (if live fetch fails)
-        </span>
-        <span className="text-gray-400">{showManual ? '▲' : '▼'}</span>
+        <span>Manual price override</span>
+        <ChevronDownIcon className={`w-4 h-4 text-desk-muted transition-transform duration-150 ${showManual ? 'rotate-180' : ''}`} />
       </button>
 
       {showManual && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-700/50">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            {uniqueSymbols.map(symbol => {
-              const trade = trades.find(t => t.symbol === symbol);
+        <div className="p-5 bg-desk-deep/40 border-t border-hairline space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {uniqueSymbols.map((symbol) => {
+              const trade = trades.find((t) => t.symbol === symbol);
               const currentPrice = trade?.underlyingCurrentPrice || trade?.underlyingEntryPrice || 0;
-              
+
               return (
                 <div key={symbol}>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {symbol} (IB: {fmt$(currentPrice)})
+                  <label className="block text-xs font-mono text-desk-secondary mb-1">
+                    {symbol} (IB {fmt$(currentPrice)})
                   </label>
                   <input
                     type="number"
@@ -446,7 +377,7 @@ function ManualPriceEstimator({
                     placeholder={currentPrice.toFixed(2)}
                     value={manualPrices[symbol] || ''}
                     onChange={(e) => updateManualPrice(symbol, parseFloat(e.target.value) || 0)}
-                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="desk-input w-full px-2.5 py-1.5 text-xs font-mono tabular-nums"
                   />
                 </div>
               );
@@ -455,53 +386,46 @@ function ManualPriceEstimator({
 
           <button
             onClick={calculateEstimates}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            className="desk-btn-primary px-4 py-2 text-xs"
           >
-            Calculate {estimationMode === 'post-earnings' ? 'Post-Earnings' : ''} Estimate
+            Calculate {estimationMode === 'post-earnings' ? 'post-earnings' : 'live'} estimate
           </button>
 
           {estimates.length > 0 && (
-            <div className="mt-4">
-              <div className="p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Estimated P&L {estimationMode === 'post-earnings' ? 'Tomorrow (from entry)' : 'at Price'}:
-                </div>
-                <div className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className="desk-well rounded-xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-desk-muted">
+                  Estimated P&amp;L {estimationMode === 'post-earnings' ? '(tomorrow from entry)' : '(at manual price)'}
+                </span>
+                <span className={`text-lg font-mono font-semibold tabular-nums ${totalPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                   {fmt$(totalPnL, 2, true)}
-                </div>
-                
-                <div className="mt-3 space-y-2">
-                  {estimates.map(({ trade, estimate }) => {
-                    const entrySpread = trade.backEntryPrice - trade.frontEntryPrice;
-                    const newSpreadChange = estimate.spreadPrice - entrySpread;
-                    const tradePnL = newSpreadChange * trade.quantity * 100;
-                    
-                    return (
-                      <div key={trade.id} className="text-sm border-t border-gray-200 dark:border-gray-600 pt-2">
-                        <div className="flex justify-between mb-1">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">
-                            {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ {fmt$(manualPrices[trade.symbol])}
-                          </span>
-                          <span className={`font-bold ${tradePnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {fmt$(tradePnL, 0, true)}
-                            <span className="text-xs text-gray-500 ml-1 font-normal">
-                              ({fmt$(tradePnL / trade.quantity, 0)}/ct × {trade.quantity})
-                            </span>
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 pl-2 space-y-0.5">
-                          <div>Front: {fmt$(trade.frontCurrentPrice)} → <span className="text-gray-700 dark:text-gray-300">{fmt$(estimate.frontPrice)}</span>
-                            <span className="ml-2 text-gray-400">(IV: {(estimate.frontIVEstimated * 100).toFixed(0)}% → {(estimate.frontIVUsed * 100).toFixed(0)}%)</span>
-                          </div>
-                          <div>Back: {fmt$(trade.backCurrentPrice)} → <span className="text-gray-700 dark:text-gray-300">{fmt$(estimate.backPrice)}</span>
-                            <span className="ml-2 text-gray-400">(IV: {(estimate.backIVEstimated * 100).toFixed(0)}% → {(estimate.backIVUsed * 100).toFixed(0)}%)</span>
-                          </div>
-                          <div>Spread: {fmt$(entrySpread)} → <span className="font-medium text-gray-700 dark:text-gray-300">{fmt$(estimate.spreadPrice)}</span></div>
-                        </div>
+                </span>
+              </div>
+
+              <div className="divide-y divide-hairline">
+                {estimates.map(({ trade, estimate }) => {
+                  const entrySpread = trade.backEntryPrice - trade.frontEntryPrice;
+                  const newSpreadChange = estimate.spreadPrice - entrySpread;
+                  const tradePnL = newSpreadChange * trade.quantity * 100;
+
+                  return (
+                    <div key={trade.id} className="py-2.5 text-xs space-y-1">
+                      <div className="flex justify-between font-mono tabular-nums">
+                        <span className="text-desk-text font-medium">
+                          {trade.symbol} ${trade.strike}{trade.callOrPut[0]} @ {fmt$(manualPrices[trade.symbol])}
+                        </span>
+                        <span className={`font-semibold ${tradePnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
+                          {fmt$(tradePnL, 0, true)} ({fmt$(tradePnL / trade.quantity, 0)}/ct × {trade.quantity})
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="text-[11px] font-mono tabular-nums text-desk-muted flex flex-wrap gap-4">
+                        <span>Front: {fmt$(trade.frontCurrentPrice)} → {fmt$(estimate.frontPrice)}</span>
+                        <span>Back: {fmt$(trade.backCurrentPrice)} → {fmt$(estimate.backPrice)}</span>
+                        <span>Spread: {fmt$(entrySpread)} → {fmt$(estimate.spreadPrice)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

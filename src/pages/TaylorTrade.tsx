@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TaylorSignalsPayload, TaylorSignalItem } from '../types/taylor';
 import SignalChartModal from '../components/SignalChartModal';
+import { AlertCircleIcon, ChartLineIcon } from '../components/Icons';
 
 const SYMBOL_NAMES: Record<string, string> = {
   ES: 'E-mini S&P 500',
@@ -22,22 +23,32 @@ const SYMBOL_NAMES: Record<string, string> = {
 
 function formatPrice(val: number) {
   if (val === null || val === undefined || Number.isNaN(val)) return '—';
-  if (Math.abs(val) >= 1000) return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (Math.abs(val) >= 1000) {
+    return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
   if (Math.abs(val) < 2) return val.toFixed(4);
   return val.toFixed(2);
 }
 
-function sessionBadge(session?: string | null) {
-  if (session === 'ASIA') {
-    return { label: '🌙 Asia Session', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40' };
-  }
-  if (session === 'LONDON') {
-    return { label: '🌍 London Session', cls: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' };
-  }
-  if (session === 'US') {
-    return { label: '🗽 US Session', cls: 'bg-blue-500/20 text-blue-300 border-blue-500/40' };
-  }
-  return { label: '📅 Daily RTH', cls: 'bg-slate-800 text-slate-300 border-slate-700' };
+function sessionLabel(session?: string | null) {
+  if (session === 'ASIA') return 'Asia session';
+  if (session === 'LONDON') return 'London session';
+  if (session === 'US') return 'US session';
+  return 'Daily RTH';
+}
+
+function cyclePhaseLabel(phase: string) {
+  if (phase === 'BUY_DAY') return 'Buy day';
+  if (phase === 'SELL_DAY') return 'Sell day';
+  if (phase === 'SELL_SHORT_DAY') return 'Sell short day';
+  return phase.replaceAll('_', ' ');
+}
+
+function actionLabel(action: string) {
+  if (action === 'BUY_LONG') return 'Buy long';
+  if (action === 'SELL_SHORT') return 'Sell short';
+  if (action === 'SELL_EXIT') return 'Sell exit';
+  return 'Watch';
 }
 
 export default function TaylorTrade() {
@@ -74,23 +85,21 @@ export default function TaylorTrade() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-80 gap-4">
-        <div className="relative h-12 w-12">
-          <div className="absolute inset-0 rounded-full border-2 border-slate-700" />
-          <div className="absolute inset-0 rounded-full border-2 border-t-amber-500 animate-spin" />
-        </div>
-        <p className="text-slate-400 font-medium">Loading The Bradman Signals…</p>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading The Bradman signals…</p>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center h-80 gap-4">
-        <div className="text-center">
-          <p className="text-rose-400 font-semibold mb-2">⚠ Signal data unavailable</p>
-          <p className="text-slate-400 text-sm">The Bradman signal data could not be loaded. Please check back shortly.</p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>Signal data unavailable</span>
         </div>
+        <p className="text-sm text-desk-muted">The Bradman signal feed could not be loaded.</p>
       </div>
     );
   }
@@ -103,78 +112,87 @@ export default function TaylorTrade() {
 
   return (
     <div className="space-y-8">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-900/80 p-6 md:p-8 border border-slate-800 backdrop-blur shadow-xl">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              The Bradman · 24h Globex + 3-Day Cycle
+      {/* Header */}
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>24h Globex + 3-day swing cycle</span>
             </div>
-            <h1 className="mt-3 text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
               The Bradman
             </h1>
-            <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-              Combines George Douglass Taylor&rsquo;s 3-day swing cycle with 24-hour Globex (Asia, London &amp; US) 60-minute{' '}
-              <span className="text-slate-200 font-semibold">LBR 3/10 oscillator divergences</span> and{' '}
-              <span className="text-slate-200 font-semibold">Keltner Channel (20 EMA &plusmn; 2.5 ATR)</span> exhaustion triggers, including Euro FX (<span className="font-mono">6E</span>) / US Dollar (<span className="font-mono">DX</span>) inverse swing confirmation.
+            <p className="text-sm leading-relaxed text-desk-secondary">
+              Combines George Douglass Taylor’s 3-day swing cycle with 24-hour Globex (Asia, London, and US) 60-minute LBR 3/10 oscillator divergences and Keltner Channel (20 EMA ± 2.5 ATR) exhaustion triggers, including Euro FX (<span className="font-mono text-desk-text">6E</span>) / US Dollar (<span className="font-mono text-desk-text">DX</span>) inverse swing confirmation.
             </p>
           </div>
-          <div className="shrink-0 text-left md:text-right">
-            <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Signal Session</div>
-            <div className="text-2xl font-extrabold text-amber-400">{data.date}</div>
+
+          <div className="shrink-0 md:text-right">
+            <div className="text-xs text-desk-muted">Signal session</div>
+            <div className="mt-1 text-xl font-medium font-mono text-desk-text">{data.date}</div>
           </div>
         </div>
 
         {/* Stat Cards Row */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-slate-950/40 rounded-xl p-4 border border-slate-800">
-            <div className="text-xs font-semibold uppercase text-slate-400">Total Scanned</div>
-            <div className="mt-1 text-2xl font-bold text-slate-100">{data?.total_scanned ?? 0}</div>
-            <div className="text-[11px] text-slate-400">Globex + ICE Futures</div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Contracts scanned</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {data?.total_scanned ?? 0}
+            </div>
+            <div className="mt-2 text-xs text-desk-muted">Globex + ICE futures</div>
           </div>
-          <div className="bg-slate-950/40 rounded-xl p-4 border border-fuchsia-900/50">
-            <div className="text-xs font-semibold uppercase text-fuchsia-300">1H 3/10 Divergences</div>
-            <div className="mt-1 text-2xl font-bold text-fuchsia-300">{hourlyDivCount}</div>
-            <div className="text-[11px] text-slate-400">{overnightDivCount} entered in Asia / London</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">1h 3/10 divergences</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {hourlyDivCount}
+            </div>
+            <div className="mt-2 text-xs text-desk-muted">{overnightDivCount} in Asia or London</div>
           </div>
-          <div className="bg-slate-950/40 rounded-xl p-4 border border-emerald-900/40">
-            <div className="text-xs font-semibold uppercase text-emerald-400">Buy Days (Day 1)</div>
-            <div className="mt-1 text-2xl font-bold text-emerald-400">{summary.buy_day_count}</div>
-            <div className="text-[11px] text-slate-400">Support / Buy Div Setups</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Buy days (Day 1)</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">
+              {summary.buy_day_count}
+            </div>
+            <div className="mt-2 text-xs text-desk-muted">Support / buy div</div>
           </div>
-          <div className="bg-slate-950/40 rounded-xl p-4 border border-amber-900/40">
-            <div className="text-xs font-semibold uppercase text-amber-400">Sell Days (Day 2)</div>
-            <div className="mt-1 text-2xl font-bold text-amber-400">{summary.sell_day_count}</div>
-            <div className="text-[11px] text-slate-400">Mid-Cycle Rotation</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Sell days (Day 2)</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {summary.sell_day_count}
+            </div>
+            <div className="mt-2 text-xs text-desk-muted">Mid-cycle rotation</div>
           </div>
-          <div className="bg-slate-950/40 rounded-xl p-4 border border-rose-900/40">
-            <div className="text-xs font-semibold uppercase text-rose-400">Sell Short Days (Day 3)</div>
-            <div className="mt-1 text-2xl font-bold text-rose-400">{summary.sell_short_day_count}</div>
-            <div className="text-[11px] text-slate-400">Resistance / Sell Div Setups</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Sell short days (Day 3)</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-down">
+              {summary.sell_short_day_count}
+            </div>
+            <div className="mt-2 text-xs text-desk-muted">Resistance / sell div</div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+      <div className="flex flex-wrap items-center gap-1 border-b border-hairline pb-3">
         {(
           [
-            { id: 'ALL', label: 'All Contracts' },
-            { id: 'HOURLY_DIV', label: `⚡ 1H Divergences (${hourlyDivCount})` },
-            { id: 'BUY_DAY', label: 'BUY DAY' },
-            { id: 'SELL_DAY', label: 'SELL DAY' },
-            { id: 'SELL_SHORT_DAY', label: 'SELL SHORT DAY' },
+            { id: 'ALL', label: 'All contracts' },
+            { id: 'HOURLY_DIV', label: `1h divergences (${hourlyDivCount})` },
+            { id: 'BUY_DAY', label: 'Buy day' },
+            { id: 'SELL_DAY', label: 'Sell day' },
+            { id: 'SELL_SHORT_DAY', label: 'Sell short day' },
           ] as const
         ).map((tab) => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => setFilter(tab.id)}
-            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+            className={`h-8 px-3.5 rounded-lg text-xs transition-colors duration-150 ease-desk ${
               filter === tab.id
-                ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-desk-raised text-desk-text font-medium shadow-inset-top border border-hairline'
+                : 'text-desk-secondary hover:text-desk-text hover:bg-desk-card'
             }`}
           >
             {tab.label}
@@ -183,168 +201,141 @@ export default function TaylorTrade() {
       </div>
 
       {/* Signals Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredSignals.map((item) => {
           const fullName = SYMBOL_NAMES[item.symbol] || item.symbol;
           const isBuy = item.cycle_phase === 'BUY_DAY';
-          const isSell = item.cycle_phase === 'SELL_DAY';
-          const sBadge = sessionBadge(item.entry_session);
+          const isShortDay = item.cycle_phase === 'SELL_SHORT_DAY';
+          const isLongAction = item.action === 'BUY_LONG';
+          const isShortAction = item.action === 'SELL_SHORT';
 
           return (
             <div
               key={item.symbol}
-              className={`rounded-2xl bg-slate-900/70 border backdrop-blur p-6 flex flex-col justify-between shadow-lg transition-all hover:border-amber-500/50 ${
-                isBuy
-                  ? 'border-emerald-500/30 bg-gradient-to-b from-slate-900/80 to-emerald-950/20'
-                  : isSell
-                    ? 'border-amber-500/30 bg-gradient-to-b from-slate-900/80 to-amber-950/20'
-                    : 'border-rose-500/30 bg-gradient-to-b from-slate-900/80 to-rose-950/20'
-              }`}
+              className="desk-surface rounded-2xl p-5 flex flex-col justify-between hover:border-hairline-strong transition-colors duration-150 ease-desk"
             >
-              <div>
+              <div className="space-y-4">
                 {/* Symbol Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-black text-2xl text-slate-100">{item.symbol}</span>
-                      <span className="text-xs font-medium text-slate-400">({fullName})</span>
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          isLongAction || isShortAction ? 'bg-desk-up' : 'bg-desk-muted'
+                        }`}
+                      />
+                      <span className="font-mono text-xl font-medium text-desk-text">{item.symbol}</span>
+                      <span className="text-xs text-desk-muted">{fullName}</span>
                     </div>
-                    <div className="mt-1 text-sm text-slate-300">
-                      Last Close: <span className="font-mono font-bold text-amber-400">{formatPrice(item.close)}</span>
+                    <div className="mt-1 text-xs font-mono text-desk-secondary">
+                      Last close <span className="text-desk-text font-medium">{formatPrice(item.close)}</span>
                     </div>
                   </div>
 
-                  {/* Cycle Phase Badge */}
-                  <div
-                    className={`px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider border ${
-                      isBuy
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                        : isSell
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                          : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                    }`}
-                  >
-                    Day {item.cycle_day} · {item.cycle_phase.replaceAll('_', ' ')}
-                  </div>
+                  <span className={isBuy ? 'desk-tag-up' : isShortDay ? 'desk-tag-down' : 'desk-tag'}>
+                    Day {item.cycle_day} · {cyclePhaseLabel(item.cycle_phase)}
+                  </span>
                 </div>
 
-                {/* Overnight / 1H Divergence & Session Badges */}
-                <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                  <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${sBadge.cls}`}>
-                    {sBadge.label}
-                  </span>
+                {/* Overnight / 1H Divergence & Session Stamps */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="desk-tag font-mono text-[11px]">{sessionLabel(item.entry_session)}</span>
                   {item.hourly_divergence && (
                     <span
-                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-extrabold uppercase border ${
+                      className={
                         item.hourly_divergence === 'BUY_DIV'
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                          : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                      }`}
+                          ? 'desk-tag-up font-mono text-[11px]'
+                          : 'desk-tag-down font-mono text-[11px]'
+                      }
                     >
-                      1H 3/10 {item.hourly_divergence === 'BUY_DIV' ? 'Buy Div' : 'Sell Div'}
+                      1h 3/10 {item.hourly_divergence === 'BUY_DIV' ? 'buy div' : 'sell div'}
                       {item.divergence_time_et ? ` · ${item.divergence_time_et}` : ''}
                     </span>
                   )}
                   {item.keltner_pierce && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
-                      Keltner &plusmn;2.5 Pierce
-                    </span>
+                    <span className="desk-tag font-mono text-[11px]">Keltner ±2.5</span>
                   )}
                   {item.fx_pair_confirmed && (
-                    <span className="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                      ⚡ EC / $ Inverse Div Confirmed
-                    </span>
+                    <span className="desk-tag-up font-mono text-[11px]">EC / $ inverse confirmed</span>
                   )}
                 </div>
 
                 {/* Key Objectives Table */}
-                <div className="mt-4 grid grid-cols-2 gap-2 bg-slate-950/50 rounded-xl p-3 border border-slate-800/80 text-xs">
+                <div className="desk-well rounded-xl p-3.5 grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-slate-400">Buying Objective:</span>
-                    <div className="font-mono font-bold text-emerald-400 text-sm mt-0.5">
+                    <div className="text-desk-muted">Buying objective</div>
+                    <div className="font-mono font-medium text-desk-up text-sm mt-0.5">
                       ${formatPrice(item.buying_objective)}
                     </div>
                   </div>
                   <div>
-                    <span className="text-slate-400">Selling Objective:</span>
-                    <div className="font-mono font-bold text-rose-400 text-sm mt-0.5">
+                    <div className="text-desk-muted">Selling objective</div>
+                    <div className="font-mono font-medium text-desk-down text-sm mt-0.5">
                       ${formatPrice(item.selling_objective)}
                     </div>
                   </div>
-                  <div className="mt-1 pt-1 border-t border-slate-800">
-                    <span className="text-slate-400">Buying Pressure:</span>
-                    <div className="font-mono font-medium text-slate-200 mt-0.5">
-                      {formatPrice(item.buying_pressure)}
-                    </div>
+                  <div className="pt-2 border-t border-hairline">
+                    <div className="text-desk-muted">Buying pressure</div>
+                    <div className="font-mono text-desk-secondary mt-0.5">{formatPrice(item.buying_pressure)}</div>
                   </div>
-                  <div className="mt-1 pt-1 border-t border-slate-800">
-                    <span className="text-slate-400">Selling Pressure:</span>
-                    <div className="font-mono font-medium text-slate-200 mt-0.5">
-                      {formatPrice(item.selling_pressure)}
-                    </div>
+                  <div className="pt-2 border-t border-hairline">
+                    <div className="text-desk-muted">Selling pressure</div>
+                    <div className="font-mono text-desk-secondary mt-0.5">{formatPrice(item.selling_pressure)}</div>
                   </div>
                 </div>
 
                 {/* Recommended Trade Action */}
-                <div className="mt-4 p-3 rounded-xl bg-slate-950/40 border border-slate-800">
-                  <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="font-bold text-slate-400 uppercase tracking-wider">Action:</span>
+                <div className="desk-well rounded-xl p-3.5 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-desk-muted">Recommended action</span>
                     <span
-                      className={`font-black uppercase px-2.5 py-0.5 rounded text-xs ${
-                        item.action === 'BUY_LONG'
-                          ? 'bg-emerald-500 text-slate-950'
-                          : item.action === 'SELL_SHORT'
-                            ? 'bg-rose-500 text-slate-950'
-                            : item.action === 'SELL_EXIT'
-                              ? 'bg-amber-500 text-slate-950'
-                              : 'bg-slate-700 text-slate-200'
-                      }`}
+                      className={
+                        isLongAction ? 'desk-tag-up' : isShortAction ? 'desk-tag-down' : 'desk-tag'
+                      }
                     >
-                      {item.action.replaceAll('_', ' ')}
+                      {actionLabel(item.action)}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-[11px] font-mono">
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-hairline text-xs font-mono">
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Entry:</span>
-                      <span className="text-slate-200 font-bold">${formatPrice(item.entry_target)}</span>
+                      <span className="text-desk-muted block text-[11px] font-sans">Entry</span>
+                      <span className="text-desk-text font-medium">${formatPrice(item.entry_target)}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Target:</span>
-                      <span className="text-emerald-400 font-bold">${formatPrice(item.profit_target)}</span>
+                      <span className="text-desk-muted block text-[11px] font-sans">Target</span>
+                      <span className="text-desk-up font-medium">${formatPrice(item.profit_target)}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Stop:</span>
-                      <span className="text-rose-400 font-bold">${formatPrice(item.stop_loss)}</span>
+                      <span className="text-desk-muted block text-[11px] font-sans">Stop</span>
+                      <span className="text-desk-down font-medium">${formatPrice(item.stop_loss)}</span>
                     </div>
                   </div>
                 </div>
 
-                {item.notes && (
-                  <p className="mt-3 text-xs text-slate-400 italic leading-relaxed">
-                    &ldquo;{item.notes}&rdquo;
-                  </p>
-                )}
+                {item.notes && <p className="text-xs text-desk-secondary leading-relaxed">{item.notes}</p>}
               </div>
 
-              {/* View Chart Buttons (60m Globex + Daily) */}
-              <div className="mt-4 grid grid-cols-2 gap-2">
+              {/* View Chart Buttons */}
+              <div className="mt-4 pt-3 border-t border-hairline grid grid-cols-2 gap-2">
                 <button
+                  type="button"
                   onClick={() => openChart(item, '60')}
-                  className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-150 ${
+                  className={
                     item.hourly_divergence
-                      ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/50 text-amber-200'
-                      : 'bg-slate-800 hover:bg-slate-700 border-slate-600 hover:border-blue-500/50 text-slate-300 hover:text-white'
-                  }`}
+                      ? 'desk-btn-primary h-8 px-3 text-xs'
+                      : 'desk-btn-secondary h-8 px-3 text-xs'
+                  }
                 >
-                  ⚡ 60m Globex
+                  <ChartLineIcon className="w-3.5 h-3.5" />
+                  <span>60m Globex</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => openChart(item, 'D')}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold
-                    bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
-                    text-slate-300 hover:text-white transition-all duration-150"
+                  className="desk-btn-secondary h-8 px-3 text-xs"
                 >
-                  📈 Daily Chart
+                  <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                  <span>Daily chart</span>
                 </button>
               </div>
             </div>
@@ -360,7 +351,7 @@ export default function TaylorTrade() {
           symbol={chartState.item.symbol}
           strategy="taylor"
           interval={chartState.interval}
-          signalLabel={`BRADMAN (${chartState.interval === '60' ? '60M GLOBEX' : 'DAILY'}) — ${chartState.item.cycle_phase.replaceAll('_', ' ')}`}
+          signalLabel={`The Bradman (${chartState.interval === '60' ? '60m Globex' : 'Daily'}) · ${cyclePhaseLabel(chartState.item.cycle_phase)}`}
           direction={
             chartState.item.action === 'BUY_LONG'
               ? 'long'
@@ -372,13 +363,25 @@ export default function TaylorTrade() {
           targetPrice={chartState.item.profit_target}
           stopPrice={chartState.item.stop_loss}
           extraRows={[
-            { label: 'Cycle Day', value: `Day ${chartState.item.cycle_day}` },
-            { label: 'Session', value: chartState.item.entry_session || 'DAILY', highlight: chartState.item.entry_session === 'ASIA' || chartState.item.entry_session === 'LONDON' },
+            { label: 'Cycle day', value: `Day ${chartState.item.cycle_day}` },
+            {
+              label: 'Session',
+              value: sessionLabel(chartState.item.entry_session),
+              highlight: chartState.item.entry_session === 'ASIA' || chartState.item.entry_session === 'LONDON',
+            },
             ...(chartState.item.hourly_divergence
-              ? [{ label: '1H 3/10 Div', value: `${chartState.item.hourly_divergence.replace('_', ' ')} (${chartState.item.divergence_time_et || ''})`, highlight: true }]
+              ? [
+                  {
+                    label: '1h 3/10 div',
+                    value: `${chartState.item.hourly_divergence === 'BUY_DIV' ? 'Buy div' : 'Sell div'}${
+                      chartState.item.divergence_time_et ? ` (${chartState.item.divergence_time_et})` : ''
+                    }`,
+                    highlight: true,
+                  },
+                ]
               : []),
-            { label: 'Buy Objective', value: `$${formatPrice(chartState.item.buying_objective)}` },
-            { label: 'Sell Objective', value: `$${formatPrice(chartState.item.selling_objective)}` },
+            { label: 'Buy objective', value: `$${formatPrice(chartState.item.buying_objective)}` },
+            { label: 'Sell objective', value: `$${formatPrice(chartState.item.selling_objective)}` },
           ]}
         />
       )}

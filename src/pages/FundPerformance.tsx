@@ -16,10 +16,7 @@ import {
   ReferenceLine,
   Cell,
 } from 'recharts';
-
-/* ================================================================== */
-/*  DATA                                                               */
-/* ================================================================== */
+import { ArrowUpRightIcon, ChevronDownIcon } from '../components/Icons';
 
 type MonthlyRow = {
   year: number;
@@ -40,21 +37,17 @@ const MONTHLY_RETURNS: MonthlyRow[] = [
 const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'] as const;
 const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-/* ================================================================== */
-/*  Helpers                                                            */
-/* ================================================================== */
-
 function cellColor(v: number | null | undefined) {
-  if (v === null || v === undefined) return '';
-  if (v >= 3)  return 'bg-emerald-100 text-emerald-800';
-  if (v > 0)   return 'bg-emerald-50 text-emerald-700';
-  if (v === 0) return 'text-slate-500';
-  if (v > -2)  return 'bg-rose-50 text-rose-700';
-  return 'bg-rose-100 text-rose-800';
+  if (v === null || v === undefined) return 'text-desk-muted';
+  if (v >= 3)  return 'bg-desk-up/20 text-desk-up';
+  if (v > 0)   return 'bg-desk-up/10 text-desk-up';
+  if (v === 0) return 'text-desk-muted';
+  if (v > -2)  return 'bg-desk-down/10 text-desk-down';
+  return 'bg-desk-down/20 text-desk-down';
 }
 
 function fmt(v: number | null | undefined) {
-  if (v === null || v === undefined) return '\u2014';
+  if (v === null || v === undefined) return '—';
   const sign = v > 0 ? '+' : '';
   return `${sign}${v.toFixed(1)}%`;
 }
@@ -105,205 +98,161 @@ function buildDrawdownCurve(rows: MonthlyRow[]) {
   return pts;
 }
 
-/* ================================================================== */
-/*  Tabs                                                               */
-/* ================================================================== */
 type TabKey = 'overview' | 'performance' | 'returns' | 'about';
 
-const TABS: { key: TabKey; letter: string; label: string }[] = [
-  { key: 'overview',    letter: 'A', label: 'Executive Summary' },
-  { key: 'performance', letter: 'B', label: 'Growth of $1,000' },
-  { key: 'returns',     letter: 'C', label: 'Monthly Returns' },
-  { key: 'about',       letter: 'D', label: 'Legal & Disclosures' },
+const TABS: { key: TabKey; label: string }[] = [
+  { key: 'overview',    label: 'Executive summary' },
+  { key: 'performance', label: 'Growth of $1,000' },
+  { key: 'returns',     label: 'Monthly returns' },
+  { key: 'about',       label: 'Disclosures' },
 ];
 
-/* ================================================================== */
-/*  Radial progress ring (used in hero stat circles)                   */
-/* ================================================================== */
-function StatRing({ value, label, color, sub }: { value: string; label: string; color: string; sub?: string }) {
-  return (
-    <div className="flex flex-col items-center">
-      <div className={`relative h-40 w-40 md:h-48 md:w-48 rounded-full border-[6px] ${color} flex items-center justify-center bg-white/60 dark:bg-slate-950/30 shadow-lg`}>
-        <div className="text-center">
-          <div className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 leading-none">{value}</div>
-          {sub && <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{sub}</div>}
-        </div>
-      </div>
-      <div className="mt-3 text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">{label}</div>
-    </div>
-  );
-}
-
-/* ================================================================== */
-/*  Component                                                          */
-/* ================================================================== */
 export default function FundPerformance() {
   const [tab, setTab] = useState<TabKey>('overview');
-  const [disclaimerOpen, setDisclaimerOpen] = useState(false);
+  const [disclaimerOpen, setDisclaimerOpen] = useState(true);
 
   const equityCurve   = useMemo(() => buildEquityCurve(MONTHLY_RETURNS), []);
   const barData       = useMemo(() => buildMonthlyBarData(MONTHLY_RETURNS), []);
   const drawdownCurve = useMemo(() => buildDrawdownCurve(MONTHLY_RETURNS), []);
 
-  /* ──────────────────────────────────────────────────────────────────── */
   return (
-    <div className="space-y-0">
-
-      {/* ============================================================== */}
-      {/*  HERO — Centered fund title + 3 big stat circles (RCM style)   */}
-      {/* ============================================================== */}
-      <div className="relative overflow-hidden rounded-2xl bg-white/80 dark:bg-slate-900/50 shadow-lg border border-slate-200/70 dark:border-slate-800/60 backdrop-blur">
-        {/* Decorative blobs */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-          <div className="absolute top-10 right-0 h-64 w-64 rounded-full bg-teal-500/8 blur-3xl" />
-          <div className="absolute -bottom-20 left-1/3 h-80 w-80 rounded-full bg-fuchsia-500/8 blur-3xl" />
-        </div>
-
-        <div className="relative text-center px-6 pt-12 pb-10 md:px-10 md:pt-16 md:pb-14">
-          {/* Small badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/30 px-3.5 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 shadow-sm mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Fund Profile
+    <div className="space-y-8 pb-16">
+      {/* Program Header */}
+      <section className="desk-surface rounded-2xl p-6 md:p-10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>Program profile · Educational track record</span>
+            </div>
+            <h1 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-desk-text">
+              OzCTA multi-strategy program
+            </h1>
+            <p className="mt-2 text-sm md:text-base text-desk-secondary leading-relaxed">
+              Systematic futures trend-following, Globex session swing models, and volatility structure research across liquid US markets.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link to="/" className="desk-btn-primary px-4 py-2 text-xs">
+                View live desk
+              </Link>
+              <a
+                href="https://x.com/OzCTA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="desk-btn-secondary px-4 py-2 text-xs inline-flex items-center gap-1.5"
+              >
+                <span>Follow @OzCTA on X</span>
+                <ArrowUpRightIcon className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
 
-          {/* Fund name — large, centered, like RCM */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1] mx-auto max-w-4xl">
-            <span className="bg-gradient-to-r from-indigo-600 via-teal-500 to-fuchsia-500 dark:from-indigo-400 dark:via-teal-400 dark:to-fuchsia-400 bg-clip-text text-transparent">
-              OzCTA
-            </span>{' '}
-            Multi-Strategy Program
-          </h1>
-
-          <p className="mt-4 text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            Systematic options &amp; trend-following across US equities
-          </p>
-
-          {/* ── 3 BIG STAT CIRCLES (mirrors RCM Return / Risk / $Minimum) ── */}
-          <div className="mt-10 flex flex-wrap justify-center gap-6 md:gap-10">
-            <StatRing value="17.4%" label="Return" color="border-emerald-400 dark:border-emerald-600" sub="Annualised" />
-            <StatRing value="8.2%"  label="Risk"   color="border-amber-400 dark:border-amber-600"   sub="Ann. Volatility" />
-            <StatRing value="$0"    label="Minimum" color="border-indigo-400 dark:border-indigo-600" sub="Educational" />
-          </div>
-
-          {/* CTA row */}
-          <div className="mt-10 flex flex-wrap justify-center items-center gap-3">
-            <Link
-              to="/"
-              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white shadow-md hover:shadow-lg hover:brightness-110 transition"
-            >
-              ← Back to Dashboard
-            </Link>
-            <a
-              href="https://x.com/OzCTA"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-2.5 rounded-xl text-sm font-bold border border-slate-200/60 dark:border-slate-800/60 bg-white/70 dark:bg-slate-950/20 text-slate-800 dark:text-slate-200 hover:shadow-md transition"
-            >
-              Follow @OzCTA on 𝕏
-            </a>
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 shrink-0">
+            <div className="desk-well rounded-xl p-4">
+              <div className="text-xs text-desk-muted">Annualised return</div>
+              <div className="mt-1.5 text-2xl font-mono font-semibold text-desk-up tabular-nums">
+                +17.4%
+              </div>
+              <div className="mt-1 text-[11px] text-desk-muted">Hypothetical net</div>
+            </div>
+            <div className="desk-well rounded-xl p-4">
+              <div className="text-xs text-desk-muted">Annualised vol</div>
+              <div className="mt-1.5 text-2xl font-mono font-semibold text-desk-text tabular-nums">
+                8.2%
+              </div>
+              <div className="mt-1 text-[11px] text-desk-muted">Sharpe 2.12</div>
+            </div>
+            <div className="desk-well rounded-xl p-4">
+              <div className="text-xs text-desk-muted">Max drawdown</div>
+              <div className="mt-1.5 text-2xl font-mono font-semibold text-desk-down tabular-nums">
+                -4.8%
+              </div>
+              <div className="mt-1 text-[11px] text-desk-muted">Monthly close</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ============================================================== */}
-      {/*  TAB BAR — RCM-style A / B / C / D                             */}
-      {/* ============================================================== */}
-      <div className="mt-14 flex items-center justify-center gap-2 flex-wrap">
-        {TABS.map((t) => {
-          const active = tab === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`group relative flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all border ${
-                active
-                  ? 'bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white border-transparent shadow-lg shadow-indigo-500/20'
-                  : 'bg-white/90 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border-slate-200/70 dark:border-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700'
-              }`}
-            >
-              <span className={`inline-flex items-center justify-center h-6 w-6 rounded-md text-xs font-bold ${
-                active
-                  ? 'bg-white/20 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'
-              }`}>
-                {t.letter}
-              </span>
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+        {/* Segmented Tabs */}
+        <div className="mt-8 border-t border-hairline pt-5 flex items-center gap-1.5 flex-wrap">
+          {TABS.map((t) => {
+            const active = tab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors duration-150 ${
+                  active
+                    ? 'bg-desk-text text-desk-deep'
+                    : 'desk-well text-desk-secondary hover:text-desk-text hover:border-hairline-strong'
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
-      {/* ============================================================== */}
-      {/*  TAB CONTENT                                                    */}
-      {/* ============================================================== */}
-      <div className="mt-10">
-
-        {/* ── A) EXECUTIVE SUMMARY (mirrors RCM layout exactly) ── */}
+      {/* Tab Content */}
+      <div>
         {tab === 'overview' && (
-          <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-            {/* Section header */}
-            <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-              <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                Executive Summary
+          <div className="desk-surface rounded-2xl overflow-hidden">
+            <div className="px-6 md:px-8 py-5 border-b border-hairline">
+              <h2 className="text-base font-semibold text-desk-text">
+                Executive summary
               </h2>
             </div>
 
-            <div className="p-8">
-              {/* RCM-style stat rows: label on left, value on right, with separator lines */}
-              <div className="divide-y divide-slate-200/70 dark:divide-slate-800/50">
-                {([
-                  { label: 'Assets Under Management',  value: 'N/A (Educational)' },
-                  { label: 'Track Record Length',       value: '3 years, 2 months' },
-                  { label: 'Sharpe Ratio',              value: '2.12' },
-                  { label: 'Total Return',              value: '+63.2%' },
-                  { label: 'Annualised Return',         value: '+17.4%' },
-                  { label: 'Annualised Volatility',     value: '8.2%' },
-                  { label: 'Max Drawdown',              value: '-4.8%' },
-                  { label: 'Win Rate (monthly)',        value: '68%' },
-                  { label: 'Best Month',                value: '+4.1% (Nov 2023)' },
-                  { label: 'Worst Month',               value: '-2.3% (Oct 2023)' },
-                  { label: 'Profit Factor',             value: '3.56' },
-                ]).map((row) => (
-                  <div key={row.label} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <div className="p-6 md:p-8">
+              <div className="divide-y divide-hairline">
+                {[
+                  { label: 'Assets under management', value: 'N/A (Educational)' },
+                  { label: 'Track record length',     value: '3 years, 2 months' },
+                  { label: 'Sharpe ratio',            value: '2.12' },
+                  { label: 'Total return',            value: '+63.2%' },
+                  { label: 'Annualised return',       value: '+17.4%' },
+                  { label: 'Annualised volatility',   value: '8.2%' },
+                  { label: 'Max drawdown',            value: '-4.8%' },
+                  { label: 'Win rate (monthly)',      value: '68%' },
+                  { label: 'Best month',              value: '+4.1% (Nov 2023)' },
+                  { label: 'Worst month',             value: '-2.3% (Oct 2023)' },
+                  { label: 'Profit factor',           value: '3.56' },
+                ].map((row) => (
+                  <div key={row.label} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
+                    <span className="text-sm text-desk-secondary">
                       {row.label}
                     </span>
-                    <span className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    <span className="text-sm font-mono font-semibold text-desk-text tabular-nums">
                       {row.value}
                     </span>
                   </div>
                 ))}
               </div>
 
-              {/* Past performance notice (like RCM) */}
-              <p className="mt-8 text-center text-sm text-slate-400 dark:text-slate-500 italic">
-                Past performance is not indicative of future results
+              <p className="mt-6 text-xs text-desk-muted">
+                Past performance is not indicative of future results. Simulated figures are shown for educational research.
               </p>
 
-              {/* Strategy allocation — 4 cards below the summary */}
-              <div className="mt-10">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
-                  Strategy Allocation
+              <div className="mt-8 pt-6 border-t border-hairline">
+                <h3 className="text-sm font-semibold text-desk-text mb-4">
+                  Strategy allocation
                 </h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {([
-                    { name: 'Forward Vol Calendars', pct: '25%', desc: 'Sell rich front-month IV, buy cheaper back-month — capitalise on the forward volatility factor.', dot: 'bg-indigo-500', border: 'border-indigo-200/60 dark:border-indigo-800/40' },
-                    { name: 'Earnings Crush',        pct: '15%', desc: 'Short-vol plays selling inflated pre-earnings IV via calendar spreads around announcement dates.',  dot: 'bg-teal-500',   border: 'border-teal-200/60 dark:border-teal-800/40' },
-                    { name: 'Earnings Ramp',         pct: '15%', desc: 'Long straddles entered 5-15 days before earnings, riding the IV expansion into the announcement.', dot: 'bg-amber-500',  border: 'border-amber-200/60 dark:border-amber-800/40' },
-                    { name: 'Trendorama',            pct: '15%', desc: 'Systematic trend-following using channel breakouts and ATR-based position sizing across futures.',  dot: 'bg-fuchsia-500', border: 'border-fuchsia-200/60 dark:border-fuchsia-800/40' },
-                    { name: 'The Bradman',           pct: '15%', desc: '3-day momentum and mean-reversion cycle model applied to liquid commodity and financial futures.', dot: 'bg-amber-600', border: 'border-amber-200/60 dark:border-amber-800/40' },
-                    { name: 'YouHaveChosenWisely',   pct: '10%', desc: 'Trend-continuation pullback model targeting high-probability EMA re-touch entries in strong trends.', dot: 'bg-orange-500', border: 'border-orange-200/60 dark:border-orange-800/40' },
-                    { name: 'TooHot TooCold',        pct: '5%',  desc: 'Range-expansion breakout model identifying volatility compression and explosive expansion cycles.', dot: 'bg-cyan-500', border: 'border-cyan-200/60 dark:border-cyan-800/40' },
-                  ]).map((s) => (
-                    <div key={s.name} className={`rounded-xl border ${s.border} bg-white/60 dark:bg-slate-950/20 p-5`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`h-2 w-2 rounded-full ${s.dot}`} />
-                        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{s.name}</span>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                  {[
+                    { name: 'Forward vol calendars', pct: '25%', desc: 'Front-to-back implied volatility term-structure spreads.' },
+                    { name: 'Earnings crush',        pct: '15%', desc: 'Short-vol calendar structures around corporate announcements.' },
+                    { name: 'Earnings ramp',         pct: '15%', desc: 'Pre-announcement straddles entered 5–15 sessions prior.' },
+                    { name: 'Trendorama',            pct: '15%', desc: 'Donchian channel breakouts with ATR-normalized sizing across futures.' },
+                    { name: 'The Bradman',           pct: '15%', desc: '24-hour Globex 3-day cycle and 60m LBR 3/10 divergence setups.' },
+                    { name: 'YouHaveChosenWisely',   pct: '10%', desc: 'ADX trend-continuation pullbacks to the 20-period exponential average.' },
+                    { name: 'TooHot TooCold',        pct: '5%',  desc: 'Narrow-range volatility compression and breakout expansion.' },
+                  ].map((s) => (
+                    <div key={s.name} className="desk-well rounded-xl p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-desk-text">{s.name}</span>
+                        <span className="text-sm font-mono font-semibold text-desk-up tabular-nums">{s.pct}</span>
                       </div>
-                      <div className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mb-1">{s.pct}</div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{s.desc}</p>
+                      <p className="mt-2 text-xs text-desk-muted leading-relaxed">{s.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -312,57 +261,51 @@ export default function FundPerformance() {
           </div>
         )}
 
-        {/* ── B) GROWTH OF $1,000 (chart tab like RCM) ── */}
         {tab === 'performance' && (
           <div className="space-y-6">
-            {/* Line chart */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
                   Growth of $1,000
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">OzCTA Multi-Strategy vs S&amp;P 500</p>
+                <p className="text-xs text-desk-muted mt-0.5">OzCTA multi-strategy vs S&amp;P 500</p>
               </div>
               <div className="p-6">
-                <div className="h-[380px] md:h-[440px]">
+                <div className="h-[360px] md:h-[420px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={equityCurve} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
-                      <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} interval={Math.max(Math.floor(equityCurve.length / 8), 1)} angle={-30} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} domain={['auto','auto']} tickFormatter={(v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} />
-                      <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number, name: string) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, name]} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232325" vertical={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#85858b' }} interval={Math.max(Math.floor(equityCurve.length / 8), 1)} angle={-30} textAnchor="end" height={50} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: '#85858b' }} domain={['auto','auto']} tickFormatter={(v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#19191b', border: '1px solid rgba(237,237,237,0.14)', borderRadius: '8px', color: '#ededed', fontSize: 12 }} formatter={(value: number, name: string) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, name]} />
                       <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
-                      <ReferenceLine y={1000} stroke="#94a3b8" strokeDasharray="4 4" />
-                      <Line type="monotone" dataKey="equity" name="OzCTA Multi-Strategy" stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#6366f1' }} />
-                      <Line type="monotone" dataKey="spx" name="S&P 500" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="5 3" dot={false} activeDot={{ r: 3, fill: '#94a3b8' }} />
+                      <ReferenceLine y={1000} stroke="rgba(237,237,237,0.14)" strokeDasharray="4 4" />
+                      <Line type="monotone" dataKey="equity" name="OzCTA multi-strategy" stroke="#4cc38a" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: '#4cc38a' }} />
+                      <Line type="monotone" dataKey="spx" name="S&P 500" stroke="#85858b" strokeWidth={1.5} strokeDasharray="5 3" dot={false} activeDot={{ r: 3, fill: '#85858b' }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="px-8 pb-5 text-center text-xs text-slate-400 dark:text-slate-500 italic">
-                Past performance is not indicative of future results
-              </div>
             </div>
 
-            {/* Monthly bar chart */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  Monthly Returns
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
+                  Monthly returns
                 </h2>
               </div>
               <div className="p-6">
-                <div className="h-[280px] md:h-[320px]">
+                <div className="h-[260px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={barData} margin={{ top: 10, right: 10, left: -10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
-                      <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#94a3b8' }} interval={2} angle={-45} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v: number) => `${v}%`} />
-                      <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number) => [`${value > 0 ? '+' : ''}${value.toFixed(1)}%`, 'Return']} />
-                      <ReferenceLine y={0} stroke="#94a3b8" strokeWidth={1} />
-                      <Bar dataKey="ret" radius={[3, 3, 0, 0]}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232325" vertical={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#85858b' }} interval={2} angle={-45} textAnchor="end" height={50} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: '#85858b' }} tickFormatter={(v: number) => `${v}%`} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#19191b', border: '1px solid rgba(237,237,237,0.14)', borderRadius: '8px', color: '#ededed', fontSize: 12 }} formatter={(value: number) => [`${value > 0 ? '+' : ''}${value.toFixed(1)}%`, 'Return']} />
+                      <ReferenceLine y={0} stroke="rgba(237,237,237,0.14)" strokeWidth={1} />
+                      <Bar dataKey="ret" radius={[2, 2, 0, 0]}>
                         {barData.map((entry, index) => (
-                          <Cell key={`c-${index}`} fill={entry.ret >= 0 ? '#10b981' : '#f43f5e'} fillOpacity={0.8} />
+                          <Cell key={`c-${index}`} fill={entry.ret >= 0 ? '#4cc38a' : '#e5484d'} fillOpacity={0.85} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -371,23 +314,22 @@ export default function FundPerformance() {
               </div>
             </div>
 
-            {/* Drawdown chart */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  Drawdown from Peak
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
+                  Drawdown from peak
                 </h2>
               </div>
               <div className="p-6">
-                <div className="h-[250px] md:h-[280px]">
+                <div className="h-[240px] md:h-[260px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={drawdownCurve} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
-                      <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} interval={Math.max(Math.floor(drawdownCurve.length / 8), 1)} angle={-30} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} domain={['auto', 0]} tickFormatter={(v: number) => `${v}%`} />
-                      <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.92)', border: 'none', borderRadius: '10px', color: '#e2e8f0', fontSize: 13 }} formatter={(value: number) => [`${value.toFixed(2)}%`, 'Drawdown']} />
-                      <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="4 4" />
-                      <Area type="monotone" dataKey="dd" stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.15} strokeWidth={2} dot={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#232325" vertical={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#85858b' }} interval={Math.max(Math.floor(drawdownCurve.length / 8), 1)} angle={-30} textAnchor="end" height={50} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: '#85858b' }} domain={['auto', 0]} tickFormatter={(v: number) => `${v}%`} axisLine={{ stroke: 'rgba(237,237,237,0.08)' }} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#19191b', border: '1px solid rgba(237,237,237,0.14)', borderRadius: '8px', color: '#ededed', fontSize: 12 }} formatter={(value: number) => [`${value.toFixed(2)}%`, 'Drawdown']} />
+                      <ReferenceLine y={0} stroke="rgba(237,237,237,0.14)" strokeDasharray="4 4" />
+                      <Area type="monotone" dataKey="dd" stroke="#e5484d" fill="#e5484d" fillOpacity={0.14} strokeWidth={1.75} dot={false} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -396,36 +338,44 @@ export default function FundPerformance() {
           </div>
         )}
 
-        {/* ── C) MONTHLY RETURNS TABLE ── */}
         {tab === 'returns' && (
           <div className="space-y-6">
-            {/* Heatmap table */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  Monthly Return Stream (%)
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
+                  Monthly return stream (%)
                 </h2>
               </div>
               <div className="p-6 overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200/60 dark:border-slate-800/50">
-                      <th className="py-2 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Year</th>
+                    <tr className="border-b border-hairline text-desk-muted">
+                      <th className="py-2.5 px-3 text-left font-medium">Year</th>
                       {MONTH_LABELS.map((m) => (
-                        <th key={m} className="py-2 px-2 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">{m}</th>
+                        <th key={m} className="py-2.5 px-2 text-right font-medium">{m}</th>
                       ))}
-                      <th className="py-2 px-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">YTD</th>
+                      <th className="py-2.5 px-3 text-right font-medium">YTD</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-hairline">
                     {MONTHLY_RETURNS.map((row) => (
-                      <tr key={row.year} className="border-b border-slate-100/80 dark:border-slate-800/40 hover:bg-slate-50/50 transition">
-                        <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-slate-100">{row.year}</td>
+                      <tr key={row.year} className="hover:bg-desk-raised/30 transition-colors">
+                        <td className="py-2.5 px-3 font-mono font-semibold text-desk-text tabular-nums">{row.year}</td>
                         {MONTHS.map((m) => {
                           const v = row[m];
-                          return <td key={m} className={`py-2.5 px-2 text-center font-mono text-xs font-semibold rounded ${cellColor(v)}`}>{fmt(v)}</td>;
+                          return (
+                            <td key={m} className="py-1.5 px-1 text-right font-mono tabular-nums">
+                              <span className={`inline-block w-full rounded px-1.5 py-1 font-medium ${cellColor(v)}`}>
+                                {fmt(v)}
+                              </span>
+                            </td>
+                          );
                         })}
-                        <td className={`py-2.5 px-3 text-center font-mono text-xs font-bold rounded ${cellColor(row.ytd)}`}>{fmt(row.ytd)}</td>
+                        <td className="py-1.5 px-2 text-right font-mono tabular-nums">
+                          <span className={`inline-block w-full rounded px-2 py-1 font-semibold ${cellColor(row.ytd)}`}>
+                            {fmt(row.ytd)}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -433,28 +383,31 @@ export default function FundPerformance() {
               </div>
             </div>
 
-            {/* Growth of $1,000 table */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  Growth of $1,000 — Cumulative Value
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
+                  Growth of $1,000 — cumulative value
                 </h2>
               </div>
-              <div className="p-6 overflow-x-auto max-h-[500px]">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-white dark:bg-slate-900">
-                    <tr className="border-b border-slate-200/60 dark:border-slate-800/50">
-                      <th className="py-2 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
-                      <th className="py-2 px-3 text-right text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-300">OzCTA</th>
-                      <th className="py-2 px-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">S&amp;P 500</th>
+              <div className="overflow-x-auto max-h-[480px]">
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-desk-card border-b border-hairline text-desk-muted">
+                    <tr>
+                      <th className="py-3 px-6 text-left font-medium">Date</th>
+                      <th className="py-3 px-6 text-right font-medium">OzCTA</th>
+                      <th className="py-3 px-6 text-right font-medium">S&amp;P 500</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-hairline">
                     {equityCurve.map((p, i) => (
-                      <tr key={i} className="border-b border-slate-100/80 dark:border-slate-800/40 hover:bg-slate-50/50 transition">
-                        <td className="py-2 px-3 text-slate-700 dark:text-slate-300">{p.date}</td>
-                        <td className="py-2 px-3 text-right font-mono font-semibold text-indigo-700 dark:text-indigo-300">${p.equity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td className="py-2 px-3 text-right font-mono text-slate-600 dark:text-slate-400">${p.spx.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <tr key={i} className="hover:bg-desk-raised/30 transition-colors">
+                        <td className="py-2.5 px-6 text-desk-secondary font-mono">{p.date}</td>
+                        <td className="py-2.5 px-6 text-right font-mono tabular-nums font-semibold text-desk-up">
+                          ${p.equity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td className="py-2.5 px-6 text-right font-mono tabular-nums text-desk-secondary">
+                          ${p.spx.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -464,96 +417,68 @@ export default function FundPerformance() {
           </div>
         )}
 
-        {/* ── D) MISC & DISCLAIMERS (collapsible, like RCM) ── */}
         {tab === 'about' && (
           <div className="space-y-6">
-            {/* About */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
-              <div className="px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/50">
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  About the Program
+            <div className="desk-surface rounded-2xl overflow-hidden">
+              <div className="px-6 md:px-8 py-5 border-b border-hairline">
+                <h2 className="text-base font-semibold text-desk-text">
+                  Program methodology
                 </h2>
               </div>
-              <div className="p-8 space-y-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <div className="p-6 md:p-8 space-y-4 text-sm text-desk-secondary leading-relaxed">
                 <p>
-                  The OzCTA Multi-Strategy Program is a systematic, rules-based approach to
-                  options and equities trading. The program allocates capital across four
-                  distinct, uncorrelated strategy modules — each with its own alpha source,
-                  risk budget, and position-sizing methodology.
+                  The OzCTA multi-strategy program combines systematic futures trend-following, session-based swing setups, and options volatility structure scans. Each model operates under independent entry criteria, objective stop distances, and predefined risk budgets.
                 </p>
                 <p>
-                  By diversifying across volatility selling (forward vol calendars, earnings crush),
-                  volatility buying (pre-earnings straddles), and directional trend-following
-                  (Trendorama channel breakouts), the program aims to deliver consistent
-                  risk-adjusted returns with low correlation to traditional equity indices.
+                  Diversifying across directional channel breakouts, short-horizon Globex oscillator divergences, and term-structure spreads reduces reliance on any single market regime.
                 </p>
-                <div className="grid sm:grid-cols-2 gap-4 pt-4">
-                  {([
-                    { label: 'Markets Traded', value: 'US equities & equity options (NASDAQ 100, S&P MidCap 400, broader liquid universe)' },
-                    { label: 'Instruments', value: 'Calendar spreads, long straddles, single-leg options, equity positions' },
-                    { label: 'Time Horizon', value: 'Short-term (1-45 DTE options) to medium-term (trend-following holds weeks to months)' },
-                    { label: 'Technology', value: 'Python + IB API for execution; React + Vite dashboard for monitoring; automated daily scans' },
-                  ]).map((item) => (
-                    <div key={item.label} className="rounded-lg border border-slate-200/60 dark:border-slate-800/50 bg-white/50 dark:bg-slate-950/20 p-4">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">{item.label}</div>
-                      <div className="text-sm text-slate-700 dark:text-slate-200">{item.value}</div>
+                <div className="grid sm:grid-cols-2 gap-3.5 pt-3">
+                  {[
+                    { label: 'Markets traded', value: 'CME, CBOT, NYMEX, COMEX, and ICE futures alongside liquid US equity options' },
+                    { label: 'Instruments', value: 'Outright futures contracts, calendar spreads, and straddles' },
+                    { label: 'Holding period', value: 'Intraday 15m / 60m Globex swings to multi-week daily Donchian trends' },
+                    { label: 'Infrastructure', value: 'Automated scheduled scans with contract-level execution logging' },
+                  ].map((item) => (
+                    <div key={item.label} className="desk-well rounded-xl p-4">
+                      <div className="text-xs font-medium text-desk-muted mb-1">{item.label}</div>
+                      <div className="text-sm text-desk-text">{item.value}</div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Disclaimers — collapsible like RCM */}
-            <div className="rounded-2xl shadow-sm border border-slate-200/70 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/50 backdrop-blur overflow-hidden">
+            <div className="desk-surface rounded-2xl overflow-hidden">
               <button
                 onClick={() => setDisclaimerOpen(!disclaimerOpen)}
-                className="w-full px-8 py-5 flex items-center justify-between text-left hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition"
+                className="w-full px-6 md:px-8 py-5 flex items-center justify-between text-left hover:bg-desk-raised/30 transition-colors"
               >
-                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-                  Disclaimers
+                <h2 className="text-base font-semibold text-desk-text">
+                  Hypothetical performance &amp; risk disclosures
                 </h2>
-                <svg
-                  className={`h-5 w-5 text-slate-400 transition-transform duration-200 ${disclaimerOpen ? 'rotate-180' : ''}`}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                <ChevronDownIcon
+                  className={`w-4 h-4 text-desk-muted transition-transform duration-150 ${disclaimerOpen ? 'rotate-180' : ''}`}
+                />
               </button>
               {disclaimerOpen && (
-                <div className="px-8 pb-8 text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 border-t border-slate-200/60 dark:border-slate-800/50 pt-5">
+                <div className="px-6 md:px-8 pb-8 text-xs text-desk-secondary leading-relaxed space-y-3 border-t border-hairline pt-5">
                   <p>
-                    <strong>Past performance is not necessarily indicative of future results.</strong>{' '}
-                    Trading futures, options on futures, and other derivative instruments involves
-                    substantial risk of loss and is not suitable for all investors.
+                    <strong className="text-desk-text">Past performance is not necessarily indicative of future results.</strong>{' '}
+                    Trading futures, options on futures, and derivative instruments involves substantial risk of loss and is not suitable for every investor.
                   </p>
                   <p>
-                    The performance data shown on this page is <strong>hypothetical</strong> and
-                    based on backtested and simulated results. Hypothetical performance results have
-                    many inherent limitations. No representation is being made that any account will
-                    or is likely to achieve profits or losses similar to those shown.
+                    Performance figures presented on this page are <strong className="text-desk-text">hypothetical</strong> and derived from simulated model execution. Hypothetical performance results have inherent limitations. No representation is being made that any account will or is likely to achieve profits or losses similar to those shown.
                   </p>
                   <p>
-                    One of the limitations of hypothetical performance results is that they are
-                    generally prepared with the benefit of hindsight. In addition, hypothetical
-                    trading does not involve financial risk, and no hypothetical trading record can
-                    completely account for the impact of financial risk in actual trading.
+                    Hypothetical trading does not involve financial risk, and no hypothetical trading record can completely account for the impact of liquidity, slippage, or adherence under drawdown in live trading.
                   </p>
-                  <p>
-                    The ability to withstand losses or to adhere to a particular trading program in
-                    spite of trading losses are material points which can adversely affect actual
-                    trading results. There are numerous other factors related to the markets in
-                    general or to the implementation of any specific trading program which cannot be
-                    fully accounted for in the preparation of hypothetical performance results, all
-                    of which can adversely affect actual trading results.
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 pt-2">
-                    © {new Date().getFullYear()} @OzCTA. For educational purposes only. This is not
-                    investment advice. Questions? Contact me on X at{' '}
+                  <p className="text-desk-muted pt-2">
+                    © {new Date().getFullYear()} OzCTA. Published for educational research only and does not constitute investment advice. Contact{' '}
                     <a
                       href="https://x.com/OzCTA"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold hover:underline"
+                      className="text-desk-text hover:underline"
                     >
                       @OzCTA
                     </a>.

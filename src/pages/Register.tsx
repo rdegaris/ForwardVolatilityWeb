@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 import { apiRegister } from '../lib/api';
+import { ChartLineIcon, ClockIcon, MailIcon, SlidersIcon } from '../components/Icons';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -19,28 +20,22 @@ export default function Register() {
 
   if (submitted) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
-        <div className="w-full max-w-lg">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-fuchsia-700 shadow-xl">
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-              <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-fuchsia-400/10 blur-3xl" />
-            </div>
-            <div className="relative px-8 py-16 text-center">
-              <div className="text-5xl mb-6">📬</div>
-              <h1 className="text-3xl font-extrabold text-white">Check Your Email</h1>
-              <p className="mt-4 text-base text-indigo-100/90 max-w-md mx-auto leading-relaxed">
-                We've sent a welcome email to <span className="font-semibold text-white">{form.email}</span> with
-                a link to create your password. Click the link to complete your account setup.
-              </p>
-              <p className="mt-6 text-sm text-indigo-200/60">
-                Didn't get the email? Check your spam folder or{' '}
-                <button onClick={() => setSubmitted(false)} className="underline text-white hover:text-indigo-100">
-                  try again
-                </button>
-              </p>
-            </div>
+      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)] py-8">
+        <div className="w-full max-w-md desk-surface rounded-2xl p-8 md:p-10 text-center">
+          <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-xl desk-well text-desk-text">
+            <MailIcon className="w-4 h-4" />
           </div>
+          <h1 className="text-xl font-semibold text-desk-text">Check your email</h1>
+          <p className="mt-2.5 text-sm text-desk-secondary leading-relaxed">
+            We sent a verification link to <span className="font-medium text-desk-text">{form.email}</span> to set your password and activate access.
+          </p>
+          <p className="mt-6 text-xs text-desk-muted">
+            Did not receive the message? Check spam or{' '}
+            <button onClick={() => setSubmitted(false)} className="underline text-desk-text hover:text-desk-secondary">
+              try again
+            </button>
+            .
+          </p>
         </div>
       </div>
     );
@@ -61,144 +56,134 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
-      <div className="w-full max-w-3xl">
-
-        {/* ── Hero card ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-fuchsia-700 shadow-xl">
-          {/* Decorative blobs */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-fuchsia-400/10 blur-3xl" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[28rem] w-[28rem] rounded-full bg-teal-400/5 blur-3xl" />
+    <div className="flex items-center justify-center min-h-[calc(100vh-12rem)] py-8">
+      <div className="w-full max-w-2xl">
+        <div className="desk-surface rounded-2xl p-6 md:p-10">
+          <div className="max-w-xl">
+            <div className="text-xs font-mono text-desk-muted">Complimentary research access</div>
+            <h1 className="mt-1.5 text-2xl md:text-3xl font-semibold text-desk-text tracking-tight">
+              Create an OzCTA account
+            </h1>
+            <p className="mt-2 text-sm text-desk-secondary leading-relaxed">
+              Register to inspect full systematic futures signals, session-stamped setups, and the live $100,000 model execution ledger.
+            </p>
           </div>
 
-          <div className="relative px-6 py-12 md:px-14 md:py-16 text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-white/80 shadow-sm mb-6">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Free Access
-            </div>
+          <div className="mt-6 grid sm:grid-cols-3 gap-3">
+            {[
+              { Icon: ChartLineIcon, title: 'Performance ledger', desc: 'Contract-level P&L, drawdowns, and net friction' },
+              { Icon: ClockIcon, title: 'Session scans', desc: 'Globex 60m, 15m, and daily settlement triggers' },
+              { Icon: SlidersIcon, title: 'Risk ladders', desc: 'Exact entry, stop, and target levels per setup' },
+            ].map((f) => (
+              <div key={f.title} className="desk-well rounded-xl p-4">
+                <f.Icon className="w-4 h-4 text-desk-secondary" />
+                <div className="mt-2.5 text-xs font-semibold text-desk-text">{f.title}</div>
+                <div className="mt-1 text-xs text-desk-muted leading-relaxed">{f.desc}</div>
+              </div>
+            ))}
+          </div>
 
-            {/* Heading */}
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Get the Full Picture!
-            </h1>
-            <p className="mt-4 text-base md:text-lg text-indigo-100/90 max-w-2xl mx-auto leading-relaxed">
-              Access our strategies, signals, and trade tracking — completely{' '}
-              <span className="font-extrabold text-white">FREE</span>.
-              Register now to see detailed analysis of every strategy, and gain
-              access to the complete OzCTA database where you can:
-            </p>
-
-            {/* Feature cards */}
-            <div className="mt-8 grid sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
-              {[
-                { icon: '📊', title: 'Performance Data', desc: 'Full returns, drawdowns & research reports' },
-                { icon: '🔔', title: 'Trade Signals', desc: 'Daily scanner alerts across all strategies' },
-                { icon: '📈', title: 'Open Positions', desc: 'Track open futures trades and strategy exposure' },
-              ].map((f) => (
-                <div
-                  key={f.title}
-                  className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-4 text-left"
-                >
-                  <span className="text-2xl">{f.icon}</span>
-                  <div className="mt-2 text-sm font-bold text-white">{f.title}</div>
-                  <div className="mt-0.5 text-xs text-indigo-100/70 leading-relaxed">{f.desc}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* ── Registration form ── */}
-            <form onSubmit={handleSubmit} className="mt-10 mx-auto max-w-xl text-left">
-              <div className="grid sm:grid-cols-2 gap-3">
+          <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                  First name *
+                </label>
                 <input
                   type="text"
                   required
                   autoComplete="given-name"
-                  placeholder="First Name *"
+                  placeholder="First name"
                   value={form.firstName}
                   onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                  className="w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition"
+                  className="desk-input w-full px-3.5 py-2.5 text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                  Last name *
+                </label>
                 <input
                   type="text"
                   required
                   autoComplete="family-name"
-                  placeholder="Last Name *"
+                  placeholder="Last name"
                   value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                  className="w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition"
+                  className="desk-input w-full px-3.5 py-2.5 text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                  Email address *
+                </label>
                 <input
                   type="email"
                   required
                   autoComplete="email"
-                  placeholder="Email *"
+                  placeholder="you@domain.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition"
+                  className="desk-input w-full px-3.5 py-2.5 text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                  Phone (optional)
+                </label>
                 <input
                   type="tel"
                   autoComplete="tel"
-                  placeholder="Phone Number"
+                  placeholder="+1 (555) 000-0000"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition"
+                  className="desk-input w-full px-3.5 py-2.5 text-sm"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                Investor classification *
+              </label>
               <select
                 required
                 value={form.professional}
                 onChange={(e) => setForm({ ...form, professional: e.target.value })}
-                className="mt-3 w-full rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-transparent transition appearance-none"
+                className="desk-input w-full px-3.5 py-2.5 text-sm"
               >
-                <option value="" disabled className="text-slate-900">Are you an investment professional? *</option>
-                <option value="yes" className="text-slate-900">Yes — I manage money professionally</option>
-                <option value="no" className="text-slate-900">No — I'm an individual / retail trader</option>
-                <option value="student" className="text-slate-900">Student / learning about systematic trading</option>
+                <option value="" disabled>Select classification…</option>
+                <option value="yes">Investment professional / allocator</option>
+                <option value="no">Individual / self-directed trader</option>
+                <option value="student">Academic / quantitative researcher</option>
               </select>
+            </div>
 
-              {error && (
-                <div className="mt-4 rounded-xl bg-rose-500/20 border border-rose-400/30 px-4 py-3 text-sm text-rose-100 text-center">
-                  {error}
-                </div>
-              )}
-
-              <div className="mt-6 text-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full sm:w-auto px-12 py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider bg-white text-indigo-700 shadow-lg hover:shadow-xl hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-white/60 disabled:opacity-60 transition"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Submitting…
-                    </span>
-                  ) : (
-                    'Register Now'
-                  )}
-                </button>
+            {error && (
+              <div className="rounded-lg bg-desk-down/10 border border-desk-down/30 px-3.5 py-2.5 text-xs text-desk-down">
+                {error}
               </div>
+            )}
 
-              <p className="mt-5 text-center text-xs text-indigo-200/50 max-w-md mx-auto">
-                By registering you agree to receive occasional updates from OzCTA.
-                You may unsubscribe at any time. We respect your privacy.
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <p className="text-xs text-desk-muted max-w-sm">
+                By registering you agree to receive occasional research notes from OzCTA. Unsubscribe anytime.
               </p>
-            </form>
-          </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="desk-btn-primary px-6 py-2.5 text-sm shrink-0 disabled:opacity-50"
+              >
+                {loading ? 'Submitting…' : 'Create account'}
+              </button>
+            </div>
+          </form>
         </div>
 
-        {/* Already have access? */}
-        <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-            Log in →
+        <p className="mt-5 text-center text-xs text-desk-muted">
+          Already registered?{' '}
+          <Link to="/login" className="font-medium text-desk-text hover:underline">
+            Sign in
           </Link>
         </p>
       </div>

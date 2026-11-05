@@ -1,126 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
+import { ChevronDownIcon, XIcon } from './Icons';
 
-type NavSectionKey = 'forward' | 'earningsCrush' | 'preEarnings' | 'turtle' | 'grail' | 'odid' | 'taylor' | 'linda';
-
-type AccentStyle = {
-  topActiveText: string;
-  topInactiveText: string;
-  topHoverText: string;
-  topActiveUnderline: string;
-  subBarBg: string;
-  subBarBorder: string;
-  subActivePill: string;
-  subInactivePill: string;
-  subHoverPill: string;
-  dot: string;
-};
-
-const ACCENTS: Record<NavSectionKey, AccentStyle> = {
-  forward: {
-    topActiveText: 'text-indigo-900 dark:text-indigo-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-indigo-800 dark:hover:text-indigo-200',
-    topActiveUnderline: 'bg-indigo-500',
-    subBarBg: 'bg-indigo-50/70 dark:bg-indigo-950/30',
-    subBarBorder: 'border-indigo-200/70 dark:border-indigo-800/40',
-    subActivePill: 'bg-indigo-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-indigo-100/70 dark:hover:bg-indigo-900/30',
-    dot: 'bg-indigo-500',
-  },
-  earningsCrush: {
-    topActiveText: 'text-teal-900 dark:text-teal-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-teal-800 dark:hover:text-teal-200',
-    topActiveUnderline: 'bg-teal-500',
-    subBarBg: 'bg-teal-50/70 dark:bg-teal-950/25',
-    subBarBorder: 'border-teal-200/70 dark:border-teal-800/40',
-    subActivePill: 'bg-teal-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-teal-100/70 dark:hover:bg-teal-900/30',
-    dot: 'bg-teal-500',
-  },
-  preEarnings: {
-    topActiveText: 'text-amber-900 dark:text-amber-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-amber-800 dark:hover:text-amber-200',
-    topActiveUnderline: 'bg-amber-500',
-    subBarBg: 'bg-amber-50/70 dark:bg-amber-950/25',
-    subBarBorder: 'border-amber-200/70 dark:border-amber-800/40',
-    subActivePill: 'bg-amber-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-amber-100/70 dark:hover:bg-amber-900/30',
-    dot: 'bg-amber-500',
-  },
-  turtle: {
-    topActiveText: 'text-fuchsia-900 dark:text-fuchsia-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-fuchsia-800 dark:hover:text-fuchsia-200',
-    topActiveUnderline: 'bg-fuchsia-500',
-    subBarBg: 'bg-fuchsia-50/70 dark:bg-fuchsia-950/25',
-    subBarBorder: 'border-fuchsia-200/70 dark:border-fuchsia-800/40',
-    subActivePill: 'bg-fuchsia-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-fuchsia-100/70 dark:hover:bg-fuchsia-900/30',
-    dot: 'bg-fuchsia-500',
-  },
-  grail: {
-    topActiveText: 'text-orange-900 dark:text-orange-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-orange-800 dark:hover:text-orange-200',
-    topActiveUnderline: 'bg-orange-500',
-    subBarBg: 'bg-orange-50/70 dark:bg-orange-950/25',
-    subBarBorder: 'border-orange-200/70 dark:border-orange-800/40',
-    subActivePill: 'bg-orange-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-orange-100/70 dark:hover:bg-orange-900/30',
-    dot: 'bg-orange-500',
-  },
-  odid: {
-    topActiveText: 'text-cyan-900 dark:text-cyan-100',
-    topInactiveText: 'text-slate-600 dark:text-slate-300',
-    topHoverText: 'hover:text-cyan-800 dark:hover:text-cyan-200',
-    topActiveUnderline: 'bg-cyan-500',
-    subBarBg: 'bg-cyan-50/70 dark:bg-cyan-950/25',
-    subBarBorder: 'border-cyan-200/70 dark:border-cyan-800/40',
-    subActivePill: 'bg-cyan-600 text-white',
-    subInactivePill: 'text-slate-700 dark:text-slate-200',
-    subHoverPill: 'hover:bg-cyan-100/70 dark:hover:bg-cyan-900/30',
-    dot: 'bg-cyan-500',
-  },
-  taylor: {
-    topActiveText: 'text-amber-100',
-    topInactiveText: 'text-slate-300',
-    topHoverText: 'hover:text-amber-200',
-    topActiveUnderline: 'bg-amber-500',
-    subBarBg: 'bg-amber-950/25',
-    subBarBorder: 'border-amber-800/40',
-    subActivePill: 'bg-amber-600 text-white',
-    subInactivePill: 'text-slate-200',
-    subHoverPill: 'hover:bg-amber-900/30',
-    dot: 'bg-amber-500',
-  },
-  linda: {
-    topActiveText: 'text-rose-100',
-    topInactiveText: 'text-slate-300',
-    topHoverText: 'hover:text-rose-200',
-    topActiveUnderline: 'bg-rose-500',
-    subBarBg: 'bg-rose-950/25',
-    subBarBorder: 'border-rose-800/40',
-    subActivePill: 'bg-rose-600 text-white',
-    subInactivePill: 'text-slate-200',
-    subHoverPill: 'hover:bg-rose-900/30',
-    dot: 'bg-rose-500',
-  },
-};
+type NavSectionKey =
+  | 'forward'
+  | 'earningsCrush'
+  | 'preEarnings'
+  | 'turtle'
+  | 'grail'
+  | 'odid'
+  | 'taylor'
+  | 'linda';
 
 function getSection(pathname: string): NavSectionKey | null {
   if (pathname.startsWith('/taylor')) return 'taylor';
   if (pathname.startsWith('/linda')) return 'linda';
-  if (pathname.startsWith('/trendorama')) return 'turtle';
-  if (pathname.startsWith('/turtle')) return 'turtle';
+  if (pathname.startsWith('/trendorama') || pathname.startsWith('/turtle')) return 'turtle';
   if (pathname.startsWith('/grail')) return 'grail';
   if (pathname.startsWith('/odid')) return 'odid';
   if (pathname.startsWith('/pre-earnings')) return 'preEarnings';
@@ -131,119 +27,102 @@ function getSection(pathname: string): NavSectionKey | null {
     pathname.startsWith('/iv-rankings') ||
     pathname.startsWith('/calculator') ||
     pathname.startsWith('/trade-tracker')
-  ) return 'forward';
+  ) {
+    return 'forward';
+  }
   return null;
 }
 
 type NavItem = { label: string; to: string };
 
+const STRATEGY_LINKS: Array<{ key: NavSectionKey; label: string; meta: string; to: string }> = [
+  { key: 'turtle', label: 'Trendorama', meta: '55-day breakout', to: '/trendorama' },
+  { key: 'taylor', label: 'The Bradman', meta: 'Globex 1h + 3-day cycle', to: '/taylor' },
+  { key: 'grail', label: 'YouHaveChosenWisely', meta: 'ADX / EMA pullback', to: '/grail' },
+  { key: 'odid', label: 'TooHot TooCold', meta: 'Range expansion', to: '/odid' },
+  { key: 'linda', label: 'The Linda', meta: '15m EMA reversion', to: '/linda' },
+];
+
+const SECTION_LABELS: Record<NavSectionKey, string> = {
+  forward: 'Forward vol',
+  earningsCrush: 'Earnings crush',
+  preEarnings: 'Earnings ramp',
+  turtle: 'Trendorama',
+  grail: 'YouHaveChosenWisely',
+  odid: 'TooHot TooCold',
+  taylor: 'The Bradman',
+  linda: 'The Linda',
+};
+
 const SUB_NAV: Record<NavSectionKey, NavItem[]> = {
   forward: [
     { label: 'NASDAQ 100', to: '/nasdaq100' },
     { label: 'MidCap 400', to: '/midcap400' },
-    { label: 'IV Rankings', to: '/iv-rankings' },
+    { label: 'IV rankings', to: '/iv-rankings' },
     { label: 'Calculator', to: '/calculator' },
-    { label: 'Trade Tracker', to: '/trade-tracker' },
+    { label: 'Trade tracker', to: '/trade-tracker' },
   ],
   earningsCrush: [
     { label: 'Scanner', to: '/earnings-crush' },
-    { label: 'Trade Tracker', to: '/earnings-crush/trades' },
+    { label: 'Trade tracker', to: '/earnings-crush/trades' },
   ],
   preEarnings: [
     { label: 'Opportunities', to: '/pre-earnings' },
-    { label: 'Open Trades', to: '/pre-earnings/open-trades' },
+    { label: 'Open trades', to: '/pre-earnings/open-trades' },
   ],
   turtle: [
     { label: 'Signals', to: '/trendorama' },
-    { label: 'Open Trades', to: '/trendorama/open-trades' },
-    { label: 'Triggers Soon', to: '/trendorama/triggers' },
-    { label: 'Executed Trades', to: '/executed-trades' },
+    { label: 'Open trades', to: '/trendorama/open-trades' },
+    { label: 'Triggers soon', to: '/trendorama/triggers' },
+    { label: 'Executed trades', to: '/executed-trades' },
   ],
   grail: [
     { label: 'Signals', to: '/grail' },
-    { label: 'Executed Trades', to: '/executed-trades' },
+    { label: 'Executed trades', to: '/executed-trades' },
   ],
   odid: [
     { label: 'Signals', to: '/odid' },
-    { label: 'Executed Trades', to: '/executed-trades' },
+    { label: 'Executed trades', to: '/executed-trades' },
   ],
   taylor: [
     { label: 'Signals', to: '/taylor' },
-    { label: 'Executed Trades', to: '/executed-trades' },
+    { label: 'Executed trades', to: '/executed-trades' },
   ],
   linda: [
     { label: 'Signals', to: '/linda' },
-    { label: 'Executed Trades', to: '/executed-trades' },
+    { label: 'Executed trades', to: '/executed-trades' },
   ],
 };
 
-function OzCtaMark({ className }: { className?: string }) {
+function OzCtaMark({ className = 'w-7 h-7' }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 64 64"
+      viewBox="0 0 32 32"
       aria-hidden="true"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <defs>
-        <linearGradient id="ozcta-shield" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0F172A" />
-          <stop offset="0.5" stopColor="#1E1B4B" />
-          <stop offset="1" stopColor="#090D16" />
-        </linearGradient>
-        <linearGradient id="ozcta-glow" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#10B981" />
-          <stop offset="0.5" stopColor="#06B6D4" />
-          <stop offset="1" stopColor="#F59E0B" />
-        </linearGradient>
-        <linearGradient id="ozcta-gold" x1="12" y1="44" x2="48" y2="12" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F59E0B" />
-          <stop offset="0.5" stopColor="#10B981" />
-          <stop offset="1" stopColor="#38BDF8" />
-        </linearGradient>
-      </defs>
-      
-      <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#ozcta-shield)" stroke="url(#ozcta-glow)" strokeWidth="1.5" strokeOpacity="0.4" />
-      <line x1="16" y1="18" x2="16" y2="46" stroke="#334155" strokeWidth="1" strokeDasharray="2 2" />
-      <line x1="48" y1="18" x2="48" y2="46" stroke="#334155" strokeWidth="1" strokeDasharray="2 2" />
-      <rect x="14" y="24" width="4" height="12" rx="1" fill="#10B981" opacity="0.6" />
-      <rect x="46" y="20" width="4" height="14" rx="1" fill="#F59E0B" opacity="0.6" />
-      <path d="M14 42 L24 34 L32 40 L46 18" stroke="url(#ozcta-gold)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M38 18 H46 V26" stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="46" cy="18" r="3.5" fill="#F59E0B" />
+      <rect
+        x="1"
+        y="1"
+        width="30"
+        height="30"
+        rx="7"
+        fill="#19191b"
+        stroke="#ededed"
+        strokeOpacity="0.14"
+        strokeWidth="1"
+      />
+      <path
+        d="M8 21 L13.5 15.5 L17.5 18.5 L23.5 10.5"
+        stroke="#ededed"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="23.5" cy="10.5" r="2" fill="#4cc38a" />
     </svg>
-  );
-}
-
-type TopGroup = 'futures' | null;
-
-const FUTURES_KEYS: NavSectionKey[] = ['turtle', 'grail', 'odid', 'taylor', 'linda'];
-
-function getActiveGroup(section: NavSectionKey | null): TopGroup {
-  if (section && FUTURES_KEYS.includes(section)) return 'futures';
-  return null;
-}
-
-function ExpandableItems({ 
-  show, children 
-}: { show: boolean; children: React.ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    if (ref.current) setWidth(ref.current.scrollWidth);
-  }, [children]);
-
-  return (
-    <div
-      className="overflow-hidden transition-all duration-300 ease-in-out"
-      style={{ maxWidth: show ? width : 0, opacity: show ? 1 : 0 }}
-    >
-      <div ref={ref} className="flex items-center gap-1 whitespace-nowrap">
-        {children}
-      </div>
-    </div>
   );
 }
 
@@ -253,176 +132,208 @@ export default function Navigation() {
   const { isAuthenticated, user, logout } = useAuth();
 
   const section = getSection(location.pathname);
-  const accent = section ? ACCENTS[section] : null;
-  const activeGroup = getActiveGroup(section);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [strategiesOpen, setStrategiesOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [expanded, setExpanded] = useState<TopGroup>(activeGroup);
-
-  // Sync expanded group when route changes
   useEffect(() => {
-    setExpanded(activeGroup);
-  }, [activeGroup]);
+    setMenuOpen(false);
+    setStrategiesOpen(false);
+  }, [location.pathname]);
 
-  const isActive = (path: string) => location.pathname === path;
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setStrategiesOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
 
-  const toggleGroup = (group: TopGroup) => {
-    setExpanded(prev => prev === group ? null : group);
-  };
+  const isFuturesSection = section && STRATEGY_LINKS.some((s) => s.key === section);
+
+  const navItemClass = (active: boolean) =>
+    `h-8 px-3 rounded-lg text-sm inline-flex items-center gap-2 transition-colors duration-150 ease-desk ${
+      active
+        ? 'bg-desk-raised text-desk-text font-medium shadow-inset-top border border-hairline'
+        : 'text-desk-secondary hover:text-desk-text hover:bg-desk-raised/50'
+    }`;
 
   return (
-    <nav className="bg-slate-900/90 shadow-xl mb-8 rounded-xl overflow-hidden border border-slate-800/80 backdrop-blur">
-      <div className="max-w-[1720px] mx-auto">
-        {/* Top Level Navigation */}
-        <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800/80">
+    <header className="sticky top-0 z-40 bg-desk-deep border-b border-hairline">
+      <div className="max-w-[1520px] mx-auto px-6 md:px-8">
+        <div className="h-14 flex items-center justify-between gap-6">
+          {/* Left: Brand + Primary links */}
           <div className="flex items-center gap-6">
             <Link
               to="/"
-              aria-label="OzCTA"
-              className="group inline-flex items-center gap-2.5 rounded-xl px-3 py-2 -ml-2 transition-colors hover:bg-slate-800/50"
+              aria-label="OzCTA home"
+              className="inline-flex items-center gap-2.5 rounded-lg py-1 pr-2 transition-opacity duration-150 ease-desk hover:opacity-90"
             >
-              <span className="relative">
-                <OzCtaMark className="h-9 w-9 drop-shadow-md transition-transform duration-300 group-hover:scale-105" />
-              </span>
-              <span className="leading-tight">
-                <span className="block text-xl font-black tracking-tight text-slate-100">
-                  Oz<span className="bg-gradient-to-r from-emerald-400 to-amber-400 bg-clip-text text-transparent">CTA</span>
+              <OzCtaMark className="w-7 h-7 shrink-0" />
+              <div className="flex items-baseline gap-2">
+                <span className="text-[17px] font-semibold tracking-tight text-desk-text leading-none">
+                  OzCTA
                 </span>
-                <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                  Commodity Trading Advisor
+                <span className="hidden xl:inline text-xs text-desk-muted">
+                  Futures desk
                 </span>
-              </span>
+              </div>
             </Link>
 
-            <div className="hidden sm:flex items-center gap-1.5">
-              {/* ── Futures ── */}
-              <button
-                onClick={() => toggleGroup('futures')}
-                className={`relative px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all duration-200 ${
-                  expanded === 'futures'
-                    ? 'bg-fuchsia-600/10 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300 ring-1 ring-fuchsia-500/30'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
-                }`}
-              >
-                <span className="flex items-center gap-2">
-                  Futures Strategies
-                  <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                  </svg>
-                </span>
-              </button>
+            <nav className="hidden lg:flex items-center gap-1" aria-label="Primary">
+              <Link to="/" className={navItemClass(location.pathname === '/')}>
+                Dashboard
+              </Link>
 
-              <ExpandableItems show={expanded === 'futures'}>
-                {([
-                  { key: 'turtle' as const, label: 'Trendorama', to: '/trendorama' },
-                  { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
-                  { key: 'odid' as const, label: 'TooHot TooCold', to: '/odid' },
-                  { key: 'taylor' as const, label: 'The Bradman', to: '/taylor' },
-                  { key: 'linda' as const, label: 'The Linda', to: '/linda' },
-                ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
-                  const isSectionActive = section === item.key;
-                  const a = ACCENTS[item.key];
-                  return (
-                    <Link
-                      key={item.key}
-                      to={item.to}
-                      className={`relative px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                        isSectionActive
-                          ? `${a.topActiveText} bg-white/80 dark:bg-slate-800/60 shadow-sm`
-                          : `text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30`
-                      }`}
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span className={`h-1.5 w-1.5 rounded-full ${a.dot} ${isSectionActive ? 'opacity-100' : 'opacity-30'}`} />
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </ExpandableItems>
-            </div>
+              {/* Futures strategies dropdown on lg, inline on 2xl */}
+              <div ref={dropdownRef} className="relative 2xl:hidden">
+                <button
+                  type="button"
+                  onClick={() => setStrategiesOpen((o) => !o)}
+                  aria-expanded={strategiesOpen}
+                  className={navItemClass(Boolean(isFuturesSection || strategiesOpen))}
+                >
+                  <span>Strategies</span>
+                  <ChevronDownIcon
+                    className={`w-4 h-4 text-desk-muted transition-transform duration-150 ease-desk ${
+                      strategiesOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {strategiesOpen && (
+                  <div className="absolute left-0 mt-2 w-64 rounded-xl bg-desk-card border border-hairline-strong p-1.5 shadow-xl z-50">
+                    {STRATEGY_LINKS.map((item) => {
+                      const active = section === item.key;
+                      return (
+                        <Link
+                          key={item.key}
+                          to={item.to}
+                          className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors duration-150 ease-desk ${
+                            active
+                              ? 'bg-desk-raised text-desk-text font-medium'
+                              : 'text-desk-secondary hover:text-desk-text hover:bg-desk-raised/60'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${
+                                active ? 'bg-desk-up' : 'bg-desk-muted/50'
+                              }`}
+                            />
+                            <span>{item.label}</span>
+                          </span>
+                          <span className="text-[11px] font-mono text-desk-muted">{item.meta.split(' ')[0]}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="hidden 2xl:flex items-center gap-1">
+                {STRATEGY_LINKS.map((item) => (
+                  <Link
+                    key={item.key}
+                    to={item.to}
+                    className={navItemClass(section === item.key)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+
+              <Link
+                to="/executed-trades"
+                className={navItemClass(
+                  location.pathname === '/executed-trades' || location.pathname === '/paper-trades'
+                )}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+                Executed trades
+              </Link>
+
+              <Link to="/fund" className={navItemClass(location.pathname === '/fund')}>
+                Program
+              </Link>
+            </nav>
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/executed-trades"
-              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 ${
-                location.pathname === '/executed-trades'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                  : 'text-emerald-400 hover:bg-emerald-500/10'
-              }`}
-            >
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Executed Trades
-            </Link>
-            <Link
-              to="/"
-              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                location.pathname === '/'
-                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/40'
-              }`}
-            >
-              Dashboard
-            </Link>
+          {/* Right: Auth controls (one button max, Log in as quiet text link) */}
+          <div className="hidden lg:flex items-center gap-4">
             {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-600 dark:text-slate-300">
-                  Hi, <span className="font-semibold text-slate-900 dark:text-slate-100">{user?.firstName}</span>
+              <>
+                <span className="text-xs text-desk-muted">
+                  Signed in as <span className="text-desk-secondary font-medium">{user?.firstName || user?.email}</span>
                 </span>
                 <button
-                  onClick={() => { logout(); navigate('/login'); }}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/40 transition-colors"
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                  }}
+                  className="h-8 px-3 rounded-lg text-sm text-desk-secondary hover:text-desk-text hover:bg-desk-raised/60 transition-colors duration-150 ease-desk"
                 >
-                  Log Out
+                  Log out
                 </button>
-              </div>
+              </>
             ) : (
-              <Link
-                to="/login"
-                className="px-3 py-1.5 rounded-lg text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
-              >
-                Log In
-              </Link>
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+                >
+                  Log in
+                </Link>
+                <Link to="/register" className="desk-btn-primary h-8 px-3.5 text-xs">
+                  Create account
+                </Link>
+              </>
             )}
           </div>
+
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            className="lg:hidden desk-btn-secondary h-9 px-3 text-xs"
+            aria-expanded={menuOpen}
+            aria-label="Toggle navigation menu"
+          >
+            {menuOpen ? (
+              <>
+                <XIcon className="w-4 h-4 text-desk-secondary" />
+                <span>Close</span>
+              </>
+            ) : (
+              <span>Menu</span>
+            )}
+          </button>
         </div>
+      </div>
 
-        {/* Sub Navigation (connected to active section via tint + dot rail) */}
-        {section && accent && (
-        <div className={`px-4 py-3 border-t ${accent.subBarBorder} ${accent.subBarBg}`}>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className={`h-2.5 w-2.5 rounded-full ${accent.dot}`} />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                {section === 'forward'
-                  ? 'Forward Vol'
-                  : section === 'earningsCrush'
-                    ? 'Earnings Crush'
-                    : section === 'preEarnings'
-                      ? 'Earnings Ramp'
-                      : section === 'taylor'
-                        ? 'The Bradman'
-                        : section === 'grail'
-                          ? 'YouHaveChosenWisely'
-                          : section === 'odid'
-                            ? 'TooHot TooCold'
-                            : 'Trendorama'}
-              </span>
-            </div>
-
-            <div className="h-4 w-px bg-slate-300/60 dark:bg-slate-700/60" />
-
-            <div className="flex flex-wrap gap-2">
+      {/* Contextual Sub-Navigation Strip */}
+      {section && SUB_NAV[section] && (
+        <div className="border-t border-hairline bg-desk-bg/80">
+          <div className="max-w-[1520px] mx-auto px-6 md:px-8 h-10 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <span className="flex items-center gap-2 text-xs font-medium text-desk-secondary shrink-0">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              {SECTION_LABELS[section]}
+            </span>
+            <span className="h-3.5 w-px bg-desk-raised shrink-0" />
+            <div className="flex items-center gap-1">
               {SUB_NAV[section].map((item) => {
-                const active = isActive(item.to);
+                const active = location.pathname === item.to;
                 return (
                   <Link
                     key={item.to}
                     to={item.to}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`h-7 px-2.5 rounded-md text-xs inline-flex items-center transition-colors duration-150 ease-desk ${
                       active
-                        ? accent.subActivePill
-                        : `${accent.subInactivePill} ${accent.subHoverPill} bg-white/60 dark:bg-slate-950/20`
+                        ? 'bg-desk-raised text-desk-text font-medium border border-hairline'
+                        : 'text-desk-muted hover:text-desk-text hover:bg-desk-card'
                     }`}
                   >
                     {item.label}
@@ -431,50 +342,80 @@ export default function Navigation() {
               })}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Mobile top-level fallback */}
-          <div className="sm:hidden mt-3 space-y-2">
-            <button
-              onClick={() => toggleGroup('futures')}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
-                expanded === 'futures'
-                  ? 'bg-fuchsia-600/10 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300'
-                  : 'text-slate-500 dark:text-slate-400'
-              }`}
+      {/* Mobile Navigation Sheet */}
+      {menuOpen && (
+        <div className="lg:hidden border-t border-hairline bg-desk-deep px-6 py-4 space-y-4">
+          <div className="space-y-1">
+            <Link
+              to="/"
+              className="flex items-center h-9 px-3 rounded-lg text-sm text-desk-text hover:bg-desk-raised"
             >
-              Futures Strategies
-              <svg className={`w-4 h-4 transition-transform duration-300 ${expanded === 'futures' ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <ExpandableItems show={expanded === 'futures'}>
-            {([
-              { key: 'turtle' as const, label: 'Trendorama', to: '/trendorama' },
-              { key: 'grail' as const, label: 'YouHaveChosenWisely', to: '/grail' },
-              { key: 'odid' as const, label: 'TooHot TooCold', to: '/odid' },
-              { key: 'taylor' as const, label: 'The Bradman', to: '/taylor' },
-            ] satisfies Array<{ key: NavSectionKey; label: string; to: string }>).map((item) => {
-              const isSectionActive = section === item.key;
-              const a = ACCENTS[item.key];
-              return (
+              Dashboard
+            </Link>
+            <Link
+              to="/executed-trades"
+              className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm text-desk-text hover:bg-desk-raised"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              Executed trades
+            </Link>
+            <Link
+              to="/fund"
+              className="flex items-center h-9 px-3 rounded-lg text-sm text-desk-text hover:bg-desk-raised"
+            >
+              Program profile
+            </Link>
+          </div>
+
+          <div className="pt-3 border-t border-hairline">
+            <div className="px-3 pb-2 text-xs text-desk-muted">Futures strategies</div>
+            <div className="space-y-1">
+              {STRATEGY_LINKS.map((item) => (
                 <Link
                   key={item.key}
                   to={item.to}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors border border-slate-200/60 dark:border-slate-800/60 ${
-                    isSectionActive
-                      ? `${a.subActivePill}`
-                      : `${a.topInactiveText} ${a.topHoverText} bg-white/60 dark:bg-slate-950/20`
-                  }`}
+                  className="flex items-center justify-between h-9 px-3 rounded-lg text-sm text-desk-secondary hover:text-desk-text hover:bg-desk-raised"
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  <span className="text-xs font-mono text-desk-muted">{item.meta}</span>
                 </Link>
-              );
-            })}
-            </ExpandableItems>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-hairline flex items-center justify-between gap-3">
+            {isAuthenticated ? (
+              <>
+                <span className="text-xs text-desk-muted px-3">
+                  {user?.firstName || user?.email}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                  }}
+                  className="desk-btn-secondary h-9 px-4 text-xs"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm text-desk-secondary px-3">
+                  Log in
+                </Link>
+                <Link to="/register" className="desk-btn-primary h-9 px-4 text-xs">
+                  Create account
+                </Link>
+              </>
+            )}
           </div>
         </div>
-        )}
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

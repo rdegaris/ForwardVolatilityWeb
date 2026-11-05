@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import type { LindaSignalsPayload, LindaSignalRow } from '../types/linda';
 import SignalChartModal from '../components/SignalChartModal';
+import { AlertCircleIcon, ChartLineIcon } from '../components/Icons';
 
 async function fetchJson<T>(url: string, opts?: RequestInit): Promise<T> {
   const res = await fetch(url, opts);
@@ -9,10 +10,20 @@ async function fetchJson<T>(url: string, opts?: RequestInit): Promise<T> {
 }
 
 const FULL_NAMES: Record<string, string> = {
-  ES: 'E-mini S&P 500', NQ: 'E-mini Nasdaq 100', RTY: 'E-mini Russell 2000',
-  YM: 'E-mini Dow Jones', GC: 'Gold', SI: 'Silver', CL: 'Crude Oil',
-  NG: 'Natural Gas', '6E': 'Euro FX', '6J': 'Japanese Yen', '6B': 'British Pound', DX: 'US Dollar Index',
-  ZB: '30-Yr T-Bond', ZN: '10-Yr T-Note',
+  ES: 'E-mini S&P 500',
+  NQ: 'E-mini Nasdaq 100',
+  RTY: 'E-mini Russell 2000',
+  YM: 'E-mini Dow Jones',
+  GC: 'Gold',
+  SI: 'Silver',
+  CL: 'Crude Oil',
+  NG: 'Natural Gas',
+  '6E': 'Euro FX',
+  '6J': 'Japanese Yen',
+  '6B': 'British Pound',
+  DX: 'US Dollar Index',
+  ZB: '30-Yr T-Bond',
+  ZN: '10-Yr T-Note',
 };
 
 function fmt(v: number | null | undefined, decimals = 2): string {
@@ -24,97 +35,86 @@ function TrendBar({ value }: { value: number }) {
   const pct = Math.round(value * 100);
   const isBull = pct >= 75;
   const isBear = pct <= 25;
-  const color = isBull ? 'bg-emerald-500' : isBear ? 'bg-rose-500' : 'bg-slate-500';
+  const color = isBull ? 'bg-desk-up' : isBear ? 'bg-desk-down' : 'bg-desk-muted';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 rounded-full bg-slate-700">
+      <div className="flex-1 h-1.5 rounded-full bg-desk-raised">
         <div className={`h-1.5 rounded-full ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[10px] font-mono text-slate-400 w-7 text-right">{pct}%</span>
+      <span className="text-xs font-mono text-desk-muted w-8 text-right">{pct}%</span>
     </div>
   );
 }
 
 function SignalCard({ sig, onChartClick }: { sig: LindaSignalRow; onChartClick: (sig: LindaSignalRow) => void }) {
   const isFadeUp = sig.direction === 'FADE_UP';
-  const isFadeDown = sig.direction === 'FADE_DOWN';
   const fullName = FULL_NAMES[sig.symbol] ?? sig.symbol;
 
   return (
-    <div className={`rounded-2xl border p-5 flex flex-col gap-3 ${
-      isFadeUp
-        ? 'border-rose-500/40 bg-gradient-to-br from-slate-900 to-rose-950/20'
-        : 'border-emerald-500/40 bg-gradient-to-br from-slate-900 to-emerald-950/20'
-    }`}>
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-black text-xl text-slate-100">{sig.symbol}</span>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
-              isFadeUp
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-            }`}>
-              {isFadeUp ? 'FADE UP — SELL' : 'FADE DOWN — BUY'}
-            </span>
+    <div className="desk-surface rounded-2xl p-5 flex flex-col justify-between gap-4 hover:border-hairline-strong transition-colors duration-150 ease-desk">
+      <div className="space-y-4">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span className="font-mono text-xl font-medium text-desk-text">{sig.symbol}</span>
+              <span className={isFadeUp ? 'desk-tag-down' : 'desk-tag-up'}>
+                {isFadeUp ? 'Fade up · Short' : 'Fade down · Long'}
+              </span>
+            </div>
+            <div className="text-xs text-desk-muted mt-0.5">{fullName}</div>
           </div>
-          <div className="text-xs text-slate-400 mt-0.5">{fullName}</div>
+          <div className="text-right">
+            <div className="text-xs text-desk-muted">EMA gap</div>
+            <div className="text-lg font-medium font-mono text-desk-text">{fmt(sig.gap_pct)}%</div>
+          </div>
         </div>
-        <div className="text-right">
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider">Gap from EMA</div>
-          <div className={`text-lg font-extrabold font-mono ${
-            sig.gap_pct >= 2 ? 'text-amber-400' : 'text-slate-300'
-          }`}>{fmt(sig.gap_pct)}%</div>
+
+        {/* Price grid */}
+        <div className="desk-well rounded-xl p-3.5 grid grid-cols-3 gap-2 text-xs">
+          <div>
+            <div className="text-desk-muted">Prior close</div>
+            <div className="mt-1 font-mono font-medium text-desk-text">{fmt(sig.close, 4)}</div>
+          </div>
+          <div>
+            <div className="text-desk-muted">Target (EMA)</div>
+            <div className={`mt-1 font-mono font-medium ${isFadeUp ? 'text-desk-down' : 'text-desk-up'}`}>
+              {fmt(sig.target, 4)}
+            </div>
+          </div>
+          <div>
+            <div className="text-desk-muted">Stop</div>
+            <div className="mt-1 font-mono font-medium text-desk-secondary">{fmt(sig.stop, 4)}</div>
+          </div>
         </div>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-3 text-xs">
+          <div>
+            <div className="text-desk-muted mb-1">Range / ATR</div>
+            <div className="font-mono font-medium text-desk-text">{fmt(sig.range_vs_atr)}×</div>
+          </div>
+          <div>
+            <div className="text-desk-muted mb-1">ATR (20)</div>
+            <div className="font-mono font-medium text-desk-text">{fmt(sig.atr20, 4)}</div>
+          </div>
+          <div>
+            <div className="text-desk-muted mb-1">Close location</div>
+            <TrendBar value={sig.trend_strength} />
+          </div>
+        </div>
+
+        <p className="text-xs text-desk-secondary leading-relaxed">{sig.reason}</p>
       </div>
 
-      {/* Price grid */}
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="bg-black/20 rounded-xl p-2.5">
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Prior Close</div>
-          <div className="font-mono font-bold text-slate-100 text-sm">{fmt(sig.close, 4)}</div>
-        </div>
-        <div className="bg-black/20 rounded-xl p-2.5 border border-rose-500/20">
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Target (EMA)</div>
-          <div className="font-mono font-bold text-rose-300 text-sm">{fmt(sig.target, 4)}</div>
-        </div>
-        <div className="bg-black/20 rounded-xl p-2.5">
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Stop</div>
-          <div className="font-mono font-bold text-slate-400 text-sm">{fmt(sig.stop, 4)}</div>
-        </div>
-      </div>
-
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3 text-[11px]">
-        <div>
-          <div className="text-slate-500 uppercase tracking-wider mb-1">Range / ATR</div>
-          <div className="font-mono font-bold text-slate-200">{fmt(sig.range_vs_atr)}×</div>
-        </div>
-        <div>
-          <div className="text-slate-500 uppercase tracking-wider mb-1">ATR (20)</div>
-          <div className="font-mono font-bold text-slate-200">{fmt(sig.atr20, 4)}</div>
-        </div>
-        <div>
-          <div className="text-slate-500 uppercase tracking-wider mb-1">Trend Strength</div>
-          <TrendBar value={sig.trend_strength} />
-        </div>
-      </div>
-
-      {/* Reason */}
-      <p className="text-xs text-slate-400 italic leading-relaxed">{sig.reason}</p>
-
-      {/* View Chart CTA */}
       <button
+        type="button"
         onClick={() => onChartClick(sig)}
-        className="mt-1 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold
-          bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
-          text-slate-300 hover:text-white transition-all duration-150 group"
+        className="desk-btn-secondary w-full h-8 text-xs"
       >
-        <svg className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
-        </svg>
-        View 15-Min Chart
+        <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+        <span>15-minute chart</span>
       </button>
     </div>
   );
@@ -141,275 +141,295 @@ export default function LindaTrade() {
     })();
   }, []);
 
-  const triggeredRows = useMemo(() =>
-    (data?.signals ?? []).filter(s => s.triggered).sort((a, b) => (b.gap_pct ?? 0) - (a.gap_pct ?? 0)),
+  const triggeredRows = useMemo(
+    () => (data?.signals ?? []).filter((s) => s.triggered).sort((a, b) => (b.gap_pct ?? 0) - (a.gap_pct ?? 0)),
     [data]
   );
 
-  const watchingRows = useMemo(() =>
-    (data?.signals ?? []).filter(s => !s.triggered && s.direction != null)
-      .sort((a, b) => (b.gap_pct ?? 0) - (a.gap_pct ?? 0)),
+  const watchingRows = useMemo(
+    () =>
+      (data?.signals ?? [])
+        .filter((s) => !s.triggered && s.direction != null)
+        .sort((a, b) => (b.gap_pct ?? 0) - (a.gap_pct ?? 0)),
     [data]
   );
 
-  const allRows = useMemo(() =>
-    (data?.signals ?? []).sort((a, b) => a.symbol.localeCompare(b.symbol)),
+  const allRows = useMemo(
+    () => [...(data?.signals ?? [])].sort((a, b) => a.symbol.localeCompare(b.symbol)),
     [data]
   );
 
   if (loading) {
     return (
-      <div className="text-white flex items-center justify-center py-24">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading The Linda signals…</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading The Linda signals…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="text-white flex items-center justify-center py-24">
-        <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠ Signal data is currently unavailable</p>
-          <p className="text-gray-400 text-sm">The Linda signal data could not be loaded. Please check back shortly.</p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>Signal data unavailable</span>
         </div>
+        <p className="text-sm text-desk-muted">The Linda signal feed could not be loaded.</p>
       </div>
     );
   }
 
   const updatedTime = data.timestamp
-    ? new Date(data.timestamp).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })
+    ? new Date(data.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })
     : '—';
 
   return (
-    <div className="space-y-8 text-white">
-      <div className="max-w-7xl mx-auto">
-
-        {/* Header */}
-        <div className="rounded-2xl border border-rose-900/50 bg-gradient-to-br from-slate-900 via-slate-900/90 to-rose-950/30 p-6 md:p-8 mb-8 backdrop-blur shadow-xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-rose-900/30 pb-4 mb-5">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-                <span className="text-xs font-extrabold uppercase tracking-widest text-rose-400">Mean Reversion</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rose-300 to-pink-400">
-                The Linda
-              </h1>
+    <div className="space-y-8">
+      {/* Header */}
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>15-minute pit session EMA reversion</span>
             </div>
-            <div className="shrink-0 text-left md:text-right">
-              <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Today's Signals</div>
-              <div className="text-2xl font-extrabold text-rose-400">
-                {new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
-              </div>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
+              The Linda
+            </h1>
+            <p className="text-sm leading-relaxed text-desk-secondary">
+              Next-day mean-reversion model derived from Linda Bradford Raschke’s trend-day research. When a contract closes in the extreme 25% of a wide pit session without touching its 20-period 15-minute EMA, reversion toward the EMA is favored on the following session.
+            </p>
           </div>
-
-          <p className="text-slate-300 text-sm md:text-base leading-relaxed w-full mb-5">
-            A next-day mean-reversion model inspired by Linda Bradford Raschke's research. On a trend day where price closes at an extreme without ever touching the EMA, a reversion to the mean is highly probable the following session.
-          </p>
-
-          <div className="rounded-xl bg-rose-950/40 border border-rose-500/20 p-5 text-sm w-full">
-            <div className="font-bold text-rose-300 mb-3 flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-rose-500/20 text-xs font-black uppercase tracking-wider text-rose-300">Guide</span>
-              How to use:
-            </div>
-            <div className="grid md:grid-cols-2 gap-3 text-xs text-slate-300 leading-relaxed">
-              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-rose-500/20">
-                <span className="font-bold text-rose-300 block text-xs uppercase mb-1">FADE UP — SELL / SHORT</span>
-                Yesterday was a bullish trend day; low never touched EMA → sell/short near the open, target pullback to EMA.
-              </div>
-              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-emerald-500/20">
-                <span className="font-bold text-emerald-300 block text-xs uppercase mb-1">FADE DOWN — BUY / LONG</span>
-                Yesterday was a bearish trend day; high never touched EMA → buy near the open, target rally to EMA.
-              </div>
-              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-slate-200 block text-xs uppercase mb-1">Protective Stop-Loss</span>
-                Place protective stop-loss 1× ATR beyond the prior day's price extreme (high for shorts, low for longs).
-              </div>
-              <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-slate-200 block text-xs uppercase mb-1">Trend Day Qualifier</span>
-                Pit Session Range/ATR ≥ {(data.trend_day_atr_multiple ?? 0.70).toFixed(2)}× and Close in top/bottom 25% of range without touching 20-period 15m EMA.
-              </div>
-            </div>
-          </div>
-
-          {/* Stat bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Today's Signals</div>
-              <div className="text-xl font-bold">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Total Scanned</div>
-              <div className="text-xl font-bold text-rose-300">{data.total_scanned}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Triggered</div>
-              <div className="text-xl font-bold text-emerald-300">{data.total_triggered}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{updatedTime}</div>
-            </div>
+          <div className="shrink-0 md:text-right">
+            <div className="text-xs text-desk-muted">Signal date</div>
+            <div className="mt-1 text-xl font-medium font-mono text-desk-text">{data.date}</div>
           </div>
         </div>
 
-        {/* Triggered setups */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">Triggered — Active Mean Reversion Setups</h2>
-          {triggeredRows.length === 0 ? (
-            <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No trend day / no-EMA-touch setups triggered today.</div>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {triggeredRows.map(sig => <SignalCard key={sig.symbol} sig={sig} onChartClick={openChart} />)}
-            </div>
-          )}
+        {/* Execution rules */}
+        <div className="grid md:grid-cols-4 gap-3 text-xs">
+          <div className="desk-well rounded-xl p-4 space-y-1">
+            <div className="font-medium text-desk-down">Fade up · Short</div>
+            <p className="text-desk-secondary leading-relaxed">
+              Prior session closed near highs without touching 15m EMA; look to fade near open toward EMA.
+            </p>
+          </div>
+          <div className="desk-well rounded-xl p-4 space-y-1">
+            <div className="font-medium text-desk-up">Fade down · Long</div>
+            <p className="text-desk-secondary leading-relaxed">
+              Prior session closed near lows without touching 15m EMA; look to buy near open toward EMA.
+            </p>
+          </div>
+          <div className="desk-well rounded-xl p-4 space-y-1">
+            <div className="font-medium text-desk-text">Protective stop</div>
+            <p className="text-desk-secondary leading-relaxed">
+              Placed 1.0 × ATR beyond the prior day’s session extreme (high for shorts, low for longs).
+            </p>
+          </div>
+          <div className="desk-well rounded-xl p-4 space-y-1">
+            <div className="font-medium text-desk-text">Trend day qualifier</div>
+            <p className="text-desk-secondary leading-relaxed">
+              Pit range / ATR ≥ {(data.trend_day_atr_multiple ?? 0.7).toFixed(2)}× and close in outer 25% of range.
+            </p>
+          </div>
         </div>
 
-        {/* Watching — trend day but EMA was touched */}
-        {watchingRows.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-200 mb-3">Near Miss — Trend Day, EMA Was Touched</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {watchingRows.map(sig => (
-                <div key={sig.symbol} className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 flex flex-col justify-between gap-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-slate-200">{sig.symbol}</span>
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-700/60 text-slate-400 border border-slate-600/40">
-                          {sig.direction === 'FADE_UP' ? 'Bullish Thrust' : 'Bearish Thrust'}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">{FULL_NAMES[sig.symbol] ?? sig.symbol}</div>
-                      <div className="text-xs text-slate-400 mt-1 italic">{sig.reason}</div>
+        {/* Stat bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Contracts scanned</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {data.total_scanned}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Triggered today</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">
+              {data.total_triggered}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Near-miss thrust</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {watchingRows.length}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Last updated</div>
+            <div className="mt-2 text-lg leading-none font-medium font-mono text-desk-text">
+              {updatedTime}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Triggered setups */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">Triggered mean-reversion setups</h2>
+        {triggeredRows.length === 0 ? (
+          <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+            No untagged-EMA trend-day setups triggered today
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {triggeredRows.map((sig) => (
+              <SignalCard key={sig.symbol} sig={sig} onChartClick={openChart} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Near Miss */}
+      {watchingRows.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-lg font-medium text-desk-text">Near miss (trend day, EMA touched)</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {watchingRows.map((sig) => (
+              <div key={sig.symbol} className="desk-surface rounded-xl p-4 flex flex-col justify-between gap-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-medium text-desk-text">{sig.symbol}</span>
+                      <span className="desk-tag text-[11px]">
+                        {sig.direction === 'FADE_UP' ? 'Bullish thrust' : 'Bearish thrust'}
+                      </span>
                     </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-xs text-slate-500">EMA Gap</div>
-                      <div className="font-mono font-bold text-slate-300">{fmt(sig.gap_pct)}%</div>
-                    </div>
+                    <div className="text-xs text-desk-muted mt-0.5">{FULL_NAMES[sig.symbol] ?? sig.symbol}</div>
+                    <div className="text-xs text-desk-secondary mt-1.5">{sig.reason}</div>
                   </div>
-                  <button
-                    onClick={() => openChart(sig)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold
-                      bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-blue-500/50
-                      text-slate-300 hover:text-white transition-all duration-150"
-                  >
-                    📊 View 15-Min Chart
-                  </button>
+                  <div className="text-right shrink-0">
+                    <div className="text-xs text-desk-muted">EMA gap</div>
+                    <div className="font-mono font-medium text-desk-text">{fmt(sig.gap_pct)}%</div>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <button
+                  type="button"
+                  onClick={() => openChart(sig)}
+                  className="desk-btn-secondary w-full h-8 text-xs"
+                >
+                  <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                  <span>15-minute chart</span>
+                </button>
+              </div>
+            ))}
           </div>
-        )}
+        </section>
+      )}
 
-        {/* All Scanned */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">All Scanned ({data?.total_scanned ?? allRows.length})</h2>
-          <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-black/20 text-gray-300">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Symbol</th>
-                    <th className="px-4 py-3 text-left">Direction</th>
-                    <th className="px-4 py-3 text-right">Close</th>
-                    <th className="px-4 py-3 text-right">EMA 20</th>
-                    <th className="px-4 py-3 text-right">Gap %</th>
-                    <th className="px-4 py-3 text-right">Range/ATR</th>
-                    <th className="px-4 py-3 text-right">Strength</th>
-                    <th className="px-4 py-3 text-right">Target</th>
-                    <th className="px-4 py-3 text-right">Stop</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-center">Chart</th>
+      {/* All Scanned */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">
+          All contracts scanned ({data?.total_scanned ?? allRows.length})
+        </h2>
+        <div className="desk-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left font-normal">Contract</th>
+                  <th className="px-4 py-3 text-left font-normal">Direction</th>
+                  <th className="px-4 py-3 text-right font-normal">Close</th>
+                  <th className="px-4 py-3 text-right font-normal">EMA 20</th>
+                  <th className="px-4 py-3 text-right font-normal">Gap %</th>
+                  <th className="px-4 py-3 text-right font-normal">Range / ATR</th>
+                  <th className="px-4 py-3 text-left font-normal">Close loc</th>
+                  <th className="px-4 py-3 text-right font-normal">Target</th>
+                  <th className="px-4 py-3 text-right font-normal">Stop</th>
+                  <th className="px-4 py-3 text-left font-normal">Status</th>
+                  <th className="px-4 py-3 text-right font-normal">Chart</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {allRows.map((sig) => (
+                  <tr
+                    key={sig.symbol}
+                    className={`hover:bg-desk-raised/40 transition-colors duration-150 ease-desk ${
+                      sig.triggered ? 'bg-desk-raised/25' : ''
+                    }`}
+                  >
+                    <td className="px-4 py-3">
+                      <div className="font-mono font-medium text-desk-text">{sig.symbol}</div>
+                      <div className="text-[11px] text-desk-muted">{FULL_NAMES[sig.symbol] ?? ''}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {sig.direction ? (
+                        <span className={sig.direction === 'FADE_UP' ? 'desk-tag-down' : 'desk-tag-up'}>
+                          {sig.direction === 'FADE_UP' ? 'Fade up' : 'Fade down'}
+                        </span>
+                      ) : (
+                        <span className="text-desk-muted">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{fmt(sig.close, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{fmt(sig.ema20, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{fmt(sig.gap_pct)}%</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{fmt(sig.range_vs_atr)}×</td>
+                    <td className="px-4 py-3 min-w-[120px]">
+                      <TrendBar value={sig.trend_strength} />
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{fmt(sig.target, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-muted">{fmt(sig.stop, 4)}</td>
+                    <td className="px-4 py-3">
+                      {sig.triggered ? (
+                        <span className="inline-flex items-center gap-1.5 text-desk-up">
+                          <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+                          <span>Active</span>
+                        </span>
+                      ) : (
+                        <span className="text-desk-muted">Watch</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => openChart(sig)}
+                        className="desk-btn-secondary h-7 px-2.5 text-xs"
+                      >
+                        <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                        <span>15m</span>
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {allRows.map((sig, i) => (
-                    <tr key={sig.symbol} className={`border-t border-slate-700/40 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''} ${sig.triggered ? 'bg-rose-950/20' : ''}`}>
-                      <td className="px-4 py-3">
-                        <div className="font-mono font-bold text-slate-100">{sig.symbol}</div>
-                        <div className="text-xs text-slate-500">{FULL_NAMES[sig.symbol] ?? ''}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        {sig.direction ? (
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                            sig.direction === 'FADE_UP'
-                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                          }`}>
-                            {sig.direction === 'FADE_UP' ? 'Fade Up' : 'Fade Down'}
-                          </span>
-                        ) : (
-                          <span className="text-slate-500 text-xs">—</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-slate-200">{fmt(sig.close, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-rose-300">{fmt(sig.ema20, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">
-                        <span className={sig.gap_pct >= 2 ? 'text-amber-400 font-bold' : 'text-slate-400'}>{fmt(sig.gap_pct)}%</span>
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono">
-                        <span className={sig.range_vs_atr >= (data.trend_day_atr_multiple ?? 0.70) ? 'text-amber-300 font-bold' : 'text-slate-400'}>{fmt(sig.range_vs_atr)}×</span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <TrendBar value={sig.trend_strength} />
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono text-slate-300">{fmt(sig.target, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-slate-400">{fmt(sig.stop, 4)}</td>
-                      <td className="px-4 py-3">
-                        {sig.triggered ? (
-                          <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                            ● Active
-                          </span>
-                        ) : (
-                          <span className="text-xs text-slate-500">Watch</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => openChart(sig)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
-                        >
-                          Chart 📈
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+      </section>
 
-        {/* Chart Modal */}
-        {chartSig && (
-          <SignalChartModal
-            isOpen={!!chartSig}
-            onClose={closeChart}
-            symbol={chartSig.symbol}
-            strategy="linda"
-            interval="15"
-            signalLabel={chartSig.direction === 'FADE_UP' ? 'FADE UP — SELL' : chartSig.direction === 'FADE_DOWN' ? 'FADE DOWN — BUY' : 'THE LINDA'}
-            direction={chartSig.direction === 'FADE_UP' ? 'fade_up' : chartSig.direction === 'FADE_DOWN' ? 'fade_down' : null}
-            entryPrice={chartSig.close}
-            targetPrice={chartSig.target}
-            stopPrice={chartSig.stop}
-            signalDate={data?.date}
-            extraRows={[
-              { label: 'EMA Gap', value: `${fmt(chartSig.gap_pct)}%`, highlight: chartSig.gap_pct >= 2 },
-              { label: 'Range / ATR', value: `${fmt(chartSig.range_vs_atr)}×` },
-              { label: '20 EMA Target', value: fmt(chartSig.target, 4) }
-            ]}
-          />
-        )}
-
-      </div>
+      {chartSig && (
+        <SignalChartModal
+          isOpen={!!chartSig}
+          onClose={closeChart}
+          symbol={chartSig.symbol}
+          strategy="linda"
+          interval="15"
+          signalLabel={
+            chartSig.direction === 'FADE_UP'
+              ? 'Fade up · Short'
+              : chartSig.direction === 'FADE_DOWN'
+                ? 'Fade down · Long'
+                : 'The Linda'
+          }
+          direction={
+            chartSig.direction === 'FADE_UP'
+              ? 'fade_up'
+              : chartSig.direction === 'FADE_DOWN'
+                ? 'fade_down'
+                : null
+          }
+          entryPrice={chartSig.close}
+          targetPrice={chartSig.target}
+          stopPrice={chartSig.stop}
+          signalDate={data?.date}
+          extraRows={[
+            { label: 'EMA gap', value: `${fmt(chartSig.gap_pct)}%`, highlight: chartSig.gap_pct >= 2 },
+            { label: 'Range / ATR', value: `${fmt(chartSig.range_vs_atr)}×` },
+            { label: '20 EMA target', value: fmt(chartSig.target, 4) },
+          ]}
+        />
+      )}
     </div>
   );
 }
