@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TurtleSuggestedTrade, TurtleSuggestedTradesPayload } from '../types/turtle';
+import { AlertCircleIcon } from '../components/Icons';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -24,7 +25,7 @@ export default function TurtleSuggested() {
         setData(d);
         setLoading(false);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load turtle suggested trades');
+        setError(err?.message || 'Failed to load suggested trades');
         setLoading(false);
       }
     })();
@@ -41,105 +42,109 @@ export default function TurtleSuggested() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading Turtle suggested trades...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading suggested entries…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
-        <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
-          <p className="text-gray-400 text-sm">
-            Generate <span className="font-mono">turtle_suggested_latest.json</span> into <span className="font-mono">public/data</span>.
-          </p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>{error || 'No suggested-trade data available'}</span>
         </div>
+        <p className="text-sm text-desk-muted">
+          Ensure <span className="font-mono">turtle_suggested_latest.json</span> exists in <span className="font-mono">public/data</span>.
+        </p>
       </div>
     );
   }
 
-  const total = rows.length;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
-            Turtle (System 2) — Suggested Trades
+    <div className="space-y-8">
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+            <span>Trendorama · Continuous stop-entry candidates</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
+            Suggested trades
           </h1>
-          <p className="text-gray-300">Stop entries + protective stops based on continuous signals; execute in front month.</p>
+          <p className="text-sm text-desk-secondary">
+            Stop entries and protective stops derived from continuous contract series; execute in liquid front-month contracts.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Scan Date</div>
-              <div className="text-xl font-bold">{data.date}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">System</div>
-              <div className="text-xl font-bold text-indigo-300">{data.system}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Suggested</div>
-              <div className="text-xl font-bold text-emerald-300">{total}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">
-                {new Date(data.timestamp).toLocaleString()}
-              </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Scan date</div>
+            <div className="mt-2 text-xl font-medium font-mono text-desk-text">{data.date}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">System</div>
+            <div className="mt-2 text-xl font-medium font-mono text-desk-text">{data.system}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Candidates</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">{rows.length}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Updated</div>
+            <div className="mt-2 text-sm font-medium font-mono text-desk-secondary">
+              {new Date(data.timestamp).toLocaleString()}
             </div>
           </div>
         </div>
+      </section>
 
-        {rows.length === 0 ? (
-          <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-            <div className="text-gray-300">No suggested trades.</div>
-          </div>
-        ) : (
-          <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-black/20 text-gray-300">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Symbol</th>
-                    <th className="px-4 py-3 text-left">Side</th>
-                    <th className="px-4 py-3 text-right">Last</th>
-                    <th className="px-4 py-3 text-right">Entry Stop</th>
-                    <th className="px-4 py-3 text-right">Stop Loss</th>
-                    <th className="px-4 py-3 text-right">Unit Qty</th>
-                    <th className="px-4 py-3 text-right">Dist (N)</th>
-                    <th className="px-4 py-3 text-right">Dist (%)</th>
-                    <th className="px-4 py-3 text-left">Notes</th>
+      {rows.length === 0 ? (
+        <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+          No suggested trades currently listed
+        </div>
+      ) : (
+        <div className="desk-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left font-normal">Contract</th>
+                  <th className="px-4 py-3 text-left font-normal">Side</th>
+                  <th className="px-4 py-3 text-right font-normal">Last close</th>
+                  <th className="px-4 py-3 text-right font-normal">Entry stop</th>
+                  <th className="px-4 py-3 text-right font-normal">Stop loss</th>
+                  <th className="px-4 py-3 text-right font-normal">Unit qty</th>
+                  <th className="px-4 py-3 text-right font-normal">Dist (N)</th>
+                  <th className="px-4 py-3 text-right font-normal">Dist (%)</th>
+                  <th className="px-4 py-3 text-left font-normal">Notes</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {rows.map((r: TurtleSuggestedTrade, idx: number) => (
+                  <tr key={`${r.symbol}-${idx}`} className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk">
+                    <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                    <td className="px-4 py-3">
+                      <span className={r.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                        {r.side === 'long' ? 'Long' : 'Short'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.last_close)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.entry_stop)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-down">{formatNum(r.stop_loss)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{r.unit_qty}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.distance_to_entry_N, 2)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatPct(r.pct_to_entry, 2)}</td>
+                    <td className="px-4 py-3 text-desk-secondary">{r.notes || '—'}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r: TurtleSuggestedTrade, idx: number) => {
-                    const sideColor = r.side === 'long' ? 'text-emerald-200' : 'text-rose-200';
-                    return (
-                      <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
-                        <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${sideColor}`}>{r.side.toUpperCase()}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.stop_loss)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{r.unit_qty}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.distance_to_entry_N, 2)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatPct(r.pct_to_entry, 2)}</td>
-                        <td className="px-4 py-3 text-gray-300">{r.notes || '—'}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

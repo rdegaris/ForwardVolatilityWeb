@@ -46,16 +46,14 @@ export default function IVRankings() {
         const nasdaq100Data = settled[1].status === 'fulfilled' ? settled[1].value : { rankings: [] };
         const midcapData = settled[2].status === 'fulfilled' ? settled[2].value : { rankings: [] };
 
-        // Combine all rankings
         const allRankings: IVRanking[] = [
           ...(mag7Data.rankings || []),
           ...(nasdaq100Data.rankings || []),
-          ...(midcapData.rankings || [])
+          ...(midcapData.rankings || []),
         ];
-        
-        // Sort by IV descending
+
         allRankings.sort((a, b) => b.iv - a.iv);
-        
+
         const result: IVResults = {
           timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
           date: getTodayPacific(),
@@ -65,15 +63,17 @@ export default function IVRankings() {
           summary: {
             highest_iv: allRankings[0]?.iv || 0,
             lowest_iv: allRankings[allRankings.length - 1]?.iv || 0,
-            average_iv: allRankings.length > 0 
-              ? Math.round(allRankings.reduce((sum, r) => sum + r.iv, 0) / allRankings.length * 100) / 100 
-              : 0,
-            median_iv: allRankings.length > 0 
-              ? allRankings[Math.floor(allRankings.length / 2)].iv 
-              : 0
-          }
+            average_iv:
+              allRankings.length > 0
+                ? Math.round((allRankings.reduce((sum, r) => sum + r.iv, 0) / allRankings.length) * 100) / 100
+                : 0,
+            median_iv:
+              allRankings.length > 0
+                ? allRankings[Math.floor(allRankings.length / 2)].iv
+                : 0,
+          },
         };
-        
+
         setResults(result);
       } catch (err) {
         setError('Failed to load IV rankings');
@@ -86,216 +86,152 @@ export default function IVRankings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading IV Rankings...</div>
+      <div className="flex flex-col items-center justify-center h-96 gap-3">
+        <div className="h-8 w-8 rounded-full border-2 border-hairline border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading implied volatility rankings…</p>
       </div>
     );
   }
 
   if (error || !results) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
-        <div className="text-red-400 text-xl">{error || 'No rankings available'}</div>
+      <div className="desk-surface rounded-2xl p-8 text-center text-sm text-desk-down">
+        {error || 'No rankings available'}
       </div>
     );
   }
 
-  // Filter rankings
-  const filteredRankings = results.rankings.filter(r => {
+  const filteredRankings = results.rankings.filter((r) => {
     const matchesUniverse = filterUniverse === 'all' || r.universe.toLowerCase() === filterUniverse;
     const matchesSearch = searchTerm === '' || r.ticker.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesUniverse && matchesSearch;
   });
 
-  // Get universe badge color
-  const getUniverseColor = (universe: string) => {
-    switch (universe) {
-      case 'MAG7': return 'bg-yellow-500/20 text-yellow-300';
-      case 'NASDAQ100': return 'bg-blue-500/20 text-blue-300';
-      case 'MIDCAP400': return 'bg-teal-500/20 text-teal-300';
-      default: return 'bg-gray-500/20 text-gray-300';
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
-            Implied Volatility Rankings
+    <div className="space-y-6 pb-16">
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div>
+          <div className="text-xs font-mono text-desk-muted">Cross-universe screen</div>
+          <h1 className="mt-1.5 text-2xl md:text-3xl font-semibold text-desk-text tracking-tight">
+            Implied volatility rankings
           </h1>
-          <p className="text-gray-300 mb-6">
-            Tickers ranked by near-term implied volatility across all universes
+          <p className="mt-1.5 text-sm text-desk-secondary">
+            Tickers ranked by near-term implied volatility across MAG7, Nasdaq-100, and S&amp;P MidCap 400.
           </p>
-          
-          {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mb-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Scan Date</div>
-              <div className="text-xl font-bold">{results.date}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Total Scanned</div>
-              <div className="text-xl font-bold text-green-400">{results.total_scanned}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Highest IV</div>
-              <div className="text-xl font-bold text-red-400">{results.summary.highest_iv.toFixed(1)}%</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Average IV</div>
-              <div className="text-xl font-bold text-yellow-400">{results.summary.average_iv.toFixed(1)}%</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Median IV</div>
-              <div className="text-xl font-bold text-blue-400">{results.summary.median_iv.toFixed(1)}%</div>
-            </div>
-          </div>
+        </div>
 
-          {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Search ticker..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 focus:border-indigo-400 focus:outline-none backdrop-blur-sm"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFilterUniverse('all')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  filterUniverse === 'all'
-                    ? 'bg-indigo-600 shadow-lg'
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setFilterUniverse('mag7')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  filterUniverse === 'mag7'
-                    ? 'bg-yellow-600 shadow-lg'
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                MAG7
-              </button>
-              <button
-                onClick={() => setFilterUniverse('nasdaq100')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  filterUniverse === 'nasdaq100'
-                    ? 'bg-blue-600 shadow-lg'
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                NASDAQ 100
-              </button>
-              <button
-                onClick={() => setFilterUniverse('midcap400')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  filterUniverse === 'midcap400'
-                    ? 'bg-teal-600 shadow-lg'
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
-              >
-                MidCap 400
-              </button>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Scan date</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-text tabular-nums">{results.date}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Total scanned</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-text tabular-nums">{results.total_scanned}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Highest IV</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-down tabular-nums">{results.summary.highest_iv.toFixed(1)}%</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Average IV</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-text tabular-nums">{results.summary.average_iv.toFixed(1)}%</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Median IV</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-text tabular-nums">{results.summary.median_iv.toFixed(1)}%</div>
           </div>
         </div>
 
-        {/* Rankings Table */}
-        <div className="bg-white/10 rounded-xl backdrop-blur-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-white/5">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Rank</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Ticker</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Universe</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Price</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">IV</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Next Earnings</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">vs 200MA</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">200MA</th>
+        <div className="flex flex-col md:flex-row gap-3 pt-2 border-t border-hairline">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Filter ticker…"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="desk-input w-full px-3.5 py-2 text-xs font-mono"
+            />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { id: 'all', label: 'All' },
+              { id: 'mag7', label: 'MAG7' },
+              { id: 'nasdaq100', label: 'Nasdaq-100' },
+              { id: 'midcap400', label: 'MidCap 400' },
+            ].map((u) => (
+              <button
+                key={u.id}
+                onClick={() => setFilterUniverse(u.id)}
+                className={`px-3.5 py-2 rounded-lg text-xs font-medium transition-colors duration-150 ${
+                  filterUniverse === u.id
+                    ? 'bg-desk-text text-desk-deep'
+                    : 'desk-well text-desk-secondary hover:text-desk-text'
+                }`}
+              >
+                {u.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="desk-surface rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="border-b border-hairline bg-desk-deep/60 text-desk-muted">
+              <tr>
+                <th className="px-5 py-3 text-left font-medium">Rank</th>
+                <th className="px-5 py-3 text-left font-medium">Ticker</th>
+                <th className="px-5 py-3 text-left font-medium">Universe</th>
+                <th className="px-5 py-3 text-right font-medium">Price</th>
+                <th className="px-5 py-3 text-right font-medium">IV</th>
+                <th className="px-5 py-3 text-center font-medium">Next earnings</th>
+                <th className="px-5 py-3 text-center font-medium">vs 200d MA</th>
+                <th className="px-5 py-3 text-right font-medium">200d MA</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-hairline">
+              {filteredRankings.map((ranking, idx) => (
+                <tr key={idx} className="hover:bg-desk-raised/30 transition-colors">
+                  <td className="px-5 py-3 text-desk-muted font-mono tabular-nums">{idx + 1}</td>
+                  <td className="px-5 py-3 font-mono font-semibold text-desk-text">{ranking.ticker}</td>
+                  <td className="px-5 py-3">
+                    <span className="desk-tag">{ranking.universe}</span>
+                  </td>
+                  <td className="px-5 py-3 text-right font-mono tabular-nums text-desk-text">
+                    ${ranking.price.toFixed(2)}
+                  </td>
+                  <td className="px-5 py-3 text-right font-mono tabular-nums font-semibold text-desk-text">
+                    {ranking.iv.toFixed(1)}%
+                  </td>
+                  <td className="px-5 py-3 text-center font-mono tabular-nums text-desk-secondary">
+                    {ranking.next_earnings
+                      ? new Date(ranking.next_earnings).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                      : '—'}
+                  </td>
+                  <td className="px-5 py-3 text-center">
+                    {ranking.above_ma_200 !== null && ranking.above_ma_200 !== undefined && (
+                      <span className={ranking.above_ma_200 ? 'desk-tag-up' : 'desk-tag-down'}>
+                        {ranking.above_ma_200 ? 'Above' : 'Below'}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 text-right text-desk-muted font-mono tabular-nums">
+                    {ranking.ma_200 ? `$${ranking.ma_200.toFixed(2)}` : '—'}
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {filteredRankings.map((ranking, idx) => (
-                  <tr key={idx} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4 text-gray-400 font-mono">{idx + 1}</td>
-                    <td className="px-6 py-4">
-                      <span className="text-lg font-bold font-mono">{ranking.ticker}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getUniverseColor(ranking.universe)}`}>
-                        {ranking.universe}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right font-mono">
-                      ${ranking.price.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className={`text-lg font-bold ${
-                        ranking.iv > 70 ? 'text-red-400' :
-                        ranking.iv > 50 ? 'text-orange-400' :
-                        ranking.iv > 30 ? 'text-yellow-400' :
-                        'text-green-400'
-                      }`}>
-                        {ranking.iv.toFixed(1)}%
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center font-mono text-sm">
-                      {ranking.next_earnings ? (
-                        <span className="text-yellow-300">
-                          {new Date(ranking.next_earnings).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      {ranking.above_ma_200 !== null && (
-                        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          ranking.above_ma_200
-                            ? 'bg-green-500/20 text-green-300'
-                            : 'bg-red-500/20 text-red-300'
-                        }`}>
-                          {ranking.above_ma_200 ? 'Above' : 'Below'}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right text-gray-400 font-mono text-sm">
-                      {ranking.ma_200 ? `$${ranking.ma_200.toFixed(2)}` : '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {filteredRankings.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            No tickers match your filters
-          </div>
-        )}
-
-        {/* About Section */}
-        <div className="mt-8 bg-white/5 rounded-xl p-6 backdrop-blur-sm">
-          <h3 className="text-xl font-bold mb-3 text-indigo-300">About IV Rankings</h3>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            This page ranks all tickers across MAG7, NASDAQ 100, and S&P MidCap 400 by their near-term implied volatility.
-            Higher IV generally indicates greater expected price movement and can signal trading opportunities. The 200MA indicator
-            shows whether the stock is currently trading above (bullish) or below (bearish) its 200-day moving average.
-          </p>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
+
+      {filteredRankings.length === 0 && (
+        <div className="desk-surface rounded-2xl p-10 text-center text-sm text-desk-muted">
+          No tickers match the current filter.
+        </div>
+      )}
     </div>
   );
 }

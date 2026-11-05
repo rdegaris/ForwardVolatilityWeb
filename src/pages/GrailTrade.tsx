@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { GrailSignalRow, GrailSignalsPayload } from '../types/grail';
 import SignalChartModal from '../components/SignalChartModal';
+import { AlertCircleIcon, ChartLineIcon } from '../components/Icons';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -24,15 +25,14 @@ export default function GrailTrade() {
         setData(d);
         setLoading(false);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load Grail Trade signals');
+        setError(err?.message || 'Failed to load YouHaveChosenWisely signals');
         setLoading(false);
       }
     })();
   }, []);
 
   const triggeredRows = useMemo(() => {
-    // JSON stores all rows in signals[]; eligible=true rows are the triggered ones
-    const rows = data?.triggered?.length ? data.triggered : (data?.signals ?? []).filter(r => r.eligible);
+    const rows = data?.triggered?.length ? data.triggered : (data?.signals ?? []).filter((r) => r.eligible);
     return [...rows].sort((a, b) => {
       const sym = a.symbol.localeCompare(b.symbol);
       if (sym !== 0) return sym;
@@ -42,16 +42,14 @@ export default function GrailTrade() {
 
   const watchingRows = useMemo(() => {
     const rows = data?.signals ?? [];
-    // Filter to rows with strong ADX but not yet at EMA
     return [...rows]
-      .filter(r => !r.eligible && r.adx >= (data?.adx_threshold ?? 30))
+      .filter((r) => !r.eligible && r.adx >= (data?.adx_threshold ?? 30))
       .sort((a, b) => a.distance_to_ema_pct - b.distance_to_ema_pct);
   }, [data]);
 
   const allRows = useMemo(() => {
     const rows = data?.signals ?? [];
     return [...rows].sort((a, b) => {
-      // Sort by eligible first, then by ADX descending
       if (a.eligible !== b.eligible) return a.eligible ? -1 : 1;
       return b.adx - a.adx;
     });
@@ -59,241 +57,133 @@ export default function GrailTrade() {
 
   if (loading) {
     return (
-      <div className="text-white flex items-center justify-center py-24">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading YouHaveChosenWisely signals...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading YouHaveChosenWisely signals…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="text-white flex items-center justify-center py-24">
-        <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ Signal data is currently unavailable</p>
-          <p className="text-gray-400 text-sm">YouHaveChosenWisely signal data could not be loaded. Please check back shortly.</p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>Signal data unavailable</span>
         </div>
+        <p className="text-sm text-desk-muted">YouHaveChosenWisely signal data could not be loaded.</p>
       </div>
     );
   }
 
-  const sideColor = (r: GrailSignalRow) => {
-    if (r.side === 'long') return 'text-emerald-200';
-    if (r.side === 'short') return 'text-rose-200';
-    return 'text-gray-400';
-  };
-
-  const eligibleColor = (r: GrailSignalRow) => {
-    if (r.eligible) return 'text-emerald-200';
-    return 'text-amber-200';
-  };
-
   return (
-    <div className="space-y-8 text-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-500">
-            YouHaveChosenWisely
-          </h1>
-          <p className="text-gray-300">
-            A quantitative trend-continuation model designed to capture high-probability pullback entries during strong market moves, customized with optimized backtested trend-strength and moving average parameters.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm mt-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Today's Signals</div>
-              <div className="text-xl font-bold">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</div>
+    <div className="space-y-8">
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>ADX trend continuation / 20 EMA pullback</span>
             </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">System</div>
-              <div className="text-xl font-bold text-amber-300">YouHaveChosenWisely</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Triggered</div>
-              <div className="text-xl font-bold text-emerald-300">{data.total_triggered}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Watching</div>
-              <div className="text-xl font-bold text-amber-300">{watchingRows.length}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{new Date(data.timestamp).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</div>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
+              YouHaveChosenWisely
+            </h1>
+            <p className="text-sm leading-relaxed text-desk-secondary">
+              Trend-continuation pullback model capturing 20-period EMA retracements inside strong directional trends (ADX ≥ {data.adx_threshold ?? 30}), paired with swing-extreme targets and ATR-calibrated stops.
+            </p>
+          </div>
+          <div className="shrink-0 md:text-right">
+            <div className="text-xs text-desk-muted">Signal session</div>
+            <div className="mt-1 text-xl font-medium font-mono text-desk-text">{data.date}</div>
           </div>
         </div>
 
-        {/* Triggered Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">Triggered Setups</h2>
-          {triggeredRows.length === 0 ? (
-            <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No markets have triggered today. Wait for price to reach EMA.</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Contracts scanned</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {data.total_scanned ?? allRows.length}
             </div>
-          ) : (
-            <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-black/20 text-gray-300">
-                    <tr>
-                      <th className="px-4 py-3 text-left">Symbol</th>
-                      <th className="px-4 py-3 text-left">Side</th>
-                      <th className="px-4 py-3 text-left">Cluster</th>
-                      <th className="px-4 py-3 text-right">Close</th>
-                      <th className="px-4 py-3 text-right">EMA20</th>
-                      <th className="px-4 py-3 text-right">ADX</th>
-                      <th className="px-4 py-3 text-right">+DI</th>
-                      <th className="px-4 py-3 text-right">-DI</th>
-                      <th className="px-4 py-3 text-right">Entry Zone</th>
-                      <th className="px-4 py-3 text-right">Stop</th>
-                      <th className="px-4 py-3 text-right">Target</th>
-                      <th className="px-4 py-3 text-left">Reason</th>
-                      <th className="px-4 py-3 text-center">Chart</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {triggeredRows.map((r, idx) => (
-                      <tr
-                        key={`${r.symbol}-${idx}`}
-                        className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
-                      >
-                        <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>{r.side.toUpperCase()}</td>
-                        <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.close, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.ema20, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono font-bold text-amber-300">{formatNum(r.adx, 1)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-emerald-300">{formatNum(r.plus_di, 1)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-rose-300">{formatNum(r.minus_di, 1)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_zone, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-emerald-200">{formatNum(r.target, 4)}</td>
-                        <td className="px-4 py-3 text-gray-300 text-xs">{r.reason}</td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => openChart(r)}
-                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
-                          >
-                            Chart 📈
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Triggered setups</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">
+              {data.total_triggered}
             </div>
-          )}
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Strong trend watching</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {watchingRows.length}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Updated</div>
+            <div className="mt-2 text-lg leading-none font-medium font-mono text-desk-text">
+              {new Date(data.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Watching Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">Watching — Strong Trend, Waiting for Pullback</h2>
-          {watchingRows.length === 0 ? (
-            <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No markets with strong ADX currently watching for pullback.</div>
-            </div>
-          ) : (
-            <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-black/20 text-gray-300">
-                    <tr>
-                      <th className="px-4 py-3 text-left">Symbol</th>
-                      <th className="px-4 py-3 text-left">Trend</th>
-                      <th className="px-4 py-3 text-left">Cluster</th>
-                      <th className="px-4 py-3 text-right">Close</th>
-                      <th className="px-4 py-3 text-right">EMA20</th>
-                      <th className="px-4 py-3 text-right">Dist to EMA</th>
-                      <th className="px-4 py-3 text-right">ADX</th>
-                      <th className="px-4 py-3 text-right">+DI</th>
-                      <th className="px-4 py-3 text-right">-DI</th>
-                      <th className="px-4 py-3 text-left">Status</th>
-                      <th className="px-4 py-3 text-center">Chart</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {watchingRows.map((r, idx) => (
-                      <tr
-                        key={`${r.symbol}-${idx}`}
-                        className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
-                      >
-                        <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>
-                          {r.side === 'long' ? '⬆️ UP' : r.side === 'short' ? '⬇️ DN' : '—'}
-                        </td>
-                        <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.close, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.ema20, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-amber-300">{formatNum(r.distance_to_ema_pct, 1)}%</td>
-                        <td className="px-4 py-3 text-right font-mono font-bold text-amber-300">{formatNum(r.adx, 1)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-emerald-300">{formatNum(r.plus_di, 1)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-rose-300">{formatNum(r.minus_di, 1)}</td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">{r.reason}</td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => openChart(r)}
-                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
-                          >
-                            Chart 📈
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* All Signals Section */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">All Scanned ({data?.total_scanned ?? allRows.length})</h2>
-          <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
+      {/* Triggered Section */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">Triggered setups</h2>
+        {triggeredRows.length === 0 ? (
+          <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+            No contracts have tagged the 20 EMA pullback zone today
+          </div>
+        ) : (
+          <div className="desk-surface rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-black/20 text-gray-300">
+              <table className="min-w-full text-xs">
+                <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
                   <tr>
-                    <th className="px-4 py-3 text-left">Symbol</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                    <th className="px-4 py-3 text-left">Trend</th>
-                    <th className="px-4 py-3 text-right">Close</th>
-                    <th className="px-4 py-3 text-right">EMA20</th>
-                    <th className="px-4 py-3 text-right">ADX</th>
-                    <th className="px-4 py-3 text-right">+DI</th>
-                    <th className="px-4 py-3 text-right">-DI</th>
-                    <th className="px-4 py-3 text-left">Reason</th>
-                    <th className="px-4 py-3 text-center">Chart</th>
+                    <th className="px-4 py-3 text-left font-normal">Contract</th>
+                    <th className="px-4 py-3 text-left font-normal">Side</th>
+                    <th className="px-4 py-3 text-left font-normal">Cluster</th>
+                    <th className="px-4 py-3 text-right font-normal">Close</th>
+                    <th className="px-4 py-3 text-right font-normal">EMA 20</th>
+                    <th className="px-4 py-3 text-right font-normal">ADX</th>
+                    <th className="px-4 py-3 text-right font-normal">+DI / -DI</th>
+                    <th className="px-4 py-3 text-right font-normal">Entry zone</th>
+                    <th className="px-4 py-3 text-right font-normal">Stop</th>
+                    <th className="px-4 py-3 text-right font-normal">Target</th>
+                    <th className="px-4 py-3 text-left font-normal">Notes</th>
+                    <th className="px-4 py-3 text-right font-normal">Chart</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {allRows.map((r, idx) => (
+                <tbody className="divide-y divide-hairline">
+                  {triggeredRows.map((r, idx) => (
                     <tr
                       key={`${r.symbol}-${idx}`}
-                      className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
+                      className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk"
                     >
-                      <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                      <td className={`px-4 py-3 font-semibold ${eligibleColor(r)}`}>
-                        {r.eligible ? '✅ TRIGGERED' : '⏳ WAITING'}
+                      <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                      <td className="px-4 py-3">
+                        <span className={r.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                          {r.side === 'long' ? 'Long' : 'Short'}
+                        </span>
                       </td>
-                      <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>
-                        {r.side === 'long' ? 'LONG' : r.side === 'short' ? 'SHORT' : '—'}
+                      <td className="px-4 py-3 text-desk-secondary">{r.cluster || '—'}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.close, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.ema20, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono font-medium text-desk-text">{formatNum(r.adx, 1)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">
+                        {formatNum(r.plus_di, 1)} / {formatNum(r.minus_di, 1)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.close, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.ema20, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.adx, 1)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.plus_di, 1)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.minus_di, 1)}</td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">{r.reason}</td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.entry_zone, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-down">{formatNum(r.stop_loss, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-up">{formatNum(r.target, 4)}</td>
+                      <td className="px-4 py-3 text-desk-secondary">{r.reason}</td>
+                      <td className="px-4 py-3 text-right">
                         <button
+                          type="button"
                           onClick={() => openChart(r)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                          className="desk-btn-secondary h-7 px-2.5 text-xs"
                         >
-                          Chart 📈
+                          <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                          <span>1D</span>
                         </button>
                       </td>
                     </tr>
@@ -302,31 +192,174 @@ export default function GrailTrade() {
               </table>
             </div>
           </div>
-        </div>
-
-        {/* Chart Modal */}
-        {chartRow && (
-          <SignalChartModal
-            isOpen={!!chartRow}
-            onClose={closeChart}
-            symbol={chartRow.symbol}
-            strategy="grail"
-            interval="D"
-            signalLabel={chartRow.side ? `GRAIL — ${chartRow.side.toUpperCase()}` : 'HOLY GRAIL'}
-            direction={chartRow.side === 'long' ? 'long' : chartRow.side === 'short' ? 'short' : null}
-            entryPrice={chartRow.entry_zone ?? chartRow.ema20}
-            targetPrice={chartRow.target}
-            stopPrice={chartRow.stop_loss}
-            signalDate={data?.date}
-            extraRows={[
-              { label: 'ADX (14)', value: formatNum(chartRow.adx, 1), highlight: chartRow.adx >= (data?.adx_threshold ?? 30) },
-              { label: '+DI / -DI', value: `${formatNum(chartRow.plus_di, 1)} / ${formatNum(chartRow.minus_di, 1)}` },
-              { label: 'EMA (20)', value: formatNum(chartRow.ema20, 4) }
-            ]}
-          />
         )}
+      </section>
 
-      </div>
+      {/* Watching Section */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">Strong trend watchlist (awaiting EMA pullback)</h2>
+        {watchingRows.length === 0 ? (
+          <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+            No contracts with ADX ≥ {data.adx_threshold ?? 30} currently awaiting pullback
+          </div>
+        ) : (
+          <div className="desk-surface rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-xs">
+                <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-normal">Contract</th>
+                    <th className="px-4 py-3 text-left font-normal">Trend</th>
+                    <th className="px-4 py-3 text-left font-normal">Cluster</th>
+                    <th className="px-4 py-3 text-right font-normal">Close</th>
+                    <th className="px-4 py-3 text-right font-normal">EMA 20</th>
+                    <th className="px-4 py-3 text-right font-normal">Dist to EMA</th>
+                    <th className="px-4 py-3 text-right font-normal">ADX</th>
+                    <th className="px-4 py-3 text-right font-normal">+DI / -DI</th>
+                    <th className="px-4 py-3 text-left font-normal">Status</th>
+                    <th className="px-4 py-3 text-right font-normal">Chart</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-hairline">
+                  {watchingRows.map((r, idx) => (
+                    <tr
+                      key={`${r.symbol}-${idx}`}
+                      className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk"
+                    >
+                      <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                      <td className="px-4 py-3">
+                        {r.side === 'long' ? (
+                          <span className="desk-tag-up">Up</span>
+                        ) : r.side === 'short' ? (
+                          <span className="desk-tag-down">Down</span>
+                        ) : (
+                          <span className="text-desk-muted">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-desk-secondary">{r.cluster || '—'}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.close, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.ema20, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.distance_to_ema_pct, 1)}%</td>
+                      <td className="px-4 py-3 text-right font-mono font-medium text-desk-text">{formatNum(r.adx, 1)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">
+                        {formatNum(r.plus_di, 1)} / {formatNum(r.minus_di, 1)}
+                      </td>
+                      <td className="px-4 py-3 text-desk-muted">{r.reason}</td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => openChart(r)}
+                          className="desk-btn-secondary h-7 px-2.5 text-xs"
+                        >
+                          <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                          <span>1D</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* All Scanned */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">
+          All contracts scanned ({data?.total_scanned ?? allRows.length})
+        </h2>
+        <div className="desk-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left font-normal">Contract</th>
+                  <th className="px-4 py-3 text-left font-normal">Status</th>
+                  <th className="px-4 py-3 text-left font-normal">Trend</th>
+                  <th className="px-4 py-3 text-right font-normal">Close</th>
+                  <th className="px-4 py-3 text-right font-normal">EMA 20</th>
+                  <th className="px-4 py-3 text-right font-normal">ADX</th>
+                  <th className="px-4 py-3 text-right font-normal">+DI / -DI</th>
+                  <th className="px-4 py-3 text-left font-normal">Notes</th>
+                  <th className="px-4 py-3 text-right font-normal">Chart</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {allRows.map((r, idx) => (
+                  <tr
+                    key={`${r.symbol}-${idx}`}
+                    className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk"
+                  >
+                    <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                    <td className="px-4 py-3">
+                      {r.eligible ? (
+                        <span className="inline-flex items-center gap-1.5 text-desk-up">
+                          <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+                          <span>Triggered</span>
+                        </span>
+                      ) : (
+                        <span className="text-desk-muted">Waiting</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {r.side === 'long' ? (
+                        <span className="text-desk-up">Long</span>
+                      ) : r.side === 'short' ? (
+                        <span className="text-desk-down">Short</span>
+                      ) : (
+                        <span className="text-desk-muted">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.close, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.ema20, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.adx, 1)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">
+                      {formatNum(r.plus_di, 1)} / {formatNum(r.minus_di, 1)}
+                    </td>
+                    <td className="px-4 py-3 text-desk-muted">{r.reason}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => openChart(r)}
+                        className="desk-btn-secondary h-7 px-2.5 text-xs"
+                      >
+                        <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                        <span>1D</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {chartRow && (
+        <SignalChartModal
+          isOpen={!!chartRow}
+          onClose={closeChart}
+          symbol={chartRow.symbol}
+          strategy="grail"
+          interval="D"
+          signalLabel={
+            chartRow.side && chartRow.side !== 'none'
+              ? `YouHaveChosenWisely · ${chartRow.side === 'long' ? 'Long' : 'Short'}`
+              : 'YouHaveChosenWisely'
+          }
+          direction={chartRow.side === 'long' ? 'long' : chartRow.side === 'short' ? 'short' : null}
+          entryPrice={chartRow.entry_zone ?? chartRow.ema20}
+          targetPrice={chartRow.target}
+          stopPrice={chartRow.stop_loss}
+          signalDate={data?.date}
+          extraRows={[
+            { label: 'ADX (14)', value: formatNum(chartRow.adx, 1), highlight: chartRow.adx >= (data?.adx_threshold ?? 30) },
+            { label: '+DI / -DI', value: `${formatNum(chartRow.plus_di, 1)} / ${formatNum(chartRow.minus_di, 1)}` },
+            { label: 'EMA (20)', value: formatNum(chartRow.ema20, 4) },
+          ]}
+        />
+      )}
     </div>
   );
 }

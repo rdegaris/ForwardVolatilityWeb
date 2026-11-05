@@ -453,10 +453,10 @@ export default function TradeTracker() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-desk-text">
             Trade Tracker
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-desk-secondary">
             Monitor your calendar spread positions and P&L
           </p>
         </div>
@@ -465,27 +465,27 @@ export default function TradeTracker() {
             <>
               <button
                 onClick={handleExportCSV}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-up hover:bg-desk-up text-desk-deep"
               >
-                📊 Export CSV
+                 Export CSV
               </button>
               <button
                 onClick={handleClearAllTrades}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-down hover:bg-desk-down text-desk-deep"
               >
-                🗑️ Clear All
+                 Clear All
               </button>
             </>
           )}
           <button
             onClick={() => setShowImportModal(true)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+            className="font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-text hover:bg-desk-text text-desk-deep"
           >
-            📥 Import from IB
+             Import from IB
           </button>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            className="font-semibold py-2 px-6 rounded-md transition-colors duration-200 bg-desk-text hover:bg-desk-text text-desk-deep"
           >
             {showForm ? 'Cancel' : '+ Add Trade'}
           </button>
@@ -494,12 +494,12 @@ export default function TradeTracker() {
 
       {/* Add Trade Form */}
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">New Calendar Spread</h2>
+        <div className="rounded-lg p-6 bg-desk-card">
+          <h2 className="text-xl font-bold mb-4 text-desk-text">New Calendar Spread</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Symbol
               </label>
               <input
@@ -507,12 +507,12 @@ export default function TradeTracker() {
                 value={formData.symbol}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value.toUpperCase() })}
                 placeholder="AMD"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Strike
               </label>
               <input
@@ -521,18 +521,18 @@ export default function TradeTracker() {
                 value={formData.strike}
                 onChange={(e) => setFormData({ ...formData, strike: parseFloat(e.target.value) })}
                 placeholder="237.5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Type
               </label>
               <select
                 value={formData.callOrPut}
                 onChange={(e) => setFormData({ ...formData, callOrPut: e.target.value as 'CALL' | 'PUT' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               >
                 <option value="CALL">CALL</option>
                 <option value="PUT">PUT</option>
@@ -542,24 +542,24 @@ export default function TradeTracker() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             {/* Front Month (Short) */}
-            <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Front Month (Short)</h3>
+            <div className="border rounded-lg p-4 border-hairline">
+              <h3 className="font-semibold mb-3 text-desk-text">Front Month (Short)</h3>
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Expiration
                   </label>
                   <input
                     type="date"
                     value={formData.frontExpiration}
                     onChange={(e) => setFormData({ ...formData, frontExpiration: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Entry Price
                   </label>
                   <input
@@ -568,12 +568,12 @@ export default function TradeTracker() {
                     value={formData.frontEntryPrice}
                     onChange={(e) => setFormData({ ...formData, frontEntryPrice: parseFloat(e.target.value) })}
                     placeholder="2.44"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Current Price
                   </label>
                   <input
@@ -582,31 +582,31 @@ export default function TradeTracker() {
                     value={formData.frontCurrentPrice}
                     onChange={(e) => setFormData({ ...formData, frontCurrentPrice: parseFloat(e.target.value) })}
                     placeholder="2.44"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
               </div>
             </div>
 
             {/* Back Month (Long) */}
-            <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Back Month (Long)</h3>
+            <div className="border rounded-lg p-4 border-hairline">
+              <h3 className="font-semibold mb-3 text-desk-text">Back Month (Long)</h3>
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Expiration
                   </label>
                   <input
                     type="date"
                     value={formData.backExpiration}
                     onChange={(e) => setFormData({ ...formData, backExpiration: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Entry Price
                   </label>
                   <input
@@ -615,12 +615,12 @@ export default function TradeTracker() {
                     value={formData.backEntryPrice}
                     onChange={(e) => setFormData({ ...formData, backEntryPrice: parseFloat(e.target.value) })}
                     placeholder="5.00"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-desk-secondary">
                     Current Price
                   </label>
                   <input
@@ -629,7 +629,7 @@ export default function TradeTracker() {
                     value={formData.backCurrentPrice}
                     onChange={(e) => setFormData({ ...formData, backCurrentPrice: parseFloat(e.target.value) })}
                     placeholder="5.00"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                   />
                 </div>
               </div>
@@ -638,7 +638,7 @@ export default function TradeTracker() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Quantity (Contracts)
               </label>
               <input
@@ -646,12 +646,12 @@ export default function TradeTracker() {
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
                 placeholder="1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Underlying Entry Price
               </label>
               <input
@@ -660,12 +660,12 @@ export default function TradeTracker() {
                 value={formData.underlyingEntryPrice}
                 onChange={(e) => setFormData({ ...formData, underlyingEntryPrice: parseFloat(e.target.value) })}
                 placeholder="235.72"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium mb-1 text-desk-secondary">
                 Underlying Current Price
               </label>
               <input
@@ -674,14 +674,14 @@ export default function TradeTracker() {
                 value={formData.underlyingCurrentPrice}
                 onChange={(e) => setFormData({ ...formData, underlyingCurrentPrice: parseFloat(e.target.value) })}
                 placeholder="235.72"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
               />
             </div>
           </div>
 
           <button
             onClick={handleAddTrade}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-md transition duration-200"
+            className="w-full font-semibold py-3 px-6 rounded-md transition-colors duration-200 text-desk-text bg-desk-raised"
           >
             Add Trade
           </button>
@@ -692,31 +692,31 @@ export default function TradeTracker() {
       {trades.length > 0 && (
         <>
           {/* Summary Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Portfolio Summary</h2>
+          <div className="rounded-lg overflow-hidden bg-desk-card">
+            <div className="px-4 py-3 border-b bg-desk-raised border-hairline">
+              <h2 className="text-lg font-semibold text-desk-text">Portfolio Summary</h2>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Positions</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{trades.length}</div>
+                  <div className="text-sm mb-1 text-desk-muted">Total Positions</div>
+                  <div className="text-2xl font-bold text-desk-text">{trades.length}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Contracts</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <div className="text-sm mb-1 text-desk-muted">Total Contracts</div>
+                  <div className="text-2xl font-bold text-desk-text">
                     {trades.reduce((sum, t) => sum + t.quantity, 0)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total P&L</div>
-                  <div className={`text-2xl font-bold ${trades.reduce((sum, t) => sum + calculatePnL(t), 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  <div className="text-sm mb-1 text-desk-muted">Total P&L</div>
+                  <div className={`text-2xl font-bold ${trades.reduce((sum, t) => sum + calculatePnL(t), 0) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                     {fmt$(trades.reduce((sum, t) => sum + calculatePnL(t), 0))}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg P&L per Trade</div>
-                  <div className={`text-2xl font-bold ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  <div className="text-sm mb-1 text-desk-muted">Avg P&L per Trade</div>
+                  <div className={`text-2xl font-bold ${(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                     {fmt$(trades.reduce((sum, t) => sum + calculatePnL(t), 0) / trades.length)}
                   </div>
                 </div>
@@ -725,23 +725,23 @@ export default function TradeTracker() {
           </div>
 
           {/* Open Positions Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-            <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Open Positions</h2>
+          <div className="rounded-lg overflow-hidden bg-desk-card">
+            <div className="px-4 py-3 border-b bg-desk-raised border-hairline">
+              <h2 className="text-lg font-semibold text-desk-text">Open Positions</h2>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-gray-100 dark:bg-gray-700">
-                  <tr className="border-b border-gray-300 dark:border-gray-600">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-900 dark:text-white">Financial Instrument</th>
-                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Position</th>
-                    <th className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">Close By</th>
-                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Avg Price</th>
-                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Last</th>
-                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change</th>
-                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Change %</th>
-                    <th className="text-right py-2 px-2 font-semibold text-gray-900 dark:text-white">Daily P&L</th>
+                <thead className="bg-desk-raised">
+                  <tr className="border-b border-hairline">
+                    <th className="text-left py-2 px-3 font-semibold text-desk-text">Financial Instrument</th>
+                    <th className="text-center py-2 px-2 font-semibold text-desk-text">Position</th>
+                    <th className="text-center py-2 px-2 font-semibold text-desk-text">Close By</th>
+                    <th className="text-right py-2 px-2 font-semibold text-desk-text">Avg Price</th>
+                    <th className="text-right py-2 px-2 font-semibold text-desk-text">Last</th>
+                    <th className="text-right py-2 px-2 font-semibold text-desk-text">Change</th>
+                    <th className="text-right py-2 px-2 font-semibold text-desk-text">Change %</th>
+                    <th className="text-right py-2 px-2 font-semibold text-desk-text">Daily P&L</th>
                   </tr>
                 </thead>
               <tbody>
@@ -781,36 +781,36 @@ export default function TradeTracker() {
                       {/* Calendar Spread Row */}
                       <tr 
                         key={`${trade.id}-spread`}
-                        className="border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/10"
+                        className="border-b border-hairline bg-desk-card"
                       >
-                        <td className="py-2 px-3 font-medium text-gray-900 dark:text-white">
+                        <td className="py-2 px-3 font-medium text-desk-text">
                           {trade.symbol} {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}/{new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })} {trade.strike} CalC
                         </td>
-                        <td className="text-center py-2 px-2 font-semibold text-gray-900 dark:text-white">
+                        <td className="text-center py-2 px-2 font-semibold text-desk-text">
                           {trade.quantity}
                         </td>
                         <td className="text-center py-2 px-2">
                           <div className="flex items-center justify-center gap-1">
-                            {isToday && <span className="text-red-600 dark:text-red-400 font-bold text-lg" title="Expires TODAY!">🔴</span>}
-                            {isThisWeek && !isToday && <span className="text-yellow-600 dark:text-yellow-400 text-lg" title="Expires this week">⚠️</span>}
-                            <span className={isToday ? 'text-red-600 dark:text-red-400 font-bold' : isThisWeek ? 'text-yellow-600 dark:text-yellow-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}>
+                            {isToday && <span className="font-bold text-lg text-desk-down" title="Expires TODAY!"></span>}
+                            {isThisWeek && !isToday && <span className="text-lg text-desk-amber" title="Expires this week"></span>}
+                            <span className={isToday ? 'font-bold text-desk-down' : isThisWeek ? 'font-semibold text-desk-amber' : 'text-desk-secondary'}>
                               {closeDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' })}
                             </span>
                           </div>
                         </td>
-                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                        <td className="text-right py-2 px-2 text-desk-secondary">
                           {(backEntry - frontEntry).toFixed(2)}
                         </td>
-                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                        <td className="text-right py-2 px-2 text-desk-text">
                           {(backCurrent - frontCurrent).toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {totalPnL >= 0 ? '+' : ''}{((backChange - frontChange)).toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 font-medium ${totalPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {totalPnL >= 0 ? '+' : ''}{(((backChange - frontChange) / (backEntry - frontEntry)) * 100).toFixed(2)}%
                         </td>
-                        <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 font-bold ${totalPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {fmt$(totalPnL, 0)}
                         </td>
                       </tr>
@@ -818,28 +818,28 @@ export default function TradeTracker() {
                       {/* Front Month (Short) Row */}
                       <tr 
                         key={`${trade.id}-front`}
-                        className="border-b border-gray-100 dark:border-gray-700 bg-red-50 dark:bg-red-900/10"
+                        className="border-b border-hairline bg-desk-card"
                       >
-                        <td className="py-2 px-3 pl-8 text-gray-700 dark:text-gray-300">
+                        <td className="py-2 px-3 pl-8 text-desk-secondary">
                           -{trade.quantity} {trade.symbol} {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}'{new Date(trade.frontExpiration).getFullYear().toString().slice(2)} {trade.strike} {trade.callOrPut === 'CALL' ? 'C' : 'P'}
                         </td>
-                        <td className="text-center py-2 px-2 text-red-600 dark:text-red-400 font-semibold">
+                        <td className="text-center py-2 px-2 font-semibold text-desk-down">
                           -{trade.quantity}
                         </td>
                         <td></td>
-                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                        <td className="text-right py-2 px-2 text-desk-secondary">
                           {frontEntry.toFixed(2)}
                         </td>
-                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                        <td className="text-right py-2 px-2 text-desk-text">
                           {frontCurrent.toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {-frontPnL >= 0 ? '+' : ''}{(-frontChange).toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {-frontPnL >= 0 ? '+' : ''}{(-frontChangePct).toFixed(2)}%
                         </td>
-                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${-frontPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {(-frontPnL).toFixed(0)}
                         </td>
                       </tr>
@@ -847,28 +847,28 @@ export default function TradeTracker() {
                       {/* Back Month (Long) Row */}
                       <tr 
                         key={`${trade.id}-back`}
-                        className="border-b-2 border-gray-300 dark:border-gray-600 bg-green-50 dark:bg-green-900/10"
+                        className="border-b-2 border-hairline bg-desk-card"
                       >
-                        <td className="py-2 px-3 pl-8 text-gray-700 dark:text-gray-300">
+                        <td className="py-2 px-3 pl-8 text-desk-secondary">
                           +{trade.quantity} {trade.symbol} {new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}'{new Date(trade.backExpiration).getFullYear().toString().slice(2)} {trade.strike} {trade.callOrPut === 'CALL' ? 'C' : 'P'}
                         </td>
-                        <td className="text-center py-2 px-2 text-green-600 dark:text-green-400 font-semibold">
+                        <td className="text-center py-2 px-2 font-semibold text-desk-up">
                           +{trade.quantity}
                         </td>
                         <td></td>
-                        <td className="text-right py-2 px-2 text-gray-700 dark:text-gray-300">
+                        <td className="text-right py-2 px-2 text-desk-secondary">
                           {backEntry.toFixed(2)}
                         </td>
-                        <td className="text-right py-2 px-2 text-gray-900 dark:text-white">
+                        <td className="text-right py-2 px-2 text-desk-text">
                           {backCurrent.toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {backPnL >= 0 ? '+' : ''}{backChange.toFixed(2)}
                         </td>
-                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {backPnL >= 0 ? '+' : ''}{backChangePct.toFixed(2)}%
                         </td>
-                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <td className={`text-right py-2 px-2 ${backPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {backPnL.toFixed(0)}
                         </td>
                       </tr>
@@ -887,49 +887,49 @@ export default function TradeTracker() {
 
       {/* Directional Option Trades */}
       {directionalTrades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <span>🎯</span> Directional Option Trades
+        <div className="rounded-lg overflow-hidden bg-desk-card">
+          <div className="px-4 py-3 border-b flex items-center justify-between border-hairline bg-desk-raised">
+            <h2 className="text-lg font-semibold flex items-center gap-2 text-desk-text">
+              <span></span> Directional Option Trades
             </h2>
             <div className="flex items-center gap-3">
               {dirLastUpdate && (
-                <span className="text-xs text-amber-100">
+                <span className="text-xs text-desk-amber">
                   {dirPriceSource} · {dirLastUpdate.toLocaleTimeString()}
                 </span>
               )}
               <button
                 onClick={refreshDirectionalPrices}
                 disabled={dirRefreshing}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 disabled:opacity-50 text-white text-sm font-medium rounded-md transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 disabled:opacity-50 text-sm font-medium rounded-md transition-colors bg-desk-card hover:bg-desk-card text-desk-text"
               >
-                <span className={dirRefreshing ? 'animate-spin' : ''}>🔄</span>
+                <span className={dirRefreshing ? 'animate-spin' : ''}></span>
                 {dirRefreshing ? 'Refreshing...' : 'Refresh Prices'}
               </button>
             </div>
           </div>
 
           {/* Summary */}
-          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+          <div className="p-4 border-b bg-desk-card border-hairline">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Open Positions</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">{directionalTrades.length}</div>
+                <div className="text-xs mb-1 text-desk-muted">Open Positions</div>
+                <div className="text-xl font-bold text-desk-text">{directionalTrades.length}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Contracts</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="text-xs mb-1 text-desk-muted">Total Contracts</div>
+                <div className="text-xl font-bold text-desk-text">
                   {directionalTrades.reduce((sum, t) => sum + Math.abs(t.quantity), 0)}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Cost</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                <div className="text-xs mb-1 text-desk-muted">Total Cost</div>
+                <div className="text-xl font-bold text-desk-text">
                   {fmt$(directionalTrades.reduce((sum, t) => sum + t.entryPrice * Math.abs(t.quantity) * 100, 0), 0)}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total P&L</div>
+                <div className="text-xs mb-1 text-desk-muted">Total P&L</div>
                 {(() => {
                   const totalPnl = directionalTrades.reduce((sum, t) => {
                     if (t.unrealizedPnL !== undefined && t.unrealizedPnL !== null) return sum + t.unrealizedPnL;
@@ -939,7 +939,7 @@ export default function TradeTracker() {
                     return sum + pnl;
                   }, 0);
                   return (
-                    <div className={`text-xl font-bold ${totalPnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    <div className={`text-xl font-bold ${totalPnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                       {fmt$(totalPnl, 0, true)}
                     </div>
                   );
@@ -950,16 +950,16 @@ export default function TradeTracker() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-gray-700">
-                <tr className="border-b border-gray-300 dark:border-gray-600">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Position</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Qty</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Expiration</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Entry</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Current</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Change</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Change %</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">P&L</th>
+              <thead className="bg-desk-raised">
+                <tr className="border-b border-hairline">
+                  <th className="text-left py-3 px-4 font-semibold text-desk-text">Position</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Qty</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Expiration</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Entry</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Current</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Change</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Change %</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">P&L</th>
                 </tr>
               </thead>
               <tbody>
@@ -978,51 +978,51 @@ export default function TradeTracker() {
                   return (
                     <tr
                       key={trade.id}
-                      className={`border-b border-gray-200 dark:border-gray-700 ${
+                      className={`border-b border-hairline ${
                         isLong
-                          ? 'bg-green-50 dark:bg-green-900/10 hover:bg-green-100 dark:hover:bg-green-900/20'
-                          : 'bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20'
+                          ? 'bg-desk-card hover:bg-desk-card'
+                          : 'bg-desk-card hover:bg-desk-card'
                       }`}
                     >
-                      <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">
+                      <td className="py-3 px-4 font-medium text-desk-text">
                         <div className="flex items-center gap-2">
-                          <span className={`px-1.5 py-0.5 text-xs font-bold rounded ${isLong ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200' : 'bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200'}`}>
+                          <span className={`px-1.5 py-0.5 text-xs font-bold rounded ${isLong ? 'bg-desk-up text-desk-up' : 'bg-desk-down text-desk-down'}`}>
                             {isLong ? 'LONG' : 'SHORT'}
                           </span>
                           <span>{trade.symbol} ${trade.strike} {trade.callOrPut}</span>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <div className="text-xs mt-0.5 text-desk-muted">
                           Underlying: {fmt$(trade.underlyingCurrentPrice)}
                         </div>
                       </td>
-                      <td className={`text-center py-3 px-3 font-semibold ${isLong ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-center py-3 px-3 font-semibold ${isLong ? 'text-desk-up' : 'text-desk-down'}`}>
                         {isLong ? '+' : ''}{trade.quantity}
                       </td>
                       <td className="text-center py-3 px-3">
                         <div className="flex items-center justify-center gap-1">
-                          {dte <= 0 && <span className="text-red-600 dark:text-red-400 font-bold text-lg" title="Expired!">🔴</span>}
-                          {dte > 0 && dte <= 7 && <span className="text-yellow-600 dark:text-yellow-400 text-lg" title="Expires this week">⚠️</span>}
+                          {dte <= 0 && <span className="font-bold text-lg text-desk-down" title="Expired!"></span>}
+                          {dte > 0 && dte <= 7 && <span className="text-lg text-desk-amber" title="Expires this week"></span>}
                           <div>
-                            <div className={dte <= 0 ? 'text-red-600 dark:text-red-400 font-bold' : dte <= 7 ? 'text-yellow-600 dark:text-yellow-400 font-semibold' : 'text-gray-700 dark:text-gray-300'}>
+                            <div className={dte <= 0 ? 'font-bold text-desk-down' : dte <= 7 ? 'font-semibold text-desk-amber' : 'text-desk-secondary'}>
                               {new Date(trade.expiration).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: '2-digit' })}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{dte}d</div>
+                            <div className="text-xs text-desk-muted">{dte}d</div>
                           </div>
                         </div>
                       </td>
-                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-3 px-3 text-desk-secondary">
                         {fmt$(trade.entryPrice)}
                       </td>
-                      <td className="text-right py-3 px-3 text-gray-900 dark:text-white font-medium">
+                      <td className="text-right py-3 px-3 font-medium text-desk-text">
                         {fmt$(trade.currentPrice)}
                       </td>
-                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? change : -change) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? change : -change) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {(isLong ? change : -change) >= 0 ? '+' : ''}{(isLong ? change : -change).toFixed(2)}
                       </td>
-                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? changePct : -changePct) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-3 px-3 font-medium ${(isLong ? changePct : -changePct) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {(isLong ? changePct : -changePct) >= 0 ? '+' : ''}{(isLong ? changePct : -changePct).toFixed(1)}%
                       </td>
-                      <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {fmt$(pnl, 0, true)}
                       </td>
                     </tr>
@@ -1033,7 +1033,7 @@ export default function TradeTracker() {
           </div>
 
           {directionalTrades[0]?.asOf && (
-            <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2 text-xs border-t text-desk-muted border-hairline">
               Last updated: {new Date(directionalTrades[0].asOf).toLocaleString()}
             </div>
           )}
@@ -1042,35 +1042,35 @@ export default function TradeTracker() {
 
       {/* Recently Closed Trades */}
       {closedTrades.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <span>🏆</span> Recently Closed Trades
+        <div className="rounded-lg overflow-hidden bg-desk-card">
+          <div className="px-4 py-3 border-b border-hairline bg-desk-raised">
+            <h2 className="text-lg font-semibold flex items-center gap-2 text-desk-text">
+              <span></span> Recently Closed Trades
             </h2>
           </div>
           
           {/* Closed Trades Summary */}
-          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+          <div className="p-4 border-b bg-desk-card border-hairline">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Closed This Week</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">{closedTrades.length}</div>
+                <div className="text-xs mb-1 text-desk-muted">Closed This Week</div>
+                <div className="text-xl font-bold text-desk-text">{closedTrades.length}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Winners</div>
-                <div className="text-xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-xs mb-1 text-desk-muted">Winners</div>
+                <div className="text-xl font-bold text-desk-up">
                   {closedTrades.filter(t => t.realizedPnL > 0).length}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Losers</div>
-                <div className="text-xl font-bold text-red-600 dark:text-red-400">
+                <div className="text-xs mb-1 text-desk-muted">Losers</div>
+                <div className="text-xl font-bold text-desk-down">
                   {closedTrades.filter(t => t.realizedPnL < 0).length}
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Realized P&L</div>
-                <div className={`text-xl font-bold ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                <div className="text-xs mb-1 text-desk-muted">Total Realized P&L</div>
+                <div className={`text-xl font-bold ${closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                   {fmt$(closedTrades.reduce((sum, t) => sum + t.realizedPnL, 0))}
                 </div>
               </div>
@@ -1079,16 +1079,16 @@ export default function TradeTracker() {
           
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-gray-700">
-                <tr className="border-b border-gray-300 dark:border-gray-600">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Symbol</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strike</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Qty</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Strategy</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Entry</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">Exit</th>
-                  <th className="text-right py-3 px-3 font-semibold text-gray-900 dark:text-white">P&L</th>
-                  <th className="text-center py-3 px-3 font-semibold text-gray-900 dark:text-white">Closed</th>
+              <thead className="bg-desk-raised">
+                <tr className="border-b border-hairline">
+                  <th className="text-left py-3 px-4 font-semibold text-desk-text">Symbol</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Strike</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Qty</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Strategy</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Entry</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">Exit</th>
+                  <th className="text-right py-3 px-3 font-semibold text-desk-text">P&L</th>
+                  <th className="text-center py-3 px-3 font-semibold text-desk-text">Closed</th>
                 </tr>
               </thead>
               <tbody>
@@ -1101,53 +1101,53 @@ export default function TradeTracker() {
                   return (
                     <tr 
                       key={trade.id}
-                      className={`border-b border-gray-200 dark:border-gray-700 transition-colors ${
+                      className={`border-b border-hairline transition-colors ${
                         isWinner 
-                          ? 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30' 
+                          ? 'bg-desk-card hover:bg-desk-card' 
                           : isLoser 
-                            ? 'bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                            ? 'bg-desk-card hover:bg-desk-card'
+                            : 'hover:bg-desk-card'
                       }`}
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">
-                            {isWinner ? '✅' : isLoser ? '❌' : '➖'}
+                            {isWinner ? '' : isLoser ? '' : ''}
                           </span>
                           <div>
-                            <div className="font-bold text-gray-900 dark:text-white">{trade.symbol}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                            <div className="font-bold text-desk-text">{trade.symbol}</div>
+                            <div className="text-xs text-desk-muted">
                               {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} / {new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
+                      <td className="text-center py-3 px-3 font-medium text-desk-text">
                         ${trade.strike} {trade.callOrPut.charAt(0)}
                       </td>
-                      <td className="text-center py-3 px-3 text-gray-900 dark:text-white font-medium">
+                      <td className="text-center py-3 px-3 font-medium text-desk-text">
                         {trade.quantity}
                       </td>
                       <td className="text-center py-3 px-3">
-                        <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs rounded-full">
+                        <span className="px-2 py-1 text-xs rounded-full bg-desk-card text-desk-text">
                           {trade.strategy || 'Calendar'}
                         </span>
                       </td>
-                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-3 px-3 text-desk-secondary">
                         {fmt$(trade.entryPrice)}
                       </td>
-                      <td className="text-right py-3 px-3 text-gray-700 dark:text-gray-300">
+                      <td className="text-right py-3 px-3 text-desk-secondary">
                         {fmt$(trade.exitPrice)}
                       </td>
                       <td className="text-right py-3 px-3">
-                        <div className={`font-bold ${isWinner ? 'text-green-600 dark:text-green-400' : isLoser ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                        <div className={`font-bold ${isWinner ? 'text-desk-up' : isLoser ? 'text-desk-down' : 'text-desk-muted'}`}>
                           {fmt$(trade.realizedPnL, 2, true)}
                         </div>
-                        <div className={`text-xs ${isWinner ? 'text-green-500 dark:text-green-500' : isLoser ? 'text-red-500 dark:text-red-500' : 'text-gray-500'}`}>
+                        <div className={`text-xs ${isWinner ? 'text-desk-up' : isLoser ? 'text-desk-down' : 'text-desk-muted'}`}>
                           {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
                         </div>
                       </td>
-                      <td className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 text-xs">
+                      <td className="text-center py-3 px-3 text-xs text-desk-muted">
                         {new Date(trade.closedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </td>
                     </tr>
@@ -1158,10 +1158,10 @@ export default function TradeTracker() {
           </div>
           
           {closedTrades.some(t => t.notes) && (
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">Trade Notes:</div>
+            <div className="p-4 border-t border-hairline">
+              <div className="text-xs font-medium mb-2 text-desk-muted">Trade Notes:</div>
               {closedTrades.filter(t => t.notes).map(trade => (
-                <div key={trade.id} className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                <div key={trade.id} className="text-sm mb-1 text-desk-secondary">
                   <span className="font-medium">{trade.symbol}:</span> {trade.notes}
                 </div>
               ))}
@@ -1174,19 +1174,19 @@ export default function TradeTracker() {
       {selectedTrade && (
         <div className="space-y-6">
           {/* Trade Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-6">
+          <div className="rounded-lg p-6 text-desk-text bg-desk-raised">
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold mb-1">
                   {selectedTrade.quantity} x {selectedTrade.symbol} ${selectedTrade.strike} {selectedTrade.callOrPut}
                 </h2>
-                <p className="text-blue-100">
+                <p className="text-desk-text">
                   {selectedTrade.frontExpiration} / {selectedTrade.backExpiration} Calendar Spread
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-sm text-blue-100">P&L</div>
-                <div className={`text-3xl font-bold ${calculatePnL(selectedTrade) >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                <div className="text-sm text-desk-text">P&L</div>
+                <div className={`text-3xl font-bold ${calculatePnL(selectedTrade) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                   {fmt$(calculatePnL(selectedTrade))}
                 </div>
               </div>
@@ -1194,47 +1194,47 @@ export default function TradeTracker() {
           </div>
 
           {/* Scenario Analysis Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Scenario Analysis</h3>
+          <div className="rounded-lg p-6 bg-desk-card">
+            <h3 className="text-lg font-semibold mb-4 text-desk-text">Scenario Analysis</h3>
             
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-300 dark:border-gray-600">
-                    <th className="text-left py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Price Change</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Underlying</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">P&L</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Delta</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Gamma</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Theta</th>
-                    <th className="text-right py-2 px-2 text-sm font-semibold text-gray-900 dark:text-white">Vega</th>
+                  <tr className="border-b border-hairline">
+                    <th className="text-left py-2 px-2 text-sm font-semibold text-desk-text">Price Change</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">Underlying</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">P&L</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">Delta</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">Gamma</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">Theta</th>
+                    <th className="text-right py-2 px-2 text-sm font-semibold text-desk-text">Vega</th>
                   </tr>
                 </thead>
                 <tbody>
                   {generateScenarios(selectedTrade).map((scenario, idx) => (
                     <tr 
                       key={idx}
-                      className={`border-b border-gray-200 dark:border-gray-700 ${scenario.priceChange === 'Current' ? 'bg-blue-50 dark:bg-blue-900/20 font-semibold' : ''}`}
+                      className={`border-b border-hairline ${scenario.priceChange === 'Current' ? 'font-semibold bg-desk-card' : ''}`}
                     >
-                      <td className="py-2 px-2 text-sm text-gray-900 dark:text-white">
+                      <td className="py-2 px-2 text-sm text-desk-text">
                         {scenario.priceChange}
                       </td>
-                      <td className="text-right py-2 px-2 text-sm text-gray-900 dark:text-white">
+                      <td className="text-right py-2 px-2 text-sm text-desk-text">
                         {fmt$(scenario.underlyingPrice)}
                       </td>
-                      <td className={`text-right py-2 px-2 text-sm font-semibold ${scenario.pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <td className={`text-right py-2 px-2 text-sm font-semibold ${scenario.pnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {fmt$(scenario.pnl)}
                       </td>
-                      <td className="text-right py-2 px-2 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="text-right py-2 px-2 text-sm text-desk-muted">
                         {scenario.delta.toFixed(2)}
                       </td>
-                      <td className="text-right py-2 px-2 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="text-right py-2 px-2 text-sm text-desk-muted">
                         {scenario.gamma.toFixed(2)}
                       </td>
-                      <td className="text-right py-2 px-2 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="text-right py-2 px-2 text-sm text-desk-muted">
                         {scenario.theta.toFixed(2)}
                       </td>
-                      <td className="text-right py-2 px-2 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="text-right py-2 px-2 text-sm text-desk-muted">
                         {scenario.vega.toFixed(2)}
                       </td>
                     </tr>
@@ -1243,17 +1243,17 @@ export default function TradeTracker() {
               </table>
             </div>
             
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 text-sm text-desk-muted">
               <p>
-                <span className="text-yellow-600 dark:text-yellow-400">⚠️ Note:</span> Greeks values are simplified estimates. 
+                <span className="text-desk-amber"> Note:</span> Greeks values are simplified estimates. 
                 For accurate Greeks, integrate with a real-time options pricing API.
               </p>
             </div>
           </div>
 
           {/* P&L Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">P&L Profile</h3>
+          <div className="rounded-lg p-6 bg-desk-card">
+            <h3 className="text-lg font-semibold mb-4 text-desk-text">P&L Profile</h3>
             
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={generateChartData(selectedTrade)}>
@@ -1292,9 +1292,9 @@ export default function TradeTracker() {
               </LineChart>
             </ResponsiveContainer>
             
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 text-sm text-desk-muted">
               <p>
-                <span className="text-yellow-600 dark:text-yellow-400">⚠️ Note:</span> This is a simplified P&L curve. 
+                <span className="text-desk-amber"> Note:</span> This is a simplified P&L curve. 
                 For accurate P&L profiles, use Black-Scholes pricing with real-time volatility and time decay.
               </p>
             </div>
@@ -1304,17 +1304,17 @@ export default function TradeTracker() {
 
       {/* Empty State */}
       {trades.length === 0 && !showForm && (
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-12 text-center">
-          <div className="text-6xl mb-4">📊</div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        <div className="rounded-lg p-12 text-center bg-desk-raised">
+          <div className="text-6xl mb-4"></div>
+          <h3 className="text-xl font-semibold mb-2 text-desk-text">
             No trades yet
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <p className="mb-6 text-desk-secondary">
             Start tracking your calendar spreads by adding your first trade
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            className="font-semibold py-2 px-6 rounded-md transition-colors duration-200 bg-desk-text hover:bg-desk-text text-desk-deep"
           >
             Add Your First Trade
           </button>
@@ -1323,13 +1323,13 @@ export default function TradeTracker() {
 
       {/* Update Prices Modal */}
       {showUpdateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowUpdateModal(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Update Current Prices</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black" onClick={() => setShowUpdateModal(false)}>
+          <div className="rounded-lg p-6 max-w-md w-full mx-4 bg-desk-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold mb-4 text-desk-text">Update Current Prices</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">
                   Front Month Current Price
                 </label>
                 <input
@@ -1337,12 +1337,12 @@ export default function TradeTracker() {
                   step="0.01"
                   value={updatePrices.front}
                   onChange={(e) => setUpdatePrices({ ...updatePrices, front: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">
                   Back Month Current Price
                 </label>
                 <input
@@ -1350,12 +1350,12 @@ export default function TradeTracker() {
                   step="0.01"
                   value={updatePrices.back}
                   onChange={(e) => setUpdatePrices({ ...updatePrices, back: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">
                   Underlying Current Price
                 </label>
                 <input
@@ -1363,7 +1363,7 @@ export default function TradeTracker() {
                   step="0.01"
                   value={updatePrices.underlying}
                   onChange={(e) => setUpdatePrices({ ...updatePrices, underlying: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none border-hairline bg-desk-raised text-desk-text"
                 />
               </div>
             </div>
@@ -1371,13 +1371,13 @@ export default function TradeTracker() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowUpdateModal(false)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="flex-1 font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-raised hover:bg-desk-raised text-desk-text"
               >
                 Cancel
               </button>
               <button
                 onClick={submitPriceUpdate}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="flex-1 font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-text hover:bg-desk-text text-desk-deep"
               >
                 Update
               </button>
@@ -1388,17 +1388,17 @@ export default function TradeTracker() {
 
       {/* Import from IB Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowImportModal(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Import Trades from Interactive Brokers</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black" onClick={() => setShowImportModal(false)}>
+          <div className="rounded-lg p-6 max-w-2xl w-full mx-4 bg-desk-card" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold mb-4 text-desk-text">Import Trades from Interactive Brokers</h2>
             
-            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-4 rounded">
-              <p className="text-sm text-blue-800 dark:text-blue-300">
+            <div className="border-l-4 p-4 mb-4 rounded bg-desk-card border-hairline">
+              <p className="text-sm text-desk-text">
                 <strong>Instructions:</strong>
               </p>
-              <ol className="text-sm text-blue-700 dark:text-blue-300 list-decimal ml-4 mt-2 space-y-1">
-                <li>Run <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">python fetch_ib_positions.py</code> in your calculator folder</li>
-                <li>Open the generated <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">trades.json</code> file</li>
+              <ol className="text-sm list-decimal ml-4 mt-2 space-y-1 text-desk-text">
+                <li>Run <code className="px-1 rounded bg-desk-text">python fetch_ib_positions.py</code> in your calculator folder</li>
+                <li>Open the generated <code className="px-1 rounded bg-desk-text">trades.json</code> file</li>
                 <li>Copy the entire JSON content</li>
                 <li>Paste it in the text area below</li>
                 <li>Click Import</li>
@@ -1406,7 +1406,7 @@ export default function TradeTracker() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium mb-2 text-desk-secondary">
                 Paste JSON from fetch_ib_positions.py:
               </label>
               <textarea
@@ -1414,7 +1414,7 @@ export default function TradeTracker() {
                 onChange={(e) => setImportJson(e.target.value)}
                 placeholder='[{"id": "...", "symbol": "AMD", "strike": 237.5, ...}]'
                 rows={10}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none font-mono text-xs border-hairline bg-desk-raised text-desk-text"
               />
             </div>
 
@@ -1424,14 +1424,14 @@ export default function TradeTracker() {
                   setShowImportModal(false);
                   setImportJson('');
                 }}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="flex-1 font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-raised hover:bg-desk-raised text-desk-text"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImportJSON}
                 disabled={!importJson.trim()}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                className="flex-1 disabled:cursor-not-allowed font-semibold py-2 px-4 rounded-md transition-colors duration-200 bg-desk-text hover:bg-desk-text disabled:bg-desk-raised text-desk-deep"
               >
                 Import Trades
               </button>

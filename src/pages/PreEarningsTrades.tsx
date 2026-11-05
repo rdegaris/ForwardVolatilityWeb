@@ -98,155 +98,127 @@ export default function PreEarningsTrades() {
   const summary = useMemo(() => {
     const total = openStraddles.length;
     const totalPnl = openStraddles.reduce((acc, s) => acc + (s.unrealized_pnl || 0), 0);
-    const needsAction = openStraddles.filter(s => s.action_needed).length;
+    const needsAction = openStraddles.filter((s) => s.action_needed).length;
     return { total, totalPnl, needsAction };
   }, [openStraddles]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
-            Pre-Earnings Straddles — Open Trades
-          </h1>
-          <p className="text-gray-300">
-            Live marks and P&L pulled from IB (no manual inputs). Exit before earnings to avoid gap risk.
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Requires local IB bridge + local web dev server
-          </p>
-        </div>
+    <div className="space-y-6 pb-16">
+      <section className="desk-surface rounded-2xl p-6 md:p-8">
+        <div className="text-xs font-mono text-desk-muted">Local IB bridge feed</div>
+        <h1 className="mt-1.5 text-2xl md:text-3xl font-semibold text-desk-text tracking-tight">
+          Pre-earnings straddles — open positions
+        </h1>
+        <p className="mt-1.5 text-sm text-desk-secondary">
+          Live marks and unrealized P&amp;L streamed from Interactive Brokers. Exit positions ahead of announcement.
+        </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
-          <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-            <div className="text-gray-400">Open Straddles</div>
-            <div className="text-xl font-bold text-indigo-300">{summary.total}</div>
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Open straddles</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-text tabular-nums">{summary.total}</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-            <div className="text-gray-400">Need Action</div>
-            <div className="text-xl font-bold text-amber-300">{summary.needsAction}</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Action required</div>
+            <div className="mt-1 text-lg font-mono font-semibold text-desk-amber tabular-nums">{summary.needsAction}</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-            <div className="text-gray-400">Unrealized P&amp;L</div>
-            <div className={`text-xl font-bold ${summary.totalPnl >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Unrealized P&amp;L</div>
+            <div className={`mt-1 text-lg font-mono font-semibold tabular-nums ${summary.totalPnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
               {formatMoney(summary.totalPnl)}
             </div>
           </div>
-          <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-            <div className="text-gray-400">Data Source</div>
-            <div className="text-xs text-gray-300">/api (proxied to local IB bridge)</div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Data source</div>
+            <div className="mt-1 text-xs font-mono text-desk-secondary">/api/preearnings/open</div>
           </div>
         </div>
+      </section>
 
-        {loading ? (
-          <div className="bg-white/10 rounded-xl p-6 border border-slate-700/60 backdrop-blur-sm">
-            <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-400"></div>
-              <div className="text-gray-300">Loading open straddles from IB…</div>
+      {loading ? (
+        <div className="desk-surface rounded-2xl p-8 flex items-center gap-3">
+          <div className="h-5 w-5 rounded-full border-2 border-hairline border-t-desk-text animate-spin" />
+          <span className="text-sm text-desk-secondary">Loading open straddles from IB…</span>
+        </div>
+      ) : error ? (
+        <div className="desk-surface rounded-2xl p-6 space-y-3">
+          <div className="text-sm font-semibold text-desk-down">IB bridge not reachable</div>
+          <div className="text-xs text-desk-secondary">{error}</div>
+          <div className="text-xs text-desk-muted space-y-2 pt-2">
+            <div>Start the local IB bridge from <span className="font-mono">forward-volatility-calculator</span>:</div>
+            <div className="desk-well rounded-lg p-3 font-mono text-xs text-desk-text">
+              python ib_bridge_server.py
             </div>
           </div>
-        ) : error ? (
-          <div className="bg-white/10 rounded-xl p-6 border border-red-500/30 backdrop-blur-sm">
-            <div className="text-red-300 font-semibold mb-2">IB bridge not reachable</div>
-            <div className="text-gray-300 text-sm mb-4">{error}</div>
-            <div className="text-gray-400 text-sm">
-              Run the bridge locally from <span className="font-mono">forward-volatility-calculator</span>:
-              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-slate-700/50 font-mono text-xs whitespace-pre-wrap">
-                /c/Ryan/CTA Business/Forward Volatility/forward-volatility-calculator/.venv/Scripts/python.exe ib_bridge_server.py
-              </div>
-              Then run the web locally (so /api can proxy):
-              <div className="mt-2 p-3 rounded-lg bg-black/30 border border-slate-700/50 font-mono text-xs whitespace-pre-wrap">
-                cd /c/Ryan/CTA Business/Forward Volatility/forward-volatility-web
-                npm run dev
-              </div>
-              Then refresh this page.
-            </div>
+        </div>
+      ) : openStraddles.length === 0 ? (
+        <div className="desk-surface rounded-2xl p-8">
+          <div className="text-sm font-semibold text-desk-text">No open pre-earnings straddles found</div>
+          <div className="text-xs text-desk-muted mt-1">
+            Detects paired long call + long put positions with matching strike and expiration in IB.
           </div>
-        ) : openStraddles.length === 0 ? (
-          <div className="bg-white/10 rounded-xl p-6 border border-slate-700/60 backdrop-blur-sm">
-            <div className="text-gray-200 font-semibold mb-1">No open pre-earnings straddles found</div>
-            <div className="text-gray-400 text-sm">
-              This page detects long straddles from IB positions (paired long call + long put, same strike/expiry).
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {openStraddles.map((s, idx) => {
-              const urgent = !!s.action_needed;
-              return (
-                <div
-                  key={`${s.ticker}-${s.expiry}-${s.strike}-${idx}`}
-                  className={`rounded-xl overflow-hidden backdrop-blur-sm border ${
-                    urgent ? 'bg-amber-900/20 border-amber-500/30' : 'bg-white/10 border-slate-700/60'
-                  }`}
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-6">
-                      <div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-3xl font-bold font-mono">{s.ticker}</span>
-                          {s.action_needed ? (
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-500/40">
-                              {s.action_needed}
-                            </span>
-                          ) : (
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-500/40">
-                              OK
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-gray-300 text-sm mt-1">
-                          Long {s.quantity}× ATM Straddle · {s.expiry} · ${s.strike.toFixed(0)}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className={`text-2xl font-bold font-mono ${(s.unrealized_pnl || 0) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                          {formatMoney(s.unrealized_pnl || 0)}
-                        </div>
-                        <div className="text-xs text-gray-400">Unrealized P&amp;L</div>
-                        {s.unrealized_pnl_pct !== null && s.unrealized_pnl_pct !== undefined && (
-                          <div className="text-xs text-gray-300">{s.unrealized_pnl_pct.toFixed(2)}%</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-5">
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Earnings</div>
-                        <div className="font-mono text-sm">{s.earnings_date || '—'}</div>
-                      </div>
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Days To</div>
-                        <div className={`text-lg font-bold ${
-                          (s.days_to_earnings ?? 999) <= 1 ? 'text-rose-300' : (s.days_to_earnings ?? 999) <= 3 ? 'text-amber-300' : 'text-emerald-300'
-                        }`}>
-                          {s.days_to_earnings ?? '—'}
-                        </div>
-                      </div>
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Call Mid</div>
-                        <div className="font-mono text-sm">{s.call.mid ?? '—'}</div>
-                      </div>
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Put Mid</div>
-                        <div className="font-mono text-sm">{s.put.mid ?? '—'}</div>
-                      </div>
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Straddle Mid</div>
-                        <div className="font-mono text-sm">{s.straddle_mid ?? '—'}</div>
-                      </div>
-                      <div className="bg-white/5 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 mb-1">Cost / Straddle</div>
-                        <div className="font-mono text-sm">{s.cost_basis_per_straddle.toFixed(2)}</div>
-                      </div>
-                    </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {openStraddles.map((s, idx) => (
+            <div key={`${s.ticker}-${s.expiry}-${s.strike}-${idx}`} className="desk-surface rounded-2xl p-6">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-2xl font-mono font-semibold text-desk-text">{s.ticker}</span>
+                    {s.action_needed ? (
+                      <span className="desk-tag text-desk-amber">{s.action_needed}</span>
+                    ) : (
+                      <span className="desk-tag-up">Active</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-desk-secondary font-mono mt-1 tabular-nums">
+                    Long {s.quantity}× ATM straddle · {s.expiry} · ${s.strike.toFixed(0)}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                <div className="text-right font-mono tabular-nums">
+                  <div className={`text-xl font-semibold ${(s.unrealized_pnl || 0) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
+                    {formatMoney(s.unrealized_pnl || 0)}
+                  </div>
+                  <div className="text-xs text-desk-muted font-sans">Unrealized P&amp;L</div>
+                  {s.unrealized_pnl_pct !== null && s.unrealized_pnl_pct !== undefined && (
+                    <div className="text-xs text-desk-secondary">{s.unrealized_pnl_pct.toFixed(2)}%</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mt-5">
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Earnings</div>
+                  <div className="mt-1 font-mono text-sm text-desk-text tabular-nums">{s.earnings_date || '—'}</div>
+                </div>
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Days to</div>
+                  <div className="mt-1 text-base font-mono font-semibold text-desk-text tabular-nums">
+                    {s.days_to_earnings ?? '—'}
+                  </div>
+                </div>
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Call mid</div>
+                  <div className="mt-1 font-mono text-sm text-desk-text tabular-nums">{s.call.mid ?? '—'}</div>
+                </div>
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Put mid</div>
+                  <div className="mt-1 font-mono text-sm text-desk-text tabular-nums">{s.put.mid ?? '—'}</div>
+                </div>
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Straddle mid</div>
+                  <div className="mt-1 font-mono text-sm text-desk-text tabular-nums">{s.straddle_mid ?? '—'}</div>
+                </div>
+                <div className="desk-well rounded-xl p-3">
+                  <div className="text-xs text-desk-muted">Cost / straddle</div>
+                  <div className="mt-1 font-mono text-sm text-desk-text tabular-nums">{s.cost_basis_per_straddle.toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

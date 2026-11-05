@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TurtleSignalRow, TurtleSignalsPayload, TurtleTriggeredSignal } from '../types/turtle';
 import SignalChartModal from '../components/SignalChartModal';
+import { AlertCircleIcon, ChartLineIcon } from '../components/Icons';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -53,24 +54,23 @@ export default function TurtleSignals() {
 
   if (loading) {
     return (
-      <div className="text-white flex items-center justify-center py-24">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fuchsia-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading Trendorama signals...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading Trendorama signals…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
-        <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
-          <p className="text-gray-400 text-sm">
-            Generate the latest signals JSON into <span className="font-mono">public/data</span>.
-          </p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>{error || 'Signal data unavailable'}</span>
         </div>
+        <p className="text-sm text-desk-muted">
+          Ensure <span className="font-mono">turtle_signals_latest.json</span> is present in <span className="font-mono">public/data</span>.
+        </p>
       </div>
     );
   }
@@ -78,193 +78,140 @@ export default function TurtleSignals() {
   const total = allRows.length;
   const triggered = triggeredRows.length;
 
-  const sideText = (r: TurtleSignalRow) => {
-    if (r.long_triggered && r.short_triggered) return 'LONG / SHORT';
-    if (r.long_triggered) return 'LONG';
-    if (r.short_triggered) return 'SHORT';
-    return '—';
-  };
-
-  const sideColor = (r: TurtleSignalRow) => {
-    if (r.long_triggered && !r.short_triggered) return 'text-emerald-200';
-    if (r.short_triggered && !r.long_triggered) return 'text-rose-200';
-    if (r.long_triggered && r.short_triggered) return 'text-amber-200';
-    return 'text-gray-400';
-  };
-
-  const triggeredSideColor = (r: TurtleTriggeredSignal) => {
-    if (r.side === 'long') return 'text-emerald-200';
-    if (r.side === 'short') return 'text-rose-200';
-    return 'text-gray-400';
-  };
-
-  const eligibleText = (r: TurtleTriggeredSignal) => {
-    if (r.eligible === true) return 'OK';
-    if (r.eligible === false) return 'BLOCKED';
-    return '—';
-  };
-
-  const eligibleColor = (r: TurtleTriggeredSignal) => {
-    if (r.eligible === true) return 'text-emerald-200';
-    if (r.eligible === false) return 'text-amber-200';
-    return 'text-gray-400';
-  };
-
   return (
-    <div className="space-y-8 text-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 to-fuchsia-500">
-            Trendorama — Signals
-          </h1>
-          <p className="text-gray-300">
-            A systematic trend-following breakout model engineered to capture major commodity and currency market trends, tuned with customized backtested volatility parameters and risk-sizing filters.
-          </p>
-
-          <div className="mt-4 bg-white/5 rounded-lg border border-slate-700/60 p-4 text-sm text-gray-300">
-            <div className="font-semibold text-gray-200 mb-1">How to use this page</div>
-            <ul className="space-y-1">
-              <li>Use the <span className="font-mono">ENTRY</span> as your stop-entry reference (classic Trendorama: place for the next session).</li>
-              <li>Use the <span className="font-mono">STOP</span> as the protective stop-loss (2×N from entry), rounded to tick size.</li>
-              <li>If price already ran far past entry, you may be late — consider skipping or using your execution rules.</li>
-              <li>Check <span className="font-mono">Open Trades</span> before entering a duplicate position.</li>
-            </ul>
+    <div className="space-y-8">
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>55-day Donchian channel breakout</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
+              Trendorama
+            </h1>
+            <p className="text-sm leading-relaxed text-desk-secondary">
+              Systematic trend-following breakout model engineered to capture sustained commodity, currency, and financial futures trends with 2×N ATR protective stops and volatility-normalized unit sizing.
+            </p>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Today's Signals</div>
-              <div className="text-xl font-bold">{new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Total Scanned</div>
-              <div className="text-xl font-bold text-indigo-300">{data.total_scanned ?? total}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Triggered</div>
-              <div className="text-xl font-bold text-emerald-300">{triggered}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
-            </div>
+          <div className="shrink-0 md:text-right">
+            <div className="text-xs text-desk-muted">Signal session</div>
+            <div className="mt-1 text-xl font-medium font-mono text-desk-text">{data.date}</div>
           </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">Triggered Today</h2>
-          {triggeredRows.length === 0 ? (
-            <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-              <div className="text-gray-300">No markets triggered today.</div>
+        <div className="desk-well rounded-xl p-4 grid md:grid-cols-2 gap-3 text-xs text-desk-secondary">
+          <div>
+            <span className="text-desk-text font-medium">Stop-entry reference:</span> Use <span className="font-mono text-desk-text">Entry</span> for next-session stop placement and <span className="font-mono text-desk-text">Stop</span> for the 2×N protective exit rounded to contract tick size.
+          </div>
+          <div>
+            <span className="text-desk-text font-medium">Position check:</span> Review <span className="font-mono text-desk-text">Open trades</span> and cluster limits before adding exposure in correlated contracts.
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Contracts scanned</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {data.total_scanned ?? total}
             </div>
-          ) : (
-            <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-black/20 text-gray-300">
-                    <tr>
-                      <th className="px-4 py-3 text-left">Symbol</th>
-                      <th className="px-4 py-3 text-left">Side</th>
-                      <th className="px-4 py-3 text-left">Status</th>
-                      <th className="px-4 py-3 text-left">Cluster</th>
-                      <th className="px-4 py-3 text-right">Close</th>
-                      <th className="px-4 py-3 text-right">ENTRY</th>
-                      <th className="px-4 py-3 text-right">STOP</th>
-                      <th className="px-4 py-3 text-right">Unit Qty</th>
-                      <th className="px-4 py-3 text-right">N</th>
-                      <th className="px-4 py-3 text-left">Asof</th>
-                      <th className="px-4 py-3 text-left">Notes</th>
-                      <th className="px-4 py-3 text-center">Chart</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {triggeredRows.map((r: TurtleTriggeredSignal, idx: number) => (
-                      <tr
-                        key={`${r.symbol}-${idx}`}
-                        className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
-                      >
-                        <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${triggeredSideColor(r)}`}>{r.side.toUpperCase()}</td>
-                        <td className={`px-4 py-3 font-semibold ${eligibleColor(r)}`}>{eligibleText(r)}</td>
-                        <td className="px-4 py-3 text-gray-200">{r.cluster || '—'}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.entry_stop, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.stop_loss, 4)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{r.unit_qty}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.N, 4)}</td>
-                        <td className="px-4 py-3 text-gray-300 font-mono">{r.asof}</td>
-                        <td className="px-4 py-3 text-gray-300">{r.blocked_reason ? `${r.notes || ''} (${r.blocked_reason})` : r.notes || '—'}</td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => setChartItem({
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Triggered today</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">
+              {triggered}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Eligible breakouts</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-text">
+              {triggeredRows.filter((r) => r.eligible !== false).length}
+            </div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Updated</div>
+            <div className="mt-2 text-lg leading-none font-medium font-mono text-desk-text">
+              {data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">Triggered today</h2>
+        {triggeredRows.length === 0 ? (
+          <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+            No contracts triggered on the latest bar
+          </div>
+        ) : (
+          <div className="desk-surface rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-xs">
+                <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-normal">Contract</th>
+                    <th className="px-4 py-3 text-left font-normal">Side</th>
+                    <th className="px-4 py-3 text-left font-normal">Eligibility</th>
+                    <th className="px-4 py-3 text-left font-normal">Cluster</th>
+                    <th className="px-4 py-3 text-right font-normal">Close</th>
+                    <th className="px-4 py-3 text-right font-normal">Entry</th>
+                    <th className="px-4 py-3 text-right font-normal">Stop</th>
+                    <th className="px-4 py-3 text-right font-normal">Unit qty</th>
+                    <th className="px-4 py-3 text-right font-normal">N (ATR)</th>
+                    <th className="px-4 py-3 text-left font-normal">As of</th>
+                    <th className="px-4 py-3 text-left font-normal">Notes</th>
+                    <th className="px-4 py-3 text-right font-normal">Chart</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-hairline">
+                  {triggeredRows.map((r: TurtleTriggeredSignal, idx: number) => (
+                    <tr
+                      key={`${r.symbol}-${idx}`}
+                      className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk"
+                    >
+                      <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                      <td className="px-4 py-3">
+                        <span className={r.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                          {r.side === 'long' ? 'Long' : 'Short'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {r.eligible === true ? (
+                          <span className="text-desk-up">Eligible</span>
+                        ) : r.eligible === false ? (
+                          <span className="text-desk-muted">Blocked</span>
+                        ) : (
+                          <span className="text-desk-muted">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-desk-secondary">{r.cluster || '—'}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.last_close, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.entry_stop, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-down">{formatNum(r.stop_loss, 4)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">{r.unit_qty}</td>
+                      <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.N, 4)}</td>
+                      <td className="px-4 py-3 font-mono text-desk-muted">{r.asof}</td>
+                      <td className="px-4 py-3 text-desk-secondary">
+                        {r.blocked_reason ? `${r.notes || ''} (${r.blocked_reason})` : r.notes || '—'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setChartItem({
                               symbol: r.symbol,
                               side: r.side,
                               entry: r.entry_stop,
                               stop: r.stop_loss,
                               close: r.last_close,
                               n: r.N,
-                              qty: r.unit_qty
-                            })}
-                            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
-                          >
-                            Chart 📈
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold text-gray-200 mb-3">All Scanned ({total})</h2>
-          <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-black/20 text-gray-300">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Symbol</th>
-                    <th className="px-4 py-3 text-left">Triggered</th>
-                    <th className="px-4 py-3 text-right">Close</th>
-                    <th className="px-4 py-3 text-right">Long Entry</th>
-                    <th className="px-4 py-3 text-right">Short Entry</th>
-                    <th className="px-4 py-3 text-right">Long STOP</th>
-                    <th className="px-4 py-3 text-right">Short STOP</th>
-                    <th className="px-4 py-3 text-right">Unit Qty</th>
-                    <th className="px-4 py-3 text-center">Chart</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allRows.map((r: TurtleSignalRow, idx: number) => (
-                    <tr
-                      key={`${r.symbol}-${idx}`}
-                      className={`border-t border-slate-700/50 ${idx % 2 === 0 ? 'bg-white/0' : 'bg-white/5'} hover:bg-white/10`}
-                    >
-                      <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                      <td className={`px-4 py-3 font-semibold ${sideColor(r)}`}>{sideText(r)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.long_entry, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{formatNum(r.short_entry, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.long_stop_loss, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-rose-200">{formatNum(r.short_stop_loss, 4)}</td>
-                      <td className="px-4 py-3 text-right font-mono">{r.unit_qty ?? '—'}</td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => setChartItem({
-                            symbol: r.symbol,
-                            side: r.long_triggered ? 'long' : r.short_triggered ? 'short' : null,
-                            entry: r.long_triggered ? r.long_entry : r.short_triggered ? r.short_entry : null,
-                            stop: r.long_triggered ? r.long_stop_loss : r.short_triggered ? r.short_stop_loss : null,
-                            close: r.last_close,
-                            n: r.N,
-                            qty: r.unit_qty
-                          })}
-                          className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors"
+                              qty: r.unit_qty,
+                            })
+                          }
+                          className="desk-btn-secondary h-7 px-2.5 text-xs"
                         >
-                          Chart 📈
+                          <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                          <span>1D</span>
                         </button>
                       </td>
                     </tr>
@@ -273,29 +220,101 @@ export default function TurtleSignals() {
               </table>
             </div>
           </div>
-        </div>
-
-        {/* Chart Modal */}
-        {chartItem && (
-          <SignalChartModal
-            isOpen={!!chartItem}
-            onClose={closeChart}
-            symbol={chartItem.symbol}
-            strategy="trendorama"
-            interval="D"
-            signalLabel={chartItem.side ? `TRENDORAMA — ${chartItem.side.toUpperCase()}` : 'TRENDORAMA 55-DAY'}
-            direction={chartItem.side === 'long' ? 'long' : chartItem.side === 'short' ? 'short' : null}
-            entryPrice={chartItem.entry}
-            stopPrice={chartItem.stop}
-            extraRows={[
-              { label: 'Prior Close', value: formatNum(chartItem.close, 4) },
-              { label: 'N (ATR 20)', value: formatNum(chartItem.n, 4) },
-              { label: 'Unit Qty', value: chartItem.qty != null ? `${chartItem.qty}` : '—' }
-            ]}
-          />
         )}
+      </section>
 
-      </div>
+      <section className="space-y-4">
+        <h2 className="text-lg font-medium text-desk-text">All contracts scanned ({total})</h2>
+        <div className="desk-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left font-normal">Contract</th>
+                  <th className="px-4 py-3 text-left font-normal">Triggered</th>
+                  <th className="px-4 py-3 text-right font-normal">Close</th>
+                  <th className="px-4 py-3 text-right font-normal">Long entry</th>
+                  <th className="px-4 py-3 text-right font-normal">Short entry</th>
+                  <th className="px-4 py-3 text-right font-normal">Long stop</th>
+                  <th className="px-4 py-3 text-right font-normal">Short stop</th>
+                  <th className="px-4 py-3 text-right font-normal">Unit qty</th>
+                  <th className="px-4 py-3 text-right font-normal">Chart</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {allRows.map((r: TurtleSignalRow, idx: number) => (
+                  <tr
+                    key={`${r.symbol}-${idx}`}
+                    className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk"
+                  >
+                    <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                    <td className="px-4 py-3">
+                      {r.long_triggered && r.short_triggered ? (
+                        <span className="desk-tag">Long / Short</span>
+                      ) : r.long_triggered ? (
+                        <span className="desk-tag-up">Long</span>
+                      ) : r.short_triggered ? (
+                        <span className="desk-tag-down">Short</span>
+                      ) : (
+                        <span className="text-desk-muted">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.last_close, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.long_entry, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.short_entry, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-down">{formatNum(r.long_stop_loss, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-down">{formatNum(r.short_stop_loss, 4)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{r.unit_qty ?? '—'}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setChartItem({
+                            symbol: r.symbol,
+                            side: r.long_triggered ? 'long' : r.short_triggered ? 'short' : null,
+                            entry: r.long_triggered ? r.long_entry : r.short_triggered ? r.short_entry : null,
+                            stop: r.long_triggered ? r.long_stop_loss : r.short_triggered ? r.short_stop_loss : null,
+                            close: r.last_close,
+                            n: r.N,
+                            qty: r.unit_qty,
+                          })
+                        }
+                        className="desk-btn-secondary h-7 px-2.5 text-xs"
+                      >
+                        <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                        <span>1D</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {chartItem && (
+        <SignalChartModal
+          isOpen={!!chartItem}
+          onClose={closeChart}
+          symbol={chartItem.symbol}
+          strategy="trendorama"
+          interval="D"
+          signalLabel={
+            chartItem.side
+              ? `Trendorama · ${chartItem.side === 'long' ? 'Long' : 'Short'}`
+              : 'Trendorama 55-day'
+          }
+          direction={chartItem.side === 'long' ? 'long' : chartItem.side === 'short' ? 'short' : null}
+          entryPrice={chartItem.entry}
+          stopPrice={chartItem.stop}
+          extraRows={[
+            { label: 'Prior close', value: formatNum(chartItem.close, 4) },
+            { label: 'N (ATR 20)', value: formatNum(chartItem.n, 4) },
+            { label: 'Unit qty', value: chartItem.qty != null ? `${chartItem.qty}` : '—' },
+          ]}
+        />
+      )}
     </div>
   );
 }

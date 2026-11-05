@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRightIcon, ArrowUpRightIcon, PlayIcon } from '../components/Icons';
 
 interface ScanLog {
   time: string;
@@ -28,7 +29,7 @@ export default function ScanRunner() {
   const [isRunningCloud, setIsRunningCloud] = useState(false);
   const [githubPat, setGithubPat] = useState<string>(() => localStorage.getItem('ozcta_github_pat') || '');
   const [logs, setLogs] = useState<ScanLog[]>([]);
-  const [statusText, setStatusText] = useState<string>('Ready');
+  const [statusText, setStatusText] = useState<string>('Idle');
 
   const addLog = useCallback((message: string, type: ScanLog['type'] = 'info') => {
     const time = new Date().toLocaleTimeString();
@@ -40,18 +41,17 @@ export default function ScanRunner() {
     localStorage.setItem('ozcta_github_pat', val);
   };
 
-  // 1. Trigger GitHub Actions Workflow Dispatch
   const triggerGitHubAction = async () => {
     if (!githubPat.trim()) {
-      addLog('⚠️ GitHub Personal Access Token (PAT) is required to trigger cloud action directly from browser.', 'warning');
-      addLog('💡 You can also trigger it in 1 click at https://github.com/rdegaris/ForwardVolatilityWeb/actions', 'info');
+      addLog('GitHub Personal Access Token (PAT) is required to trigger workflow_dispatch from the browser.', 'warning');
+      addLog('Opening GitHub Actions workflow page in a new tab.', 'info');
       window.open('https://github.com/rdegaris/ForwardVolatilityWeb/actions/workflows/daily_futures_scan.yml', '_blank');
       return;
     }
 
     try {
       setIsRunningCloud(true);
-      setStatusText('Triggering GitHub Actions Workflow…');
+      setStatusText('Dispatching workflow…');
       addLog('Sending workflow_dispatch request to GitHub REST API…', 'info');
 
       const res = await fetch(
@@ -70,148 +70,139 @@ export default function ScanRunner() {
       );
 
       if (res.status === 204) {
-        addLog('✅ GitHub Actions workflow triggered successfully! Cloud runner is executing.', 'success');
-        addLog('⏳ Scans, stop/target monitoring, and deployment will complete in ~60-90s.', 'info');
-        setStatusText('Cloud scan running on GitHub Actions');
+        addLog('GitHub Actions workflow dispatched. Cloud runner is executing.', 'success');
+        addLog('Scans, stop/target evaluation, and deployment complete in ~60–90s.', 'info');
+        setStatusText('Running on GitHub Actions');
       } else {
         const text = await res.text();
-        addLog(`❌ GitHub API Error (${res.status}): ${text}`, 'error');
-        setStatusText('Error triggering cloud workflow');
+        addLog(`GitHub API error (${res.status}): ${text}`, 'error');
+        setStatusText('Dispatch failed');
       }
     } catch (err: any) {
-      addLog(`❌ Network error: ${err?.message || err}`, 'error');
+      addLog(`Network error: ${err?.message || err}`, 'error');
       setStatusText('Network error');
     } finally {
       setIsRunningCloud(false);
     }
   };
 
-  // 2. Direct Link to GitHub Actions
   const openGitHubActions = () => {
     window.open('https://github.com/rdegaris/ForwardVolatilityWeb/actions/workflows/daily_futures_scan.yml', '_blank');
   };
 
   return (
-    <div className="space-y-8 pb-16">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 p-6 md:p-10 border border-slate-800 shadow-2xl backdrop-blur">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6 pb-16">
+      {/* Header */}
+      <section className="desk-surface rounded-2xl p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-400">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Scan Command & Control Desk
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>Scanner dispatch desk</span>
             </div>
-            <h1 className="mt-3 text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
-              On-Demand Scanner Runner
+            <h1 className="mt-2 text-2xl md:text-3xl font-semibold text-desk-text tracking-tight">
+              On-demand scanner runner
             </h1>
-            <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-              Manually trigger full futures market scans, recalculate Trendorama, The Bradman, YouHaveChosenWisely, TooHot TooCold, and The Linda signals, and update the execution ledger & stops.
+            <p className="mt-2 text-sm text-desk-secondary max-w-2xl leading-relaxed">
+              Trigger full futures market scans across Trendorama, The Bradman, YouHaveChosenWisely, TooHot TooCold, and The Linda, then refresh stops and execution logs.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="shrink-0">
             <Link
               to="/executed-trades"
-              className="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-slate-700 transition"
+              className="desk-btn-secondary px-4 py-2 text-xs inline-flex items-center gap-1.5"
             >
-              View Executed Trades →
+              <span>Executed trades</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Control Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Cloud Trigger Card */}
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 md:p-8 shadow-xl backdrop-blur space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xl font-bold">
-                ⚡
-              </span>
-              <div>
-                <h2 className="text-lg font-black text-slate-100">Trigger Cloud Scan (GitHub Actions)</h2>
-                <p className="text-xs text-slate-400">Runs full scan in GitHub cloud & auto-deploys updated data</p>
-              </div>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="desk-surface rounded-2xl p-6 space-y-5">
+          <div className="border-b border-hairline pb-4">
+            <h2 className="text-base font-semibold text-desk-text">Trigger cloud scan (GitHub Actions)</h2>
+            <p className="text-xs text-desk-muted mt-0.5">Executes the full Python pipeline and publishes updated JSON feeds</p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                GitHub Token (Optional - for 1-click in-browser trigger)
+              <label className="block text-xs font-medium text-desk-secondary mb-1.5">
+                GitHub personal access token (optional for direct browser dispatch)
               </label>
               <input
                 type="password"
-                placeholder="github_pat_... (leave empty to open GitHub directly)"
+                placeholder="github_pat_… (leave blank to open GitHub Actions)"
                 value={githubPat}
                 onChange={(e) => handleSavePat(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                className="desk-input w-full px-3.5 py-2 text-xs font-mono"
               />
-              <p className="mt-1 text-[11px] text-slate-500">
-                Stored safely only in your browser local storage.
+              <p className="mt-1.5 text-[11px] text-desk-muted">
+                Stored locally in browser storage (`ozcta_github_pat`).
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-3 pt-1">
               <button
                 onClick={triggerGitHubAction}
                 disabled={isRunningCloud}
-                className="flex-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 transition"
+                className="desk-btn-primary px-4 py-2.5 text-xs inline-flex items-center gap-2 disabled:opacity-50"
               >
-                {isRunningCloud ? '⏳ Sending Dispatch…' : '⚡ Run Cloud Scanner Now'}
+                <PlayIcon className="w-3.5 h-3.5" />
+                <span>{isRunningCloud ? 'Sending dispatch…' : 'Run cloud scanner'}</span>
               </button>
 
               <button
                 onClick={openGitHubActions}
-                className="rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 hover:text-white transition"
+                className="desk-btn-secondary px-4 py-2.5 text-xs inline-flex items-center gap-1.5"
               >
-                Open GitHub Actions Tab ↗
+                <span>Open GitHub Actions</span>
+                <ArrowUpRightIcon className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-800/80 bg-slate-950/60 p-4 space-y-2">
-            <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">Automated Scans Schedule</div>
-            <ul className="text-xs text-slate-400 space-y-1">
-              <li>• <strong>Scan 1:</strong> 5:30 PM ET (21:30 UTC) Mon–Fri — Post-market settlement run</li>
-              <li>• <strong>Scan 2:</strong> 8:30 PM ET (00:30 UTC) Mon–Fri — Finalized daily close confirmation</li>
-              <li>• <strong>On-Demand:</strong> Anytime via this page or GitHub Actions tab</li>
+          <div className="desk-well rounded-xl p-4 space-y-2">
+            <div className="text-xs font-medium text-desk-text">Scheduled scan windows</div>
+            <ul className="text-xs text-desk-secondary space-y-1 font-mono tabular-nums">
+              <li>17:30 ET (21:30 UTC) Mon–Fri · Post-settlement scan</li>
+              <li>20:30 ET (00:30 UTC) Mon–Fri · Globex Asia session confirmation</li>
+              <li>On-demand · Manual workflow dispatch</li>
             </ul>
           </div>
         </div>
 
-        {/* Status & Terminal Log Output */}
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 md:p-8 shadow-xl backdrop-blur flex flex-col space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        {/* Status & Console */}
+        <div className="desk-surface rounded-2xl p-6 flex flex-col space-y-4">
+          <div className="flex items-center justify-between border-b border-hairline pb-4">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-emerald-400 animate-pulse" />
-              <h2 className="text-lg font-black text-slate-100">Live Execution Console</h2>
+              <span className={`h-2 w-2 rounded-full ${isRunningCloud ? 'bg-desk-amber' : 'bg-desk-up'}`} />
+              <h2 className="text-base font-semibold text-desk-text">Execution console</h2>
             </div>
-            <span className="rounded-lg bg-slate-800 px-3 py-1 text-[11px] font-mono font-bold text-slate-300">
-              {statusText}
-            </span>
+            <span className="desk-tag font-mono">{statusText}</span>
           </div>
 
-          <div className="flex-1 min-h-[260px] max-h-[340px] overflow-y-auto rounded-2xl border border-slate-800/90 bg-slate-950 p-4 font-mono text-xs space-y-2">
+          <div className="flex-1 min-h-[240px] max-h-[320px] overflow-y-auto rounded-xl border border-hairline bg-desk-deep p-4 font-mono text-xs space-y-2 tabular-nums">
             {logs.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-slate-600">
-                Console idle. Click "Run Cloud Scanner Now" to trigger.
+              <div className="flex h-full items-center justify-center text-desk-muted">
+                Console idle. Select &ldquo;Run cloud scanner&rdquo; to dispatch.
               </div>
             ) : (
               logs.map((l, i) => {
                 const color =
                   l.type === 'success'
-                    ? 'text-emerald-400'
+                    ? 'text-desk-up'
                     : l.type === 'warning'
-                    ? 'text-amber-400'
+                    ? 'text-desk-amber'
                     : l.type === 'error'
-                    ? 'text-rose-400'
-                    : 'text-slate-300';
+                    ? 'text-desk-down'
+                    : 'text-desk-secondary';
                 return (
                   <div key={i} className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-slate-500 shrink-0">[{l.time}]</span>
+                    <span className="text-desk-muted shrink-0">[{l.time}]</span>
                     <span className={color}>{l.message}</span>
                   </div>
                 );
@@ -221,14 +212,16 @@ export default function ScanRunner() {
         </div>
       </div>
 
-      {/* 13 Futures Instruments Monitored */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 md:p-8 shadow-xl backdrop-blur">
-        <h3 className="text-base font-black text-slate-100 mb-4">Universe of 13 Tracked Futures Contracts</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+      {/* Monitored Futures Contracts */}
+      <div className="desk-surface rounded-2xl p-6">
+        <h3 className="text-sm font-semibold text-desk-text mb-4">
+          Monitored futures universe ({Object.keys(FUTURES_MAP).length} contracts)
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
           {Object.entries(FUTURES_MAP).map(([sym, ticker]) => (
-            <div key={sym} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-center">
-              <div className="text-sm font-bold font-mono text-slate-100">{sym}</div>
-              <div className="text-[10px] font-mono text-slate-500">{ticker}</div>
+            <div key={sym} className="desk-well rounded-xl p-3 text-center">
+              <div className="text-sm font-semibold font-mono text-desk-text">{sym}</div>
+              <div className="text-[11px] font-mono text-desk-muted mt-0.5">{ticker}</div>
             </div>
           ))}
         </div>

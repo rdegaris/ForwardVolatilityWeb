@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchJson } from '../lib/http';
 import type { TurtleTriggerSoon, TurtleTriggersPayload } from '../types/turtle';
+import { AlertCircleIcon } from '../components/Icons';
 
 function formatNum(value?: number | null, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
@@ -24,7 +25,7 @@ export default function TurtleTriggers() {
         setData(d);
         setLoading(false);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load turtle trigger watchlist');
+        setError(err?.message || 'Failed to load Trendorama trigger watchlist');
         setLoading(false);
       }
     })();
@@ -41,99 +42,105 @@ export default function TurtleTriggers() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading Turtle trigger watchlist...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading near-trigger watchlist…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
-        <div className="text-center max-w-lg">
-          <p className="text-red-400 mb-4">⚠️ {error || 'No data available'}</p>
-          <p className="text-gray-400 text-sm">
-            Generate <span className="font-mono">turtle_triggers_latest.json</span> into <span className="font-mono">public/data</span>.
-          </p>
+      <div className="flex flex-col items-center justify-center h-80 gap-2 text-center">
+        <div className="inline-flex items-center gap-2 text-sm font-medium text-desk-down">
+          <AlertCircleIcon className="w-4 h-4" />
+          <span>{error || 'No watchlist data available'}</span>
         </div>
+        <p className="text-sm text-desk-muted">
+          Ensure <span className="font-mono">turtle_triggers_latest.json</span> exists in <span className="font-mono">public/data</span>.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-500">
-            Turtle (System 2) — Triggers Soon
+    <div className="space-y-8">
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+            <span>Trendorama · Near-breakout proximity</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
+            Triggers soon
           </h1>
-          <p className="text-gray-300">
-            Watchlist for markets approaching their breakout level. {data.threshold_note || ''}
+          <p className="text-sm text-desk-secondary">
+            Contracts trading closest to their 55-day breakout boundary measured in volatility units (N). {data.threshold_note || ''}
           </p>
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-6">
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Date</div>
-              <div className="text-xl font-bold">{data.date}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Signals</div>
-              <div className="text-xl font-bold text-emerald-300">{rows.length}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">System</div>
-              <div className="text-xl font-bold text-indigo-300">{data.system}</div>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              <div className="text-gray-400">Updated</div>
-              <div className="text-xl font-bold text-gray-200">{new Date(data.timestamp).toLocaleString()}</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Session date</div>
+            <div className="mt-2 text-xl font-medium font-mono text-desk-text">{data.date}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Near-trigger contracts</div>
+            <div className="mt-2 text-[28px] leading-none font-medium font-mono text-desk-up">{rows.length}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">System</div>
+            <div className="mt-2 text-xl font-medium font-mono text-desk-text">{data.system}</div>
+          </div>
+          <div className="desk-well rounded-xl p-4">
+            <div className="text-xs text-desk-muted">Updated</div>
+            <div className="mt-2 text-sm font-medium font-mono text-desk-secondary">
+              {new Date(data.timestamp).toLocaleString()}
             </div>
           </div>
         </div>
+      </section>
 
-        {rows.length === 0 ? (
-          <div className="bg-white/10 rounded-lg p-6 border border-slate-700/60">
-            <div className="text-gray-300">No near-trigger markets.</div>
-          </div>
-        ) : (
-          <div className="bg-white/5 rounded-xl border border-slate-700/60 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-black/20 text-gray-300">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Symbol</th>
-                    <th className="px-4 py-3 text-left">Side</th>
-                    <th className="px-4 py-3 text-right">Last</th>
-                    <th className="px-4 py-3 text-right">Trigger</th>
-                    <th className="px-4 py-3 text-right">Dist (N)</th>
-                    <th className="px-4 py-3 text-right">Away (%)</th>
-                    <th className="px-4 py-3 text-left">Notes</th>
+      {rows.length === 0 ? (
+        <div className="desk-surface rounded-xl p-6 text-sm text-desk-muted">
+          No contracts within the near-trigger distance threshold
+        </div>
+      ) : (
+        <div className="desk-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="border-b border-hairline bg-desk-deep text-desk-muted">
+                <tr>
+                  <th className="px-4 py-3 text-left font-normal">Contract</th>
+                  <th className="px-4 py-3 text-left font-normal">Side</th>
+                  <th className="px-4 py-3 text-right font-normal">Last close</th>
+                  <th className="px-4 py-3 text-right font-normal">Trigger price</th>
+                  <th className="px-4 py-3 text-right font-normal">Distance (N)</th>
+                  <th className="px-4 py-3 text-right font-normal">Away (%)</th>
+                  <th className="px-4 py-3 text-left font-normal">Notes</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {rows.map((r: TurtleTriggerSoon, idx: number) => (
+                  <tr key={`${r.symbol}-${idx}`} className="hover:bg-desk-raised/40 transition-colors duration-150 ease-desk">
+                    <td className="px-4 py-3 font-mono font-medium text-desk-text">{r.symbol}</td>
+                    <td className="px-4 py-3">
+                      <span className={r.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                        {r.side === 'long' ? 'Long' : 'Short'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.last_close)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-text">{formatNum(r.trigger_price)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatNum(r.distance_N, 2)}</td>
+                    <td className="px-4 py-3 text-right font-mono text-desk-secondary">{formatPct(r.pct_away, 2)}</td>
+                    <td className="px-4 py-3 text-desk-secondary">{r.notes || '—'}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r: TurtleTriggerSoon, idx: number) => {
-                    const sideColor = r.side === 'long' ? 'text-emerald-200' : 'text-rose-200';
-                    return (
-                      <tr key={`${r.symbol}-${idx}`} className="border-t border-slate-700/50 hover:bg-white/5">
-                        <td className="px-4 py-3 font-mono font-bold">{r.symbol}</td>
-                        <td className={`px-4 py-3 font-semibold ${sideColor}`}>{r.side.toUpperCase()}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.last_close)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.trigger_price)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatNum(r.distance_N, 2)}</td>
-                        <td className="px-4 py-3 text-right font-mono">{formatPct(r.pct_away, 2)}</td>
-                        <td className="px-4 py-3 text-gray-300">{r.notes || '—'}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

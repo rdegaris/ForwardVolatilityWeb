@@ -1,5 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { TV_SYMBOLS, CME_FUTURES_SYMBOLS, LBR_STUDIES, LBR_STUDIES_OVERRIDES, STRATEGY_INTERVALS } from '../lib/tradingview';
+import {
+  TV_SYMBOLS,
+  CME_FUTURES_SYMBOLS,
+  LBR_STUDIES,
+  LBR_STUDIES_OVERRIDES,
+  STRATEGY_INTERVALS,
+} from '../lib/tradingview';
+import { ArrowUpRightIcon, XIcon } from './Icons';
 
 export interface SignalChartModalProps {
   isOpen: boolean;
@@ -7,8 +14,7 @@ export interface SignalChartModalProps {
   symbol: string;
   strategy: string;
   interval?: string;
-  // Signal overlay data
-  signalLabel?: string;        // e.g. "FADE UP — SELL"
+  signalLabel?: string;
   direction?: 'long' | 'short' | 'fade_up' | 'fade_down' | null;
   entryPrice?: number | null;
   stopPrice?: number | null;
@@ -23,24 +29,29 @@ declare global {
   }
 }
 
-function PricePill({
+function PriceStat({
   label,
   value,
-  color,
+  tone = 'neutral',
 }: {
   label: string;
   value: number | null | undefined;
-  color: string;
+  tone?: 'neutral' | 'up' | 'down';
 }) {
   if (value == null) return null;
   const formatted =
     Math.abs(value) >= 1000
       ? value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-      : value.toFixed(4);
+      : Math.abs(value) < 2
+        ? value.toFixed(4)
+        : value.toFixed(2);
+  const valueClass =
+    tone === 'up' ? 'text-desk-up' : tone === 'down' ? 'text-desk-down' : 'text-desk-text';
+
   return (
-    <div className="flex flex-col items-center bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-2 min-w-[100px]">
-      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">{label}</span>
-      <span className={`font-mono font-bold text-base ${color}`}>${formatted}</span>
+    <div className="desk-well rounded-lg px-3.5 py-2 min-w-[104px]">
+      <div className="text-xs text-desk-muted">{label}</div>
+      <div className={`mt-0.5 font-mono text-sm font-medium ${valueClass}`}>${formatted}</div>
     </div>
   );
 }
@@ -72,23 +83,14 @@ export default function SignalChartModal({
     STRATEGY_INTERVALS[strategy?.toLowerCase()] ||
     'D';
 
-  // Determine direction styling
-  const isBullish =
-    direction === 'long' || direction === 'fade_down';
-  const dirColor = isBullish
-    ? 'text-emerald-400'
-    : direction
-    ? 'text-rose-400'
-    : 'text-slate-300';
+  const isBullish = direction === 'long' || direction === 'fade_down';
+  const dirColor = isBullish ? 'text-desk-up' : direction ? 'text-desk-down' : 'text-desk-secondary';
 
   useEffect(() => {
     if (!isOpen) return;
 
-    // Load TradingView widget script once
     const loadWidget = () => {
       if (!containerRef.current) return;
-
-      // Clear previous widget
       containerRef.current.innerHTML = `<div id="${chartId.current}" style="height:100%;width:100%;"></div>`;
 
       widgetRef.current = new window.TradingView.widget({
@@ -99,9 +101,9 @@ export default function SignalChartModal({
         interval: effectiveInterval,
         timezone: 'America/New_York',
         theme: 'dark',
-        style: '1',           // candlestick
+        style: '1',
         locale: 'en',
-        toolbar_bg: '#0f172a',
+        toolbar_bg: '#141415',
         enable_publishing: false,
         hide_side_toolbar: false,
         hide_top_toolbar: false,
@@ -110,13 +112,13 @@ export default function SignalChartModal({
         studies: LBR_STUDIES,
         studies_overrides: LBR_STUDIES_OVERRIDES,
         overrides: {
-          'paneProperties.background': '#0f172a',
-          'paneProperties.vertGridProperties.color': '#1e293b',
-          'paneProperties.horzGridProperties.color': '#1e293b',
-          'symbolWatermarkProperties.transparency': 90,
-          'scalesProperties.textColor': '#94a3b8',
+          'paneProperties.background': '#141415',
+          'paneProperties.vertGridProperties.color': '#232325',
+          'paneProperties.horzGridProperties.color': '#232325',
+          'symbolWatermarkProperties.transparency': 92,
+          'scalesProperties.textColor': '#85858b',
         },
-        loading_screen: { backgroundColor: '#0f172a', foregroundColor: '#3b82f6' },
+        loading_screen: { backgroundColor: '#141415', foregroundColor: '#ededed' },
       });
     };
 
@@ -135,7 +137,6 @@ export default function SignalChartModal({
     };
   }, [isOpen, tvSymbol, effectiveInterval]);
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -146,156 +147,120 @@ export default function SignalChartModal({
 
   if (!isOpen) return null;
 
+  const intervalLabel =
+    effectiveInterval === '15'
+      ? '15m pit session'
+      : effectiveInterval === '1'
+        ? '1m'
+        : effectiveInterval === '30'
+          ? '30m'
+          : effectiveInterval === '60' || effectiveInterval === '1H'
+            ? '60m Globex'
+            : 'Daily (1D)';
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/75" />
 
-      {/* Modal */}
-      <div className="relative z-10 w-full max-w-[1400px] h-[92vh] bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col">
-
+      <div className="relative z-10 w-full max-w-[1440px] h-[90vh] bg-desk-card rounded-2xl border border-hairline-strong overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/80 backdrop-blur shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="font-mono font-black text-2xl text-white">{symbol}</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 border-b border-hairline bg-desk-deep shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="font-mono text-xl font-medium text-desk-text">{symbol}</span>
             {signalLabel && (
-              <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border ${
-                isBullish
-                  ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                  : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
-              }`}>
+              <span className={isBullish ? 'desk-tag-up' : direction ? 'desk-tag-down' : 'desk-tag'}>
                 {signalLabel}
               </span>
             )}
-            <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-mono font-bold border border-slate-700">
-              {effectiveInterval === '15' ? '15m Pit Session' : effectiveInterval === '1' ? '1m' : effectiveInterval === '30' ? '30m' : effectiveInterval === '60' || effectiveInterval === '1H' ? '1h' : 'Daily (1D)'}
-            </span>
-            <span className="text-slate-500 text-xs font-mono">Mapped: {tvSymbol}</span>
+            <span className="desk-tag font-mono">{intervalLabel}</span>
+            <span className="text-xs font-mono text-desk-muted">Proxy: {tvSymbol}</span>
           </div>
+
           <div className="flex items-center gap-3">
+            {signalDate && <span className="text-xs font-mono text-desk-muted">Session {signalDate}</span>}
             <a
               href={`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(cmeSymbol)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 transition-colors flex items-center gap-1.5"
+              className="desk-btn-secondary h-8 px-3 text-xs"
             >
-              Open {cmeSymbol} on TradingView ↗
+              <span>Open {cmeSymbol}</span>
+              <ArrowUpRightIcon className="w-3.5 h-3.5 text-desk-muted" />
             </a>
-            {signalDate && (
-              <span className="text-xs text-slate-500">As of {signalDate}</span>
-            )}
             <button
+              type="button"
               onClick={onClose}
-              className="text-slate-400 hover:text-white transition-colors text-2xl leading-none px-2"
+              className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-desk-muted hover:text-desk-text hover:bg-desk-raised transition-colors duration-150 ease-desk"
               aria-label="Close chart"
             >
-              ×
+              <XIcon className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Chart */}
-        <div ref={containerRef} className="flex-1 w-full min-h-[500px]" />
+        <div ref={containerRef} className="flex-1 w-full min-h-[460px] bg-desk-bg" />
 
         {/* Signal details strip */}
         {(entryPrice != null || stopPrice != null || targetPrice != null || extraRows.length > 0) && (
-          <div className="border-t border-slate-700 bg-slate-900 px-6 py-4 shrink-0">
+          <div className="border-t border-hairline bg-desk-deep px-6 py-3.5 shrink-0">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Price pills */}
-                <PricePill
-                  label="Entry"
-                  value={entryPrice}
-                  color="bg-slate-800 text-slate-100 border border-slate-600"
-                />
-                <PricePill
-                  label="Target"
-                  value={targetPrice}
-                  color={`bg-slate-800 border ${isBullish ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300'}`}
-                />
-                <PricePill
-                  label="Stop"
-                  value={stopPrice}
-                  color="bg-slate-800 border border-amber-500/30 text-amber-300"
-                />
+              <div className="flex flex-wrap items-center gap-2.5">
+                <PriceStat label="Entry" value={entryPrice} tone="neutral" />
+                <PriceStat label="Target" value={targetPrice} tone={isBullish ? 'up' : 'down'} />
+                <PriceStat label="Stop" value={stopPrice} tone="down" />
 
-                {/* Risk/Reward */}
                 {entryPrice != null && stopPrice != null && targetPrice != null && (
-                  <div className="flex flex-col items-center rounded-xl px-4 py-2 bg-indigo-950/50 border border-indigo-500/20 min-w-[90px]">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-0.5">
-                      R:R
-                    </span>
-                    <span className="font-mono font-bold text-base text-indigo-300">
-                      {Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
-                        Math.abs((entryPrice ?? stopPrice) - stopPrice) > 0
+                  <div className="desk-well rounded-lg px-3.5 py-2 min-w-[88px]">
+                    <div className="text-xs text-desk-muted">Reward / risk</div>
+                    <div className="mt-0.5 font-mono text-sm font-medium text-desk-text">
+                      {Math.abs((entryPrice ?? stopPrice) - stopPrice) > 0
                         ? (
                             Math.abs(targetPrice - (entryPrice ?? targetPrice)) /
                             Math.abs((entryPrice ?? stopPrice) - stopPrice)
                           ).toFixed(1)
                         : '—'}
                       :1
-                    </span>
+                    </div>
                   </div>
                 )}
 
-                {/* Extra metadata rows */}
                 {extraRows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex flex-col items-center rounded-xl px-4 py-2 bg-slate-800 border border-slate-700 min-w-[90px]"
-                  >
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
-                      {row.label}
-                    </span>
-                    <span className={`font-mono font-bold text-base ${row.highlight ? dirColor : 'text-slate-300'}`}>
+                  <div key={row.label} className="desk-well rounded-lg px-3.5 py-2 min-w-[96px]">
+                    <div className="text-xs text-desk-muted">{row.label}</div>
+                    <div className={`mt-0.5 font-mono text-sm font-medium ${row.highlight ? dirColor : 'text-desk-secondary'}`}>
                       {row.value}
-                    </span>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              {/* Discord / X Support Callout Box */}
-              <div className="flex items-center gap-3 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-300 shadow-inner">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-semibold text-slate-200">Have questions about this setup?</span>
-                </div>
-                <div className="flex items-center gap-2 font-bold">
-                  <a
-                    href="https://discord.gg/ozcta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-2.5 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/40 border border-indigo-500/30 transition-colors flex items-center gap-1.5"
-                  >
-                    💬 Discord Channel
-                  </a>
-                  <span className="text-slate-600">·</span>
-                  <a
-                    href="https://x.com/LindaRaschke"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-2.5 py-1 rounded-lg bg-sky-600/20 text-sky-300 hover:bg-sky-600/40 border border-sky-500/30 transition-colors flex items-center gap-1.5"
-                  >
-                    𝕏 Contact on X
-                  </a>
-                </div>
+              <div className="flex flex-wrap items-center gap-4 text-xs text-desk-muted">
+                <span className="font-mono">Keltner 20 EMA ± 2.5 ATR · LBR 3/10</span>
+                <a
+                  href="https://discord.gg/W3G2TpJQvP"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+                >
+                  <span>Desk Discord</span>
+                  <ArrowUpRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+                </a>
+                <a
+                  href="https://x.com/OzCTA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+                >
+                  <span>@OzCTA</span>
+                  <ArrowUpRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+                </a>
               </div>
-            </div>
-
-            {/* LBR indicator reminder */}
-            <div className="mt-3 flex flex-wrap gap-2">
-              {[
-                'Keltner Channel: 20 EMA ± 2.5×ATR',
-                'EMA: 20-period',
-                'MACD: 3/10/16 (LBR 3-10 Oscillator)',
-              ].map((hint) => (
-                <span key={hint} className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700">
-                  {hint}
-                </span>
-              ))}
             </div>
           </div>
         )}

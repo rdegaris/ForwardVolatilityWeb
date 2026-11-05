@@ -187,21 +187,21 @@ export default function EarningsCrushTrades() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="p-8 text-desk-text bg-desk-raised">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-400">
+            <h1 className="text-4xl font-bold mb-2 bg-desk-raised">
               Earnings Crush Trades
             </h1>
-            <p className="text-gray-300">
+            <p className="text-desk-secondary">
               Track your earnings volatility trades
             </p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200"
+            className="font-semibold py-2 px-6 rounded-md transition-colors duration-200 bg-desk-up hover:bg-desk-up text-desk-deep"
           >
             {showForm ? 'Cancel' : '+ Add Trade'}
           </button>
@@ -209,100 +209,100 @@ export default function EarningsCrushTrades() {
 
         {/* Add Trade Form */}
         {showForm && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-teal-500/30">
-            <h2 className="text-xl font-bold text-white mb-4">New Earnings Crush Trade</h2>
+          <div className="rounded-xl p-6 border bg-desk-card border-desk-up/30">
+            <h2 className="text-xl font-bold mb-4 text-desk-text">New Earnings Crush Trade</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Symbol</label>
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">Symbol</label>
                 <input
                   type="text"
                   value={formData.symbol}
                   onChange={(e) => setFormData({ ...formData, symbol: e.target.value.toUpperCase() })}
                   placeholder="AVGO"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Strike</label>
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">Strike</label>
                 <input
                   type="number"
                   step="0.5"
                   value={formData.strike || ''}
                   onChange={(e) => setFormData({ ...formData, strike: parseFloat(e.target.value) })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">Type</label>
                 <select
                   value={formData.callOrPut}
                   onChange={(e) => setFormData({ ...formData, callOrPut: e.target.value as 'CALL' | 'PUT' })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 >
                   <option value="CALL">CALL</option>
                   <option value="PUT">PUT</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Quantity</label>
+                <label className="block text-sm font-medium mb-1 text-desk-secondary">Quantity</label>
                 <input
                   type="number"
                   value={formData.quantity || ''}
                   onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
               {/* Front Month (Short - Sell) */}
-              <div className="border border-red-500/30 rounded-lg p-4 bg-red-900/10">
-                <h3 className="font-semibold text-red-300 mb-3">Front Month (SELL - Short)</h3>
+              <div className="border rounded-lg p-4 border-desk-down/30 bg-desk-card">
+                <h3 className="font-semibold mb-3 text-desk-down">Front Month (SELL - Short)</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Expiration</label>
+                    <label className="block text-sm mb-1 text-desk-muted">Expiration</label>
                     <input
                       type="date"
                       value={formData.frontExpiration}
                       onChange={(e) => setFormData({ ...formData, frontExpiration: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                      className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Entry Credit</label>
+                    <label className="block text-sm mb-1 text-desk-muted">Entry Credit</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.frontEntryPrice || ''}
                       onChange={(e) => setFormData({ ...formData, frontEntryPrice: parseFloat(e.target.value) })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                      className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Back Month (Long - Buy) */}
-              <div className="border border-green-500/30 rounded-lg p-4 bg-green-900/10">
-                <h3 className="font-semibold text-green-300 mb-3">Back Month (BUY - Long)</h3>
+              <div className="border rounded-lg p-4 border-desk-up/30 bg-desk-card">
+                <h3 className="font-semibold mb-3 text-desk-up">Back Month (BUY - Long)</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Expiration</label>
+                    <label className="block text-sm mb-1 text-desk-muted">Expiration</label>
                     <input
                       type="date"
                       value={formData.backExpiration}
                       onChange={(e) => setFormData({ ...formData, backExpiration: e.target.value })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                      className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Entry Debit</label>
+                    <label className="block text-sm mb-1 text-desk-muted">Entry Debit</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.backEntryPrice || ''}
                       onChange={(e) => setFormData({ ...formData, backEntryPrice: parseFloat(e.target.value) })}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                      className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                     />
                   </div>
                 </div>
@@ -311,38 +311,38 @@ export default function EarningsCrushTrades() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Entry Date</label>
+                <label className="block text-sm mb-1 text-desk-muted">Entry Date</label>
                 <input
                   type="date"
                   value={formData.entryDate}
                   onChange={(e) => setFormData({ ...formData, entryDate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Earnings Date</label>
+                <label className="block text-sm mb-1 text-desk-muted">Earnings Date</label>
                 <input
                   type="date"
                   value={formData.earningsDate}
                   onChange={(e) => setFormData({ ...formData, earningsDate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Underlying Price</label>
+                <label className="block text-sm mb-1 text-desk-muted">Underlying Price</label>
                 <input
                   type="number"
                   step="0.01"
                   value={formData.underlyingEntryPrice || ''}
                   onChange={(e) => setFormData({ ...formData, underlyingEntryPrice: parseFloat(e.target.value) })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white"
+                  className="w-full px-3 py-2 border rounded-md bg-desk-card border-hairline text-desk-text"
                 />
               </div>
             </div>
 
             <button
               onClick={handleAddTrade}
-              className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-md transition"
+              className="w-full font-semibold py-3 rounded-md transition-colors text-desk-text bg-desk-raised"
             >
               Add Trade
             </button>
@@ -351,23 +351,23 @@ export default function EarningsCrushTrades() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
-            <div className="text-sm text-gray-400 mb-1">Open Positions</div>
-            <div className="text-2xl font-bold text-teal-400">{openTrades.length}</div>
+          <div className="rounded-xl p-4 border bg-desk-card border-hairline">
+            <div className="text-sm mb-1 text-desk-muted">Open Positions</div>
+            <div className="text-2xl font-bold text-desk-up">{openTrades.length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
-            <div className="text-sm text-gray-400 mb-1">Open P&L</div>
-            <div className={`text-2xl font-bold ${totalOpenPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="rounded-xl p-4 border bg-desk-card border-hairline">
+            <div className="text-sm mb-1 text-desk-muted">Open P&L</div>
+            <div className={`text-2xl font-bold ${totalOpenPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
               {fmt$(totalOpenPnL)}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
-            <div className="text-sm text-gray-400 mb-1">Closed Trades</div>
-            <div className="text-2xl font-bold text-gray-300">{closedTrades.length}</div>
+          <div className="rounded-xl p-4 border bg-desk-card border-hairline">
+            <div className="text-sm mb-1 text-desk-muted">Closed Trades</div>
+            <div className="text-2xl font-bold text-desk-secondary">{closedTrades.length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-slate-700/60">
-            <div className="text-sm text-gray-400 mb-1">Realized P&L</div>
-            <div className={`text-2xl font-bold ${totalClosedPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="rounded-xl p-4 border bg-desk-card border-hairline">
+            <div className="text-sm mb-1 text-desk-muted">Realized P&L</div>
+            <div className={`text-2xl font-bold ${totalClosedPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
               {fmt$(totalClosedPnL)}
             </div>
           </div>
@@ -375,21 +375,21 @@ export default function EarningsCrushTrades() {
 
         {/* Open Positions */}
         {openTrades.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-teal-500/30">
-            <div className="bg-teal-900/30 px-6 py-4 border-b border-teal-500/30">
-              <h2 className="text-xl font-bold text-teal-300">📈 Open Positions</h2>
+          <div className="rounded-xl overflow-hidden border bg-desk-card border-desk-up/30">
+            <div className="px-6 py-4 border-b bg-desk-card border-desk-up/30">
+              <h2 className="text-xl font-bold text-desk-up"> Open Positions</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-800/50">
+                <thead className="bg-desk-card">
                   <tr>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-300">Trade</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-300">Qty</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-300">Earnings</th>
-                    <th className="text-right py-3 px-3 font-semibold text-gray-300">Entry Cost</th>
-                    <th className="text-right py-3 px-3 font-semibold text-gray-300">Current</th>
-                    <th className="text-right py-3 px-3 font-semibold text-gray-300">P&L</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-300">Actions</th>
+                    <th className="text-left py-3 px-4 font-semibold text-desk-secondary">Trade</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-secondary">Qty</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-secondary">Earnings</th>
+                    <th className="text-right py-3 px-3 font-semibold text-desk-secondary">Entry Cost</th>
+                    <th className="text-right py-3 px-3 font-semibold text-desk-secondary">Current</th>
+                    <th className="text-right py-3 px-3 font-semibold text-desk-secondary">P&L</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-secondary">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -402,40 +402,40 @@ export default function EarningsCrushTrades() {
                     const daysToEarnings = Math.ceil((earningsDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                     
                     return (
-                      <tr key={trade.id} className="border-b border-gray-700/50 hover:bg-white/5">
+                      <tr key={trade.id} className="border-b border-hairline hover:bg-desk-card">
                         <td className="py-3 px-4">
-                          <div className="font-bold text-white">{trade.symbol}</div>
-                          <div className="text-xs text-gray-400">
+                          <div className="font-bold text-desk-text">{trade.symbol}</div>
+                          <div className="text-xs text-desk-muted">
                             ${trade.strike} {trade.callOrPut} | {new Date(trade.frontExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}/{new Date(trade.backExpiration).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                         </td>
                         <td className="text-center py-3 px-3 font-semibold">{trade.quantity}</td>
                         <td className="text-center py-3 px-3">
-                          <div className={`text-sm ${daysToEarnings <= 0 ? 'text-gray-400' : daysToEarnings <= 1 ? 'text-red-400 font-bold' : 'text-yellow-400'}`}>
+                          <div className={`text-sm ${daysToEarnings <= 0 ? 'text-desk-muted' : daysToEarnings <= 1 ? 'font-bold text-desk-down' : 'text-desk-amber'}`}>
                             {daysToEarnings <= 0 ? 'PASSED' : `${daysToEarnings}d`}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-desk-muted">
                             {earningsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                         </td>
                         <td className="text-right py-3 px-3 font-mono">{fmt$(entryCost)}</td>
                         <td className="text-right py-3 px-3 font-mono">{fmt$(currentValue)}</td>
-                        <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <td className={`text-right py-3 px-3 font-bold ${pnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                           {fmt$(pnl, 0)}
                         </td>
                         <td className="text-center py-3 px-3">
                           <div className="flex gap-2 justify-center">
                             <button
                               onClick={() => openCloseModal(trade)}
-                              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition"
+                              className="px-3 py-1 text-xs rounded transition-colors bg-desk-up hover:bg-desk-up text-desk-deep"
                             >
                               Close
                             </button>
                             <button
                               onClick={() => handleDeleteTrade(trade.id)}
-                              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition"
+                              className="px-3 py-1 text-xs rounded transition-colors bg-desk-down hover:bg-desk-down text-desk-deep"
                             >
-                              ✕
+                              Delete
                             </button>
                           </div>
                         </td>
@@ -450,59 +450,59 @@ export default function EarningsCrushTrades() {
 
         {/* Closed Trades */}
         {closedTrades.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-500/30">
-            <div className="bg-gray-800/50 px-6 py-4 border-b border-gray-500/30">
-              <h2 className="text-xl font-bold text-gray-300">📊 Closed Trades</h2>
+          <div className="rounded-xl overflow-hidden border bg-desk-card border-hairline">
+            <div className="px-6 py-4 border-b bg-desk-card border-hairline">
+              <h2 className="text-xl font-bold text-desk-secondary"> Closed Trades</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-800/50">
+                <thead className="bg-desk-card">
                   <tr>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-400">Trade</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-400">Qty</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-400">Entry</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-400">Closed</th>
-                    <th className="text-right py-3 px-3 font-semibold text-gray-400">Realized P&L</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-400">Notes</th>
-                    <th className="text-center py-3 px-3 font-semibold text-gray-400">Actions</th>
+                    <th className="text-left py-3 px-4 font-semibold text-desk-muted">Trade</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-muted">Qty</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-muted">Entry</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-muted">Closed</th>
+                    <th className="text-right py-3 px-3 font-semibold text-desk-muted">Realized P&L</th>
+                    <th className="text-left py-3 px-3 font-semibold text-desk-muted">Notes</th>
+                    <th className="text-center py-3 px-3 font-semibold text-desk-muted">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {closedTrades.map(trade => (
-                    <tr key={trade.id} className="border-b border-gray-700/50 hover:bg-white/5 opacity-75">
+                    <tr key={trade.id} className="border-b opacity-75 border-hairline hover:bg-desk-card">
                       <td className="py-3 px-4">
-                        <div className="font-bold text-gray-300">{trade.symbol}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="font-bold text-desk-secondary">{trade.symbol}</div>
+                        <div className="text-xs text-desk-muted">
                           ${trade.strike} {trade.callOrPut}
                         </div>
                       </td>
                       <td className="text-center py-3 px-3">{trade.quantity}</td>
-                      <td className="text-center py-3 px-3 text-gray-400">
+                      <td className="text-center py-3 px-3 text-desk-muted">
                         {new Date(trade.entryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </td>
-                      <td className="text-center py-3 px-3 text-gray-400">
+                      <td className="text-center py-3 px-3 text-desk-muted">
                         {trade.closedDate ? new Date(trade.closedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '-'}
                       </td>
-                      <td className={`text-right py-3 px-3 font-bold ${(trade.realizedPnL || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <td className={`text-right py-3 px-3 font-bold ${(trade.realizedPnL || 0) >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {fmt$(trade.realizedPnL || 0, 0)}
                       </td>
-                      <td className="py-3 px-3 text-gray-400 text-xs max-w-[200px] truncate">
+                      <td className="py-3 px-3 text-xs max-w-[200px] truncate text-desk-muted">
                         {trade.closeNotes || '-'}
                       </td>
                       <td className="text-center py-3 px-3">
                         <div className="flex gap-2 justify-center">
                           <button
                             onClick={() => handleReopenTrade(trade.id)}
-                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition"
+                            className="px-3 py-1 text-xs rounded transition-colors bg-desk-text hover:bg-desk-text text-desk-deep"
                             title="Reopen trade"
                           >
-                            ↩
+                            Reopen
                           </button>
                           <button
                             onClick={() => handleDeleteTrade(trade.id)}
-                            className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition"
+                            className="px-3 py-1 text-xs rounded transition-colors bg-desk-down hover:bg-desk-down text-desk-deep"
                           >
-                            ✕
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -516,15 +516,15 @@ export default function EarningsCrushTrades() {
 
         {/* Empty State */}
         {trades.length === 0 && !showForm && (
-          <div className="bg-white/5 rounded-xl p-12 text-center">
-            <div className="text-6xl mb-4">📉</div>
-            <h3 className="text-xl font-semibold text-white mb-2">No earnings crush trades yet</h3>
-            <p className="text-gray-400 mb-6">
+          <div className="rounded-xl p-12 text-center bg-desk-card">
+            <div className="text-6xl mb-4"></div>
+            <h3 className="text-xl font-semibold mb-2 text-desk-text">No earnings crush trades yet</h3>
+            <p className="mb-6 text-desk-muted">
               Start tracking your earnings volatility trades
             </p>
             <button
               onClick={() => setShowForm(true)}
-              className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-md transition"
+              className="font-semibold py-2 px-6 rounded-md transition-colors bg-desk-up hover:bg-desk-up text-desk-deep"
             >
               Add Your First Trade
             </button>
@@ -533,51 +533,51 @@ export default function EarningsCrushTrades() {
 
         {/* Close Trade Modal */}
         {showCloseModal && tradeToClose && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowCloseModal(false)}>
-            <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-teal-500/30" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-xl font-bold text-white mb-4">Close Trade: {tradeToClose.symbol}</h2>
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-desk-card" onClick={() => setShowCloseModal(false)}>
+            <div className="rounded-xl p-6 max-w-md w-full mx-4 border bg-desk-card border-desk-up/30" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-xl font-bold mb-4 text-desk-text">Close Trade: {tradeToClose.symbol}</h2>
               
               <div className="space-y-4 mb-6">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Front Month Close Price (Credit)</label>
+                  <label className="block text-sm mb-1 text-desk-muted">Front Month Close Price (Credit)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={closeData.frontClosePrice}
                     onChange={(e) => setCloseData({ ...closeData, frontClosePrice: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+                    className="w-full px-3 py-2 border rounded-md bg-desk-raised border-hairline text-desk-text"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Back Month Close Price (Debit)</label>
+                  <label className="block text-sm mb-1 text-desk-muted">Back Month Close Price (Debit)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={closeData.backClosePrice}
                     onChange={(e) => setCloseData({ ...closeData, backClosePrice: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+                    className="w-full px-3 py-2 border rounded-md bg-desk-raised border-hairline text-desk-text"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Notes (optional)</label>
+                  <label className="block text-sm mb-1 text-desk-muted">Notes (optional)</label>
                   <input
                     type="text"
                     value={closeData.closeNotes}
                     onChange={(e) => setCloseData({ ...closeData, closeNotes: e.target.value })}
                     placeholder="e.g., Closed after earnings beat"
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+                    className="w-full px-3 py-2 border rounded-md bg-desk-raised border-hairline text-desk-text"
                   />
                 </div>
                 
                 {/* P&L Preview */}
-                <div className="bg-gray-900/50 rounded-lg p-4">
-                  <div className="text-sm text-gray-400 mb-1">Estimated P&L</div>
+                <div className="rounded-lg p-4 bg-desk-card">
+                  <div className="text-sm mb-1 text-desk-muted">Estimated P&L</div>
                   {(() => {
                     const frontPnL = (closeData.frontClosePrice - tradeToClose.frontEntryPrice) * tradeToClose.quantity * 100;
                     const backPnL = (closeData.backClosePrice - tradeToClose.backEntryPrice) * tradeToClose.quantity * 100;
                     const totalPnL = backPnL - frontPnL;
                     return (
-                      <div className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
                         {fmt$(totalPnL)}
                       </div>
                     );
@@ -588,13 +588,13 @@ export default function EarningsCrushTrades() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowCloseModal(false)}
-                  className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 rounded-md transition"
+                  className="flex-1 font-semibold py-2 rounded-md transition-colors bg-desk-raised hover:bg-desk-raised text-desk-text"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCloseTrade}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition"
+                  className="flex-1 font-semibold py-2 rounded-md transition-colors bg-desk-up hover:bg-desk-up text-desk-deep"
                 >
                   Close Trade
                 </button>

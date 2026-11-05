@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import { getTodayDatePacific } from '../lib/dateUtils';
 import { fetchJson } from '../lib/http';
 import type {
@@ -15,6 +25,12 @@ import type { PaperTrade, PaperTradesPayload, PaperTradePerformancePayload } fro
 import { fmt$ } from '../lib/formatCurrency';
 import SignalChartModal from '../components/SignalChartModal';
 import IraPortfolioWidget from '../components/IraPortfolioWidget';
+import {
+  ArrowRightIcon,
+  ChartLineIcon,
+  ChevronDownIcon,
+  ClockIcon,
+} from '../components/Icons';
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -24,83 +40,94 @@ function formatSignalPrice(value?: number | string | null, digits = 2) {
   if (value === null || value === undefined || value === '') return '—';
   const num = typeof value === 'string' ? parseFloat(value) : value;
   if (Number.isNaN(num)) return '—';
-  if (Math.abs(num) >= 1000) return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (Math.abs(num) >= 1000) {
+    return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
   if (Math.abs(num) < 2) return num.toFixed(4);
   return num.toFixed(digits);
 }
 
+function fmtSignedPct(v?: number) {
+  if (v === undefined || Number.isNaN(v)) return '0.0%';
+  return v > 0 ? `+${v.toFixed(1)}%` : `${v.toFixed(1)}%`;
+}
+
+function pctTone(v?: number) {
+  if (!v) return 'text-desk-muted';
+  return v > 0 ? 'text-desk-up' : 'text-desk-down';
+}
+
+function formatSessionLabel(session?: string | null, isHourly?: boolean) {
+  if (session === 'ASIA') return 'Asia 1h';
+  if (session === 'LONDON') return 'London 1h';
+  if (session === 'US') return isHourly ? 'US 1h' : 'US RTH';
+  return isHourly ? 'Globex 1h' : 'Daily';
+}
+
+const STATUS_LABELS: Record<string, { label: string; dot: string; text: string }> = {
+  OPEN: { label: 'Open', dot: 'bg-desk-up', text: 'text-desk-text' },
+  HIT_TARGET: { label: 'Target hit', dot: 'bg-desk-up', text: 'text-desk-up' },
+  STOPPED_OUT: { label: 'Stopped out', dot: 'bg-desk-down', text: 'text-desk-down' },
+  DONCHIAN_EXIT: { label: 'Donchian exit', dot: 'bg-desk-muted', text: 'text-desk-secondary' },
+  TIME_EXIT: { label: 'Time exit', dot: 'bg-desk-muted', text: 'text-desk-secondary' },
+  EMA_EXIT: { label: 'EMA exit', dot: 'bg-desk-muted', text: 'text-desk-secondary' },
+  EOD_EXIT: { label: 'EOD exit', dot: 'bg-desk-muted', text: 'text-desk-secondary' },
+  MANUALLY_CLOSED: { label: 'Closed', dot: 'bg-desk-muted', text: 'text-desk-muted' },
+};
+
 /* ------------------------------------------------------------------ */
-/*  Reusable StatCard                                                 */
+/*  Strategy Summary Stat Card                                        */
 /* ------------------------------------------------------------------ */
 
-function StatCard({
+function StrategySummaryCard({
   label,
-  title,
+  to,
+  method,
   value,
   sub,
-  accent,
-  badge,
   mtdPct,
   allTimePct,
 }: {
-  label?: string;
-  title?: string;
-  value: React.ReactNode;
-  sub?: React.ReactNode;
-  accent: string;
-  badge?: string;
+  label: string;
+  to: string;
+  method: string;
+  value: number;
+  sub: string;
   mtdPct?: number;
   allTimePct?: number;
 }) {
-  const cardTitle = label || title || '';
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-slate-700 flex flex-col justify-between">
+    <Link
+      to={to}
+      className="group desk-surface rounded-xl p-5 flex flex-col justify-between hover:border-hairline-strong transition-colors duration-150 ease-desk"
+    >
       <div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{cardTitle}</span>
-          {badge && (
-            <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-300 border border-slate-700">
-              {badge}
-            </span>
-          )}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm font-medium text-desk-text group-hover:text-white transition-colors duration-150 ease-desk truncate">
+            {label}
+          </span>
+          <span className="text-xs font-mono text-desk-muted shrink-0">{method}</span>
         </div>
-        <div className={`mt-2 text-3xl font-black tracking-tight ${accent}`}>{value}</div>
-        {sub && <div className="mt-1 text-xs text-slate-400 font-medium">{sub}</div>}
+
+        <div className="mt-4 flex items-baseline gap-2.5">
+          <span className="text-[28px] leading-none font-medium font-mono text-desk-text">
+            {value}
+          </span>
+          <span className="text-xs text-desk-muted truncate">{sub}</span>
+        </div>
       </div>
 
-      {(mtdPct !== undefined || allTimePct !== undefined) && (
-        <div className="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2">
-          {mtdPct !== undefined && (
-            <div
-              className={`rounded-xl px-2.5 py-1.5 text-center border ${
-                mtdPct >= 0
-                  ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
-                  : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-              }`}
-            >
-              <div className="text-[9px] font-bold uppercase tracking-wider opacity-80">MTD</div>
-              <div className="text-xs font-black font-mono">
-                {mtdPct >= 0 ? `+${mtdPct.toFixed(1)}%` : `${mtdPct.toFixed(1)}%`}
-              </div>
-            </div>
-          )}
-          {allTimePct !== undefined && (
-            <div
-              className={`rounded-xl px-2.5 py-1.5 text-center border ${
-                allTimePct >= 0
-                  ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
-                  : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-              }`}
-            >
-              <div className="text-[9px] font-bold uppercase tracking-wider opacity-80">All Time</div>
-              <div className="text-xs font-black font-mono">
-                {allTimePct >= 0 ? `+${allTimePct.toFixed(1)}%` : `${allTimePct.toFixed(1)}%`}
-              </div>
-            </div>
-          )}
+      <div className="mt-4 pt-3 border-t border-hairline flex items-center justify-between text-xs font-mono">
+        <div>
+          <span className="text-desk-muted mr-1.5">MTD</span>
+          <span className={pctTone(mtdPct)}>{fmtSignedPct(mtdPct)}</span>
         </div>
-      )}
-    </div>
+        <div>
+          <span className="text-desk-muted mr-1.5">All</span>
+          <span className={pctTone(allTimePct)}>{fmtSignedPct(allTimePct)}</span>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -113,8 +140,8 @@ export default function Home() {
   const [winnersOpen, setWinnersOpen] = useState(false);
   const [losersOpen, setLosersOpen] = useState(false);
   const [turtleSignals, setTurtleSignals] = useState<TurtleSignalsPayload | null>(null);
-  const [turtleOpen, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
-  const [turtleSuggested, setTurtleSuggested] = useState<TurtleSuggestedTradesPayload | null>(null);
+  const [, setTurtleOpen] = useState<TurtleOpenTradesPayload | null>(null);
+  const [, setTurtleSuggested] = useState<TurtleSuggestedTradesPayload | null>(null);
   const [odidSignals, setOdidSignals] = useState<OdidSignalsPayload | null>(null);
   const [odidAlerts, setOdidAlerts] = useState<OdidAlertsPayload | null>(null);
   const [odidOpen, setOdidOpen] = useState<OdidOpenTradesPayload | null>(null);
@@ -178,7 +205,6 @@ export default function Home() {
   const odidAlertsCount = odidAlerts?.total_alerts ?? 0;
   const odidOpenCount = odidOpen?.open_trades?.length ?? 0;
 
-  // Actionable Bradman signals (prioritize EC/$ confirmed & overnight Asia/London 1H divergences first)
   const bradmanActionable = useMemo(() => {
     if (!taylorSignals?.signals) return [];
     return [...taylorSignals.signals]
@@ -192,16 +218,14 @@ export default function Home() {
       });
   }, [taylorSignals]);
 
-  // Actionable YouHaveChosenWisely signals
   const grailTriggered = useMemo(() => {
     if (!grailSignals?.signals) return [];
     return grailSignals.signals.filter((s) => s.eligible !== false && s.side !== 'none');
   }, [grailSignals]);
 
-  // The Linda triggered
   const lindaTriggered = useMemo(() => {
     if (!lindaSignals?.signals) return [];
-    return lindaSignals.signals.filter(s => s.triggered);
+    return lindaSignals.signals.filter((s) => s.triggered);
   }, [lindaSignals]);
 
   const [selectedPerfStrategy, setSelectedPerfStrategy] = useState<string>('ALL');
@@ -224,7 +248,6 @@ export default function Home() {
     return true;
   };
 
-  // Filtered Trades for Performance Section (Open trades first, then newest first)
   const perfTrades = useMemo(() => {
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
     if (sourceTrades.length === 0) return [];
@@ -242,7 +265,50 @@ export default function Home() {
       });
   }, [allTrades, paperPerformance, selectedPerfStrategy, selectedPerfTimeframe]);
 
-  // Inception-level metrics (always across full history for selected strategy)
+  const deskHeroTotals = useMemo(() => {
+    const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
+    const closed = sourceTrades.filter((t) => t.status !== 'OPEN');
+    const open = sourceTrades.filter((t) => t.status === 'OPEN');
+    const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+    const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
+    const netPnl = realizedPnl + unrealizedPnl;
+    return {
+      realizedPnl: Math.round(realizedPnl * 100) / 100,
+      unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
+      netPnl: Math.round(netPnl * 100) / 100,
+      returnPct: Math.round((netPnl / 100000) * 1000) / 10,
+      closedCount: closed.length,
+      openCount: open.length,
+    };
+  }, [allTrades, paperPerformance]);
+
+  const heroEquityCurve = useMemo(() => {
+    if (paperPerformance?.equity_curve?.length) {
+      return paperPerformance.equity_curve;
+    }
+    if (allTrades.length === 0) return [];
+    const dateSet = new Set<string>();
+    for (const t of allTrades) {
+      if (t.entry_date) dateSet.add(t.entry_date.slice(0, 10));
+      if (t.exit_date) dateSet.add(t.exit_date.slice(0, 10));
+    }
+    const sortedDates = Array.from(dateSet).sort();
+    const latest = sortedDates[sortedDates.length - 1];
+    return sortedDates.map((d) => {
+      const realized = allTrades
+        .filter((t) => t.status !== 'OPEN' && (t.exit_date || t.entry_date)?.slice(0, 10) <= d)
+        .reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
+      const unrealized =
+        d === latest
+          ? allTrades
+              .filter((t) => t.status === 'OPEN' && (t.entry_date || '').slice(0, 10) <= d)
+              .reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0)
+          : 0;
+      const cum_pnl = Math.round((realized + unrealized) * 100) / 100;
+      return { date: d, cum_pnl };
+    });
+  }, [paperPerformance, allTrades]);
+
   const inceptionMetrics = useMemo(() => {
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
     const pool = sourceTrades.filter(
@@ -253,24 +319,15 @@ export default function Home() {
 
     const realizedPnl = closed.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const unrealizedPnl = open.reduce((acc, t) => acc + (t.unrealized_pnl || 0), 0);
-    const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
-    const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
-    const totalCosts = totalCommissions + totalSlippage;
-    const netPnl = realizedPnl + unrealizedPnl;
 
     return {
       realizedPnl: Math.round(realizedPnl * 100) / 100,
       unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
-      netPnl: Math.round(netPnl * 100) / 100,
-      totalCommissions: Math.round(totalCommissions * 100) / 100,
-      totalSlippage: Math.round(totalSlippage * 100) / 100,
-      totalCosts: Math.round(totalCosts * 100) / 100,
       closedCount: closed.length,
       openCount: open.length,
     };
   }, [allTrades, paperPerformance, selectedPerfStrategy]);
 
-  // Per-strategy MTD % and All Time % for the 5 Strategy StatCards
   const strategyPerfSummary = useMemo(() => {
     const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda'];
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
@@ -278,7 +335,7 @@ export default function Home() {
     const fallbackMonth = `${nowPac.getFullYear()}-${String(nowPac.getMonth() + 1).padStart(2, '0')}`;
     const currentMonth = paperPerformance?.date ? paperPerformance.date.slice(0, 7) : fallbackMonth;
 
-    const map: Record<string, { mtdPct: number; allTimePct: number; mtdPnl: number; allTimePnl: number }> = {};
+    const map: Record<string, { mtdPct: number; allTimePct: number }> = {};
     for (const strat of strategies) {
       const stratTrades = sourceTrades.filter((t) => t.strategy === strat);
       const allTimePnl =
@@ -301,8 +358,6 @@ export default function Home() {
       );
 
       map[strat] = {
-        mtdPnl: Math.round(mtdPnl * 100) / 100,
-        allTimePnl: Math.round(allTimePnl * 100) / 100,
         mtdPct: Math.round((mtdPnl / 100000) * 1000) / 10,
         allTimePct: Math.round((allTimePnl / 100000) * 1000) / 10,
       };
@@ -310,7 +365,6 @@ export default function Home() {
     return map;
   }, [allTrades, paperPerformance]);
 
-  // Strategy & Timeframe Specific Metrics
   const activeMetrics = useMemo(() => {
     if (!paperPerformance && allTrades.length === 0) return null;
     const pool = perfTrades;
@@ -326,7 +380,6 @@ export default function Home() {
     const totalCommissions = pool.reduce((acc, t) => acc + (t.commission || 0), 0);
     const totalSlippage = pool.reduce((acc, t) => acc + (t.slippage || 0), 0);
     const totalCosts = totalCommissions + totalSlippage;
-    const closedCosts = closed.reduce((acc, t) => acc + (t.fees_and_slippage ?? ((t.commission || 0) + (t.slippage || 0))), 0);
 
     const netPnl = realizedPnl + unrealizedPnl;
     const returnPct = (netPnl / 100000) * 100;
@@ -336,14 +389,14 @@ export default function Home() {
     const winDollars = wins.reduce((acc, t) => acc + (t.realized_pnl || 0), 0);
     const lossDollars = Math.abs(losses.reduce((acc, t) => acc + (t.realized_pnl || 0), 0));
 
-    const winRate = closed.length > 0
-      ? (wins.length / closed.length) * 100
-      : (open.length > 0 ? (open.filter((t) => (t.unrealized_pnl || 0) > 0).length / open.length) * 100 : 0);
+    const winRate =
+      closed.length > 0
+        ? (wins.length / closed.length) * 100
+        : open.length > 0
+          ? (open.filter((t) => (t.unrealized_pnl || 0) > 0).length / open.length) * 100
+          : 0;
 
-    const profitFactor = lossDollars > 0
-      ? winDollars / lossDollars
-      : (winDollars > 0 ? 99.9 : 1.0);
-
+    const profitFactor = lossDollars > 0 ? winDollars / lossDollars : winDollars > 0 ? 99.9 : 1.0;
     const avgWin = wins.length > 0 ? winDollars / wins.length : 0;
 
     return {
@@ -351,13 +404,10 @@ export default function Home() {
       returnPct: Math.round(returnPct * 100) / 100,
       realizedPnl: Math.round(realizedPnl * 100) / 100,
       unrealizedPnl: Math.round(unrealizedPnl * 100) / 100,
-      grossRealizedPnl: Math.round(grossRealizedPnl * 100) / 100,
-      grossUnrealizedPnl: Math.round(grossUnrealizedPnl * 100) / 100,
       grossPnl: Math.round(grossPnl * 100) / 100,
       totalCommissions: Math.round(totalCommissions * 100) / 100,
       totalSlippage: Math.round(totalSlippage * 100) / 100,
       totalCosts: Math.round(totalCosts * 100) / 100,
-      closedCosts: Math.round(closedCosts * 100) / 100,
       winRate: Math.round(winRate * 10) / 10,
       wins: wins.length,
       losses: losses.length,
@@ -369,7 +419,6 @@ export default function Home() {
     };
   }, [paperPerformance, allTrades, perfTrades]);
 
-  // Biggest Winners & Losers for Selected Strategy
   const biggestWinners = useMemo(() => {
     return [...perfTrades]
       .filter((t) => (t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl) > 0)
@@ -392,21 +441,13 @@ export default function Home() {
       .slice(0, 4);
   }, [perfTrades]);
 
-  const todayStr = getTodayDatePacific().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'America/Los_Angeles',
-  });
-
   const todayShort = getTodayDatePacific().toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
+    year: 'numeric',
     timeZone: 'America/Los_Angeles',
   });
 
-  // Compute Last Scan Run and Next Scheduled Run times
   const scanScheduleStatus = useMemo(() => {
     const rawTs =
       paperPerformance?.timestamp ||
@@ -435,18 +476,15 @@ export default function Home() {
       }
     }
 
-    // Scheduled UTC slots matching .github/workflows/daily_futures_scan.yml:
-    // Mon-Fri: 14:00 (Morning Open), 17:30 (Mid-Session), 20:05 (RTH Pit Close), 21:15 (Globex Close)
-    // Tue-Sat: 00:30 (Final Settlement)
     const now = new Date();
     const dailySlots: { hourUtc: number; minUtc: number; label: string; daysUtc: number[] }[] = [
-      { hourUtc: 0, minUtc: 30, label: 'Settlement Sync', daysUtc: [2, 3, 4, 5, 6] },
-      { hourUtc: 3, minUtc: 30, label: 'Asia Session', daysUtc: [2, 3, 4, 5, 6] },
-      { hourUtc: 8, minUtc: 15, label: 'London Open', daysUtc: [1, 2, 3, 4, 5] },
-      { hourUtc: 14, minUtc: 0, label: 'Morning Open', daysUtc: [1, 2, 3, 4, 5] },
-      { hourUtc: 17, minUtc: 30, label: 'Mid-Session', daysUtc: [1, 2, 3, 4, 5] },
-      { hourUtc: 20, minUtc: 5, label: 'RTH Pit Close', daysUtc: [1, 2, 3, 4, 5] },
-      { hourUtc: 21, minUtc: 15, label: 'Globex Close', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 0, minUtc: 30, label: 'Settlement sync', daysUtc: [2, 3, 4, 5, 6] },
+      { hourUtc: 3, minUtc: 30, label: 'Asia session', daysUtc: [2, 3, 4, 5, 6] },
+      { hourUtc: 8, minUtc: 15, label: 'London open', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 14, minUtc: 0, label: 'Morning open', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 17, minUtc: 30, label: 'Mid-session', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 20, minUtc: 5, label: 'Pit close', daysUtc: [1, 2, 3, 4, 5] },
+      { hourUtc: 21, minUtc: 15, label: 'Globex close', daysUtc: [1, 2, 3, 4, 5] },
     ];
 
     let nextCandidate: { dt: Date; label: string } | null = null;
@@ -455,14 +493,16 @@ export default function Home() {
       const dow = base.getUTCDay();
       for (const slot of dailySlots) {
         if (!slot.daysUtc.includes(dow)) continue;
-        const slotDt = new Date(Date.UTC(
-          base.getUTCFullYear(),
-          base.getUTCMonth(),
-          base.getUTCDate(),
-          slot.hourUtc,
-          slot.minUtc,
-          0
-        ));
+        const slotDt = new Date(
+          Date.UTC(
+            base.getUTCFullYear(),
+            base.getUTCMonth(),
+            base.getUTCDate(),
+            slot.hourUtc,
+            slot.minUtc,
+            0
+          )
+        );
         if (slotDt.getTime() > now.getTime()) {
           if (!nextCandidate || slotDt.getTime() < nextCandidate.dt.getTime()) {
             nextCandidate = { dt: slotDt, label: slot.label };
@@ -498,684 +538,757 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 gap-4">
-        <div className="relative h-14 w-14">
-          <div className="absolute inset-0 rounded-full border-2 border-slate-800" />
-          <div className="absolute inset-0 rounded-full border-2 border-t-emerald-400 border-r-amber-400 animate-spin" />
-        </div>
-        <p className="text-slate-400 font-medium tracking-wide">Initializing Quantitative Dashboard…</p>
+      <div className="flex flex-col items-center justify-center h-80 gap-3">
+        <div className="h-6 w-6 rounded-full border-2 border-desk-raised border-t-desk-text animate-spin" />
+        <p className="text-sm text-desk-muted">Loading futures desk data…</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 bg-grid-pattern pb-12">
-      {/* ──────────────── HERO TERMINAL BANNER ──────────────── */}
-      <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 shadow-2xl border border-slate-800/90 backdrop-blur-xl">
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
-          <div className="absolute top-1/2 -right-20 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
-          <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
-        </div>
-
-        <div className="relative px-6 py-10 md:px-12 md:py-12">
-          {/* Top Status Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/60 pb-6">
-            <div className="inline-flex items-center gap-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-300 shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              SYSTEMATIC FUTURES DESK
-              <span className="text-slate-500">|</span>
-              <span className="font-mono text-slate-300">{todayShort}</span>
-            </div>
-
-            {/* Scan Run Timestamps (Current Run & Next Scheduled Run) */}
-            <div className="flex flex-wrap items-center gap-2.5 text-xs">
-              <div className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Scan:</span>
-                <span className="font-mono font-bold text-slate-200">{scanScheduleStatus.lastRunDisplay}</span>
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">Next Scan:</span>
-                <span className="font-mono font-bold text-cyan-100">{scanScheduleStatus.nextRunDisplay}</span>
-                {scanScheduleStatus.nextRunLabel && (
-                  <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cyan-300 border border-cyan-500/30">
-                    {scanScheduleStatus.nextRunLabel}
-                  </span>
-                )}
-              </div>
-              <div className="hidden xl:block text-xs font-semibold tracking-wide text-slate-400 ml-1">
-                {todayStr}
-              </div>
-            </div>
+    <div className="space-y-10 pb-8">
+      {/* ──────────────── ASYMMETRIC DESK HERO ──────────────── */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-2">
+        {/* Left: Calm, specific desk statement + primary & secondary actions */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+            <span>NFA-registered CTA</span>
+            <span>·</span>
+            <span>{todayShort}</span>
           </div>
 
-          {/* Headline */}
-          <div className="mt-8 text-center max-w-5xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-100 leading-tight">
-              Oz<span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">CTA</span>
+          <div className="space-y-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-[42px] leading-[1.08] tracking-[-0.025em] font-medium text-desk-text">
+              Systematic futures signals and execution ledger
             </h1>
-            <p className="mt-4 text-sm sm:text-base md:text-lg text-slate-300 font-medium">
-              National Futures Association (NFA) registered Commodity Trading Advisor specializing in actively managed futures.
-            </p>
-            <div className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-slate-950/60 px-5 py-2.5 border border-slate-800 text-sm font-semibold text-slate-200">
-              ⚡ Access our futures strategy signals, trade models, and daily scans —{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent font-black tracking-wider text-base">
-                100% FREE
-              </span>
-            </div>
-          </div>
-
-          {/* Quick-Nav Strategy Cards */}
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              {
-                label: 'Trendorama',
-                desc: 'Systematic Trend Following',
-                to: '/trendorama',
-                dot: 'bg-fuchsia-500',
-                border: 'hover:border-fuchsia-500/50 hover:shadow-fuchsia-500/10',
-                text: 'text-fuchsia-300',
-                bg: 'from-fuchsia-950/40 to-slate-900/40',
-              },
-              {
-                label: 'The Bradman',
-                desc: 'Momentum & Mean-Reversion',
-                to: '/taylor',
-                dot: 'bg-amber-500',
-                border: 'hover:border-amber-500/50 hover:shadow-amber-500/10',
-                text: 'text-amber-300',
-                bg: 'from-amber-950/40 to-slate-900/40',
-              },
-              {
-                label: 'YouHaveChosenWisely',
-                desc: 'Trend Continuation Pullbacks',
-                to: '/grail',
-                dot: 'bg-orange-500',
-                border: 'hover:border-orange-500/50 hover:shadow-orange-500/10',
-                text: 'text-orange-300',
-                bg: 'from-orange-950/40 to-slate-900/40',
-              },
-              {
-                label: 'TooHot TooCold',
-                desc: 'Range Expansion Breakouts',
-                to: '/odid',
-                dot: 'bg-cyan-500',
-                border: 'hover:border-cyan-500/50 hover:shadow-cyan-500/10',
-                text: 'text-cyan-300',
-                bg: 'from-cyan-950/40 to-slate-900/40',
-              },
-              {
-                label: 'The Linda',
-                desc: 'Intraday Trend Day EMA Fade',
-                to: '/linda',
-                dot: 'bg-emerald-500',
-                border: 'hover:border-emerald-500/50 hover:shadow-emerald-500/10',
-                text: 'text-emerald-300',
-                bg: 'from-emerald-950/40 to-slate-900/40',
-              },
-            ].map((s) => (
-              <Link
-                key={s.to}
-                to={s.to}
-                className={`group rounded-2xl border border-slate-800 bg-gradient-to-br ${s.bg} p-4 shadow-lg transition-all duration-300 ${s.border}`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${s.dot}`} />
-                  <span className={`text-xs font-extrabold uppercase tracking-wider ${s.text}`}>{s.label}</span>
-                </div>
-                <div className="mt-2 text-sm font-bold text-slate-100 group-hover:translate-x-1 transition-transform flex items-center justify-between">
-                  <span>{s.desc}</span>
-                  <span className="text-slate-400 group-hover:text-slate-100 transition-colors">→</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Key Metrics Bar */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <StatCard
-              label="Trendorama"
-              value={turtleTriggered.length}
-              sub={`${turtleTriggeredEligible.length} eligible breakouts`}
-              accent="text-fuchsia-400"
-              badge="Donchian"
-              mtdPct={strategyPerfSummary['Trendorama']?.mtdPct}
-              allTimePct={strategyPerfSummary['Trendorama']?.allTimePct}
-            />
-            <StatCard
-              label="The Bradman"
-              value={bradmanActionable.length}
-              sub={`of ${taylorSignals?.total_scanned ?? 0} scanned have actionable setups`}
-              accent="text-amber-400"
-              badge="3-Day"
-              mtdPct={strategyPerfSummary['The Bradman']?.mtdPct}
-              allTimePct={strategyPerfSummary['The Bradman']?.allTimePct}
-            />
-            <StatCard
-              label="YouHaveChosenWisely"
-              value={grailSignals?.total_triggered ?? 0}
-              sub={`${grailTriggered.length} active setups`}
-              accent="text-orange-400"
-              badge="EMA"
-              mtdPct={strategyPerfSummary['YouHaveChosenWisely']?.mtdPct}
-              allTimePct={strategyPerfSummary['YouHaveChosenWisely']?.allTimePct}
-            />
-            <StatCard
-              label="TooHot TooCold"
-              value={odidAlertsCount}
-              sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
-              accent="text-cyan-400"
-              badge="Range Break"
-              mtdPct={strategyPerfSummary['TooHot TooCold']?.mtdPct}
-              allTimePct={strategyPerfSummary['TooHot TooCold']?.allTimePct}
-            />
-            <StatCard
-              label="The Linda"
-              value={lindaTriggered.length}
-              sub={`of ${lindaSignals?.total_scanned ?? 0} scanned mean-revert today`}
-              accent="text-rose-400"
-              badge="Mean Rev"
-              mtdPct={strategyPerfSummary['The Linda']?.mtdPct}
-              allTimePct={strategyPerfSummary['The Linda']?.allTimePct}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* ──────────────── PRIVATE IRA WIDGET (owner only) ──────────────── */}
-      <IraPortfolioWidget />
-
-      {/* ──────────────── STRATEGY DETAIL GRID ──────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-        {/* Trendorama */}
-        <div className="rounded-3xl shadow-xl border border-fuchsia-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-fuchsia-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-fuchsia">
-          <div className="px-5 py-4 border-b border-fuchsia-900/40 bg-fuchsia-950/30 flex flex-col justify-between h-[105px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-fuchsia-300 truncate">
-                <span className="h-2 w-2 rounded-full bg-fuchsia-500 shrink-0" />
-                <span>Trendorama</span>
-              </div>
-              <Link to="/trendorama" className="px-3 py-1 rounded-lg text-xs font-bold bg-fuchsia-600 text-white hover:bg-fuchsia-500 transition shadow-sm whitespace-nowrap shrink-0">
-                Signals
-              </Link>
-            </div>
-            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
-              Systematic Trend Following
-            </div>
-          </div>
-
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="space-y-3 mb-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active Breakout Setups:
-              </div>
-              {turtleTriggered.length === 0 ? (
-                <p className="text-slate-400 text-sm italic">No breakouts triggered on the latest bar.</p>
-              ) : (
-                turtleTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
-                        <span>{t.symbol}</span>
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase ${
-                          t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                        }`}>
-                          {t.side.toUpperCase()}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setChartItem({
-                          symbol: t.symbol,
-                          strategy: 'trendorama',
-                          interval: 'D',
-                          signalLabel: `TRENDORAMA — ${t.side.toUpperCase()}`,
-                          direction: t.side.toLowerCase() === 'long' ? 'long' : 'short',
-                          entryPrice: t.entry_stop,
-                          stopPrice: t.stop_loss,
-                        })}
-                        className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
-                        title="View Interactive Chart"
-                      >
-                        📈 Chart
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
-                      <span className="text-slate-400">Entry:</span>
-                      <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span>
-
-                      <span className="text-slate-400">Stop:</span>
-                      <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-end text-xs text-slate-400">
-              <Link to="/trendorama" className="font-semibold text-fuchsia-300 hover:text-fuchsia-200 transition">
-                View Full Signal Matrix →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* The Bradman */}
-        <div className="rounded-3xl shadow-xl border border-amber-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-amber-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-amber">
-          <div className="px-5 py-4 border-b border-amber-900/40 bg-amber-950/30 flex flex-col justify-between h-[105px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-amber-300 truncate">
-                <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                <span>The Bradman</span>
-              </div>
-              <Link to="/taylor" className="px-3 py-1 rounded-lg text-xs font-bold bg-amber-600 text-white hover:bg-amber-500 transition shadow-sm whitespace-nowrap shrink-0">
-                Signals
-              </Link>
-            </div>
-            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
-              Momentum & Mean-Reversion
-            </div>
-          </div>
-
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="space-y-3 mb-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active Cycle Recommendations:
-              </div>
-              {(bradmanActionable.length > 0 ? bradmanActionable : taylorSignals?.signals || []).slice(0, 3).map((sig) => (
-                <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
-                      <span>{sig.symbol}</span>
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase ${
-                        sig.action === 'BUY_LONG' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                        sig.action === 'SELL_SHORT' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                      }`}>
-                        {sig.action.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setChartItem({
-                        symbol: sig.symbol,
-                        strategy: 'taylor',
-                        interval: sig.hourly_divergence ? '60' : 'D',
-                        signalLabel: `BRADMAN (${sig.hourly_divergence ? '60M GLOBEX' : 'DAILY'}) — ${sig.action.replaceAll('_', ' ')}`,
-                        direction: sig.action === 'BUY_LONG' ? 'long' : sig.action === 'SELL_SHORT' ? 'short' : null,
-                        entryPrice: sig.entry_target,
-                        targetPrice: sig.profit_target,
-                        stopPrice: sig.stop_loss,
-                      })}
-                      className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
-                      title="View Interactive Chart"
-                    >
-                      {sig.hourly_divergence ? '⚡ 60m' : '📈 Chart'}
-                    </button>
-                  </div>
-
-                  {sig.hourly_divergence && (
-                    <div className="flex flex-wrap items-center gap-1 text-[10px] font-bold">
-                      <span className="px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 uppercase">
-                        1H 3/10 · {sig.entry_session}
-                      </span>
-                      {sig.fx_pair_confirmed && (
-                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase">
-                          EC/$ Div
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
-                    <span className="text-slate-400">Entry:</span>
-                    <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_target)}</span>
-
-                    <span className="text-slate-400">Target:</span>
-                    <span className="font-bold text-emerald-400">${formatSignalPrice(sig.profit_target)}</span>
-
-                    <span className="text-slate-400">Stop:</span>
-                    <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-end text-xs text-slate-400">
-              <Link to="/taylor" className="font-semibold text-amber-300 hover:text-amber-200 transition">
-                Explore The Bradman Levels →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* YouHaveChosenWisely */}
-        <div className="rounded-3xl shadow-xl border border-orange-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-orange-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-orange">
-          <div className="px-5 py-4 border-b border-orange-900/40 bg-orange-950/30 flex flex-col justify-between h-[105px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-orange-300 truncate">
-                <span className="h-2 w-2 rounded-full bg-orange-500 shrink-0" />
-                <span className="truncate">YouHaveChosenWisely</span>
-              </div>
-              <Link to="/grail" className="px-3 py-1 rounded-lg text-xs font-bold bg-orange-600 text-white hover:bg-orange-500 transition shadow-sm whitespace-nowrap shrink-0">
-                Signals
-              </Link>
-            </div>
-            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
-              Trend Continuation Pullbacks
-            </div>
-          </div>
-
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="space-y-3 mb-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active Pullback Recommendations:
-              </div>
-              {grailTriggered.length === 0 ? (
-                <p className="text-slate-400 text-sm italic">No active pullback signals today.</p>
-              ) : (
-                grailTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
-                        <span>{sig.symbol}</span>
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase ${
-                          sig.side === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                        }`}>
-                          {sig.side.toUpperCase()}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setChartItem({
-                          symbol: sig.symbol,
-                          strategy: 'grail',
-                          interval: 'D',
-                          signalLabel: `GRAIL — ${sig.side.toUpperCase()}`,
-                          direction: sig.side === 'long' ? 'long' : 'short',
-                          entryPrice: sig.entry_zone ?? sig.ema20,
-                          targetPrice: sig.target,
-                          stopPrice: sig.stop_loss,
-                        })}
-                        className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
-                        title="View Interactive Chart"
-                      >
-                        📈 Chart
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
-                      <span className="text-slate-400">Entry:</span>
-                      <span className="font-bold text-slate-100">${formatSignalPrice(sig.entry_zone)}</span>
-
-                      <span className="text-slate-400">Stop:</span>
-                      <span className="font-bold text-rose-400">${formatSignalPrice(sig.stop_loss)}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-end text-xs text-slate-400">
-              <Link to="/grail" className="font-semibold text-orange-300 hover:text-orange-200 transition">
-                View Strategy Signals →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* TooHot TooCold */}
-        <div className="rounded-3xl shadow-xl border border-cyan-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-cyan-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-cyan">
-          <div className="px-5 py-4 border-b border-cyan-900/40 bg-cyan-950/30 flex flex-col justify-between h-[105px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300 truncate">
-                <span className="h-2 w-2 rounded-full bg-cyan-500 shrink-0" />
-                <span>TooHot TooCold</span>
-              </div>
-              <Link to="/odid" className="px-3 py-1 rounded-lg text-xs font-bold bg-cyan-600 text-white hover:bg-cyan-500 transition shadow-sm whitespace-nowrap shrink-0">
-                Monitor
-              </Link>
-            </div>
-            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
-              Range Expansion Breakouts
-            </div>
-          </div>
-
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="space-y-3 mb-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Confirmed Breakout Triggers:
-              </div>
-              {odidTriggered.length === 0 ? (
-                <p className="text-slate-400 text-sm italic">No close-confirmed range breakouts today.</p>
-              ) : (
-                odidTriggered.slice(0, 3).map((t, i) => (
-                  <div key={`${t.symbol}-${i}`} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
-                        <span>{t.symbol}</span>
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase ${
-                          t.side.toLowerCase() === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                        }`}>
-                          {t.side.toUpperCase()}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setChartItem({
-                          symbol: t.symbol,
-                          strategy: 'odid',
-                          interval: 'D',
-                          signalLabel: `TOOHOT TOCOLD — ${t.side.toUpperCase()}`,
-                          direction: t.side.toLowerCase() === 'long' ? 'long' : 'short',
-                          entryPrice: t.entry_stop,
-                          stopPrice: t.stop_loss,
-                        })}
-                        className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
-                        title="View Interactive Chart"
-                      >
-                        📈 Chart
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
-                      <span className="text-slate-400">Entry:</span>
-                      <span className="font-bold text-slate-100">${formatSignalPrice(t.entry_stop)}</span>
-
-                      <span className="text-slate-400">Stop:</span>
-                      <span className="font-bold text-rose-400">${formatSignalPrice(t.stop_loss)}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-end text-xs text-slate-400">
-              <Link to="/odid" className="font-semibold text-cyan-300 hover:text-cyan-200 transition">
-                Monitor Armed Setups →
-              </Link>
-            </div>
-          </div>
-        </div>
-        {/* The Linda */}
-        <div className="rounded-3xl shadow-xl border border-rose-900/50 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-rose-950/20 backdrop-blur-xl overflow-hidden flex flex-col glow-rose">
-          <div className="px-5 py-4 border-b border-rose-900/40 bg-rose-950/30 flex flex-col justify-between h-[105px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-rose-300 truncate">
-                <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
-                <span>The Linda</span>
-              </div>
-              <Link to="/linda" className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 transition shadow-sm whitespace-nowrap shrink-0">
-                Signals
-              </Link>
-            </div>
-            <div className="text-sm font-bold text-slate-100 leading-snug line-clamp-2">
-              Next-Day Mean Reversion
-            </div>
-          </div>
-
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div className="space-y-3 mb-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Active Reversion Setups:
-              </div>
-              {lindaTriggered.length === 0 ? (
-                <p className="text-slate-400 text-sm italic">No trend day / no-EMA-touch setups today.</p>
-              ) : (
-                lindaTriggered.slice(0, 3).map((sig) => (
-                  <div key={sig.symbol} className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="font-mono font-bold text-slate-100 flex items-center gap-2 text-sm">
-                        <span>{sig.symbol}</span>
-                        <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase ${
-                          sig.direction === 'FADE_UP'
-                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                            : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                        }`}>
-                          {sig.direction === 'FADE_UP' ? 'Fade Up' : 'Fade Down'}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setChartItem({
-                          symbol: sig.symbol,
-                          strategy: 'linda',
-                          interval: '15',
-                          signalLabel: sig.direction === 'FADE_UP' ? 'FADE UP — SELL' : 'FADE DOWN — BUY',
-                          direction: sig.direction === 'FADE_UP' ? 'fade_up' : 'fade_down',
-                          entryPrice: sig.close,
-                          targetPrice: sig.target,
-                          stopPrice: sig.stop,
-                        })}
-                        className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-slate-700 transition-colors text-xs font-bold shrink-0 flex items-center gap-1"
-                        title="View Interactive Chart"
-                      >
-                        📈 Chart
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 text-xs font-mono">
-                      <span className="text-slate-400">Target:</span>
-                      <span className="font-bold text-rose-300">${sig.target?.toFixed(2) ?? '—'}</span>
-
-                      <span className="text-slate-400">Stop:</span>
-                      <span className="font-bold text-slate-400">${sig.stop?.toFixed(2) ?? '—'}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-4 border-t border-slate-800/80 pt-4 flex items-center justify-end text-xs text-slate-400">
-              <Link to="/linda" className="font-semibold text-rose-300 hover:text-rose-200 transition">
-                View The Linda Setups →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ──────────────── SYSTEMATIC TRADING PERFORMANCE & RUNNING LOG ──────────────── */}
-      <div className="rounded-3xl border border-slate-800/90 bg-slate-900/90 p-6 md:p-8 shadow-2xl backdrop-blur-xl space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Live Signal Execution Log
-            </div>
-            <h2 className="mt-2 text-2xl md:text-3xl font-black text-slate-100 tracking-tight">
-              Trading Performance
-            </h2>
-            <p className="mt-1 text-xs text-slate-400">
-              Running ledger of systematically executed futures strategy signals with active stops & profit targets
+            <p className="text-base leading-relaxed text-desk-secondary max-w-[34rem]">
+              OzCTA runs automated Globex and pit-session scans across 14 commodity, equity index, interest rate, and currency futures contracts, logging every triggered setup with entry, stop, target, and round-turn friction.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-2xl border border-slate-700/80 bg-slate-950/70 px-4 py-2 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Starting Capital
-              </div>
-              <div className="text-sm font-black text-slate-100 font-mono">
-                $100,000 <span className="text-[10px] text-slate-400 font-normal">(2% Risk / Trade)</span>
+            <Link to="/executed-trades" className="desk-btn-primary h-11 px-5 text-sm">
+              <span>View execution ledger</span>
+              <ArrowRightIcon className="w-4 h-4" />
+            </Link>
+            <Link to="/fund" className="desk-btn-secondary h-11 px-5 text-sm">
+              Program profile
+            </Link>
+          </div>
+
+          <div className="pt-2 border-t border-hairline flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-2 text-xs font-mono text-desk-muted">
+            <div className="flex items-center gap-2">
+              <ClockIcon className="w-3.5 h-3.5 text-desk-muted" />
+              <span>Last scan:</span>
+              <span className="text-desk-secondary">{scanScheduleStatus.lastRunDisplay}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>Next:</span>
+              <span className="text-desk-secondary">{scanScheduleStatus.nextRunDisplay}</span>
+              {scanScheduleStatus.nextRunLabel && (
+                <span className="text-desk-muted">({scanScheduleStatus.nextRunLabel})</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Moment #1 — Live Desk Cumulative Equity Blotter */}
+        <div className="lg:col-span-7 desk-surface rounded-2xl p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4 pb-5 border-b border-hairline">
+            <div>
+              <div className="text-xs text-desk-muted">Model execution blotter ($100,000 baseline · 2% risk/trade)</div>
+              <div className="mt-1.5 flex items-baseline gap-3">
+                <span
+                  className={`text-[32px] leading-none font-medium font-mono ${
+                    deskHeroTotals.netPnl >= 0 ? 'text-desk-up' : 'text-desk-down'
+                  }`}
+                >
+                  {deskHeroTotals.netPnl >= 0 ? '+' : ''}
+                  {fmt$(deskHeroTotals.netPnl)}
+                </span>
+                <span className="text-xs font-mono text-desk-secondary">
+                  {fmtSignedPct(deskHeroTotals.returnPct)} vs $100k starting capital
+                </span>
               </div>
             </div>
 
+            <div className="flex items-center gap-6 text-right font-mono">
+              <div>
+                <div className="text-xs font-sans text-desk-muted">Closed realized</div>
+                <div
+                  className={`mt-0.5 text-sm font-medium ${
+                    deskHeroTotals.realizedPnl >= 0 ? 'text-desk-text' : 'text-desk-down'
+                  }`}
+                >
+                  {deskHeroTotals.realizedPnl >= 0 ? '+' : ''}
+                  {fmt$(deskHeroTotals.realizedPnl)}
+                </div>
+                <div className="text-[11px] text-desk-muted">{deskHeroTotals.closedCount} closed</div>
+              </div>
+
+              <div>
+                <div className="text-xs font-sans text-desk-muted">Active open</div>
+                <div
+                  className={`mt-0.5 text-sm font-medium ${
+                    deskHeroTotals.unrealizedPnl >= 0 ? 'text-desk-up' : 'text-desk-down'
+                  }`}
+                >
+                  {deskHeroTotals.unrealizedPnl >= 0 ? '+' : ''}
+                  {fmt$(deskHeroTotals.unrealizedPnl)}
+                </div>
+                <div className="text-[11px] text-desk-muted">{deskHeroTotals.openCount} open</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 h-[220px] w-full">
+            {heroEquityCurve.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={heroEquityCurve} margin={{ top: 8, right: 4, left: -12, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="deskEquityFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4cc38a" stopOpacity={0.18} />
+                      <stop offset="100%" stopColor="#4cc38a" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="#232325" strokeDasharray="2 2" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    stroke="#85858b"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={36}
+                    tick={{ fill: '#85858b', fontFamily: 'JetBrains Mono, monospace' }}
+                  />
+                  <YAxis
+                    stroke="#85858b"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                    tick={{ fill: '#85858b', fontFamily: 'JetBrains Mono, monospace' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0f0f10',
+                      border: '1px solid rgba(237, 237, 237, 0.14)',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      color: '#ededed',
+                      fontFamily: 'JetBrains Mono, monospace',
+                    }}
+                    formatter={(val: any) => [fmt$(Number(val)), 'Cumulative net P&L']}
+                    labelFormatter={(l) => `Session ${l}`}
+                  />
+                  <ReferenceLine y={0} stroke="#323236" strokeDasharray="3 3" />
+                  <Area
+                    type="monotone"
+                    dataKey="cum_pnl"
+                    stroke="#4cc38a"
+                    strokeWidth={1.75}
+                    fill="url(#deskEquityFill)"
+                    fillOpacity={1}
+                    isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-xs text-desk-muted font-mono">
+                Awaiting cumulative curve points
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────── PRIVATE IRA WIDGET (owner only) ──────────────── */}
+      <IraPortfolioWidget />
+
+      {/* ──────────────── COMPACT STRATEGY SUMMARY ROW ──────────────── */}
+      <section className="space-y-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-lg font-medium text-desk-text">Strategy overview</h2>
+          <span className="text-xs font-mono text-desk-muted">5 systematic futures models · net of commissions & slippage</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <StrategySummaryCard
+            label="Trendorama"
+            to="/trendorama"
+            method="Donchian"
+            value={turtleTriggered.length}
+            sub={`${turtleTriggeredEligible.length} eligible`}
+            mtdPct={strategyPerfSummary['Trendorama']?.mtdPct}
+            allTimePct={strategyPerfSummary['Trendorama']?.allTimePct}
+          />
+          <StrategySummaryCard
+            label="The Bradman"
+            to="/taylor"
+            method="Globex 1h"
+            value={bradmanActionable.length}
+            sub={`of ${taylorSignals?.total_scanned ?? 0} actionable`}
+            mtdPct={strategyPerfSummary['The Bradman']?.mtdPct}
+            allTimePct={strategyPerfSummary['The Bradman']?.allTimePct}
+          />
+          <StrategySummaryCard
+            label="YouHaveChosenWisely"
+            to="/grail"
+            method="ADX / EMA"
+            value={grailSignals?.total_triggered ?? 0}
+            sub={`${grailTriggered.length} active setups`}
+            mtdPct={strategyPerfSummary['YouHaveChosenWisely']?.mtdPct}
+            allTimePct={strategyPerfSummary['YouHaveChosenWisely']?.allTimePct}
+          />
+          <StrategySummaryCard
+            label="TooHot TooCold"
+            to="/odid"
+            method="OD/ID break"
+            value={odidAlertsCount}
+            sub={`${odidTriggered.length} triggered · ${odidOpenCount} open`}
+            mtdPct={strategyPerfSummary['TooHot TooCold']?.mtdPct}
+            allTimePct={strategyPerfSummary['TooHot TooCold']?.allTimePct}
+          />
+          <StrategySummaryCard
+            label="The Linda"
+            to="/linda"
+            method="15m EMA"
+            value={lindaTriggered.length}
+            sub={`of ${lindaSignals?.total_scanned ?? 0} mean-revert`}
+            mtdPct={strategyPerfSummary['The Linda']?.mtdPct}
+            allTimePct={strategyPerfSummary['The Linda']?.allTimePct}
+          />
+        </div>
+      </section>
+
+      {/* ──────────────── ACTIVE SETUPS BY MODEL (PRICE LADDERS) ──────────────── */}
+      <section className="space-y-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-lg font-medium text-desk-text">Active setups by strategy</h2>
+          <span className="text-xs text-desk-muted">Select any contract row to inspect the TradingView study chart</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+          {/* 1. Trendorama */}
+          <div className="desk-surface rounded-2xl flex flex-col justify-between overflow-hidden">
+            <div>
+              <div className="px-4 py-3.5 border-b border-hairline flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-desk-text">Trendorama</div>
+                  <div className="text-xs text-desk-muted">55-day channel breakout</div>
+                </div>
+                <Link to="/trendorama" className="desk-btn-secondary h-7 px-2.5 text-xs shrink-0">
+                  Signals
+                </Link>
+              </div>
+
+              <div className="p-4 space-y-2">
+                {turtleTriggered.length === 0 ? (
+                  <p className="text-xs text-desk-muted py-6 text-center">
+                    No breakouts triggered on the latest bar
+                  </p>
+                ) : (
+                  turtleTriggered.slice(0, 3).map((t, i) => {
+                    const isLong = t.side.toLowerCase() === 'long';
+                    return (
+                      <div key={`${t.symbol}-${i}`} className="desk-well rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="h-1.5 w-1.5 rounded-full bg-desk-up shrink-0" />
+                            <span className="font-mono text-sm font-medium text-desk-text">{t.symbol}</span>
+                            <span className="text-[11px] font-mono text-desk-muted">· Daily</span>
+                            <span className={isLong ? 'desk-tag-up' : 'desk-tag-down'}>
+                              {isLong ? 'Long' : 'Short'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChartItem({
+                                symbol: t.symbol,
+                                strategy: 'trendorama',
+                                interval: 'D',
+                                signalLabel: `Trendorama · ${isLong ? 'Long' : 'Short'}`,
+                                direction: isLong ? 'long' : 'short',
+                                entryPrice: t.entry_stop,
+                                stopPrice: t.stop_loss,
+                              })
+                            }
+                            className="h-7 px-2 rounded-md bg-desk-raised hover:bg-[#2b2b2e] border border-hairline text-xs text-desk-secondary hover:text-desk-text inline-flex items-center gap-1.5 transition-colors duration-150 ease-desk shrink-0"
+                            title="Open chart"
+                          >
+                            <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                            <span>1D</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline text-xs font-mono">
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Entry</span>
+                            <span className="text-desk-text">${formatSignalPrice(t.entry_stop)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Stop</span>
+                            <span className="text-desk-down">${formatSignalPrice(t.stop_loss)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-hairline flex justify-end">
+              <Link
+                to="/trendorama"
+                className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+              >
+                <span>Signal matrix</span>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 2. The Bradman */}
+          <div className="desk-surface rounded-2xl flex flex-col justify-between overflow-hidden">
+            <div>
+              <div className="px-4 py-3.5 border-b border-hairline flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-desk-text">The Bradman</div>
+                  <div className="text-xs text-desk-muted">24h Globex 1h + 3-day cycle</div>
+                </div>
+                <Link to="/taylor" className="desk-btn-secondary h-7 px-2.5 text-xs shrink-0">
+                  Signals
+                </Link>
+              </div>
+
+              <div className="p-4 space-y-2">
+                {(bradmanActionable.length > 0 ? bradmanActionable : taylorSignals?.signals || [])
+                  .slice(0, 3)
+                  .map((sig) => {
+                    const isLong = sig.action === 'BUY_LONG';
+                    const isShort = sig.action === 'SELL_SHORT';
+                    const actionLabel = isLong ? 'Long' : isShort ? 'Short' : 'Watch';
+                    return (
+                      <div key={sig.symbol} className="desk-well rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full shrink-0 ${
+                                isLong || isShort ? 'bg-desk-up' : 'bg-desk-muted'
+                              }`}
+                            />
+                            <span className="font-mono text-sm font-medium text-desk-text">{sig.symbol}</span>
+                            <span className="text-[11px] font-mono text-desk-muted truncate">
+                              · {formatSessionLabel(sig.entry_session, Boolean(sig.hourly_divergence))}
+                            </span>
+                            <span className={isLong ? 'desk-tag-up' : isShort ? 'desk-tag-down' : 'desk-tag'}>
+                              {actionLabel}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChartItem({
+                                symbol: sig.symbol,
+                                strategy: 'taylor',
+                                interval: sig.hourly_divergence ? '60' : 'D',
+                                signalLabel: `The Bradman (${sig.hourly_divergence ? '60m Globex' : 'Daily'}) · ${actionLabel}`,
+                                direction: isLong ? 'long' : isShort ? 'short' : null,
+                                entryPrice: sig.entry_target,
+                                targetPrice: sig.profit_target,
+                                stopPrice: sig.stop_loss,
+                              })
+                            }
+                            className="h-7 px-2 rounded-md bg-desk-raised hover:bg-[#2b2b2e] border border-hairline text-xs text-desk-secondary hover:text-desk-text inline-flex items-center gap-1.5 transition-colors duration-150 ease-desk shrink-0"
+                            title="Open chart"
+                          >
+                            <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                            <span>{sig.hourly_divergence ? '60m' : '1D'}</span>
+                          </button>
+                        </div>
+
+                        {sig.hourly_divergence && (
+                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono text-desk-secondary">
+                            <span className="desk-tag text-[11px]">1h 3/10 div</span>
+                            {sig.fx_pair_confirmed && (
+                              <span className="desk-tag-up text-[11px]">EC / $ confirmed</span>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="space-y-1 pt-1 border-t border-hairline text-xs font-mono">
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Entry</span>
+                            <span className="text-desk-text">${formatSignalPrice(sig.entry_target)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Target / Stop</span>
+                            <span>
+                              <span className="text-desk-up">${formatSignalPrice(sig.profit_target)}</span>
+                              <span className="text-desk-muted mx-1">/</span>
+                              <span className="text-desk-down">${formatSignalPrice(sig.stop_loss)}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-hairline flex justify-end">
+              <Link
+                to="/taylor"
+                className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+              >
+                <span>Cycle objectives</span>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 3. YouHaveChosenWisely */}
+          <div className="desk-surface rounded-2xl flex flex-col justify-between overflow-hidden">
+            <div>
+              <div className="px-4 py-3.5 border-b border-hairline flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-desk-text truncate">YouHaveChosenWisely</div>
+                  <div className="text-xs text-desk-muted">ADX trend / 20 EMA pullback</div>
+                </div>
+                <Link to="/grail" className="desk-btn-secondary h-7 px-2.5 text-xs shrink-0">
+                  Signals
+                </Link>
+              </div>
+
+              <div className="p-4 space-y-2">
+                {grailTriggered.length === 0 ? (
+                  <p className="text-xs text-desk-muted py-6 text-center">
+                    No active EMA pullback triggers today
+                  </p>
+                ) : (
+                  grailTriggered.slice(0, 3).map((sig) => {
+                    const isLong = sig.side === 'long';
+                    return (
+                      <div key={sig.symbol} className="desk-well rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="h-1.5 w-1.5 rounded-full bg-desk-up shrink-0" />
+                            <span className="font-mono text-sm font-medium text-desk-text">{sig.symbol}</span>
+                            <span className="text-[11px] font-mono text-desk-muted">· Daily</span>
+                            <span className={isLong ? 'desk-tag-up' : 'desk-tag-down'}>
+                              {isLong ? 'Long' : 'Short'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChartItem({
+                                symbol: sig.symbol,
+                                strategy: 'grail',
+                                interval: 'D',
+                                signalLabel: `YouHaveChosenWisely · ${isLong ? 'Long' : 'Short'}`,
+                                direction: isLong ? 'long' : 'short',
+                                entryPrice: sig.entry_zone ?? sig.ema20,
+                                targetPrice: sig.target,
+                                stopPrice: sig.stop_loss,
+                              })
+                            }
+                            className="h-7 px-2 rounded-md bg-desk-raised hover:bg-[#2b2b2e] border border-hairline text-xs text-desk-secondary hover:text-desk-text inline-flex items-center gap-1.5 transition-colors duration-150 ease-desk shrink-0"
+                            title="Open chart"
+                          >
+                            <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                            <span>1D</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline text-xs font-mono">
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Entry</span>
+                            <span className="text-desk-text">${formatSignalPrice(sig.entry_zone)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Stop</span>
+                            <span className="text-desk-down">${formatSignalPrice(sig.stop_loss)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-hairline flex justify-end">
+              <Link
+                to="/grail"
+                className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+              >
+                <span>Pullback watchlist</span>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 4. TooHot TooCold */}
+          <div className="desk-surface rounded-2xl flex flex-col justify-between overflow-hidden">
+            <div>
+              <div className="px-4 py-3.5 border-b border-hairline flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-desk-text">TooHot TooCold</div>
+                  <div className="text-xs text-desk-muted">Range compression breakout</div>
+                </div>
+                <Link to="/odid" className="desk-btn-secondary h-7 px-2.5 text-xs shrink-0">
+                  Monitor
+                </Link>
+              </div>
+
+              <div className="p-4 space-y-2">
+                {odidTriggered.length === 0 ? (
+                  <p className="text-xs text-desk-muted py-6 text-center">
+                    No close-confirmed range breakouts today
+                  </p>
+                ) : (
+                  odidTriggered.slice(0, 3).map((t, i) => {
+                    const isLong = t.side.toLowerCase() === 'long';
+                    return (
+                      <div key={`${t.symbol}-${i}`} className="desk-well rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="h-1.5 w-1.5 rounded-full bg-desk-up shrink-0" />
+                            <span className="font-mono text-sm font-medium text-desk-text">{t.symbol}</span>
+                            <span className="text-[11px] font-mono text-desk-muted">· Daily</span>
+                            <span className={isLong ? 'desk-tag-up' : 'desk-tag-down'}>
+                              {isLong ? 'Long' : 'Short'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChartItem({
+                                symbol: t.symbol,
+                                strategy: 'odid',
+                                interval: 'D',
+                                signalLabel: `TooHot TooCold · ${isLong ? 'Long' : 'Short'}`,
+                                direction: isLong ? 'long' : 'short',
+                                entryPrice: t.entry_stop,
+                                stopPrice: t.stop_loss,
+                              })
+                            }
+                            className="h-7 px-2 rounded-md bg-desk-raised hover:bg-[#2b2b2e] border border-hairline text-xs text-desk-secondary hover:text-desk-text inline-flex items-center gap-1.5 transition-colors duration-150 ease-desk shrink-0"
+                            title="Open chart"
+                          >
+                            <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                            <span>1D</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline text-xs font-mono">
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Entry</span>
+                            <span className="text-desk-text">${formatSignalPrice(t.entry_stop)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Stop</span>
+                            <span className="text-desk-down">${formatSignalPrice(t.stop_loss)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-hairline flex justify-end">
+              <Link
+                to="/odid"
+                className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+              >
+                <span>Armed levels</span>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 5. The Linda */}
+          <div className="desk-surface rounded-2xl flex flex-col justify-between overflow-hidden">
+            <div>
+              <div className="px-4 py-3.5 border-b border-hairline flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-desk-text">The Linda</div>
+                  <div className="text-xs text-desk-muted">Next-day 15m EMA reversion</div>
+                </div>
+                <Link to="/linda" className="desk-btn-secondary h-7 px-2.5 text-xs shrink-0">
+                  Signals
+                </Link>
+              </div>
+
+              <div className="p-4 space-y-2">
+                {lindaTriggered.length === 0 ? (
+                  <p className="text-xs text-desk-muted py-6 text-center">
+                    No untagged-EMA trend days triggered today
+                  </p>
+                ) : (
+                  lindaTriggered.slice(0, 3).map((sig) => {
+                    const isFadeUp = sig.direction === 'FADE_UP';
+                    return (
+                      <div key={sig.symbol} className="desk-well rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="h-1.5 w-1.5 rounded-full bg-desk-up shrink-0" />
+                            <span className="font-mono text-sm font-medium text-desk-text">{sig.symbol}</span>
+                            <span className="text-[11px] font-mono text-desk-muted">· 15m</span>
+                            <span className={isFadeUp ? 'desk-tag-down' : 'desk-tag-up'}>
+                              {isFadeUp ? 'Fade up' : 'Fade down'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setChartItem({
+                                symbol: sig.symbol,
+                                strategy: 'linda',
+                                interval: '15',
+                                signalLabel: isFadeUp ? 'Fade up · Short' : 'Fade down · Long',
+                                direction: isFadeUp ? 'fade_up' : 'fade_down',
+                                entryPrice: sig.close,
+                                targetPrice: sig.target,
+                                stopPrice: sig.stop,
+                              })
+                            }
+                            className="h-7 px-2 rounded-md bg-desk-raised hover:bg-[#2b2b2e] border border-hairline text-xs text-desk-secondary hover:text-desk-text inline-flex items-center gap-1.5 transition-colors duration-150 ease-desk shrink-0"
+                            title="Open chart"
+                          >
+                            <ChartLineIcon className="w-3.5 h-3.5 text-desk-muted" />
+                            <span>15m</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-hairline text-xs font-mono">
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Target</span>
+                            <span className={isFadeUp ? 'text-desk-down' : 'text-desk-up'}>
+                              ${sig.target?.toFixed(2) ?? '—'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-desk-muted">Stop</span>
+                            <span className="text-desk-secondary">${sig.stop?.toFixed(2) ?? '—'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-hairline flex justify-end">
+              <Link
+                to="/linda"
+                className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+              >
+                <span>Reversion setups</span>
+                <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────── SYSTEMATIC TRADING PERFORMANCE & EXECUTION LEDGER ──────────────── */}
+      <section className="desk-surface rounded-2xl p-6 md:p-8 space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-hairline pb-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+              <span>Systematic execution log</span>
+            </div>
+            <h2 className="mt-1.5 text-2xl font-medium text-desk-text tracking-tight">
+              Trading performance
+            </h2>
+            <p className="mt-1 text-sm text-desk-secondary">
+              Executed futures strategy signals with contract multipliers, active stops, targets, and round-turn friction
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/executed-trades?status=CLOSED"
-              className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-right hover:bg-emerald-500/15 transition"
-              title="Closed Realized P&L Since Inception (Net of Commissions & Slippage)"
+              className="desk-well rounded-xl px-4 py-2.5 text-right hover:border-hairline-strong transition-colors duration-150 ease-desk"
             >
-              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                Closed P&L (Since Inception)
-              </div>
-              <div className={`text-sm font-black font-mono ${(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? 'text-emerald-300' : 'text-rose-400'}`}>
-                {(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.realizedPnl ?? 0)}{' '}
-                <span className="text-[10px] text-emerald-400/80 font-normal">
-                  ({inceptionMetrics?.closedCount ?? 0} Closed · Net)
+              <div className="text-xs text-desk-muted">Closed P&L (inception)</div>
+              <div
+                className={`mt-0.5 text-sm font-medium font-mono ${
+                  (inceptionMetrics?.realizedPnl ?? 0) >= 0 ? 'text-desk-up' : 'text-desk-down'
+                }`}
+              >
+                {(inceptionMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}
+                {fmt$(inceptionMetrics?.realizedPnl ?? 0)}{' '}
+                <span className="text-xs text-desk-muted font-normal">
+                  ({inceptionMetrics?.closedCount ?? 0})
                 </span>
               </div>
             </Link>
 
             <Link
               to="/executed-trades?status=OPEN"
-              className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-right hover:bg-blue-500/15 transition"
-              title="Open Unrealized P&L from Active Trades (Net of Entry Commissions & Slippage)"
+              className="desk-well rounded-xl px-4 py-2.5 text-right hover:border-hairline-strong transition-colors duration-150 ease-desk"
             >
-              <div className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
-                Open P&L (Active Trades)
-              </div>
-              <div className={`text-sm font-black font-mono ${(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
-                {(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(inceptionMetrics?.unrealizedPnl ?? 0)}{' '}
-                <span className="text-[10px] text-blue-400/80 font-normal">
-                  ({inceptionMetrics?.openCount ?? 0} Open)
+              <div className="text-xs text-desk-muted">Open P&L (active)</div>
+              <div
+                className={`mt-0.5 text-sm font-medium font-mono ${
+                  (inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-desk-up' : 'text-desk-down'
+                }`}
+              >
+                {(inceptionMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}
+                {fmt$(inceptionMetrics?.unrealizedPnl ?? 0)}{' '}
+                <span className="text-xs text-desk-muted font-normal">
+                  ({inceptionMetrics?.openCount ?? 0})
                 </span>
               </div>
             </Link>
 
-            <Link
-              to="/executed-trades"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition shadow-lg shadow-emerald-600/20 whitespace-nowrap"
-            >
-              View Executed Trades Desk →
+            <Link to="/executed-trades" className="desk-btn-primary h-10 px-4 text-xs">
+              <span>Full ledger</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
-        {/* ── STRATEGY & TIMEFRAME CONTROLS (SINGLE NON-WRAPPING ROW) ── */}
-        <div className="flex items-center justify-between gap-3 border-b border-slate-800/60 pb-4 overflow-x-auto no-scrollbar whitespace-nowrap flex-nowrap">
-          {/* Strategy Pills */}
-          <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 shrink-0">Strategy:</span>
+        {/* ── STRATEGY & TIMEFRAME CONTROLS ── */}
+        <div className="flex items-center justify-between gap-4 border-b border-hairline pb-4 overflow-x-auto no-scrollbar whitespace-nowrap flex-nowrap">
+          <div className="flex items-center gap-1 shrink-0 flex-nowrap">
             {[
-              { id: 'ALL', label: 'All', dot: 'bg-emerald-400' },
-              { id: 'Trendorama', label: 'Trendorama', dot: 'bg-fuchsia-400' },
-              { id: 'The Bradman', label: 'The Bradman', dot: 'bg-amber-400' },
-              { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely', dot: 'bg-orange-400' },
-              { id: 'TooHot TooCold', label: 'TooHot TooCold', dot: 'bg-cyan-400' },
-              { id: 'The Linda', label: 'The Linda', dot: 'bg-rose-400' },
+              { id: 'ALL', label: 'All models' },
+              { id: 'Trendorama', label: 'Trendorama' },
+              { id: 'The Bradman', label: 'The Bradman' },
+              { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely' },
+              { id: 'TooHot TooCold', label: 'TooHot TooCold' },
+              { id: 'The Linda', label: 'The Linda' },
             ].map((strat) => {
               const isSelected = selectedPerfStrategy === strat.id;
               return (
                 <button
                   key={strat.id}
+                  type="button"
                   onClick={() => setSelectedPerfStrategy(strat.id)}
-                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold transition-all shrink-0 ${
+                  className={`h-8 px-3 rounded-lg text-xs inline-flex items-center transition-colors duration-150 ease-desk shrink-0 ${
                     isSelected
-                      ? 'bg-slate-100 text-slate-900 shadow-md ring-2 ring-emerald-400/50'
-                      : 'bg-slate-950/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                      ? 'bg-desk-raised text-desk-text font-medium shadow-inset-top border border-hairline'
+                      : 'text-desk-secondary hover:text-desk-text hover:bg-desk-raised/50'
                   }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${strat.dot}`} />
                   {strat.label}
                 </button>
               );
             })}
           </div>
 
-          {/* Timeframe Buttons: QTD, YTD, Inception (Single Row) */}
-          <div className="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-slate-800 shrink-0 flex-nowrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 shrink-0">Timeframe:</span>
+          <div className="desk-well p-1 rounded-lg flex items-center gap-1 shrink-0 flex-nowrap">
             {[
               { id: 'QTD' as const, label: `QTD (Q${Math.floor(new Date().getMonth() / 3) + 1})` },
               { id: 'YTD' as const, label: `YTD (${new Date().getFullYear()})` },
@@ -1185,11 +1298,12 @@ export default function Home() {
               return (
                 <button
                   key={tf.id}
+                  type="button"
                   onClick={() => setSelectedPerfTimeframe(tf.id)}
-                  className={`rounded-lg px-3 py-1 text-xs font-bold transition-all shrink-0 ${
+                  className={`h-7 px-3 rounded-md text-xs transition-colors duration-150 ease-desk shrink-0 ${
                     isSelected
-                      ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                      ? 'bg-desk-raised text-desk-text font-medium border border-hairline'
+                      : 'text-desk-muted hover:text-desk-text'
                   }`}
                 >
                   {tf.label}
@@ -1199,260 +1313,265 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Summary Metrics */}
+        {/* Summary Metrics (6 clean figure cards) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <Link
             to="/executed-trades?status=CLOSED"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-emerald-500/60 hover:bg-emerald-950/20 active:scale-[0.98] block"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-300 transition-colors">
-              <span>Closed P&L ({selectedPerfTimeframe === 'INCEPTION' ? 'Inception' : selectedPerfTimeframe})</span>
-              <span className="text-[10px] text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">Closed →</span>
+            <div className="text-xs text-desk-muted">
+              Closed P&L ({selectedPerfTimeframe === 'INCEPTION' ? 'inception' : selectedPerfTimeframe})
             </div>
-            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.realizedPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {(activeMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.realizedPnl ?? 0)}
+            <div
+              className={`mt-2 text-2xl leading-none font-medium font-mono ${
+                (activeMetrics?.realizedPnl ?? 0) >= 0 ? 'text-desk-up' : 'text-desk-down'
+              }`}
+            >
+              {(activeMetrics?.realizedPnl ?? 0) >= 0 ? '+' : ''}
+              {fmt$(activeMetrics?.realizedPnl ?? 0)}
             </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {activeMetrics?.closedCount ?? 0} closed · Net of comm/slip
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              {activeMetrics?.closedCount ?? 0} closed · net
             </div>
           </Link>
 
           <Link
             to="/executed-trades?status=OPEN"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-blue-500/80 hover:bg-blue-950/20 active:scale-[0.98] block shadow-sm hover:shadow-blue-950/40"
-            title="Click to view all open positions in the executed ledger"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-blue-300 transition-colors">
-              <span>Open P&L (Active)</span>
-              <span className="text-[10px] text-blue-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+            <div className="text-xs text-desk-muted">Open P&L (active)</div>
+            <div
+              className={`mt-2 text-2xl leading-none font-medium font-mono ${
+                (activeMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-desk-up' : 'text-desk-down'
+              }`}
+            >
+              {(activeMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}
+              {fmt$(activeMetrics?.unrealizedPnl ?? 0)}
             </div>
-            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.unrealizedPnl ?? 0) >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
-              {(activeMetrics?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.unrealizedPnl ?? 0)}
-            </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {activeMetrics?.openCount ?? 0} open positions active
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              {activeMetrics?.openCount ?? 0} open positions
             </div>
           </Link>
 
           <Link
             to="/executed-trades"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Total Net P&L</span>
-              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Ledger →</span>
+            <div className="text-xs text-desk-muted">Total net P&L</div>
+            <div
+              className={`mt-2 text-2xl leading-none font-medium font-mono ${
+                (activeMetrics?.netPnl ?? 0) >= 0 ? 'text-desk-up' : 'text-desk-down'
+              }`}
+            >
+              {(activeMetrics?.netPnl ?? 0) >= 0 ? '+' : ''}
+              {fmt$(activeMetrics?.netPnl ?? 0)}
             </div>
-            <div className={`mt-1 text-2xl font-black font-mono ${(activeMetrics?.netPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {(activeMetrics?.netPnl ?? 0) >= 0 ? '+' : ''}{fmt$(activeMetrics?.netPnl ?? 0)}
-            </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Return: {activeMetrics?.returnPct !== undefined ? (activeMetrics.returnPct >= 0 ? `+${activeMetrics.returnPct.toFixed(1)}%` : `${activeMetrics.returnPct.toFixed(1)}%`) : '0.0%'} · Gross: {fmt$(activeMetrics?.grossPnl ?? 0)}
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              {fmtSignedPct(activeMetrics?.returnPct)} vs $100k
             </div>
           </Link>
 
           <Link
             to="/executed-trades"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
-            title="All-in round-turn futures commissions and tick slippage included in Net P&L"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Comm. & Slippage</span>
-              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Included</span>
-            </div>
-            <div className="mt-1 text-2xl font-black text-rose-300/90 font-mono">
+            <div className="text-xs text-desk-muted">Commissions & slippage</div>
+            <div className="mt-2 text-2xl leading-none font-medium font-mono text-desk-secondary">
               -{fmt$(activeMetrics?.totalCosts ?? 0)}
             </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Comm: {fmt$(activeMetrics?.totalCommissions ?? 0)} · Slip: {fmt$(activeMetrics?.totalSlippage ?? 0)}
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              {fmt$(activeMetrics?.totalCommissions ?? 0)} comm · {fmt$(activeMetrics?.totalSlippage ?? 0)} slip
             </div>
           </Link>
 
           <Link
             to="/executed-trades?status=CLOSED"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Win Rate (Net)</span>
-              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Closed →</span>
-            </div>
-            <div className="mt-1 text-2xl font-black text-amber-400 font-mono">
+            <div className="text-xs text-desk-muted">Win rate (net)</div>
+            <div className="mt-2 text-2xl leading-none font-medium font-mono text-desk-text">
               {(activeMetrics?.winRate ?? 0).toFixed(1)}%
             </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              {activeMetrics?.wins ?? 0}W / {activeMetrics?.losses ?? 0}L ({activeMetrics?.totalTrades ?? 0} trades)
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              {activeMetrics?.wins ?? 0}W / {activeMetrics?.losses ?? 0}L ({activeMetrics?.totalTrades ?? 0})
             </div>
           </Link>
 
           <Link
             to="/executed-trades?status=CLOSED"
-            className="group rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition-all hover:scale-[1.02] hover:border-slate-700 hover:bg-slate-900/80 active:scale-[0.98] block"
+            className="desk-well rounded-xl p-4 hover:border-hairline-strong transition-colors duration-150 ease-desk block"
           >
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-slate-200 transition-colors">
-              <span>Profit Factor</span>
-              <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Metrics →</span>
-            </div>
-            <div className="mt-1 text-2xl font-black text-cyan-300 font-mono">
+            <div className="text-xs text-desk-muted">Profit factor</div>
+            <div className="mt-2 text-2xl leading-none font-medium font-mono text-desk-text">
               {(activeMetrics?.profitFactor ?? 0) > 50 ? '> 50' : (activeMetrics?.profitFactor ?? 0).toFixed(2)}
             </div>
-            <div className="mt-1 text-[11px] text-slate-500 font-mono">
-              Avg Win: {fmt$(activeMetrics?.avgWin ?? 0)}
+            <div className="mt-2 text-xs text-desk-muted font-mono">
+              Avg win {fmt$(activeMetrics?.avgWin ?? 0)}
             </div>
           </Link>
         </div>
 
-        {/* ── BIGGEST WINNERS & LOSERS ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Top Winners */}
-          <div className="rounded-2xl border border-emerald-900/40 bg-gradient-to-br from-emerald-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
+        {/* ── LARGEST GAINS & DRAWDOWNS (COLLAPSIBLE) ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="desk-well rounded-xl p-4">
             <button
               type="button"
               onClick={() => setWinnersOpen((o) => !o)}
               aria-expanded={winnersOpen}
-              className={`flex w-full items-center justify-between text-left ${winnersOpen ? 'border-b border-emerald-900/30 pb-3' : ''}`}
+              className={`flex w-full items-center justify-between text-left ${
+                winnersOpen ? 'border-b border-hairline pb-3 mb-3' : ''
+              }`}
             >
-              <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-300">
-                <span>🏆</span> Top Winners {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
+              <span className="flex items-center gap-2 text-sm font-medium text-desk-text">
+                <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
+                <span>
+                  Largest gains {selectedPerfStrategy !== 'ALL' ? `(${selectedPerfStrategy})` : ''}
+                </span>
               </span>
-              <span className="flex items-center gap-2 text-[11px] font-bold text-emerald-400">
-                {biggestWinners.length} Top Performing
-                <span className={`transition-transform ${winnersOpen ? 'rotate-180' : ''}`}>▾</span>
+              <span className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+                <span>{biggestWinners.length} trades</span>
+                <ChevronDownIcon
+                  className={`w-4 h-4 transition-transform duration-150 ease-desk ${
+                    winnersOpen ? 'rotate-180' : ''
+                  }`}
+                />
               </span>
             </button>
 
-            {!winnersOpen ? null : biggestWinners.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-2">No winning trades recorded for this selection.</p>
-            ) : (
-              <div className="space-y-2">
-                {biggestWinners.map((t) => {
-                  const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
-                  return (
-                    <div
-                      key={t.id}
-                      className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3.5 py-2.5 transition hover:border-emerald-500/40"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div>
+            {winnersOpen &&
+              (biggestWinners.length === 0 ? (
+                <p className="text-xs text-desk-muted py-2">No winning trades recorded for this filter</p>
+              ) : (
+                <div className="space-y-2">
+                  {biggestWinners.map((t) => {
+                    const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                    return (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between rounded-lg bg-desk-card border border-hairline px-3.5 py-2.5"
+                      >
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
-                            <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-300 border border-emerald-500/20">
-                              {t.side.toUpperCase()}
+                            <span className="font-mono font-medium text-desk-text text-sm">{t.symbol}</span>
+                            <span className={t.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                              {t.side === 'long' ? 'Long' : 'Short'}
                             </span>
-                            <span className="text-[11px] text-slate-300 font-semibold truncate max-w-[130px]">
-                              {t.strategy}
-                            </span>
+                            <span className="text-xs text-desk-secondary truncate">{t.strategy}</span>
                           </div>
-                          <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-                            <span>Open: {t.entry_date?.slice(0, 10)}</span>
-                            <span className="text-slate-600">·</span>
-                            <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                          <div className="mt-1 text-[11px] font-mono text-desk-muted">
+                            Opened {t.entry_date?.slice(0, 10)} ·{' '}
+                            {t.status === 'OPEN' ? 'Open' : `Closed ${t.exit_date?.slice(0, 10) || ''}`}
                           </div>
                         </div>
-                      </div>
-                      <div className="text-right font-mono shrink-0 pl-3">
-                        <div className="font-black text-emerald-400 text-sm">+{fmt$(pnl)}</div>
-                        <div className="text-[10px] text-emerald-300 font-semibold">
-                          {t.return_pct > 0 ? `+${t.return_pct.toFixed(1)}%` : `${t.return_pct.toFixed(1)}%`}
+                        <div className="text-right font-mono shrink-0 pl-3">
+                          <div className="font-medium text-desk-up text-sm">+{fmt$(pnl)}</div>
+                          <div className="text-[11px] text-desk-muted">{fmtSignedPct(t.return_pct)}</div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              ))}
           </div>
 
-          {/* Top Losers */}
-          <div className="rounded-2xl border border-rose-900/40 bg-gradient-to-br from-rose-950/20 via-slate-950/60 to-slate-950/80 p-5 shadow-lg space-y-3">
+          <div className="desk-well rounded-xl p-4">
             <button
               type="button"
               onClick={() => setLosersOpen((o) => !o)}
               aria-expanded={losersOpen}
-              className={`flex w-full items-center justify-between text-left ${losersOpen ? 'border-b border-rose-900/30 pb-3' : ''}`}
+              className={`flex w-full items-center justify-between text-left ${
+                losersOpen ? 'border-b border-hairline pb-3 mb-3' : ''
+              }`}
             >
-              <span className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-rose-300">
-                <span>⚠️</span> Top Drawdowns / Losers {selectedPerfStrategy !== 'ALL' && `(${selectedPerfStrategy})`}
+              <span className="flex items-center gap-2 text-sm font-medium text-desk-text">
+                <span className="h-1.5 w-1.5 rounded-full bg-desk-down" />
+                <span>
+                  Largest drawdowns {selectedPerfStrategy !== 'ALL' ? `(${selectedPerfStrategy})` : ''}
+                </span>
               </span>
-              <span className="flex items-center gap-2 text-[11px] font-bold text-rose-400">
-                {biggestLosers.length} Trailing Trades
-                <span className={`transition-transform ${losersOpen ? 'rotate-180' : ''}`}>▾</span>
+              <span className="flex items-center gap-2 text-xs font-mono text-desk-muted">
+                <span>{biggestLosers.length} trades</span>
+                <ChevronDownIcon
+                  className={`w-4 h-4 transition-transform duration-150 ease-desk ${
+                    losersOpen ? 'rotate-180' : ''
+                  }`}
+                />
               </span>
             </button>
 
-            {!losersOpen ? null : biggestLosers.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-2">No drawdown trades recorded for this selection.</p>
-            ) : (
-              <div className="space-y-2">
-                {biggestLosers.map((t) => {
-                  const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
-                  return (
-                    <div
-                      key={t.id}
-                      className="flex items-center justify-between rounded-xl border border-rose-500/20 bg-rose-500/5 px-3.5 py-2.5 transition hover:border-rose-500/40"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div>
+            {losersOpen &&
+              (biggestLosers.length === 0 ? (
+                <p className="text-xs text-desk-muted py-2">No losing trades recorded for this filter</p>
+              ) : (
+                <div className="space-y-2">
+                  {biggestLosers.map((t) => {
+                    const pnl = t.status === 'OPEN' ? t.unrealized_pnl : t.realized_pnl;
+                    return (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between rounded-lg bg-desk-card border border-hairline px-3.5 py-2.5"
+                      >
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-slate-100 text-sm">{t.symbol}</span>
-                            <span className="rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-rose-300 border border-rose-500/20">
-                              {t.side.toUpperCase()}
+                            <span className="font-mono font-medium text-desk-text text-sm">{t.symbol}</span>
+                            <span className={t.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                              {t.side === 'long' ? 'Long' : 'Short'}
                             </span>
-                            <span className="text-[11px] text-slate-300 font-semibold truncate max-w-[130px]">
-                              {t.strategy}
-                            </span>
+                            <span className="text-xs text-desk-secondary truncate">{t.strategy}</span>
                           </div>
-                          <div className="mt-1 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-                            <span>Open: {t.entry_date?.slice(0, 10)}</span>
-                            <span className="text-slate-600">·</span>
-                            <span>{t.status === 'OPEN' ? <span className="text-emerald-400 font-bold">Active Open</span> : `Close: ${t.exit_date?.slice(0, 10) || 'Closed'}`}</span>
+                          <div className="mt-1 text-[11px] font-mono text-desk-muted">
+                            Opened {t.entry_date?.slice(0, 10)} ·{' '}
+                            {t.status === 'OPEN' ? 'Open' : `Closed ${t.exit_date?.slice(0, 10) || ''}`}
                           </div>
                         </div>
-                      </div>
-                      <div className="text-right font-mono shrink-0 pl-3">
-                        <div className="font-black text-rose-400 text-sm">{fmt$(pnl)}</div>
-                        <div className="text-[10px] text-rose-300 font-semibold">
-                          {t.return_pct.toFixed(1)}%
+                        <div className="text-right font-mono shrink-0 pl-3">
+                          <div className="font-medium text-desk-down text-sm">{fmt$(pnl)}</div>
+                          <div className="text-[11px] text-desk-muted">{t.return_pct.toFixed(1)}%</div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              ))}
           </div>
         </div>
 
         {/* Recent Executed Signals Table */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-slate-800/80 flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-300">
-              Recent Trade Executions & Status {selectedPerfStrategy !== 'ALL' && `· ${selectedPerfStrategy}`}
+        <div className="desk-well rounded-xl overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-hairline flex items-center justify-between">
+            <span className="text-sm font-medium text-desk-text">
+              Recent executions {selectedPerfStrategy !== 'ALL' ? `· ${selectedPerfStrategy}` : ''}
             </span>
-            <Link to="/executed-trades" className="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition">
-              Full Ledger ({activeMetrics?.totalTrades ?? 0}) →
+            <Link
+              to="/executed-trades"
+              className="inline-flex items-center gap-1 text-xs text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+            >
+              <span>All {activeMetrics?.totalTrades ?? 0} trades</span>
+              <ArrowRightIcon className="w-3.5 h-3.5 text-desk-muted" />
             </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="border-b border-slate-800/80 bg-slate-950/90 text-[10px] font-black uppercase tracking-wider text-slate-400">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-hairline text-desk-muted">
                 <tr>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Symbol</th>
-                  <th className="px-4 py-3">Strategy</th>
-                  <th className="px-4 py-3">Side</th>
-                  <th className="px-4 py-3 text-right">Entry</th>
-                  <th className="px-4 py-3 text-right">Current / Exit</th>
-                  <th className="px-4 py-3 text-right">Stop Loss</th>
-                  <th className="px-4 py-3 text-right">Target</th>
-                  <th className="px-4 py-3 text-right">Net P&L ($)</th>
-                  <th className="px-4 py-3 text-center">Status</th>
+                  <th className="px-4 py-3 font-normal">Date</th>
+                  <th className="px-4 py-3 font-normal">Contract</th>
+                  <th className="px-4 py-3 font-normal">Strategy</th>
+                  <th className="px-4 py-3 font-normal">Side</th>
+                  <th className="px-4 py-3 text-right font-normal">Entry</th>
+                  <th className="px-4 py-3 text-right font-normal">Mark / exit</th>
+                  <th className="px-4 py-3 text-right font-normal">Stop</th>
+                  <th className="px-4 py-3 text-right font-normal">Target</th>
+                  <th className="px-4 py-3 text-right font-normal">Net P&L</th>
+                  <th className="px-4 py-3 text-right font-normal">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-medium">
-                {(!perfTrades || perfTrades.length === 0) ? (
+              <tbody className="divide-y divide-hairline">
+                {!perfTrades || perfTrades.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="px-4 py-8 text-center text-slate-500">
-                      No executed trades recorded for this selection.
+                    <td colSpan={10} className="px-4 py-8 text-center text-desk-muted">
+                      No executed trades recorded for this selection
                     </td>
                   </tr>
                 ) : (
@@ -1460,98 +1579,61 @@ export default function Home() {
                     const isOpen = t.status === 'OPEN';
                     const displayPnl = isOpen ? t.unrealized_pnl : t.realized_pnl;
                     const tradeCost = t.fees_and_slippage ?? ((t.commission || 0) + (t.slippage || 0));
-                    const rowBgClass = isOpen
-                      ? 'bg-blue-500/10 hover:bg-blue-500/15 border-l-2 border-l-blue-400'
-                      : t.status === 'HIT_TARGET'
-                      ? 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08]'
-                      : t.status === 'STOPPED_OUT'
-                      ? 'bg-rose-500/[0.03] hover:bg-rose-500/[0.08]'
-                      : 'hover:bg-slate-800/40';
+                    const statusInfo = STATUS_LABELS[t.status] || {
+                      label: t.status,
+                      dot: 'bg-desk-muted',
+                      text: 'text-desk-secondary',
+                    };
+
                     return (
-                      <tr key={t.id} className={`transition-colors ${rowBgClass}`}>
-                        <td className="px-4 py-3 font-mono text-slate-300">
+                      <tr
+                        key={t.id}
+                        className={`transition-colors duration-150 ease-desk hover:bg-desk-raised/40 ${
+                          isOpen ? 'bg-desk-card/70' : ''
+                        }`}
+                      >
+                        <td className="px-4 py-3 font-mono text-desk-secondary">
                           <div>{t.entry_date}</div>
-                          {isOpen && (
-                            <div className="text-[10px] font-bold text-blue-400">Active Open</div>
-                          )}
+                          {isOpen && <div className="text-[11px] text-desk-up">Active</div>}
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-slate-100">{t.symbol}</td>
+                        <td className="px-4 py-3 font-mono font-medium text-desk-text">{t.symbol}</td>
+                        <td className="px-4 py-3 text-desk-secondary">{t.strategy}</td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex rounded-md bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700">
-                            {t.strategy}
+                          <span className={t.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
+                            {t.side === 'long' ? 'Long' : 'Short'}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-extrabold uppercase ${
-                            t.side === 'long' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
-                          }`}>
-                            {t.side.toUpperCase()}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono text-slate-200">
+                        <td className="px-4 py-3 text-right font-mono text-desk-secondary">
                           {formatSignalPrice(t.entry_price)}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-slate-100 font-semibold">
+                        <td className="px-4 py-3 text-right font-mono font-medium text-desk-text">
                           {formatSignalPrice(isOpen ? t.current_price : t.exit_price)}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-rose-300">
+                        <td className="px-4 py-3 text-right font-mono text-desk-down">
                           {formatSignalPrice(t.stop_loss)}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono text-emerald-300">
+                        <td className="px-4 py-3 text-right font-mono text-desk-up">
                           {formatSignalPrice(t.profit_target)}
                         </td>
                         <td className="px-4 py-3 text-right font-mono">
-                          <div className={`font-black ${displayPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          <div className={`font-medium ${displayPnl >= 0 ? 'text-desk-up' : 'text-desk-down'}`}>
+                            {displayPnl >= 0 ? '+' : ''}
                             {fmt$(displayPnl)}
                           </div>
                           {tradeCost > 0 && (
-                            <div className="text-[10px] text-slate-500 font-normal" title={`Gross: ${fmt$(t.gross_pnl ?? displayPnl)} | Comm: -$${(t.commission || 0).toFixed(2)} | Slip: -$${(t.slippage || 0).toFixed(2)}`}>
-                              incl. -{fmt$(tradeCost)} cost
+                            <div
+                              className="text-[11px] text-desk-muted"
+                              title={`Gross: ${fmt$(t.gross_pnl ?? displayPnl)} | Comm: -$${(t.commission || 0).toFixed(2)} | Slip: -$${(t.slippage || 0).toFixed(2)}`}
+                            >
+                              incl. -{fmt$(tradeCost)}
                             </div>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-center">
-                          {t.status === 'OPEN' && (
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-300 border border-blue-400/40 shadow-sm shadow-blue-500/10">
-                              <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
-                              OPEN
-                            </span>
-                          )}
-                          {t.status === 'HIT_TARGET' && (
-                            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-300 border border-emerald-500/30">
-                              🎯 TARGET HIT
-                            </span>
-                          )}
-                          {t.status === 'STOPPED_OUT' && (
-                            <span className="inline-flex items-center rounded-full bg-rose-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-rose-300 border border-rose-500/30">
-                              🛑 STOPPED
-                            </span>
-                          )}
-                          {t.status === 'DONCHIAN_EXIT' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-indigo-300 border border-indigo-500/30">
-                              🌊 DONCHIAN
-                            </span>
-                          )}
-                          {t.status === 'TIME_EXIT' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-300 border border-amber-500/30">
-                              ⏳ TIME EXIT
-                            </span>
-                          )}
-                          {t.status === 'EMA_EXIT' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-teal-300 border border-teal-500/30">
-                              📉 EMA EXIT
-                            </span>
-                          )}
-                          {t.status === 'EOD_EXIT' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/15 px-2.5 py-0.5 text-[10px] font-extrabold text-cyan-300 border border-cyan-500/30">
-                              🌅 EOD EXIT
-                            </span>
-                          )}
-                          {t.status === 'MANUALLY_CLOSED' && (
-                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700">
-                              CLOSED
-                            </span>
-                          )}
+                        <td className="px-4 py-3 text-right">
+                          <span className={`inline-flex items-center justify-end gap-1.5 text-xs ${statusInfo.text}`}>
+                            <span className={`h-1.5 w-1.5 rounded-full ${statusInfo.dot}`} />
+                            <span>{statusInfo.label}</span>
+                          </span>
                         </td>
                       </tr>
                     );
@@ -1561,30 +1643,7 @@ export default function Home() {
             </table>
           </div>
         </div>
-      </div>
-
-      {/* ──────────────── QUICK LINKS FOOTER ──────────────── */}
-      <div className="rounded-3xl bg-slate-900/80 p-8 border border-slate-800/90 backdrop-blur-xl shadow-xl">
-        <h2 className="text-xl font-bold text-slate-100 mb-4">Quick Access Navigation</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { label: 'Trendorama Signals', to: '/trendorama', color: 'text-fuchsia-300 border-fuchsia-900/40 hover:border-fuchsia-600' },
-            { label: 'The Bradman', to: '/taylor', color: 'text-amber-300 border-amber-900/40 hover:border-amber-600' },
-            { label: 'YouHaveChosenWisely', to: '/grail', color: 'text-orange-300 border-orange-900/40 hover:border-orange-600' },
-            { label: 'TooHot TooCold', to: '/odid', color: 'text-cyan-300 border-cyan-900/40 hover:border-cyan-600' },
-            { label: 'The Linda', to: '/linda', color: 'text-rose-300 border-rose-900/40 hover:border-rose-600' },
-            { label: 'Open Positions Tracker', to: '/trendorama/open-trades', color: 'text-emerald-300 border-emerald-900/40 hover:border-emerald-600' },
-          ].map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`rounded-2xl border bg-slate-950/60 px-5 py-4 text-sm font-bold ${link.color} shadow-md transition-all duration-300 hover:translate-y-0.5`}
-            >
-              {link.label} →
-            </Link>
-          ))}
-        </div>
-      </div>
+      </section>
 
       {/* Interactive Chart Modal */}
       {chartItem && (
