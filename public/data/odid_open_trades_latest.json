@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-06T08:24:11.086103Z",
+  "timestamp": "2026-11-06T14:06:39.016404Z",
   "date": "2026-11-06",
   "system": "odid",
   "open_trades": [
@@ -12,6 +12,16 @@
       "qty": 3,
       "net_qty": -3,
       "avg_price": 7490.0
+    },
+    {
+      "symbol": "NG",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "E-mini Natural Gas (QG)",
+      "side": "long",
+      "qty": 5,
+      "net_qty": 5,
+      "avg_price": 2.995
     }
   ]
 }
