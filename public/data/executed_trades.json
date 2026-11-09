@@ -2668,24 +2668,52 @@
     "profit_target": 3.2092,
     "point_value": 2500.0,
     "status": "STOPPED_OUT",
-    "current_price": 2.897,
-    "duration_days": 3,
+    "current_price": 2.94,
+    "duration_days": 0,
     "initial_risk": 1745.55,
     "entry_session": "LONDON",
     "created_at": "2026-07-10T10:00:00Z",
-    "updated_at": "2026-07-13T20:00:00Z",
-    "gross_pnl": -1746.0,
+    "updated_at": "2026-07-10T20:00:00Z",
+    "exit_price": 2.8746,
+    "exit_date": "2026-07-10",
+    "gross_pnl": -1745.55,
     "commission": 15.0,
     "slippage": 15.0,
     "fees_and_slippage": 30.0,
+    "realized_pnl": -1775.55,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -1776.0,
-    "return_pct": -3.89,
-    "exit_price": 2.8746,
+    "return_pct": -3.89
+  },
+  {
+    "id": "pt_ZB_THTC_20260710_95",
+    "symbol": "ZB",
+    "symbol_name": "30-Year T-Bond Futures",
+    "strategy": "TooHot TooCold",
+    "side": "long",
+    "entry_date": "2026-07-10",
+    "entry_price": 111.5938,
+    "qty": 2,
+    "stop_loss": 110.7246,
+    "profit_target": 113.3321,
+    "point_value": 1000.0,
+    "status": "STOPPED_OUT",
+    "current_price": 110.7188,
+    "duration_days": 3,
+    "initial_risk": 1738.36,
+    "created_at": "2026-07-10T13:30:00Z",
+    "updated_at": "2026-07-13T20:00:00Z",
+    "gross_pnl": -1738.4,
+    "commission": 5.0,
+    "slippage": 6.24,
+    "fees_and_slippage": 11.24,
+    "unrealized_pnl": 0.0,
+    "realized_pnl": -1749.64,
+    "return_pct": -0.78,
+    "exit_price": 110.7246,
     "exit_date": "2026-07-13"
   },
   {
-    "id": "pt_ES_Linda_20260713_95",
+    "id": "pt_ES_Linda_20260713_96",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Linda",
@@ -2713,7 +2741,7 @@
     "return_pct": 0.58
   },
   {
-    "id": "pt_RTY_Brad_20260713_96",
+    "id": "pt_RTY_Brad_20260713_97",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -2742,7 +2770,36 @@
     "exit_date": "2026-07-16"
   },
   {
-    "id": "pt_NG_Brad_20260713_97",
+    "id": "pt_CL_Brad_20260713_98",
+    "symbol": "CL",
+    "symbol_name": "Micro WTI Crude Oil (MCL)",
+    "strategy": "The Bradman",
+    "side": "short",
+    "entry_date": "2026-07-13",
+    "entry_price": 74.06,
+    "qty": 5,
+    "stop_loss": 77.5547,
+    "profit_target": 67.5075,
+    "point_value": 100.0,
+    "status": "STOPPED_OUT",
+    "current_price": 78.14,
+    "duration_days": 0,
+    "initial_risk": 1747.34,
+    "entry_session": "ASIA",
+    "created_at": "2026-07-13T06:00:00Z",
+    "updated_at": "2026-07-13T20:00:00Z",
+    "exit_price": 77.5547,
+    "exit_date": "2026-07-13",
+    "gross_pnl": -1747.34,
+    "commission": 7.5,
+    "slippage": 5.0,
+    "fees_and_slippage": 12.5,
+    "realized_pnl": -1759.84,
+    "unrealized_pnl": 0.0,
+    "return_pct": -4.72
+  },
+  {
+    "id": "pt_NG_Brad_20260713_99",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -2771,7 +2828,7 @@
     "exit_date": "2026-07-16"
   },
   {
-    "id": "pt_6E_Brad_20260713_98",
+    "id": "pt_6E_Brad_20260713_100",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -2800,7 +2857,7 @@
     "exit_date": "2026-07-15"
   },
   {
-    "id": "pt_6B_Brad_20260713_99",
+    "id": "pt_6B_Brad_20260713_101",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -2829,7 +2886,7 @@
     "exit_date": "2026-07-15"
   },
   {
-    "id": "pt_ZB_Brad_20260713_100",
+    "id": "pt_ZB_Brad_20260713_102",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -2858,7 +2915,7 @@
     "exit_date": "2026-07-16"
   },
   {
-    "id": "pt_ZN_Brad_20260713_101",
+    "id": "pt_ZN_Brad_20260713_103",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -2887,36 +2944,36 @@
     "exit_date": "2026-07-14"
   },
   {
-    "id": "pt_CL_Brad_20260714_102",
+    "id": "pt_CL_Brad_20260714_104",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
     "side": "short",
     "entry_date": "2026-07-14",
-    "entry_price": 81.05,
+    "entry_price": 79.78,
     "qty": 5,
-    "stop_loss": 84.6136,
-    "profit_target": 74.3682,
+    "stop_loss": 83.3867,
+    "profit_target": 73.0174,
     "point_value": 100.0,
     "status": "TIME_EXIT",
     "current_price": 82.49,
     "duration_days": 3,
-    "initial_risk": 1781.8,
-    "entry_session": "DAILY",
-    "created_at": "2026-07-14T13:30:00Z",
+    "initial_risk": 1803.37,
+    "entry_session": "ASIA",
+    "created_at": "2026-07-14T04:00:00Z",
     "updated_at": "2026-07-17T20:00:00Z",
-    "gross_pnl": -720.0,
+    "gross_pnl": -1355.0,
     "commission": 7.5,
     "slippage": 5.0,
     "fees_and_slippage": 12.5,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -732.5,
-    "return_pct": -1.78,
+    "realized_pnl": -1367.5,
+    "return_pct": -3.4,
     "exit_price": 82.49,
     "exit_date": "2026-07-17"
   },
   {
-    "id": "pt_6E_Brad_20260715_103",
+    "id": "pt_6E_Brad_20260715_105",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -2945,7 +3002,7 @@
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_6B_Brad_20260715_104",
+    "id": "pt_6B_Brad_20260715_106",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -2974,7 +3031,7 @@
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_ES_Linda_20260716_105",
+    "id": "pt_ES_Linda_20260716_107",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Linda",
@@ -3002,7 +3059,7 @@
     "return_pct": 0.49
   },
   {
-    "id": "pt_NQ_Brad_20260716_106",
+    "id": "pt_NQ_Brad_20260716_108",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -3031,65 +3088,65 @@
     "exit_date": "2026-07-17"
   },
   {
-    "id": "pt_ES_Brad_20260717_107",
+    "id": "pt_ES_Brad_20260717_109",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-07-17",
-    "entry_price": 7518.75,
+    "entry_price": 7513.75,
     "qty": 5,
-    "stop_loss": 7443.6761,
-    "profit_target": 7659.5135,
+    "stop_loss": 7438.6761,
+    "profit_target": 7654.5135,
     "point_value": 5.0,
     "status": "TIME_EXIT",
     "current_price": 7484.25,
     "duration_days": 3,
     "initial_risk": 1876.85,
-    "entry_session": "LONDON",
-    "created_at": "2026-07-17T11:00:00Z",
+    "entry_session": "US",
+    "created_at": "2026-07-17T13:00:00Z",
     "updated_at": "2026-07-20T20:00:00Z",
-    "gross_pnl": -862.5,
+    "gross_pnl": -737.5,
     "commission": 6.0,
     "slippage": 6.25,
     "fees_and_slippage": 12.25,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -874.75,
-    "return_pct": -0.46,
+    "realized_pnl": -749.75,
+    "return_pct": -0.39,
     "exit_price": 7484.25,
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_NQ_Brad_20260717_108",
+    "id": "pt_NQ_Brad_20260717_110",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-07-17",
-    "entry_price": 28664.5,
+    "entry_price": 28481.875,
     "qty": 1,
-    "stop_loss": 28116.5868,
-    "profit_target": 29691.8373,
+    "stop_loss": 27928.6575,
+    "profit_target": 29519.1579,
     "point_value": 2.0,
     "status": "TIME_EXIT",
     "current_price": 28778.75,
     "duration_days": 3,
-    "initial_risk": 1095.83,
-    "entry_session": "US",
-    "created_at": "2026-07-17T12:00:00Z",
+    "initial_risk": 1106.44,
+    "entry_session": "DAILY",
+    "created_at": "2026-07-17T13:30:00Z",
     "updated_at": "2026-07-20T20:00:00Z",
-    "gross_pnl": 228.5,
+    "gross_pnl": 593.75,
     "commission": 1.2,
     "slippage": 0.5,
     "fees_and_slippage": 1.7,
     "unrealized_pnl": 0.0,
-    "realized_pnl": 226.8,
-    "return_pct": 0.4,
+    "realized_pnl": 592.05,
+    "return_pct": 1.04,
     "exit_price": 28778.75,
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_CL_THTC_20260717_109",
+    "id": "pt_CL_THTC_20260717_111",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "TooHot TooCold",
@@ -3117,7 +3174,7 @@
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_NG_Linda_20260717_110",
+    "id": "pt_NG_Linda_20260717_112",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Linda",
@@ -3145,7 +3202,7 @@
     "return_pct": 0.59
   },
   {
-    "id": "pt_ZB_THTC_20260717_111",
+    "id": "pt_ZB_THTC_20260717_113",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "TooHot TooCold",
@@ -3173,35 +3230,36 @@
     "exit_date": "2026-07-21"
   },
   {
-    "id": "pt_ZN_THTC_20260717_112",
+    "id": "pt_ZN_Brad_20260717_114",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
-    "strategy": "TooHot TooCold",
-    "side": "long",
+    "strategy": "The Bradman",
+    "side": "short",
     "entry_date": "2026-07-17",
-    "entry_price": 109.2812,
+    "entry_price": 109.2969,
     "qty": 4,
-    "stop_loss": 108.7831,
-    "profit_target": 110.2775,
+    "stop_loss": 109.6999,
+    "profit_target": 108.5412,
     "point_value": 1000.0,
-    "status": "STOPPED_OUT",
+    "status": "TIME_EXIT",
     "current_price": 108.8594,
     "duration_days": 3,
-    "initial_risk": 1992.53,
-    "created_at": "2026-07-17T13:30:00Z",
+    "initial_risk": 1612.13,
+    "entry_session": "US",
+    "created_at": "2026-07-17T15:00:00Z",
     "updated_at": "2026-07-20T20:00:00Z",
-    "gross_pnl": -1992.4,
+    "gross_pnl": 1750.1,
     "commission": 10.0,
     "slippage": 6.24,
     "fees_and_slippage": 16.24,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -2008.64,
-    "return_pct": -0.46,
-    "exit_price": 108.7831,
+    "realized_pnl": 1733.86,
+    "return_pct": 0.4,
+    "exit_price": 108.8594,
     "exit_date": "2026-07-20"
   },
   {
-    "id": "pt_ES_Brad_20260720_113",
+    "id": "pt_ES_Brad_20260720_115",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -3230,7 +3288,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_RTY_Brad_20260720_114",
+    "id": "pt_RTY_Brad_20260720_116",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -3259,7 +3317,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_CL_Brad_20260720_115",
+    "id": "pt_CL_Brad_20260720_117",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -3288,7 +3346,7 @@
     "exit_date": "2026-07-22"
   },
   {
-    "id": "pt_NG_THTC_20260720_116",
+    "id": "pt_NG_THTC_20260720_118",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "TooHot TooCold",
@@ -3316,7 +3374,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_6E_Brad_20260720_117",
+    "id": "pt_6E_Brad_20260720_119",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -3345,7 +3403,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_6B_Brad_20260720_118",
+    "id": "pt_6B_Brad_20260720_120",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -3374,7 +3432,7 @@
     "exit_date": "2026-07-21"
   },
   {
-    "id": "pt_6B_Brad_20260721_119",
+    "id": "pt_6B_Brad_20260721_121",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -3403,7 +3461,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_ZB_Brad_20260721_120",
+    "id": "pt_ZB_Brad_20260721_122",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -3432,7 +3490,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_CL_Brad_20260722_121",
+    "id": "pt_CL_Brad_20260722_123",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -3461,7 +3519,7 @@
     "exit_date": "2026-07-23"
   },
   {
-    "id": "pt_ES_Brad_20260723_122",
+    "id": "pt_ES_Brad_20260723_124",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -3490,7 +3548,7 @@
     "exit_date": "2026-07-27"
   },
   {
-    "id": "pt_NQ_Brad_20260723_123",
+    "id": "pt_NQ_Brad_20260723_125",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -3519,7 +3577,7 @@
     "exit_date": "2026-07-27"
   },
   {
-    "id": "pt_CL_Brad_20260723_124",
+    "id": "pt_CL_Brad_20260723_126",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -3548,7 +3606,7 @@
     "exit_date": "2026-07-27"
   },
   {
-    "id": "pt_6B_Brad_20260723_125",
+    "id": "pt_6B_Brad_20260723_127",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -3577,7 +3635,7 @@
     "exit_date": "2026-07-27"
   },
   {
-    "id": "pt_DX_THTC_20260723_126",
+    "id": "pt_DX_THTC_20260723_128",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "TooHot TooCold",
@@ -3605,7 +3663,7 @@
     "exit_date": "2026-07-27"
   },
   {
-    "id": "pt_ZB_Tren_20260723_127",
+    "id": "pt_ZB_Tren_20260723_129",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -3633,7 +3691,7 @@
     "exit_date": "2026-07-28"
   },
   {
-    "id": "pt_ZN_Tren_20260723_128",
+    "id": "pt_ZN_Tren_20260723_130",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "Trendorama",
@@ -3661,7 +3719,7 @@
     "exit_date": "2026-08-13"
   },
   {
-    "id": "pt_ES_Brad_20260727_129",
+    "id": "pt_ES_Brad_20260727_131",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -3690,7 +3748,7 @@
     "exit_date": "2026-07-29"
   },
   {
-    "id": "pt_NQ_Brad_20260727_130",
+    "id": "pt_NQ_Brad_20260727_132",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -3719,16 +3777,16 @@
     "exit_date": "2026-07-29"
   },
   {
-    "id": "pt_CL_Brad_20260727_131",
+    "id": "pt_CL_Brad_20260727_133",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-07-27",
-    "entry_price": 83.46,
+    "entry_price": 83.47,
     "qty": 5,
-    "stop_loss": 79.925,
-    "profit_target": 90.0882,
+    "stop_loss": 79.935,
+    "profit_target": 90.0982,
     "point_value": 100.0,
     "status": "STOPPED_OUT",
     "current_price": 79.26,
@@ -3744,11 +3802,11 @@
     "unrealized_pnl": 0.0,
     "realized_pnl": -1780.0,
     "return_pct": -4.24,
-    "exit_price": 79.925,
+    "exit_price": 79.935,
     "exit_date": "2026-07-28"
   },
   {
-    "id": "pt_NG_Brad_20260727_132",
+    "id": "pt_NG_Brad_20260727_134",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -3777,7 +3835,7 @@
     "exit_date": "2026-07-28"
   },
   {
-    "id": "pt_6E_Brad_20260727_133",
+    "id": "pt_6E_Brad_20260727_135",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -3806,7 +3864,7 @@
     "exit_date": "2026-07-29"
   },
   {
-    "id": "pt_CL_Brad_20260728_134",
+    "id": "pt_CL_Brad_20260728_136",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -3835,7 +3893,7 @@
     "exit_date": "2026-07-29"
   },
   {
-    "id": "pt_NG_Brad_20260728_135",
+    "id": "pt_NG_Brad_20260728_137",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -3864,7 +3922,7 @@
     "exit_date": "2026-07-31"
   },
   {
-    "id": "pt_6B_THTC_20260728_136",
+    "id": "pt_6B_THTC_20260728_138",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "TooHot TooCold",
@@ -3892,7 +3950,7 @@
     "exit_date": "2026-07-29"
   },
   {
-    "id": "pt_ES_THTC_20260729_137",
+    "id": "pt_ES_THTC_20260729_139",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "TooHot TooCold",
@@ -3920,7 +3978,7 @@
     "exit_date": "2026-07-30"
   },
   {
-    "id": "pt_NQ_Brad_20260729_138",
+    "id": "pt_NQ_Brad_20260729_140",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -3949,7 +4007,7 @@
     "exit_date": "2026-07-30"
   },
   {
-    "id": "pt_6E_Brad_20260729_139",
+    "id": "pt_6E_Brad_20260729_141",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -3978,7 +4036,7 @@
     "exit_date": "2026-07-30"
   },
   {
-    "id": "pt_6B_Brad_20260729_140",
+    "id": "pt_6B_Brad_20260729_142",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -4007,7 +4065,7 @@
     "exit_date": "2026-07-30"
   },
   {
-    "id": "pt_ZB_Tren_20260729_141",
+    "id": "pt_ZB_Tren_20260729_143",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -4035,7 +4093,7 @@
     "exit_date": "2026-07-31"
   },
   {
-    "id": "pt_NQ_Wisely_20260730_142",
+    "id": "pt_NQ_Wisely_20260730_144",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "YouHaveChosenWisely",
@@ -4063,7 +4121,7 @@
     "exit_date": "2026-08-04"
   },
   {
-    "id": "pt_CL_Wisely_20260730_143",
+    "id": "pt_CL_Wisely_20260730_145",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "YouHaveChosenWisely",
@@ -4091,7 +4149,7 @@
     "exit_date": "2026-08-04"
   },
   {
-    "id": "pt_6E_Brad_20260730_144",
+    "id": "pt_6E_Brad_20260730_146",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -4120,7 +4178,7 @@
     "exit_date": "2026-08-03"
   },
   {
-    "id": "pt_6B_Brad_20260730_145",
+    "id": "pt_6B_Brad_20260730_147",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -4149,7 +4207,7 @@
     "exit_date": "2026-08-03"
   },
   {
-    "id": "pt_ES_Brad_20260731_146",
+    "id": "pt_ES_Brad_20260731_148",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -4178,7 +4236,7 @@
     "exit_date": "2026-08-03"
   },
   {
-    "id": "pt_ZB_Tren_20260731_147",
+    "id": "pt_ZB_Tren_20260731_149",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -4206,7 +4264,7 @@
     "exit_date": "2026-08-05"
   },
   {
-    "id": "pt_ES_Tren_20260803_148",
+    "id": "pt_ES_Tren_20260803_150",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "Trendorama",
@@ -4234,7 +4292,7 @@
     "exit_date": "2026-08-04"
   },
   {
-    "id": "pt_6E_Brad_20260803_149",
+    "id": "pt_6E_Brad_20260803_151",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -4263,7 +4321,7 @@
     "exit_date": "2026-08-06"
   },
   {
-    "id": "pt_6B_Brad_20260803_150",
+    "id": "pt_6B_Brad_20260803_152",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -4292,7 +4350,7 @@
     "exit_date": "2026-08-06"
   },
   {
-    "id": "pt_ES_Tren_20260804_151",
+    "id": "pt_ES_Tren_20260804_153",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "Trendorama",
@@ -4320,7 +4378,7 @@
     "exit_date": "2026-08-20"
   },
   {
-    "id": "pt_NQ_Brad_20260804_152",
+    "id": "pt_NQ_Brad_20260804_154",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -4349,7 +4407,7 @@
     "exit_date": "2026-08-07"
   },
   {
-    "id": "pt_CL_Brad_20260804_153",
+    "id": "pt_CL_Brad_20260804_155",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -4378,7 +4436,7 @@
     "exit_date": "2026-08-07"
   },
   {
-    "id": "pt_GC_Brad_20260805_154",
+    "id": "pt_GC_Brad_20260805_156",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -4407,7 +4465,7 @@
     "exit_date": "2026-08-07"
   },
   {
-    "id": "pt_NG_Linda_20260805_155",
+    "id": "pt_NG_Linda_20260805_157",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Linda",
@@ -4435,7 +4493,7 @@
     "return_pct": 0.04
   },
   {
-    "id": "pt_ZB_Brad_20260805_156",
+    "id": "pt_ZB_Brad_20260805_158",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -4464,7 +4522,7 @@
     "exit_date": "2026-08-10"
   },
   {
-    "id": "pt_NG_Tren_20260806_157",
+    "id": "pt_NG_Tren_20260806_159",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "Trendorama",
@@ -4492,7 +4550,7 @@
     "exit_date": "2026-08-10"
   },
   {
-    "id": "pt_DX_Wisely_20260806_158",
+    "id": "pt_DX_Wisely_20260806_160",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "YouHaveChosenWisely",
@@ -4520,7 +4578,7 @@
     "exit_date": "2026-08-11"
   },
   {
-    "id": "pt_YM_Brad_20260807_159",
+    "id": "pt_YM_Brad_20260807_161",
     "symbol": "YM",
     "symbol_name": "Micro E-mini Dow Jones (MYM)",
     "strategy": "The Bradman",
@@ -4549,7 +4607,7 @@
     "exit_date": "2026-08-10"
   },
   {
-    "id": "pt_SI_Brad_20260807_160",
+    "id": "pt_SI_Brad_20260807_162",
     "symbol": "SI",
     "symbol_name": "Micro Silver Futures (SIL)",
     "strategy": "The Bradman",
@@ -4578,7 +4636,7 @@
     "exit_date": "2026-08-10"
   },
   {
-    "id": "pt_CL_Brad_20260807_161",
+    "id": "pt_CL_Brad_20260807_163",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -4607,7 +4665,7 @@
     "exit_date": "2026-08-10"
   },
   {
-    "id": "pt_NQ_Linda_20260810_162",
+    "id": "pt_NQ_Linda_20260810_164",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Linda",
@@ -4635,7 +4693,7 @@
     "return_pct": 0.38
   },
   {
-    "id": "pt_RTY_Linda_20260810_163",
+    "id": "pt_RTY_Linda_20260810_165",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Linda",
@@ -4663,7 +4721,7 @@
     "return_pct": 0.46
   },
   {
-    "id": "pt_GC_Brad_20260810_164",
+    "id": "pt_GC_Brad_20260810_166",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -4692,7 +4750,7 @@
     "exit_date": "2026-08-13"
   },
   {
-    "id": "pt_CL_Brad_20260810_165",
+    "id": "pt_CL_Brad_20260810_167",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -4721,7 +4779,7 @@
     "exit_date": "2026-08-13"
   },
   {
-    "id": "pt_NG_Brad_20260810_166",
+    "id": "pt_NG_Brad_20260810_168",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -4750,7 +4808,7 @@
     "exit_date": "2026-08-13"
   },
   {
-    "id": "pt_6E_Wisely_20260810_167",
+    "id": "pt_6E_Wisely_20260810_169",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -4778,7 +4836,7 @@
     "exit_date": "2026-08-17"
   },
   {
-    "id": "pt_ZB_Wisely_20260810_168",
+    "id": "pt_ZB_Wisely_20260810_170",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "YouHaveChosenWisely",
@@ -4806,7 +4864,7 @@
     "exit_date": "2026-08-13"
   },
   {
-    "id": "pt_NQ_Brad_20260811_169",
+    "id": "pt_NQ_Brad_20260811_171",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -4835,7 +4893,7 @@
     "exit_date": "2026-08-14"
   },
   {
-    "id": "pt_CL_THTC_20260813_170",
+    "id": "pt_CL_THTC_20260813_172",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "TooHot TooCold",
@@ -4863,7 +4921,7 @@
     "exit_date": "2026-08-17"
   },
   {
-    "id": "pt_6B_Brad_20260813_171",
+    "id": "pt_6B_Brad_20260813_173",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -4892,7 +4950,7 @@
     "exit_date": "2026-08-17"
   },
   {
-    "id": "pt_ZB_Wisely_20260813_172",
+    "id": "pt_ZB_Wisely_20260813_174",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "YouHaveChosenWisely",
@@ -4920,7 +4978,7 @@
     "exit_date": "2026-08-18"
   },
   {
-    "id": "pt_ZN_Brad_20260813_173",
+    "id": "pt_ZN_Brad_20260813_175",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -4949,7 +5007,7 @@
     "exit_date": "2026-08-17"
   },
   {
-    "id": "pt_NQ_Linda_20260814_174",
+    "id": "pt_NQ_Linda_20260814_176",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Linda",
@@ -4977,7 +5035,7 @@
     "return_pct": 0.23
   },
   {
-    "id": "pt_RTY_Brad_20260814_175",
+    "id": "pt_RTY_Brad_20260814_177",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -5006,7 +5064,7 @@
     "exit_date": "2026-08-17"
   },
   {
-    "id": "pt_GC_THTC_20260814_176",
+    "id": "pt_GC_THTC_20260814_178",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "TooHot TooCold",
@@ -5034,7 +5092,7 @@
     "exit_date": "2026-08-18"
   },
   {
-    "id": "pt_NQ_Brad_20260817_177",
+    "id": "pt_NQ_Brad_20260817_179",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -5063,7 +5121,7 @@
     "exit_date": "2026-08-18"
   },
   {
-    "id": "pt_CL_Brad_20260817_178",
+    "id": "pt_CL_Brad_20260817_180",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -5092,7 +5150,7 @@
     "exit_date": "2026-08-20"
   },
   {
-    "id": "pt_NG_Brad_20260817_179",
+    "id": "pt_NG_Brad_20260817_181",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -5121,7 +5179,7 @@
     "exit_date": "2026-08-19"
   },
   {
-    "id": "pt_6E_Brad_20260817_180",
+    "id": "pt_6E_Brad_20260817_182",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -5150,7 +5208,7 @@
     "exit_date": "2026-08-19"
   },
   {
-    "id": "pt_6B_Tren_20260817_181",
+    "id": "pt_6B_Tren_20260817_183",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "Trendorama",
@@ -5178,7 +5236,7 @@
     "exit_date": "2026-08-19"
   },
   {
-    "id": "pt_NQ_Brad_20260818_182",
+    "id": "pt_NQ_Brad_20260818_184",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -5207,7 +5265,7 @@
     "exit_date": "2026-08-21"
   },
   {
-    "id": "pt_GC_Linda_20260818_183",
+    "id": "pt_GC_Linda_20260818_185",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Linda",
@@ -5235,7 +5293,7 @@
     "return_pct": 1.18
   },
   {
-    "id": "pt_SI_Wisely_20260818_184",
+    "id": "pt_SI_Wisely_20260818_186",
     "symbol": "SI",
     "symbol_name": "Micro Silver Futures (SIL)",
     "strategy": "YouHaveChosenWisely",
@@ -5263,7 +5321,7 @@
     "exit_date": "2026-08-20"
   },
   {
-    "id": "pt_ZB_Tren_20260818_185",
+    "id": "pt_ZB_Tren_20260818_187",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -5291,7 +5349,7 @@
     "exit_date": "2026-08-19"
   },
   {
-    "id": "pt_NG_Brad_20260819_186",
+    "id": "pt_NG_Brad_20260819_188",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -5320,7 +5378,7 @@
     "exit_date": "2026-08-24"
   },
   {
-    "id": "pt_6E_Tren_20260819_187",
+    "id": "pt_6E_Tren_20260819_189",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "Trendorama",
@@ -5348,7 +5406,7 @@
     "exit_date": "2026-08-28"
   },
   {
-    "id": "pt_6B_Tren_20260819_188",
+    "id": "pt_6B_Tren_20260819_190",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "Trendorama",
@@ -5376,7 +5434,7 @@
     "exit_date": "2026-08-28"
   },
   {
-    "id": "pt_ZB_Brad_20260819_189",
+    "id": "pt_ZB_Brad_20260819_191",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -5405,7 +5463,7 @@
     "exit_date": "2026-08-24"
   },
   {
-    "id": "pt_GC_Tren_20260820_190",
+    "id": "pt_GC_Tren_20260820_192",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "Trendorama",
@@ -5433,7 +5491,7 @@
     "exit_date": "2026-08-21"
   },
   {
-    "id": "pt_CL_Brad_20260820_191",
+    "id": "pt_CL_Brad_20260820_193",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -5462,7 +5520,7 @@
     "exit_date": "2026-08-24"
   },
   {
-    "id": "pt_GC_Tren_20260821_192",
+    "id": "pt_GC_Tren_20260821_194",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "Trendorama",
@@ -5490,7 +5548,7 @@
     "exit_date": "2026-08-28"
   },
   {
-    "id": "pt_ZN_Brad_20260821_193",
+    "id": "pt_ZN_Brad_20260821_195",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -5519,7 +5577,7 @@
     "exit_date": "2026-08-24"
   },
   {
-    "id": "pt_ES_THTC_20260824_194",
+    "id": "pt_ES_THTC_20260824_196",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "TooHot TooCold",
@@ -5547,7 +5605,7 @@
     "exit_date": "2026-08-27"
   },
   {
-    "id": "pt_NQ_Brad_20260824_195",
+    "id": "pt_NQ_Brad_20260824_197",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -5576,7 +5634,7 @@
     "exit_date": "2026-08-27"
   },
   {
-    "id": "pt_CL_Brad_20260824_196",
+    "id": "pt_CL_Brad_20260824_198",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -5605,7 +5663,7 @@
     "exit_date": "2026-08-25"
   },
   {
-    "id": "pt_NG_Brad_20260824_197",
+    "id": "pt_NG_Brad_20260824_199",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -5634,7 +5692,7 @@
     "exit_date": "2026-08-27"
   },
   {
-    "id": "pt_CL_Brad_20260825_198",
+    "id": "pt_CL_Brad_20260825_200",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -5663,7 +5721,7 @@
     "exit_date": "2026-08-28"
   },
   {
-    "id": "pt_ZB_Brad_20260825_199",
+    "id": "pt_ZB_Brad_20260825_201",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -5692,7 +5750,7 @@
     "exit_date": "2026-08-28"
   },
   {
-    "id": "pt_ES_THTC_20260827_200",
+    "id": "pt_ES_THTC_20260827_202",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "TooHot TooCold",
@@ -5720,7 +5778,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_NQ_Brad_20260827_201",
+    "id": "pt_NQ_Brad_20260827_203",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -5749,7 +5807,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_NG_Brad_20260827_202",
+    "id": "pt_NG_Brad_20260827_204",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -5778,7 +5836,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_GC_Wisely_20260828_203",
+    "id": "pt_GC_Wisely_20260828_205",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "YouHaveChosenWisely",
@@ -5806,7 +5864,7 @@
     "exit_date": "2026-09-01"
   },
   {
-    "id": "pt_6E_Brad_20260828_204",
+    "id": "pt_6E_Brad_20260828_206",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -5835,7 +5893,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_6B_Brad_20260828_205",
+    "id": "pt_6B_Brad_20260828_207",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -5864,7 +5922,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_ZB_Brad_20260828_206",
+    "id": "pt_ZB_Brad_20260828_208",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -5893,7 +5951,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_ZN_Brad_20260828_207",
+    "id": "pt_ZN_Brad_20260828_209",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -5922,7 +5980,7 @@
     "exit_date": "2026-08-31"
   },
   {
-    "id": "pt_ES_Brad_20260831_208",
+    "id": "pt_ES_Brad_20260831_210",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -5951,7 +6009,7 @@
     "exit_date": "2026-09-02"
   },
   {
-    "id": "pt_RTY_Brad_20260831_209",
+    "id": "pt_RTY_Brad_20260831_211",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -5980,7 +6038,7 @@
     "exit_date": "2026-09-01"
   },
   {
-    "id": "pt_CL_THTC_20260831_210",
+    "id": "pt_CL_THTC_20260831_212",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "TooHot TooCold",
@@ -6008,7 +6066,7 @@
     "exit_date": "2026-09-02"
   },
   {
-    "id": "pt_6E_Wisely_20260831_211",
+    "id": "pt_6E_Wisely_20260831_213",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -6036,7 +6094,7 @@
     "exit_date": "2026-09-02"
   },
   {
-    "id": "pt_6B_Wisely_20260831_212",
+    "id": "pt_6B_Wisely_20260831_214",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "YouHaveChosenWisely",
@@ -6064,7 +6122,7 @@
     "exit_date": "2026-09-02"
   },
   {
-    "id": "pt_ZB_Brad_20260831_213",
+    "id": "pt_ZB_Brad_20260831_215",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -6093,7 +6151,7 @@
     "exit_date": "2026-09-03"
   },
   {
-    "id": "pt_ZN_Brad_20260831_214",
+    "id": "pt_ZN_Brad_20260831_216",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -6122,7 +6180,7 @@
     "exit_date": "2026-09-03"
   },
   {
-    "id": "pt_NQ_Brad_20260901_215",
+    "id": "pt_NQ_Brad_20260901_217",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -6151,7 +6209,7 @@
     "exit_date": "2026-09-04"
   },
   {
-    "id": "pt_GC_Brad_20260901_216",
+    "id": "pt_GC_Brad_20260901_218",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -6180,7 +6238,7 @@
     "exit_date": "2026-09-03"
   },
   {
-    "id": "pt_RTY_Brad_20260902_217",
+    "id": "pt_RTY_Brad_20260902_219",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -6209,7 +6267,7 @@
     "exit_date": "2026-09-03"
   },
   {
-    "id": "pt_CL_Brad_20260902_218",
+    "id": "pt_CL_Brad_20260902_220",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -6238,7 +6296,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_6E_Brad_20260902_219",
+    "id": "pt_6E_Brad_20260902_221",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -6267,7 +6325,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_6B_Brad_20260902_220",
+    "id": "pt_6B_Brad_20260902_222",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -6296,7 +6354,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_ES_Brad_20260903_221",
+    "id": "pt_ES_Brad_20260903_223",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -6325,7 +6383,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_GC_Brad_20260903_222",
+    "id": "pt_GC_Brad_20260903_224",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -6354,7 +6412,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_ZB_Brad_20260903_223",
+    "id": "pt_ZB_Brad_20260903_225",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -6383,7 +6441,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_ZN_Brad_20260903_224",
+    "id": "pt_ZN_Brad_20260903_226",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -6412,7 +6470,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_NQ_Brad_20260904_225",
+    "id": "pt_NQ_Brad_20260904_227",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -6441,7 +6499,7 @@
     "exit_date": "2026-09-08"
   },
   {
-    "id": "pt_ES_Brad_20260908_226",
+    "id": "pt_ES_Brad_20260908_228",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -6470,7 +6528,7 @@
     "exit_date": "2026-09-10"
   },
   {
-    "id": "pt_YM_Brad_20260908_227",
+    "id": "pt_YM_Brad_20260908_229",
     "symbol": "YM",
     "symbol_name": "Micro E-mini Dow Jones (MYM)",
     "strategy": "The Bradman",
@@ -6499,7 +6557,7 @@
     "exit_date": "2026-09-09"
   },
   {
-    "id": "pt_GC_Brad_20260908_228",
+    "id": "pt_GC_Brad_20260908_230",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -6528,7 +6586,7 @@
     "exit_date": "2026-09-11"
   },
   {
-    "id": "pt_CL_Brad_20260908_229",
+    "id": "pt_CL_Brad_20260908_231",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -6557,7 +6615,7 @@
     "exit_date": "2026-09-10"
   },
   {
-    "id": "pt_NG_THTC_20260908_230",
+    "id": "pt_NG_THTC_20260908_232",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "TooHot TooCold",
@@ -6585,7 +6643,7 @@
     "exit_date": "2026-09-09"
   },
   {
-    "id": "pt_6E_Wisely_20260908_231",
+    "id": "pt_6E_Wisely_20260908_233",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -6613,7 +6671,7 @@
     "exit_date": "2026-09-11"
   },
   {
-    "id": "pt_6B_THTC_20260908_232",
+    "id": "pt_6B_THTC_20260908_234",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "TooHot TooCold",
@@ -6641,7 +6699,7 @@
     "exit_date": "2026-09-11"
   },
   {
-    "id": "pt_ZB_THTC_20260908_233",
+    "id": "pt_ZB_THTC_20260908_235",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "TooHot TooCold",
@@ -6669,7 +6727,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_NQ_Brad_20260909_234",
+    "id": "pt_NQ_Brad_20260909_236",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -6698,7 +6756,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_NG_Brad_20260909_235",
+    "id": "pt_NG_Brad_20260909_237",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -6727,7 +6785,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_ES_Brad_20260910_236",
+    "id": "pt_ES_Brad_20260910_238",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -6756,7 +6814,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_CL_Tren_20260910_237",
+    "id": "pt_CL_Tren_20260910_239",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "Trendorama",
@@ -6784,7 +6842,7 @@
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_GC_THTC_20260911_238",
+    "id": "pt_GC_THTC_20260911_240",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "TooHot TooCold",
@@ -6812,7 +6870,7 @@
     "exit_date": "2026-09-15"
   },
   {
-    "id": "pt_6E_Brad_20260911_239",
+    "id": "pt_6E_Brad_20260911_241",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -6841,7 +6899,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_DX_Brad_20260911_240",
+    "id": "pt_DX_Brad_20260911_242",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "The Bradman",
@@ -6870,7 +6928,7 @@
     "exit_date": "2026-09-14"
   },
   {
-    "id": "pt_RTY_Wisely_20260914_241",
+    "id": "pt_RTY_Wisely_20260914_243",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "YouHaveChosenWisely",
@@ -6898,36 +6956,7 @@
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_NG_Brad_20260914_242",
-    "symbol": "NG",
-    "symbol_name": "E-mini Natural Gas (QG)",
-    "strategy": "The Bradman",
-    "side": "short",
-    "entry_date": "2026-09-14",
-    "entry_price": 2.893,
-    "qty": 9,
-    "stop_loss": 2.979,
-    "profit_target": 2.7318,
-    "point_value": 2500.0,
-    "status": "TIME_EXIT",
-    "current_price": 2.901,
-    "duration_days": 3,
-    "initial_risk": 1934.11,
-    "entry_session": "ASIA",
-    "created_at": "2026-09-14T06:00:00Z",
-    "updated_at": "2026-09-17T20:00:00Z",
-    "gross_pnl": -180.0,
-    "commission": 22.5,
-    "slippage": 22.5,
-    "fees_and_slippage": 45.0,
-    "unrealized_pnl": 0.0,
-    "realized_pnl": -225.0,
-    "return_pct": -0.28,
-    "exit_price": 2.901,
-    "exit_date": "2026-09-17"
-  },
-  {
-    "id": "pt_6E_Brad_20260914_243",
+    "id": "pt_6E_Brad_20260914_244",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -6956,7 +6985,7 @@
     "exit_date": "2026-09-15"
   },
   {
-    "id": "pt_DX_Brad_20260914_244",
+    "id": "pt_DX_Brad_20260914_245",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "The Bradman",
@@ -6985,7 +7014,7 @@
     "exit_date": "2026-09-16"
   },
   {
-    "id": "pt_ZB_THTC_20260914_245",
+    "id": "pt_ZB_THTC_20260914_246",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "TooHot TooCold",
@@ -7013,7 +7042,7 @@
     "exit_date": "2026-09-17"
   },
   {
-    "id": "pt_ZN_Tren_20260914_246",
+    "id": "pt_ZN_Tren_20260914_247",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "Trendorama",
@@ -7041,7 +7070,7 @@
     "exit_date": "2026-09-23"
   },
   {
-    "id": "pt_ES_Brad_20260915_247",
+    "id": "pt_ES_Brad_20260915_248",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -7070,7 +7099,7 @@
     "exit_date": "2026-09-16"
   },
   {
-    "id": "pt_GC_Brad_20260915_248",
+    "id": "pt_GC_Brad_20260915_249",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -7099,7 +7128,36 @@
     "exit_date": "2026-09-18"
   },
   {
-    "id": "pt_ES_Brad_20260916_249",
+    "id": "pt_NG_Brad_20260915_250",
+    "symbol": "NG",
+    "symbol_name": "E-mini Natural Gas (QG)",
+    "strategy": "The Bradman",
+    "side": "short",
+    "entry_date": "2026-09-15",
+    "entry_price": 2.9445,
+    "qty": 9,
+    "stop_loss": 3.0284,
+    "profit_target": 2.7872,
+    "point_value": 2500.0,
+    "status": "TIME_EXIT",
+    "current_price": 2.912,
+    "duration_days": 3,
+    "initial_risk": 1887.73,
+    "entry_session": "DAILY",
+    "created_at": "2026-09-15T13:30:00Z",
+    "updated_at": "2026-09-18T20:00:00Z",
+    "gross_pnl": 731.25,
+    "commission": 22.5,
+    "slippage": 22.5,
+    "fees_and_slippage": 45.0,
+    "unrealized_pnl": 0.0,
+    "realized_pnl": 686.25,
+    "return_pct": 1.1,
+    "exit_price": 2.912,
+    "exit_date": "2026-09-18"
+  },
+  {
+    "id": "pt_ES_Brad_20260916_251",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -7128,7 +7186,7 @@
     "exit_date": "2026-09-17"
   },
   {
-    "id": "pt_6E_THTC_20260916_250",
+    "id": "pt_6E_THTC_20260916_252",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "TooHot TooCold",
@@ -7156,7 +7214,7 @@
     "exit_date": "2026-09-17"
   },
   {
-    "id": "pt_NQ_Brad_20260917_251",
+    "id": "pt_NQ_Brad_20260917_253",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -7185,7 +7243,7 @@
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_6E_THTC_20260917_252",
+    "id": "pt_6E_THTC_20260917_254",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "TooHot TooCold",
@@ -7213,16 +7271,16 @@
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_6B_Brad_20260917_253",
+    "id": "pt_6B_Brad_20260917_255",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-09-17",
-    "entry_price": 1.3379,
+    "entry_price": 1.3376,
     "qty": 68,
-    "stop_loss": 1.3332,
-    "profit_target": 1.3467,
+    "stop_loss": 1.3329,
+    "profit_target": 1.3464,
     "point_value": 6250.0,
     "status": "TIME_EXIT",
     "current_price": 1.337,
@@ -7231,47 +7289,18 @@
     "entry_session": "ASIA",
     "created_at": "2026-09-17T03:00:00Z",
     "updated_at": "2026-09-21T20:00:00Z",
-    "gross_pnl": -382.49,
+    "gross_pnl": -254.99,
     "commission": 4.0,
     "slippage": 4.96,
     "fees_and_slippage": 8.96,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -391.45,
-    "return_pct": -0.07,
+    "realized_pnl": -263.95,
+    "return_pct": -0.04,
     "exit_price": 1.337,
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_ZB_Brad_20260917_254",
-    "symbol": "ZB",
-    "symbol_name": "30-Year T-Bond Futures",
-    "strategy": "The Bradman",
-    "side": "short",
-    "entry_date": "2026-09-17",
-    "entry_price": 107.9375,
-    "qty": 2,
-    "stop_loss": 108.6188,
-    "profit_target": 106.66,
-    "point_value": 1000.0,
-    "status": "TIME_EXIT",
-    "current_price": 108.125,
-    "duration_days": 4,
-    "initial_risk": 1362.69,
-    "entry_session": "DAILY",
-    "created_at": "2026-09-17T13:30:00Z",
-    "updated_at": "2026-09-21T20:00:00Z",
-    "gross_pnl": -375.0,
-    "commission": 5.0,
-    "slippage": 6.24,
-    "fees_and_slippage": 11.24,
-    "unrealized_pnl": 0.0,
-    "realized_pnl": -386.24,
-    "return_pct": -0.17,
-    "exit_price": 108.125,
-    "exit_date": "2026-09-21"
-  },
-  {
-    "id": "pt_GC_Brad_20260918_255",
+    "id": "pt_GC_Brad_20260918_256",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -7300,7 +7329,36 @@
     "exit_date": "2026-09-21"
   },
   {
-    "id": "pt_ES_Brad_20260921_256",
+    "id": "pt_NG_Brad_20260918_257",
+    "symbol": "NG",
+    "symbol_name": "E-mini Natural Gas (QG)",
+    "strategy": "The Bradman",
+    "side": "short",
+    "entry_date": "2026-09-18",
+    "entry_price": 2.914,
+    "qty": 9,
+    "stop_loss": 2.9972,
+    "profit_target": 2.758,
+    "point_value": 2500.0,
+    "status": "TIME_EXIT",
+    "current_price": 2.836,
+    "duration_days": 3,
+    "initial_risk": 1872.52,
+    "entry_session": "DAILY",
+    "created_at": "2026-09-18T13:30:00Z",
+    "updated_at": "2026-09-21T20:00:00Z",
+    "gross_pnl": 1755.0,
+    "commission": 22.5,
+    "slippage": 22.5,
+    "fees_and_slippage": 45.0,
+    "unrealized_pnl": 0.0,
+    "realized_pnl": 1710.0,
+    "return_pct": 2.68,
+    "exit_price": 2.836,
+    "exit_date": "2026-09-21"
+  },
+  {
+    "id": "pt_ES_Brad_20260921_258",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -7329,7 +7387,7 @@
     "exit_date": "2026-09-24"
   },
   {
-    "id": "pt_NQ_Brad_20260921_257",
+    "id": "pt_NQ_Brad_20260921_259",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -7358,7 +7416,7 @@
     "return_pct": -1.24
   },
   {
-    "id": "pt_NQ_Linda_20260921_258",
+    "id": "pt_NQ_Linda_20260921_260",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Linda",
@@ -7386,7 +7444,7 @@
     "return_pct": -0.65
   },
   {
-    "id": "pt_RTY_Wisely_20260921_259",
+    "id": "pt_RTY_Wisely_20260921_261",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "YouHaveChosenWisely",
@@ -7414,7 +7472,7 @@
     "exit_date": "2026-09-28"
   },
   {
-    "id": "pt_CL_Brad_20260921_260",
+    "id": "pt_CL_Brad_20260921_262",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -7443,7 +7501,7 @@
     "exit_date": "2026-09-23"
   },
   {
-    "id": "pt_6E_Wisely_20260921_261",
+    "id": "pt_6E_Wisely_20260921_263",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -7471,7 +7529,7 @@
     "exit_date": "2026-09-28"
   },
   {
-    "id": "pt_DX_Wisely_20260921_262",
+    "id": "pt_DX_Wisely_20260921_264",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "YouHaveChosenWisely",
@@ -7499,7 +7557,7 @@
     "exit_date": "2026-09-28"
   },
   {
-    "id": "pt_ZB_Linda_20260921_263",
+    "id": "pt_ZB_Linda_20260921_265",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Linda",
@@ -7527,7 +7585,7 @@
     "return_pct": 0.06
   },
   {
-    "id": "pt_GC_Brad_20260922_264",
+    "id": "pt_GC_Brad_20260922_266",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -7556,7 +7614,7 @@
     "exit_date": "2026-09-25"
   },
   {
-    "id": "pt_NG_Brad_20260922_265",
+    "id": "pt_NG_Brad_20260922_267",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -7585,7 +7643,7 @@
     "exit_date": "2026-09-24"
   },
   {
-    "id": "pt_CL_Brad_20260923_266",
+    "id": "pt_CL_Brad_20260923_268",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -7614,7 +7672,7 @@
     "exit_date": "2026-09-24"
   },
   {
-    "id": "pt_ZB_Tren_20260923_267",
+    "id": "pt_ZB_Tren_20260923_269",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -7642,7 +7700,7 @@
     "exit_date": "2026-09-29"
   },
   {
-    "id": "pt_ES_Brad_20260924_268",
+    "id": "pt_ES_Brad_20260924_270",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -7671,7 +7729,7 @@
     "exit_date": "2026-09-28"
   },
   {
-    "id": "pt_CL_Wisely_20260924_269",
+    "id": "pt_CL_Wisely_20260924_271",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "YouHaveChosenWisely",
@@ -7699,7 +7757,7 @@
     "exit_date": "2026-09-28"
   },
   {
-    "id": "pt_NG_Brad_20260924_270",
+    "id": "pt_NG_Brad_20260924_272",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -7728,7 +7786,7 @@
     "exit_date": "2026-09-25"
   },
   {
-    "id": "pt_NG_Linda_20260925_271",
+    "id": "pt_NG_Linda_20260925_273",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Linda",
@@ -7756,7 +7814,7 @@
     "return_pct": 0.41
   },
   {
-    "id": "pt_ZN_Wisely_20260925_272",
+    "id": "pt_ZN_Wisely_20260925_274",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "YouHaveChosenWisely",
@@ -7784,7 +7842,7 @@
     "exit_date": "2026-09-30"
   },
   {
-    "id": "pt_ES_Linda_20260928_273",
+    "id": "pt_ES_Linda_20260928_275",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Linda",
@@ -7812,7 +7870,7 @@
     "return_pct": 0.63
   },
   {
-    "id": "pt_RTY_Wisely_20260928_274",
+    "id": "pt_RTY_Wisely_20260928_276",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "YouHaveChosenWisely",
@@ -7840,7 +7898,7 @@
     "exit_date": "2026-10-05"
   },
   {
-    "id": "pt_GC_Brad_20260928_275",
+    "id": "pt_GC_Brad_20260928_277",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -7869,7 +7927,7 @@
     "exit_date": "2026-10-01"
   },
   {
-    "id": "pt_CL_Wisely_20260928_276",
+    "id": "pt_CL_Wisely_20260928_278",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "YouHaveChosenWisely",
@@ -7897,7 +7955,7 @@
     "exit_date": "2026-09-29"
   },
   {
-    "id": "pt_NG_Brad_20260928_277",
+    "id": "pt_NG_Brad_20260928_279",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -7926,7 +7984,7 @@
     "exit_date": "2026-10-01"
   },
   {
-    "id": "pt_6E_Tren_20260928_278",
+    "id": "pt_6E_Tren_20260928_280",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "Trendorama",
@@ -7954,7 +8012,7 @@
     "exit_date": "2026-10-01"
   },
   {
-    "id": "pt_6B_Brad_20260928_279",
+    "id": "pt_6B_Brad_20260928_281",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -7983,7 +8041,7 @@
     "exit_date": "2026-10-01"
   },
   {
-    "id": "pt_ES_Brad_20260929_280",
+    "id": "pt_ES_Brad_20260929_282",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -8012,7 +8070,7 @@
     "exit_date": "2026-10-02"
   },
   {
-    "id": "pt_CL_THTC_20260929_281",
+    "id": "pt_CL_THTC_20260929_283",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "TooHot TooCold",
@@ -8040,7 +8098,7 @@
     "exit_date": "2026-10-05"
   },
   {
-    "id": "pt_ZB_Tren_20260930_282",
+    "id": "pt_ZB_Tren_20260930_284",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -8068,7 +8126,7 @@
     "exit_date": "2026-10-05"
   },
   {
-    "id": "pt_GC_Brad_20261001_283",
+    "id": "pt_GC_Brad_20261001_285",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -8097,7 +8155,7 @@
     "exit_date": "2026-10-05"
   },
   {
-    "id": "pt_6E_Tren_20261001_284",
+    "id": "pt_6E_Tren_20261001_286",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "Trendorama",
@@ -8125,7 +8183,7 @@
     "exit_date": "2026-10-06"
   },
   {
-    "id": "pt_6B_Tren_20261001_285",
+    "id": "pt_6B_Tren_20261001_287",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "Trendorama",
@@ -8153,7 +8211,7 @@
     "exit_date": "2026-10-14"
   },
   {
-    "id": "pt_ZN_Tren_20261001_286",
+    "id": "pt_ZN_Tren_20261001_288",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "Trendorama",
@@ -8181,7 +8239,7 @@
     "exit_date": "2026-10-02"
   },
   {
-    "id": "pt_ES_Brad_20261002_287",
+    "id": "pt_ES_Brad_20261002_289",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -8210,7 +8268,7 @@
     "exit_date": "2026-10-05"
   },
   {
-    "id": "pt_ZN_Wisely_20261002_288",
+    "id": "pt_ZN_Wisely_20261002_290",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "YouHaveChosenWisely",
@@ -8238,7 +8296,7 @@
     "exit_date": "2026-10-07"
   },
   {
-    "id": "pt_ES_Brad_20261005_289",
+    "id": "pt_ES_Brad_20261005_291",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -8267,7 +8325,7 @@
     "exit_date": "2026-10-06"
   },
   {
-    "id": "pt_NQ_Tren_20261005_290",
+    "id": "pt_NQ_Tren_20261005_292",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "Trendorama",
@@ -8295,7 +8353,7 @@
     "exit_date": "2026-10-14"
   },
   {
-    "id": "pt_GC_Brad_20261005_291",
+    "id": "pt_GC_Brad_20261005_293",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -8324,7 +8382,7 @@
     "exit_date": "2026-10-08"
   },
   {
-    "id": "pt_CL_Brad_20261005_292",
+    "id": "pt_CL_Brad_20261005_294",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -8353,7 +8411,7 @@
     "exit_date": "2026-10-08"
   },
   {
-    "id": "pt_NG_Brad_20261005_293",
+    "id": "pt_NG_Brad_20261005_295",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -8382,7 +8440,7 @@
     "exit_date": "2026-10-07"
   },
   {
-    "id": "pt_ES_Brad_20261006_294",
+    "id": "pt_ES_Brad_20261006_296",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -8411,7 +8469,7 @@
     "exit_date": "2026-10-09"
   },
   {
-    "id": "pt_6E_Wisely_20261006_295",
+    "id": "pt_6E_Wisely_20261006_297",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -8439,7 +8497,7 @@
     "exit_date": "2026-10-12"
   },
   {
-    "id": "pt_NG_Brad_20261007_296",
+    "id": "pt_NG_Brad_20261007_298",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -8468,7 +8526,7 @@
     "exit_date": "2026-10-12"
   },
   {
-    "id": "pt_ZB_Tren_20261007_297",
+    "id": "pt_ZB_Tren_20261007_299",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "Trendorama",
@@ -8496,7 +8554,7 @@
     "exit_date": "2026-10-12"
   },
   {
-    "id": "pt_SI_Brad_20261008_298",
+    "id": "pt_SI_Brad_20261008_300",
     "symbol": "SI",
     "symbol_name": "Micro Silver Futures (SIL)",
     "strategy": "The Bradman",
@@ -8525,7 +8583,7 @@
     "exit_date": "2026-10-12"
   },
   {
-    "id": "pt_CL_Brad_20261008_299",
+    "id": "pt_CL_Brad_20261008_301",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -8554,7 +8612,7 @@
     "exit_date": "2026-10-12"
   },
   {
-    "id": "pt_RTY_Wisely_20261009_300",
+    "id": "pt_RTY_Wisely_20261009_302",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "YouHaveChosenWisely",
@@ -8582,7 +8640,7 @@
     "exit_date": "2026-10-14"
   },
   {
-    "id": "pt_CL_Brad_20261012_301",
+    "id": "pt_CL_Brad_20261012_303",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -8611,7 +8669,7 @@
     "exit_date": "2026-10-15"
   },
   {
-    "id": "pt_NG_Brad_20261012_302",
+    "id": "pt_NG_Brad_20261012_304",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -8640,7 +8698,7 @@
     "exit_date": "2026-10-13"
   },
   {
-    "id": "pt_6E_Tren_20261012_303",
+    "id": "pt_6E_Tren_20261012_305",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "Trendorama",
@@ -8668,7 +8726,7 @@
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_ZB_Wisely_20261012_304",
+    "id": "pt_ZB_Wisely_20261012_306",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "YouHaveChosenWisely",
@@ -8696,7 +8754,7 @@
     "exit_date": "2026-10-15"
   },
   {
-    "id": "pt_ZN_Wisely_20261012_305",
+    "id": "pt_ZN_Wisely_20261012_307",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "YouHaveChosenWisely",
@@ -8724,7 +8782,7 @@
     "exit_date": "2026-10-15"
   },
   {
-    "id": "pt_GC_Brad_20261013_306",
+    "id": "pt_GC_Brad_20261013_308",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -8753,7 +8811,7 @@
     "exit_date": "2026-10-14"
   },
   {
-    "id": "pt_ES_Brad_20261014_307",
+    "id": "pt_ES_Brad_20261014_309",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -8782,7 +8840,7 @@
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_NQ_Brad_20261014_308",
+    "id": "pt_NQ_Brad_20261014_310",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -8811,7 +8869,7 @@
     "exit_date": "2026-10-15"
   },
   {
-    "id": "pt_GC_Brad_20261014_309",
+    "id": "pt_GC_Brad_20261014_311",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -8840,7 +8898,7 @@
     "exit_date": "2026-10-19"
   },
   {
-    "id": "pt_NG_Tren_20261014_310",
+    "id": "pt_NG_Tren_20261014_312",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "Trendorama",
@@ -8868,23 +8926,23 @@
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_NQ_Brad_20261015_311",
+    "id": "pt_NQ_Brad_20261015_313",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-10-15",
-    "entry_price": 29848.0,
+    "entry_price": 29894.5,
     "qty": 2,
-    "stop_loss": 29462.5521,
-    "profit_target": 30570.7148,
+    "stop_loss": 29509.0521,
+    "profit_target": 30617.2148,
     "point_value": 2.0,
     "status": "STOPPED_OUT",
     "current_price": 29391.5,
     "duration_days": 1,
     "initial_risk": 1541.79,
     "entry_session": "ASIA",
-    "created_at": "2026-10-15T03:00:00Z",
+    "created_at": "2026-10-15T01:00:00Z",
     "updated_at": "2026-10-16T20:00:00Z",
     "gross_pnl": -1541.79,
     "commission": 2.4,
@@ -8893,11 +8951,11 @@
     "unrealized_pnl": 0.0,
     "realized_pnl": -1545.19,
     "return_pct": -1.29,
-    "exit_price": 29462.5521,
+    "exit_price": 29509.0521,
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_CL_Brad_20261015_312",
+    "id": "pt_CL_Brad_20261015_314",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -8926,7 +8984,7 @@
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_6B_Brad_20261015_313",
+    "id": "pt_6B_Brad_20261015_315",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -8955,7 +9013,7 @@
     "exit_date": "2026-10-16"
   },
   {
-    "id": "pt_ZB_Brad_20261015_314",
+    "id": "pt_ZB_Brad_20261015_316",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -8984,7 +9042,7 @@
     "exit_date": "2026-10-19"
   },
   {
-    "id": "pt_NQ_Brad_20261016_315",
+    "id": "pt_NQ_Brad_20261016_317",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -9013,7 +9071,7 @@
     "exit_date": "2026-10-19"
   },
   {
-    "id": "pt_RTY_Tren_20261016_316",
+    "id": "pt_RTY_Tren_20261016_318",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "Trendorama",
@@ -9041,7 +9099,7 @@
     "exit_date": "2026-10-21"
   },
   {
-    "id": "pt_CL_Brad_20261016_317",
+    "id": "pt_CL_Brad_20261016_319",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -9070,7 +9128,7 @@
     "exit_date": "2026-10-19"
   },
   {
-    "id": "pt_NG_Wisely_20261016_318",
+    "id": "pt_NG_Wisely_20261016_320",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "YouHaveChosenWisely",
@@ -9098,7 +9156,7 @@
     "exit_date": "2026-10-20"
   },
   {
-    "id": "pt_6E_Wisely_20261016_319",
+    "id": "pt_6E_Wisely_20261016_321",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -9126,7 +9184,7 @@
     "exit_date": "2026-10-21"
   },
   {
-    "id": "pt_6B_Brad_20261016_320",
+    "id": "pt_6B_Brad_20261016_322",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -9155,7 +9213,7 @@
     "return_pct": -0.37
   },
   {
-    "id": "pt_6B_Wisely_20261016_321",
+    "id": "pt_6B_Wisely_20261016_323",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "YouHaveChosenWisely",
@@ -9183,7 +9241,7 @@
     "exit_date": "2026-10-19"
   },
   {
-    "id": "pt_NQ_THTC_20261019_322",
+    "id": "pt_NQ_THTC_20261019_324",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "TooHot TooCold",
@@ -9211,7 +9269,7 @@
     "exit_date": "2026-10-20"
   },
   {
-    "id": "pt_CL_Brad_20261019_323",
+    "id": "pt_CL_Brad_20261019_325",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -9240,7 +9298,7 @@
     "exit_date": "2026-10-20"
   },
   {
-    "id": "pt_6B_Wisely_20261019_324",
+    "id": "pt_6B_Wisely_20261019_326",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "YouHaveChosenWisely",
@@ -9268,7 +9326,7 @@
     "exit_date": "2026-10-20"
   },
   {
-    "id": "pt_ZB_Brad_20261019_325",
+    "id": "pt_ZB_Brad_20261019_327",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -9297,7 +9355,7 @@
     "exit_date": "2026-10-22"
   },
   {
-    "id": "pt_ZN_Brad_20261019_326",
+    "id": "pt_ZN_Brad_20261019_328",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -9326,7 +9384,7 @@
     "exit_date": "2026-10-22"
   },
   {
-    "id": "pt_ES_Brad_20261020_327",
+    "id": "pt_ES_Brad_20261020_329",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -9355,7 +9413,7 @@
     "exit_date": "2026-10-23"
   },
   {
-    "id": "pt_GC_Brad_20261020_328",
+    "id": "pt_GC_Brad_20261020_330",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -9384,7 +9442,7 @@
     "exit_date": "2026-10-22"
   },
   {
-    "id": "pt_CL_Tren_20261020_329",
+    "id": "pt_CL_Tren_20261020_331",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "Trendorama",
@@ -9412,7 +9470,7 @@
     "exit_date": "2026-10-21"
   },
   {
-    "id": "pt_NG_Brad_20261020_330",
+    "id": "pt_NG_Brad_20261020_332",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -9441,7 +9499,7 @@
     "exit_date": "2026-10-21"
   },
   {
-    "id": "pt_NQ_THTC_20261021_331",
+    "id": "pt_NQ_THTC_20261021_333",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "TooHot TooCold",
@@ -9469,7 +9527,7 @@
     "exit_date": "2026-10-22"
   },
   {
-    "id": "pt_CL_Brad_20261021_332",
+    "id": "pt_CL_Brad_20261021_334",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -9498,7 +9556,7 @@
     "exit_date": "2026-10-23"
   },
   {
-    "id": "pt_NG_Brad_20261021_333",
+    "id": "pt_NG_Brad_20261021_335",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -9527,7 +9585,7 @@
     "exit_date": "2026-10-23"
   },
   {
-    "id": "pt_6E_Wisely_20261021_334",
+    "id": "pt_6E_Wisely_20261021_336",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -9555,7 +9613,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_RTY_Brad_20261022_335",
+    "id": "pt_RTY_Brad_20261022_337",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -9584,7 +9642,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_GC_Tren_20261022_336",
+    "id": "pt_GC_Tren_20261022_338",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "Trendorama",
@@ -9612,7 +9670,7 @@
     "exit_date": "2026-10-28"
   },
   {
-    "id": "pt_6B_Brad_20261022_337",
+    "id": "pt_6B_Brad_20261022_339",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -9641,7 +9699,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_ZN_Wisely_20261022_338",
+    "id": "pt_ZN_Wisely_20261022_340",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "YouHaveChosenWisely",
@@ -9669,7 +9727,7 @@
     "exit_date": "2026-10-27"
   },
   {
-    "id": "pt_ES_Brad_20261023_339",
+    "id": "pt_ES_Brad_20261023_341",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -9698,7 +9756,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_CL_Brad_20261023_340",
+    "id": "pt_CL_Brad_20261023_342",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -9727,7 +9785,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_NG_Brad_20261023_341",
+    "id": "pt_NG_Brad_20261023_343",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -9756,7 +9814,7 @@
     "exit_date": "2026-10-26"
   },
   {
-    "id": "pt_ES_Linda_20261026_342",
+    "id": "pt_ES_Linda_20261026_344",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Linda",
@@ -9784,7 +9842,7 @@
     "return_pct": 0.32
   },
   {
-    "id": "pt_NQ_Wisely_20261026_343",
+    "id": "pt_NQ_Wisely_20261026_345",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "YouHaveChosenWisely",
@@ -9812,7 +9870,7 @@
     "exit_date": "2026-10-28"
   },
   {
-    "id": "pt_RTY_Wisely_20261026_344",
+    "id": "pt_RTY_Wisely_20261026_346",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "YouHaveChosenWisely",
@@ -9840,7 +9898,7 @@
     "exit_date": "2026-10-28"
   },
   {
-    "id": "pt_CL_Linda_20261026_345",
+    "id": "pt_CL_Linda_20261026_347",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Linda",
@@ -9868,7 +9926,7 @@
     "return_pct": 0.83
   },
   {
-    "id": "pt_NG_Tren_20261026_346",
+    "id": "pt_NG_Tren_20261026_348",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "Trendorama",
@@ -9896,7 +9954,7 @@
     "exit_date": "2026-10-28"
   },
   {
-    "id": "pt_6E_Wisely_20261026_347",
+    "id": "pt_6E_Wisely_20261026_349",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -9924,7 +9982,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_6B_Brad_20261026_348",
+    "id": "pt_6B_Brad_20261026_350",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -9953,7 +10011,7 @@
     "exit_date": "2026-10-28"
   },
   {
-    "id": "pt_ZB_Wisely_20261026_349",
+    "id": "pt_ZB_Wisely_20261026_351",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "YouHaveChosenWisely",
@@ -9981,7 +10039,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_CL_Brad_20261027_350",
+    "id": "pt_CL_Brad_20261027_352",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -10010,7 +10068,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_ES_Brad_20261028_351",
+    "id": "pt_ES_Brad_20261028_353",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -10039,7 +10097,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_NQ_Brad_20261028_352",
+    "id": "pt_NQ_Brad_20261028_354",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -10068,7 +10126,7 @@
     "exit_date": "2026-10-29"
   },
   {
-    "id": "pt_GC_Brad_20261028_353",
+    "id": "pt_GC_Brad_20261028_355",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
@@ -10097,7 +10155,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_NG_Brad_20261028_354",
+    "id": "pt_NG_Brad_20261028_356",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -10126,7 +10184,7 @@
     "exit_date": "2026-10-29"
   },
   {
-    "id": "pt_DX_Brad_20261028_355",
+    "id": "pt_DX_Brad_20261028_357",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "The Bradman",
@@ -10155,7 +10213,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_RTY_Brad_20261029_356",
+    "id": "pt_RTY_Brad_20261029_358",
     "symbol": "RTY",
     "symbol_name": "Micro E-mini Russell 2000 (M2K)",
     "strategy": "The Bradman",
@@ -10184,7 +10242,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_NG_Brad_20261029_357",
+    "id": "pt_NG_Brad_20261029_359",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -10213,7 +10271,7 @@
     "exit_date": "2026-10-30"
   },
   {
-    "id": "pt_ES_Brad_20261030_358",
+    "id": "pt_ES_Brad_20261030_360",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -10242,16 +10300,16 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_NQ_Brad_20261030_359",
+    "id": "pt_NQ_Brad_20261030_361",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
     "side": "long",
     "entry_date": "2026-10-30",
-    "entry_price": 28842.0,
+    "entry_price": 28843.0,
     "qty": 2,
-    "stop_loss": 28402.354,
-    "profit_target": 29666.3362,
+    "stop_loss": 28403.354,
+    "profit_target": 29667.3362,
     "point_value": 2.0,
     "status": "STOPPED_OUT",
     "current_price": 28534.0,
@@ -10260,7 +10318,7 @@
     "entry_session": "US",
     "created_at": "2026-10-30T13:00:00Z",
     "updated_at": "2026-10-30T20:00:00Z",
-    "exit_price": 28402.354,
+    "exit_price": 28403.354,
     "exit_date": "2026-10-30",
     "gross_pnl": -1758.58,
     "commission": 2.4,
@@ -10271,7 +10329,7 @@
     "return_pct": -1.52
   },
   {
-    "id": "pt_YM_Brad_20261030_360",
+    "id": "pt_YM_Brad_20261030_362",
     "symbol": "YM",
     "symbol_name": "Micro E-mini Dow Jones (MYM)",
     "strategy": "The Bradman",
@@ -10300,7 +10358,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_GC_Tren_20261030_361",
+    "id": "pt_GC_Tren_20261030_363",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "Trendorama",
@@ -10328,7 +10386,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_CL_THTC_20261030_362",
+    "id": "pt_CL_THTC_20261030_364",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "TooHot TooCold",
@@ -10356,7 +10414,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_NG_Brad_20261030_363",
+    "id": "pt_NG_Brad_20261030_365",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -10385,7 +10443,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_6B_Brad_20261030_364",
+    "id": "pt_6B_Brad_20261030_366",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -10414,7 +10472,7 @@
     "return_pct": -0.34
   },
   {
-    "id": "pt_DX_Brad_20261030_365",
+    "id": "pt_DX_Brad_20261030_367",
     "symbol": "DX",
     "symbol_name": "US Dollar Index Futures (DX)",
     "strategy": "The Bradman",
@@ -10443,7 +10501,7 @@
     "exit_date": "2026-11-02"
   },
   {
-    "id": "pt_ES_Brad_20261102_366",
+    "id": "pt_ES_Brad_20261102_368",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -10472,7 +10530,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_NQ_Brad_20261102_367",
+    "id": "pt_NQ_Brad_20261102_369",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -10501,7 +10559,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_CL_Brad_20261102_368",
+    "id": "pt_CL_Brad_20261102_370",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -10530,7 +10588,7 @@
     "return_pct": -3.38
   },
   {
-    "id": "pt_CL_Wisely_20261102_369",
+    "id": "pt_CL_Wisely_20261102_371",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "YouHaveChosenWisely",
@@ -10558,7 +10616,7 @@
     "exit_date": "2026-11-03"
   },
   {
-    "id": "pt_NG_Brad_20261102_370",
+    "id": "pt_NG_Brad_20261102_372",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "The Bradman",
@@ -10587,7 +10645,7 @@
     "exit_date": "2026-11-05"
   },
   {
-    "id": "pt_6E_Wisely_20261102_371",
+    "id": "pt_6E_Wisely_20261102_373",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -10615,7 +10673,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_6B_Brad_20261102_372",
+    "id": "pt_6B_Brad_20261102_374",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -10644,7 +10702,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_ZB_Brad_20261102_373",
+    "id": "pt_ZB_Brad_20261102_375",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -10673,7 +10731,7 @@
     "exit_date": "2026-11-05"
   },
   {
-    "id": "pt_CL_Brad_20261103_374",
+    "id": "pt_CL_Brad_20261103_376",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -10702,7 +10760,7 @@
     "exit_date": "2026-11-04"
   },
   {
-    "id": "pt_ES_Brad_20261104_375",
+    "id": "pt_ES_Brad_20261104_377",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
@@ -10731,7 +10789,7 @@
     "exit_date": "2026-11-05"
   },
   {
-    "id": "pt_NQ_Brad_20261104_376",
+    "id": "pt_NQ_Brad_20261104_378",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "The Bradman",
@@ -10760,16 +10818,16 @@
     "exit_date": "2026-11-05"
   },
   {
-    "id": "pt_GC_Brad_20261104_377",
+    "id": "pt_GC_Brad_20261104_379",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
     "side": "short",
     "entry_date": "2026-11-04",
-    "entry_price": 4047.3,
+    "entry_price": 4046.8,
     "qty": 2,
-    "stop_loss": 4114.6535,
-    "profit_target": 3921.0123,
+    "stop_loss": 4114.1535,
+    "profit_target": 3920.5123,
     "point_value": 10.0,
     "status": "STOPPED_OUT",
     "current_price": 4113.5,
@@ -10785,11 +10843,11 @@
     "unrealized_pnl": 0.0,
     "realized_pnl": -1352.07,
     "return_pct": -1.66,
-    "exit_price": 4114.6535,
+    "exit_price": 4114.1535,
     "exit_date": "2026-11-05"
   },
   {
-    "id": "pt_CL_Brad_20261104_378",
+    "id": "pt_CL_Brad_20261104_380",
     "symbol": "CL",
     "symbol_name": "Micro WTI Crude Oil (MCL)",
     "strategy": "The Bradman",
@@ -10801,24 +10859,24 @@
     "profit_target": 95.5585,
     "point_value": 100.0,
     "status": "TIME_EXIT",
-    "current_price": 86.69,
+    "current_price": 87.74,
     "duration_days": 5,
     "initial_risk": 1914.26,
     "entry_session": "DAILY",
     "created_at": "2026-11-04T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": -845.0,
+    "gross_pnl": -320.0,
     "commission": 7.5,
     "slippage": 5.0,
     "fees_and_slippage": 12.5,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -857.5,
-    "return_pct": -1.91,
-    "exit_price": 86.69,
+    "realized_pnl": -332.5,
+    "return_pct": -0.72,
+    "exit_price": 87.74,
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_6E_Brad_20261104_379",
+    "id": "pt_6E_Brad_20261104_381",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "The Bradman",
@@ -10847,7 +10905,7 @@
     "exit_date": "2026-11-06"
   },
   {
-    "id": "pt_6B_Brad_20261104_380",
+    "id": "pt_6B_Brad_20261104_382",
     "symbol": "6B",
     "symbol_name": "Micro British Pound (M6B)",
     "strategy": "The Bradman",
@@ -10876,7 +10934,7 @@
     "exit_date": "2026-11-06"
   },
   {
-    "id": "pt_ES_THTC_20261105_381",
+    "id": "pt_ES_THTC_20261105_383",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "TooHot TooCold",
@@ -10887,24 +10945,24 @@
     "stop_loss": 7490.0,
     "profit_target": 7268.8713,
     "point_value": 5.0,
-    "status": "TIME_EXIT",
-    "current_price": 7470.75,
+    "status": "STOPPED_OUT",
+    "current_price": 7570.5,
     "duration_days": 4,
     "initial_risk": 1658.46,
     "created_at": "2026-11-05T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": 288.75,
+    "gross_pnl": 0.0,
     "commission": 3.6,
     "slippage": 3.75,
     "fees_and_slippage": 7.35,
     "unrealized_pnl": 0.0,
-    "realized_pnl": 281.4,
-    "return_pct": 0.26,
-    "exit_price": 7470.75,
+    "realized_pnl": -7.35,
+    "return_pct": 0.0,
+    "exit_price": 7490.0,
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_NQ_Tren_20261105_382",
+    "id": "pt_NQ_Tren_20261105_384",
     "symbol": "NQ",
     "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
     "strategy": "Trendorama",
@@ -10915,51 +10973,53 @@
     "stop_loss": 27615.75,
     "profit_target": 24461.3483,
     "point_value": 2.0,
-    "status": "OPEN",
-    "current_price": 27345.25,
+    "status": "STOPPED_OUT",
+    "current_price": 27977.75,
     "duration_days": 4,
     "initial_risk": 2102.93,
     "created_at": "2026-11-05T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": 541.0,
-    "commission": 0.6,
-    "slippage": 0.25,
-    "fees_and_slippage": 0.85,
-    "unrealized_pnl": 540.15,
-    "realized_pnl": 0.0,
-    "return_pct": 0.98
+    "gross_pnl": 0.0,
+    "commission": 1.2,
+    "slippage": 0.5,
+    "fees_and_slippage": 1.7,
+    "unrealized_pnl": 0.0,
+    "realized_pnl": -1.7,
+    "return_pct": 0.0,
+    "exit_price": 27615.75,
+    "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_GC_Brad_20261105_383",
+    "id": "pt_GC_Brad_20261105_385",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "The Bradman",
     "side": "short",
     "entry_date": "2026-11-05",
-    "entry_price": 4133.7998,
+    "entry_price": 4133.5,
     "qty": 2,
-    "stop_loss": 4203.9056,
-    "profit_target": 4002.3514,
+    "stop_loss": 4203.6058,
+    "profit_target": 4002.0516,
     "point_value": 10.0,
     "status": "TIME_EXIT",
-    "current_price": 4136.1001,
+    "current_price": 4115.0,
     "duration_days": 4,
     "initial_risk": 1402.12,
     "entry_session": "ASIA",
     "created_at": "2026-11-05T07:00:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": -46.01,
+    "gross_pnl": 370.0,
     "commission": 3.0,
     "slippage": 2.0,
     "fees_and_slippage": 5.0,
     "unrealized_pnl": 0.0,
-    "realized_pnl": -51.01,
-    "return_pct": -0.06,
-    "exit_price": 4136.1001,
+    "realized_pnl": 365.0,
+    "return_pct": 0.45,
+    "exit_price": 4115.0,
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_ZB_Brad_20261105_384",
+    "id": "pt_ZB_Brad_20261105_386",
     "symbol": "ZB",
     "symbol_name": "30-Year T-Bond Futures",
     "strategy": "The Bradman",
@@ -10971,24 +11031,24 @@
     "profit_target": 107.2089,
     "point_value": 1000.0,
     "status": "TIME_EXIT",
-    "current_price": 108.7812,
+    "current_price": 108.4062,
     "duration_days": 4,
     "initial_risk": 1793.82,
     "entry_session": "DAILY",
     "created_at": "2026-11-05T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": 218.7,
+    "gross_pnl": 968.7,
     "commission": 5.0,
     "slippage": 6.24,
     "fees_and_slippage": 11.24,
     "unrealized_pnl": 0.0,
-    "realized_pnl": 207.46,
-    "return_pct": 0.1,
-    "exit_price": 108.7812,
+    "realized_pnl": 957.46,
+    "return_pct": 0.44,
+    "exit_price": 108.4062,
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_ZN_Brad_20261105_385",
+    "id": "pt_ZN_Brad_20261105_387",
     "symbol": "ZN",
     "symbol_name": "10-Year T-Note Futures",
     "strategy": "The Bradman",
@@ -11000,24 +11060,24 @@
     "profit_target": 106.5607,
     "point_value": 1000.0,
     "status": "TIME_EXIT",
-    "current_price": 107.2344,
+    "current_price": 106.9375,
     "duration_days": 4,
     "initial_risk": 1937.13,
     "entry_session": "DAILY",
     "created_at": "2026-11-05T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": 937.7,
+    "gross_pnl": 2125.2,
     "commission": 10.0,
     "slippage": 6.24,
     "fees_and_slippage": 16.24,
     "unrealized_pnl": 0.0,
-    "realized_pnl": 921.46,
-    "return_pct": 0.22,
-    "exit_price": 107.2344,
+    "realized_pnl": 2108.96,
+    "return_pct": 0.49,
+    "exit_price": 106.9375,
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_NG_THTC_20261106_386",
+    "id": "pt_NG_THTC_20261106_388",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
     "strategy": "TooHot TooCold",
@@ -11029,7 +11089,7 @@
     "profit_target": 3.2752,
     "point_value": 2500.0,
     "status": "STOPPED_OUT",
-    "current_price": 3.135,
+    "current_price": 3.172,
     "duration_days": 3,
     "initial_risk": 1751.46,
     "created_at": "2026-11-06T13:30:00Z",
@@ -11045,7 +11105,7 @@
     "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_6E_Wisely_20261106_387",
+    "id": "pt_6E_Wisely_20261106_389",
     "symbol": "6E",
     "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
@@ -11056,61 +11116,90 @@
     "stop_loss": 1.1219,
     "profit_target": 1.0993,
     "point_value": 12500.0,
-    "status": "OPEN",
-    "current_price": 1.1217,
+    "status": "STOPPED_OUT",
+    "current_price": 1.1222,
     "duration_days": 3,
     "initial_risk": 1978.42,
     "created_at": "2026-11-06T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": -1942.51,
-    "commission": 2.0,
-    "slippage": 2.48,
-    "fees_and_slippage": 4.48,
-    "unrealized_pnl": -1946.99,
-    "realized_pnl": 0.0,
-    "return_pct": -0.66
+    "gross_pnl": -1995.0,
+    "commission": 4.0,
+    "slippage": 4.96,
+    "fees_and_slippage": 8.96,
+    "unrealized_pnl": 0.0,
+    "realized_pnl": -2003.96,
+    "return_pct": -0.68,
+    "exit_price": 1.1219,
+    "exit_date": "2026-11-09"
   },
   {
-    "id": "pt_ES_Brad_20261109_388",
+    "id": "pt_ES_Brad_20261109_390",
     "symbol": "ES",
     "symbol_name": "Micro E-mini S&P 500 (MES)",
     "strategy": "The Bradman",
     "side": "short",
     "entry_date": "2026-11-09",
-    "entry_price": 7443.0,
+    "entry_price": 7538.25,
     "qty": 4,
-    "stop_loss": 7532.9139,
-    "profit_target": 7274.4114,
+    "stop_loss": 7631.9739,
+    "profit_target": 7362.5176,
     "point_value": 5.0,
     "status": "OPEN",
-    "current_price": 7470.75,
+    "current_price": 7570.5,
     "duration_days": 0,
-    "initial_risk": 1798.28,
+    "initial_risk": 1874.48,
     "entry_session": "DAILY",
     "created_at": "2026-11-09T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": -555.0,
+    "gross_pnl": -645.0,
     "commission": 2.4,
     "slippage": 2.5,
     "fees_and_slippage": 4.9,
-    "unrealized_pnl": -559.9,
+    "unrealized_pnl": -649.9,
     "realized_pnl": 0.0,
-    "return_pct": -0.37
+    "return_pct": -0.43
   },
   {
-    "id": "pt_GC_Wisely_20261109_389",
+    "id": "pt_NQ_Brad_20261109_391",
+    "symbol": "NQ",
+    "symbol_name": "Micro E-mini Nasdaq 100 (MNQ)",
+    "strategy": "The Bradman",
+    "side": "short",
+    "entry_date": "2026-11-09",
+    "entry_price": 27844.875,
+    "qty": 1,
+    "stop_loss": 28441.7442,
+    "profit_target": 26725.7452,
+    "point_value": 2.0,
+    "status": "OPEN",
+    "current_price": 27977.75,
+    "duration_days": 0,
+    "initial_risk": 1193.74,
+    "entry_session": "DAILY",
+    "created_at": "2026-11-09T13:30:00Z",
+    "updated_at": "2026-11-09T20:00:00Z",
+    "gross_pnl": -265.75,
+    "commission": 0.6,
+    "slippage": 0.25,
+    "fees_and_slippage": 0.85,
+    "unrealized_pnl": -266.6,
+    "realized_pnl": 0.0,
+    "return_pct": -0.48
+  },
+  {
+    "id": "pt_GC_Wisely_20261109_392",
     "symbol": "GC",
     "symbol_name": "Micro Gold Futures (MGC)",
     "strategy": "YouHaveChosenWisely",
     "side": "short",
     "entry_date": "2026-11-09",
-    "entry_price": 4136.1001,
+    "entry_price": 4115.0,
     "qty": 1,
-    "stop_loss": 4244.8914,
-    "profit_target": 3918.5175,
+    "stop_loss": 4223.7913,
+    "profit_target": 3897.4174,
     "point_value": 10.0,
     "status": "OPEN",
-    "current_price": 4136.1001,
+    "current_price": 4115.0,
     "duration_days": 0,
     "initial_risk": 1087.91,
     "created_at": "2026-11-09T13:30:00Z",
@@ -11124,55 +11213,110 @@
     "return_pct": 0.0
   },
   {
-    "id": "pt_NG_Tren_20261109_390",
+    "id": "pt_NG_Brad_20261109_393",
     "symbol": "NG",
     "symbol_name": "E-mini Natural Gas (QG)",
-    "strategy": "Trendorama",
-    "side": "long",
+    "strategy": "The Bradman",
+    "side": "short",
     "entry_date": "2026-11-09",
-    "entry_price": 3.334,
-    "qty": 3,
-    "stop_loss": 3.0944,
-    "profit_target": 4.0527,
+    "entry_price": 3.159,
+    "qty": 7,
+    "stop_loss": 3.2732,
+    "profit_target": 2.9449,
     "point_value": 2500.0,
     "status": "OPEN",
-    "current_price": 3.135,
+    "current_price": 3.172,
     "duration_days": 0,
-    "initial_risk": 1796.75,
+    "initial_risk": 1997.96,
+    "entry_session": "DAILY",
     "created_at": "2026-11-09T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
-    "gross_pnl": -1492.5,
-    "commission": 3.75,
-    "slippage": 3.75,
-    "fees_and_slippage": 7.5,
-    "unrealized_pnl": -1500.0,
+    "gross_pnl": -227.5,
+    "commission": 8.75,
+    "slippage": 8.75,
+    "fees_and_slippage": 17.5,
+    "unrealized_pnl": -245.0,
     "realized_pnl": 0.0,
-    "return_pct": -5.97
+    "return_pct": -0.41
   },
   {
-    "id": "pt_ZN_Wisely_20261109_391",
-    "symbol": "ZN",
-    "symbol_name": "10-Year T-Note Futures",
+    "id": "pt_6E_Wisely_20261109_394",
+    "symbol": "6E",
+    "symbol_name": "Micro Euro FX (M6E)",
     "strategy": "YouHaveChosenWisely",
-    "side": "long",
+    "side": "short",
     "entry_date": "2026-11-09",
-    "entry_price": 107.2344,
-    "qty": 2,
-    "stop_loss": 106.4948,
-    "profit_target": 108.7136,
-    "point_value": 1000.0,
+    "entry_price": 1.1222,
+    "qty": 20,
+    "stop_loss": 1.1299,
+    "profit_target": 1.1069,
+    "point_value": 12500.0,
     "status": "OPEN",
-    "current_price": 107.2344,
+    "current_price": 1.1222,
     "duration_days": 0,
-    "initial_risk": 1479.21,
+    "initial_risk": 1914.22,
     "created_at": "2026-11-09T13:30:00Z",
     "updated_at": "2026-11-09T20:00:00Z",
     "gross_pnl": 0.0,
-    "commission": 2.5,
-    "slippage": 1.56,
-    "fees_and_slippage": 4.06,
-    "unrealized_pnl": -4.06,
+    "commission": 2.0,
+    "slippage": 2.48,
+    "fees_and_slippage": 4.48,
+    "unrealized_pnl": -4.48,
     "realized_pnl": 0.0,
     "return_pct": -0.0
+  },
+  {
+    "id": "pt_ZB_Brad_20261109_395",
+    "symbol": "ZB",
+    "symbol_name": "30-Year T-Bond Futures",
+    "strategy": "The Bradman",
+    "side": "long",
+    "entry_date": "2026-11-09",
+    "entry_price": 108.4219,
+    "qty": 2,
+    "stop_loss": 107.5324,
+    "profit_target": 110.0896,
+    "point_value": 1000.0,
+    "status": "OPEN",
+    "current_price": 108.4062,
+    "duration_days": 0,
+    "initial_risk": 1778.92,
+    "entry_session": "DAILY",
+    "created_at": "2026-11-09T13:30:00Z",
+    "updated_at": "2026-11-09T20:00:00Z",
+    "gross_pnl": -31.25,
+    "commission": 2.5,
+    "slippage": 3.12,
+    "fees_and_slippage": 5.62,
+    "unrealized_pnl": -36.87,
+    "realized_pnl": 0.0,
+    "return_pct": -0.01
+  },
+  {
+    "id": "pt_ZN_Brad_20261109_396",
+    "symbol": "ZN",
+    "symbol_name": "10-Year T-Note Futures",
+    "strategy": "The Bradman",
+    "side": "long",
+    "entry_date": "2026-11-09",
+    "entry_price": 107.0156,
+    "qty": 4,
+    "stop_loss": 106.5392,
+    "profit_target": 107.909,
+    "point_value": 1000.0,
+    "status": "OPEN",
+    "current_price": 106.9375,
+    "duration_days": 0,
+    "initial_risk": 1905.88,
+    "entry_session": "DAILY",
+    "created_at": "2026-11-09T13:30:00Z",
+    "updated_at": "2026-11-09T20:00:00Z",
+    "gross_pnl": -312.5,
+    "commission": 5.0,
+    "slippage": 3.12,
+    "fees_and_slippage": 8.12,
+    "unrealized_pnl": -320.62,
+    "realized_pnl": 0.0,
+    "return_pct": -0.07
   }
 ]
