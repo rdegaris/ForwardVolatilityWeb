@@ -107,15 +107,6 @@ function App() {
                   Discord
                   <ArrowUpRightIcon className="w-3.5 h-3.5 text-desk-muted" />
                 </a>
-                <a
-                  href="https://github.com/heydamir/unslop"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-desk-muted hover:text-desk-secondary transition-colors duration-150 ease-desk"
-                  title="UI redlined with unslop by Damir Sokolovsky (@heydamir), CC BY 4.0"
-                >
-                  unslop by @heydamir
-                </a>
               </div>
             </div>
           </footer>
