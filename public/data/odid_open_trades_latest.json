@@ -1,6 +1,27 @@
 {
-  "timestamp": "2026-11-10T08:24:04.702795Z",
+  "timestamp": "2026-11-10T14:06:07.202827Z",
   "date": "2026-11-10",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "6B",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro British Pound (M6B)",
+      "side": "long",
+      "qty": 52,
+      "net_qty": 52,
+      "avg_price": 1.3443
+    },
+    {
+      "symbol": "ZB",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "30-Year T-Bond Futures",
+      "side": "short",
+      "qty": 1,
+      "net_qty": -1,
+      "avg_price": 108.0938
+    }
+  ]
 }
