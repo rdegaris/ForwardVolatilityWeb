@@ -1,6 +1,20 @@
 {
-  "timestamp": "2026-11-11T08:23:42.950223Z",
+  "timestamp": "2026-11-11T14:05:57.777757Z",
   "date": "2026-11-11",
   "system": "S2",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "NG",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "E-mini Natural Gas (QG)",
+      "side": "long",
+      "qty": 3,
+      "avg_price": 3.334,
+      "stop_price": 3.1195,
+      "units": 1,
+      "unrealized_pnl": 210.0,
+      "asof": "2026-11-11"
+    }
+  ]
 }
