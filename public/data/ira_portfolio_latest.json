@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-11-11T17:33:45.204058+00:00",
+  "timestamp": "2026-11-11T20:13:40.463810+00:00",
   "model": "Prime Aggressive Model",
   "inception_date": "2026-10-28",
   "starting_balance": 45000.0,
   "price_date": "2026-11-10",
-  "total_value": 44459.44,
-  "day_change": -162.53,
-  "day_change_pct": -0.364,
-  "total_gain": -540.56,
-  "total_gain_pct": -1.201,
+  "total_value": 44447.03,
+  "day_change": -174.94,
+  "day_change_pct": -0.392,
+  "total_gain": -552.97,
+  "total_gain_pct": -1.229,
   "positions": [
     {
       "ticker": "ANODX",
@@ -44,7 +44,7 @@
       "gain": 23.23,
       "gain_pct": 0.516,
       "stale": false,
-      "current_pct": 10.17
+      "current_pct": 10.18
     },
     {
       "ticker": "DFEMX",
@@ -80,7 +80,7 @@
       "gain": 20.11,
       "gain_pct": 0.497,
       "stale": false,
-      "current_pct": 9.15
+      "current_pct": 9.16
     },
     {
       "ticker": "FSPTX",
@@ -116,7 +116,7 @@
       "gain": -266.82,
       "gain_pct": -2.578,
       "stale": false,
-      "current_pct": 22.68
+      "current_pct": 22.69
     },
     {
       "ticker": "GSIYX",
@@ -143,16 +143,16 @@
       "shares": 155.1724,
       "basis_price": 11.6,
       "cost_basis": 1800.0,
-      "price": 11.68,
+      "price": 11.6,
       "prev_close": 11.68,
       "price_date": "2026-11-10",
-      "value": 1812.41,
-      "day_change": 0.0,
-      "day_change_pct": 0.0,
-      "gain": 12.41,
-      "gain_pct": 0.69,
+      "value": 1800.0,
+      "day_change": -12.41,
+      "day_change_pct": -0.685,
+      "gain": 0.0,
+      "gain_pct": 0.0,
       "stale": false,
-      "current_pct": 4.08
+      "current_pct": 4.05
     },
     {
       "ticker": "VEIRX",
@@ -324,7 +324,7 @@
     },
     {
       "date": "2026-11-10",
-      "value": 44459.44
+      "value": 44447.03
     }
   ]
 }

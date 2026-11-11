@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-11T17:33:43.746860Z",
+  "timestamp": "2026-11-11T20:13:38.871241Z",
   "date": "2026-11-11",
   "system": "odid",
   "open_trades": [
@@ -12,6 +12,16 @@
       "qty": 1,
       "net_qty": -1,
       "avg_price": 108.0938
+    },
+    {
+      "symbol": "ES",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini S&P 500 (MES)",
+      "side": "long",
+      "qty": 3,
+      "net_qty": 3,
+      "avg_price": 7598.75
     }
   ]
 }
