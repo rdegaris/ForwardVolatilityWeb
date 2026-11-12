@@ -315,9 +315,13 @@ export default function Home() {
 
   const inceptionMetrics = useMemo(() => {
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
-    const pool = sourceTrades.filter(
-      (t) => selectedPerfStrategy === 'ALL' || t.strategy === selectedPerfStrategy
-    );
+    const pool = sourceTrades.filter((t) => {
+      if (selectedPerfStrategy === 'ALL') return true;
+      if (selectedPerfStrategy === 'LeMark Sequential' || selectedPerfStrategy === 'DeMark Sequential') {
+        return t.strategy === 'LeMark Sequential' || t.strategy === 'DeMark Sequential';
+      }
+      return t.strategy === selectedPerfStrategy;
+    });
     const closed = pool.filter((t) => t.status !== 'OPEN');
     const open = pool.filter((t) => t.status === 'OPEN');
 
@@ -333,7 +337,7 @@ export default function Home() {
   }, [allTrades, paperPerformance, selectedPerfStrategy]);
 
   const strategyPerfSummary = useMemo(() => {
-    const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda', 'DeMark Sequential'];
+    const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda', 'LeMark Sequential', 'DeMark Sequential'];
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
     const nowPac = getTodayDatePacific();
     const fallbackMonth = `${nowPac.getFullYear()}-${String(nowPac.getMonth() + 1).padStart(2, '0')}`;
@@ -754,13 +758,13 @@ export default function Home() {
             allTimePct={strategyPerfSummary['The Linda']?.allTimePct}
           />
           <StrategySummaryCard
-            label="DeMark Sequential"
+            label="LeMark Sequential"
             to="/demark"
             method="Countdown 13"
             value={demarkSignals?.total_triggered ?? 0}
             sub={`${demarkSignals?.total_approaching_13 ?? 0} near 13 · ${demarkSignals?.total_countdown_active ?? 0} active`}
-            mtdPct={strategyPerfSummary['DeMark Sequential']?.mtdPct}
-            allTimePct={strategyPerfSummary['DeMark Sequential']?.allTimePct}
+            mtdPct={strategyPerfSummary['LeMark Sequential']?.mtdPct ?? strategyPerfSummary['DeMark Sequential']?.mtdPct}
+            allTimePct={strategyPerfSummary['LeMark Sequential']?.allTimePct ?? strategyPerfSummary['DeMark Sequential']?.allTimePct}
           />
         </div>
       </section>
@@ -1272,7 +1276,7 @@ export default function Home() {
               { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely' },
               { id: 'TooHot TooCold', label: 'TooHot TooCold' },
               { id: 'The Linda', label: 'The Linda' },
-              { id: 'DeMark Sequential', label: 'DeMark Sequential' },
+              { id: 'LeMark Sequential', label: 'LeMark Sequential' },
             ].map((strat) => {
               const isSelected = selectedPerfStrategy === strat.id;
               return (

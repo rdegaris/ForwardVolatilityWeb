@@ -30,6 +30,19 @@ const STATUS_LABELS: Record<string, string> = {
   MANUALLY_CLOSED: 'Closed',
 };
 
+function matchesStrategy(tradeStrategy: string, filterStrategy: string): boolean {
+  if (filterStrategy === 'ALL') return true;
+  if (filterStrategy === 'LeMark Sequential' || filterStrategy === 'DeMark Sequential') {
+    return tradeStrategy === 'LeMark Sequential' || tradeStrategy === 'DeMark Sequential';
+  }
+  return tradeStrategy === filterStrategy;
+}
+
+function displayStrategyName(strat: string): string {
+  if (strat === 'DeMark Sequential') return 'LeMark Sequential';
+  return strat;
+}
+
 function formatPrice(val?: number | string | null, digits = 2) {
   if (val === null || val === undefined || val === '') return '—';
   const num = typeof val === 'string' ? parseFloat(val) : val;
@@ -215,7 +228,7 @@ export default function ExecutedTrades() {
   const filteredTrades = useMemo(() => {
     return trades
       .filter((t) => {
-        if (selectedStrategy !== 'ALL' && t.strategy !== selectedStrategy)
+        if (!matchesStrategy(t.strategy, selectedStrategy))
           return false;
         if (!isTradeInTimeframe(t, selectedTimeframe))
           return false;
@@ -248,7 +261,7 @@ export default function ExecutedTrades() {
 
   const biggestWinners = useMemo(() => {
     const pool = trades.filter((t) => {
-      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchStrat = matchesStrategy(t.strategy, selectedStrategy);
       const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
@@ -264,7 +277,7 @@ export default function ExecutedTrades() {
 
   const biggestLosers = useMemo(() => {
     const pool = trades.filter((t) => {
-      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchStrat = matchesStrategy(t.strategy, selectedStrategy);
       const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
@@ -280,7 +293,7 @@ export default function ExecutedTrades() {
 
   const inceptionMetrics = useMemo(() => {
     const pool = trades.filter(
-      (t) => selectedStrategy === 'ALL' || t.strategy === selectedStrategy
+      (t) => matchesStrategy(t.strategy, selectedStrategy)
     );
     const closed = pool.filter((t) => t.status !== 'OPEN');
     const open = pool.filter((t) => t.status === 'OPEN');
@@ -304,7 +317,7 @@ export default function ExecutedTrades() {
       return performance.equity_curve;
     }
     const pool = trades.filter((t) => {
-      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchStrat = matchesStrategy(t.strategy, selectedStrategy);
       const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
@@ -349,7 +362,7 @@ export default function ExecutedTrades() {
 
   const activeMetrics = useMemo(() => {
     const pool = trades.filter((t) => {
-      const matchStrat = selectedStrategy === 'ALL' || t.strategy === selectedStrategy;
+      const matchStrat = matchesStrategy(t.strategy, selectedStrategy);
       const matchTf = isTradeInTimeframe(t, selectedTimeframe);
       return matchStrat && matchTf;
     });
@@ -554,7 +567,7 @@ export default function ExecutedTrades() {
               { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely' },
               { id: 'TooHot TooCold', label: 'TooHot TooCold' },
               { id: 'The Linda', label: 'The Linda' },
-              { id: 'DeMark Sequential', label: 'DeMark Sequential' },
+              { id: 'LeMark Sequential', label: 'LeMark Sequential' },
             ].map((strat) => {
               const isSelected = selectedStrategy === strat.id;
               return (
@@ -835,7 +848,7 @@ export default function ExecutedTrades() {
                         <span className={t.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
                           {t.side === 'long' ? 'Long' : 'Short'}
                         </span>
-                        <span className="text-xs text-desk-secondary truncate">{t.strategy}</span>
+                        <span className="text-xs text-desk-secondary truncate">{displayStrategyName(t.strategy)}</span>
                       </div>
                       <div className="mt-1 text-[11px] text-desk-muted font-mono tabular-nums flex items-center gap-1.5">
                         <span>Open {t.entry_date?.slice(0, 10)}</span>
@@ -899,7 +912,7 @@ export default function ExecutedTrades() {
                         <span className={t.side === 'long' ? 'desk-tag-up' : 'desk-tag-down'}>
                           {t.side === 'long' ? 'Long' : 'Short'}
                         </span>
-                        <span className="text-xs text-desk-secondary truncate">{t.strategy}</span>
+                        <span className="text-xs text-desk-secondary truncate">{displayStrategyName(t.strategy)}</span>
                       </div>
                       <div className="mt-1 text-[11px] text-desk-muted font-mono tabular-nums flex items-center gap-1.5">
                         <span>Open {t.entry_date?.slice(0, 10)}</span>
@@ -1066,7 +1079,7 @@ export default function ExecutedTrades() {
                       </td>
 
                       <td className="px-5 py-3.5">
-                        <span className="desk-tag">{t.strategy}</span>
+                        <span className="desk-tag">{displayStrategyName(t.strategy)}</span>
                       </td>
 
                       <td className="px-5 py-3.5">
@@ -1178,7 +1191,7 @@ export default function ExecutedTrades() {
                   Adjust parameters · <span className="font-mono">{editingTrade.symbol}</span>
                 </h3>
                 <p className="text-xs text-desk-muted mt-0.5">
-                  {editingTrade.strategy} ({editingTrade.side === 'long' ? 'Long' : 'Short'})
+                  {displayStrategyName(editingTrade.strategy)} ({editingTrade.side === 'long' ? 'Long' : 'Short'})
                 </p>
               </div>
               <button

@@ -192,7 +192,7 @@ export default function DeMarkTrade() {
       setData(res);
       setError(null);
     } catch (e: any) {
-      setError(e.message || 'Failed to load DeMark Sequential signals');
+      setError(e.message || 'Failed to load LeMark Sequential signals');
     } finally {
       setLoading(false);
     }
@@ -219,7 +219,7 @@ export default function DeMarkTrade() {
   if (loading && !data) {
     return (
       <div className="flex items-center justify-center h-80">
-        <p className="text-sm text-desk-muted">Loading DeMark Sequential signals…</p>
+        <p className="text-sm text-desk-muted">Loading LeMark Sequential signals…</p>
       </div>
     );
   }
@@ -231,7 +231,7 @@ export default function DeMarkTrade() {
           <AlertCircleIcon className="w-4 h-4" />
           <span>Signal data unavailable</span>
         </div>
-        <p className="text-sm text-desk-muted">The DeMark Sequential signal feed could not be loaded.</p>
+        <p className="text-sm text-desk-muted">The LeMark Sequential signal feed could not be loaded.</p>
       </div>
     );
   }
@@ -248,10 +248,10 @@ export default function DeMarkTrade() {
           <div className="space-y-2 max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-mono text-desk-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-desk-down" />
-              <span>Tom DeMark Sequential · Exhaustion Countdown Model</span>
+              <span>LeMark Sequential · Exhaustion Countdown Model</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-desk-text">
-              DeMark Sequential
+              LeMark Sequential
             </h1>
             <p className="text-sm leading-relaxed text-desk-secondary">
               Institutional trend-exhaustion model. Tracks the 9-bar TD Sell Setup followed by the 13-bar TD Sell Countdown across the OzCTA futures basket. Signals a high-probability exhaustion top and mean-reversion short trade upon reaching qualified Countdown 13.
@@ -385,7 +385,7 @@ export default function DeMarkTrade() {
           onClose={() => setChartItem(null)}
           symbol={chartItem.symbol}
           strategy="demark"
-          signalLabel={`DeMark Sequential · Countdown ${chartItem.countdown_count}/13`}
+          signalLabel={`LeMark Sequential · Countdown ${chartItem.countdown_count}/13`}
         />
       )}
     </div>

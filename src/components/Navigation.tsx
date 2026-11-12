@@ -43,7 +43,7 @@ const STRATEGY_LINKS: Array<{ key: NavSectionKey; label: string; meta: string; t
   { key: 'grail', label: 'YouHaveChosenWisely', meta: 'ADX / EMA pullback', to: '/grail' },
   { key: 'odid', label: 'TooHot TooCold', meta: 'Range expansion', to: '/odid' },
   { key: 'linda', label: 'The Linda', meta: '15m EMA reversion', to: '/linda' },
-  { key: 'demark', label: 'DeMark Sequential', meta: 'Sell Countdown 13', to: '/demark' },
+  { key: 'demark', label: 'LeMark Sequential', meta: 'Sell Countdown 13', to: '/demark' },
 ];
 
 const SECTION_LABELS: Record<NavSectionKey, string> = {
@@ -55,7 +55,7 @@ const SECTION_LABELS: Record<NavSectionKey, string> = {
   odid: 'TooHot TooCold',
   taylor: 'The Bradman',
   linda: 'The Linda',
-  demark: 'DeMark Sequential',
+  demark: 'LeMark Sequential',
 };
 
 const SUB_NAV: Record<NavSectionKey, NavItem[]> = {

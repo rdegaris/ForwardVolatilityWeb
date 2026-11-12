@@ -8,7 +8,7 @@ Calculates signals for:
   3. YouHaveChosenWisely (20 EMA Pullback + 14 ADX Filter)
   4. Too Hot / Too Cold (Outside Day / Inside Day Breakout Alerts)
   5. The Linda (Trend Day No-EMA-Touch Mean Reversion)
-  6. DeMark Sequential (Sell Countdown 13 Exhaustion)
+  6. LeMark Sequential (Sell Countdown 13 Exhaustion)
 
 Exports updated JSON feeds directly to public/data/ with zero external pip dependencies.
 """
@@ -1096,7 +1096,7 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
             }
 
 # -------------------------------------------------------------------
-# Strategy 6: DeMark Sequential (TD Sell Setup & Sell Countdown 13)
+# Strategy 6: LeMark Sequential (TD Sell Setup & Sell Countdown 13)
 # -------------------------------------------------------------------
 
 def analyze_demark(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Optional[dict]]:
@@ -1214,7 +1214,7 @@ def analyze_demark(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Option
 
     if bar_13_triggered_today:
         phase = "COUNTDOWN_13"
-        notes = "DeMark Sell Countdown 13 EXHAUSTION TRIGGERED — Qualified Short Signal"
+        notes = "LeMark Sell Countdown 13 EXHAUSTION TRIGGERED — Qualified Short Signal"
     elif active_sell_countdown:
         if sell_countdown_count >= 10:
             phase = "COUNTDOWN_NEAR"
@@ -1277,7 +1277,7 @@ def analyze_demark(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Option
             "unit_qty": unit_qty,
             "atr": round(atr, 4),
             "countdown_count": 13,
-            "notes": "DeMark Sequential Sell Countdown 13 exhaustion top signal",
+            "notes": "LeMark Sequential Sell Countdown 13 exhaustion top signal",
         }
 
     return row, trig
@@ -1479,8 +1479,8 @@ def main():
     demark_payload = {
         "timestamp": now_iso,
         "date": latest_date,
-        "system": "DeMark",
-        "strategy": "DeMark Sequential Sell Countdown 13",
+        "system": "LeMark",
+        "strategy": "LeMark Sequential Sell Countdown 13",
         "total_scanned": len(demark_rows),
         "total_countdown_active": sum(1 for r in demark_rows if r.get("countdown_active")),
         "total_approaching_13": sum(1 for r in demark_rows if (r.get("countdown_count", 0) >= 10 and r.get("countdown_active"))),
@@ -1646,7 +1646,7 @@ def update_standalone_paper_trades(
                 elif side == "short" and low <= entry - 1.0 * atr_cur:
                     stop = min(stop, entry)
                     t["stop_loss"] = round(stop, 4)
-            elif strat == "DeMark Sequential":
+            elif strat in ("LeMark Sequential", "DeMark Sequential"):
                 if side == "short" and low <= entry - 1.0 * atr_cur:
                     stop = min(stop, entry)
                     t["stop_loss"] = round(stop, 4)
@@ -1687,7 +1687,7 @@ def update_standalone_paper_trades(
             if strat == "The Bradman" and duration >= 3: time_exit = True
             elif strat == "TooHot TooCold" and duration >= 4: time_exit = True
             elif strat == "YouHaveChosenWisely" and duration >= 5: time_exit = True
-            elif strat == "DeMark Sequential" and duration >= 10: time_exit = True
+            elif strat in ("LeMark Sequential", "DeMark Sequential") and duration >= 10: time_exit = True
 
             # YouHaveChosenWisely: 2 consecutive closes across EMA20
             ema_exit = False
@@ -1989,7 +1989,7 @@ def update_standalone_paper_trades(
                 qty = min(raw_q, 5) if sym == "DX" else raw_q
                 new_t = {
                     "id": f"pt_{sym}_DeMk_{cur_date.replace('-','')}_{trade_id_seq}",
-                    "symbol": sym, "symbol_name": sym_name, "strategy": "DeMark Sequential", "side": "short",
+                    "symbol": sym, "symbol_name": sym_name, "strategy": "LeMark Sequential", "side": "short",
                     "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
                     "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
                     "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
