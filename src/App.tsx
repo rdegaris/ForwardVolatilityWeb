@@ -19,6 +19,7 @@ import GrailTrade from './pages/GrailTrade';
 import OdidBreakout from './pages/OdidBreakout';
 import TaylorTrade from './pages/TaylorTrade';
 import LindaTrade from './pages/LindaTrade';
+import DeMarkTrade from './pages/DeMarkTrade';
 import Home from './pages/Home';
 import ExecutedTrades from './pages/ExecutedTrades';
 import ScanRunner from './pages/ScanRunner';
@@ -58,6 +59,7 @@ function App() {
               <Route path="/odid" element={<ProtectedRoute><OdidBreakout /></ProtectedRoute>} />
               <Route path="/taylor" element={<ProtectedRoute><TaylorTrade /></ProtectedRoute>} />
               <Route path="/linda" element={<LindaTrade />} />
+              <Route path="/demark" element={<DeMarkTrade />} />
 
               <Route path="/pre-earnings" element={<ProtectedRoute><PreEarningsStraddles /></ProtectedRoute>} />
               <Route path="/pre-earnings/open-trades" element={<ProtectedRoute><PreEarningsTrades /></ProtectedRoute>} />

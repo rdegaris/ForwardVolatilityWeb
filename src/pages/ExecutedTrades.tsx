@@ -554,6 +554,7 @@ export default function ExecutedTrades() {
               { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely' },
               { id: 'TooHot TooCold', label: 'TooHot TooCold' },
               { id: 'The Linda', label: 'The Linda' },
+              { id: 'DeMark Sequential', label: 'DeMark Sequential' },
             ].map((strat) => {
               const isSelected = selectedStrategy === strat.id;
               return (

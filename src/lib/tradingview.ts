@@ -55,6 +55,8 @@ export const STRATEGY_INTERVALS: Record<string, string> = {
   turtle:               'D',
   odid:                 'D',    // Daily — outside/inside day breakouts
   toohottoocold:        'D',
+  demark:               'D',    // Daily — DeMark Sequential Sell Countdown 13
+  demark_sequential:    'D',
 };
 
 /**

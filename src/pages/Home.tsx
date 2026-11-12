@@ -21,6 +21,7 @@ import type { OdidAlertsPayload, OdidOpenTradesPayload, OdidSignalsPayload } fro
 import type { TaylorSignalsPayload } from '../types/taylor';
 import type { GrailSignalsPayload } from '../types/grail';
 import type { LindaSignalsPayload } from '../types/linda';
+import type { DeMarkSignalsPayload } from '../types/demark';
 import type { PaperTrade, PaperTradesPayload, PaperTradePerformancePayload } from '../types/paperTrade';
 import { fmt$ } from '../lib/formatCurrency';
 import SignalChartModal from '../components/SignalChartModal';
@@ -148,6 +149,7 @@ export default function Home() {
   const [taylorSignals, setTaylorSignals] = useState<TaylorSignalsPayload | null>(null);
   const [grailSignals, setGrailSignals] = useState<GrailSignalsPayload | null>(null);
   const [lindaSignals, setLindaSignals] = useState<LindaSignalsPayload | null>(null);
+  const [demarkSignals, setDemarkSignals] = useState<DeMarkSignalsPayload | null>(null);
   const [paperPerformance, setPaperPerformance] = useState<PaperTradePerformancePayload | null>(null);
   const [allTrades, setAllTrades] = useState<PaperTrade[]>([]);
   const [chartItem, setChartItem] = useState<{
@@ -176,11 +178,12 @@ export default function Home() {
           fetchJson<TaylorSignalsPayload>('/data/taylor_signals_latest.json', { cache: 'no-store' }),
           fetchJson<GrailSignalsPayload>('/data/grail_signals_latest.json', { cache: 'no-store' }),
           fetchJson<LindaSignalsPayload>('/data/linda_signals_latest.json', { cache: 'no-store' }),
+          fetchJson<DeMarkSignalsPayload>('/data/demark_signals_latest.json', { cache: 'no-store' }),
           fetchJson<PaperTradePerformancePayload>('/data/paper_trade_performance.json', { cache: 'no-store' }),
           fetchJson<PaperTradesPayload>('/data/paper_trades_latest.json', { cache: 'no-store' }),
         ]);
 
-        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin, pp, pt] = results;
+        const [ts, to2, tSug, odSig, odAlrt, odOpen, tay, gr, lin, dm, pp, pt] = results;
         if (ts.status === 'fulfilled') setTurtleSignals(ts.value);
         if (to2.status === 'fulfilled') setTurtleOpen(to2.value);
         if (tSug.status === 'fulfilled') setTurtleSuggested(tSug.value);
@@ -190,6 +193,7 @@ export default function Home() {
         if (tay.status === 'fulfilled') setTaylorSignals(tay.value);
         if (gr.status === 'fulfilled') setGrailSignals(gr.value);
         if (lin.status === 'fulfilled') setLindaSignals(lin.value);
+        if (dm && dm.status === 'fulfilled') setDemarkSignals(dm.value);
         if (pp.status === 'fulfilled') setPaperPerformance(pp.value);
         if (pt.status === 'fulfilled' && pt.value?.trades) setAllTrades(pt.value.trades);
       } finally {
@@ -329,7 +333,7 @@ export default function Home() {
   }, [allTrades, paperPerformance, selectedPerfStrategy]);
 
   const strategyPerfSummary = useMemo(() => {
-    const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda'];
+    const strategies = ['Trendorama', 'The Bradman', 'YouHaveChosenWisely', 'TooHot TooCold', 'The Linda', 'DeMark Sequential'];
     const sourceTrades = allTrades.length > 0 ? allTrades : (paperPerformance?.recent_trades || []);
     const nowPac = getTodayDatePacific();
     const fallbackMonth = `${nowPac.getFullYear()}-${String(nowPac.getMonth() + 1).padStart(2, '0')}`;
@@ -703,7 +707,7 @@ export default function Home() {
           <span className="text-xs font-mono text-desk-muted">5 systematic futures models · net of commissions & slippage</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <StrategySummaryCard
             label="Trendorama"
             to="/trendorama"
@@ -748,6 +752,15 @@ export default function Home() {
             sub={`of ${lindaSignals?.total_scanned ?? 0} mean-revert`}
             mtdPct={strategyPerfSummary['The Linda']?.mtdPct}
             allTimePct={strategyPerfSummary['The Linda']?.allTimePct}
+          />
+          <StrategySummaryCard
+            label="DeMark Sequential"
+            to="/demark"
+            method="Countdown 13"
+            value={demarkSignals?.total_triggered ?? 0}
+            sub={`${demarkSignals?.total_approaching_13 ?? 0} near 13 · ${demarkSignals?.total_countdown_active ?? 0} active`}
+            mtdPct={strategyPerfSummary['DeMark Sequential']?.mtdPct}
+            allTimePct={strategyPerfSummary['DeMark Sequential']?.allTimePct}
           />
         </div>
       </section>
@@ -1259,6 +1272,7 @@ export default function Home() {
               { id: 'YouHaveChosenWisely', label: 'YouHaveChosenWisely' },
               { id: 'TooHot TooCold', label: 'TooHot TooCold' },
               { id: 'The Linda', label: 'The Linda' },
+              { id: 'DeMark Sequential', label: 'DeMark Sequential' },
             ].map((strat) => {
               const isSelected = selectedPerfStrategy === strat.id;
               return (

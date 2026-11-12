@@ -8,6 +8,7 @@ Calculates signals for:
   3. YouHaveChosenWisely (20 EMA Pullback + 14 ADX Filter)
   4. Too Hot / Too Cold (Outside Day / Inside Day Breakout Alerts)
   5. The Linda (Trend Day No-EMA-Touch Mean Reversion)
+  6. DeMark Sequential (Sell Countdown 13 Exhaustion)
 
 Exports updated JSON feeds directly to public/data/ with zero external pip dependencies.
 """
@@ -1095,6 +1096,194 @@ def analyze_linda(daily_bars: List[Bar], intraday_15m: List[dict], symbol: str) 
             }
 
 # -------------------------------------------------------------------
+# Strategy 6: DeMark Sequential (TD Sell Setup & Sell Countdown 13)
+# -------------------------------------------------------------------
+
+def analyze_demark(bars: List[Bar], symbol: str) -> Tuple[Optional[dict], Optional[dict]]:
+    """
+    Tom DeMark's TD Sequential Model - Bearish Sell Setup & Sell Countdown 13.
+    1. TD Sell Setup: 9 consecutive closes > close 4 bars earlier (close[t] > close[t-4]).
+       Establishes TDST Resistance (max high of setup) and TDST Support (min low of setup).
+    2. TD Sell Countdown: 13 non-consecutive closes >= high 2 bars earlier (close[t] >= high[t-2]).
+       Cancelled if price closes below TDST Support or opposing 9-bar Buy Setup completes.
+    3. Bar 13 Qualification: High of bar 13 >= Close of Countdown Bar 8.
+    4. Signal: Exhaustion Short trade on Bar 13 close with TD Risk Level stop.
+    """
+    if len(bars) < 30:
+        return None, None
+
+    atrs = compute_atr(bars, 20)
+    atr = atrs[-1] if atrs and atrs[-1] > 0 else (bars[-1].high - bars[-1].low)
+    smas50 = compute_sma([b.close for b in bars], 50)
+    sma50 = smas50[-1] if smas50 else bars[-1].close
+    smas200 = compute_sma([b.close for b in bars], 200)
+    sma200 = smas200[-1] if smas200 else bars[-1].close
+
+    sell_setup_count = 0
+    buy_setup_count = 0
+    active_sell_countdown = False
+    sell_countdown_count = 0
+    sell_countdown_bar_8_close = 0.0
+    active_setup_tdst_support = 0.0
+    active_setup_tdst_resistance = 0.0
+    countdown_bars_history = []
+    highest_countdown_high = 0.0
+    bar_13_triggered_today = False
+    bar_13_qualified = False
+
+    n = len(bars)
+    for i in range(n):
+        b = bars[i]
+
+        if i >= 4:
+            c_prev4 = bars[i - 4].close
+            if b.close > c_prev4:
+                sell_setup_count += 1
+                buy_setup_count = 0
+            elif b.close < c_prev4:
+                buy_setup_count += 1
+                sell_setup_count = 0
+            else:
+                sell_setup_count = 0
+                buy_setup_count = 0
+        else:
+            sell_setup_count = 0
+            buy_setup_count = 0
+
+        # When 9-bar Sell Setup completes
+        if sell_setup_count == 9:
+            setup_slice = bars[i - 8 : i + 1]
+            active_setup_tdst_support = min(sb.low for sb in setup_slice)
+            active_setup_tdst_resistance = max(sb.high for sb in setup_slice)
+            active_sell_countdown = True
+            sell_countdown_count = 0
+            countdown_bars_history = []
+            sell_countdown_bar_8_close = 0.0
+            highest_countdown_high = max(sb.high for sb in setup_slice)
+
+        # Cancellation check: opposing Buy Setup of 9 completes
+        if buy_setup_count == 9 and active_sell_countdown:
+            active_sell_countdown = False
+            sell_countdown_count = 0
+            countdown_bars_history = []
+
+        # Sell Countdown progress
+        if active_sell_countdown and i >= 2:
+            # Cancellation check: price closes below TDST support
+            if b.close < active_setup_tdst_support:
+                active_sell_countdown = False
+                sell_countdown_count = 0
+                countdown_bars_history = []
+            else:
+                # Countdown condition: close >= high of 2 bars ago
+                h_prev2 = bars[i - 2].high
+                if b.close >= h_prev2:
+                    if b.high > highest_countdown_high:
+                        highest_countdown_high = b.high
+
+                    if sell_countdown_count < 12:
+                        sell_countdown_count += 1
+                        countdown_bars_history.append(i)
+                        if sell_countdown_count == 8:
+                            sell_countdown_bar_8_close = b.close
+                    elif sell_countdown_count == 12:
+                        # Bar 13 Qualification rule: High >= Close of Countdown Bar 8
+                        qualifies = (b.high >= sell_countdown_bar_8_close) if sell_countdown_bar_8_close > 0 else True
+                        if qualifies:
+                            sell_countdown_count = 13
+                            bar_13_qualified = True
+                            countdown_bars_history.append(i)
+                            active_sell_countdown = False
+                            if i == n - 1:
+                                bar_13_triggered_today = True
+
+    b0 = bars[-1]
+    ref_high = highest_countdown_high if highest_countdown_high > 0 else b0.high
+    stop_loss = round(ref_high + 1.0 * atr, 4)
+    risk_dist = abs(stop_loss - b0.close)
+    profit_target = round(b0.close - 2.5 * risk_dist, 4) if risk_dist > 0 else round(b0.close - 2.0 * atr, 4)
+    if active_setup_tdst_support > 0 and active_setup_tdst_support < b0.close:
+        profit_target = max(profit_target, round(active_setup_tdst_support, 4))
+
+    pt_val = POINT_VALUES.get(symbol, 1.0)
+    risk_per_contract = risk_dist * pt_val
+    unit_qty = calc_capped_qty(symbol, risk_per_contract)
+
+    progress_pct = min(100, int(round((sell_countdown_count / 13.0) * 100)))
+    cluster = get_sym_cluster(symbol)
+
+    if bar_13_triggered_today:
+        phase = "COUNTDOWN_13"
+        notes = "DeMark Sell Countdown 13 EXHAUSTION TRIGGERED — Qualified Short Signal"
+    elif active_sell_countdown:
+        if sell_countdown_count >= 10:
+            phase = "COUNTDOWN_NEAR"
+            notes = f"Sell Countdown {sell_countdown_count}/13 — {13 - sell_countdown_count} bar(s) from exhaustion 13"
+        else:
+            phase = "COUNTDOWN_ACTIVE"
+            notes = f"Sell Countdown {sell_countdown_count}/13 active (TDST Support: {active_setup_tdst_support:.2f})"
+    elif sell_setup_count > 0:
+        phase = "SETUP_ACTIVE"
+        notes = f"Sell Setup {sell_setup_count}/9 in progress"
+    else:
+        phase = "NEUTRAL"
+        notes = "Neutral / Scanning for Sell Setup"
+
+    row = {
+        "symbol": symbol,
+        "exchange": "CME",
+        "currency": "USD",
+        "cluster": cluster,
+        "asof": b0.dt,
+        "last_close": round(b0.close, 4),
+        "last_open": round(b0.open, 4),
+        "last_high": round(b0.high, 4),
+        "last_low": round(b0.low, 4),
+        "atr20": round(atr, 4),
+        "sma50": round(sma50, 4),
+        "sma200": round(sma200, 4),
+        "setup_count": sell_setup_count,
+        "setup_completed": active_setup_tdst_support > 0,
+        "tdst_support": round(active_setup_tdst_support, 4) if active_setup_tdst_support > 0 else None,
+        "tdst_resistance": round(active_setup_tdst_resistance, 4) if active_setup_tdst_resistance > 0 else None,
+        "countdown_count": sell_countdown_count,
+        "countdown_active": active_sell_countdown,
+        "countdown_progress_pct": progress_pct,
+        "bar_13_qualified": bar_13_qualified,
+        "triggered": bar_13_triggered_today,
+        "direction": "SHORT",
+        "entry_price": round(b0.close, 4),
+        "stop_loss": stop_loss,
+        "profit_target": profit_target,
+        "unit_qty": unit_qty,
+        "phase": phase,
+        "notes": notes,
+    }
+
+    trig = None
+    if bar_13_triggered_today:
+        trig = {
+            "symbol": symbol,
+            "exchange": "CME",
+            "currency": "USD",
+            "cluster": cluster,
+            "side": "short",
+            "asof": b0.dt,
+            "last_close": round(b0.close, 4),
+            "entry_price": round(b0.close, 4),
+            "stop_loss": stop_loss,
+            "profit_target": profit_target,
+            "tdst_support": round(active_setup_tdst_support, 4),
+            "unit_qty": unit_qty,
+            "atr": round(atr, 4),
+            "countdown_count": 13,
+            "notes": "DeMark Sequential Sell Countdown 13 exhaustion top signal",
+        }
+
+    return row, trig
+
+
+# -------------------------------------------------------------------
 # Main Scan Pipeline
 # -------------------------------------------------------------------
 
@@ -1113,6 +1302,8 @@ def main():
     toohot_trig = []
     linda_signals = []
     linda_triggered = []
+    demark_rows = []
+    demark_trig = []
     bars_by_symbol: Dict[str, List[Bar]] = {}
     hourly_by_symbol: Dict[str, List[dict]] = {}
 
@@ -1167,6 +1358,13 @@ def main():
             linda_signals.append(linda_sig)
             if linda_sig["triggered"]:
                 linda_triggered.append(linda_sig)
+
+        # 6. DeMark Sequential Sell Countdown 13
+        dm_row, dm_trig = analyze_demark(bars, symbol)
+        if dm_row:
+            demark_rows.append(dm_row)
+        if dm_trig:
+            demark_trig.append(dm_trig)
 
     if not taylor_signals:
         raise RuntimeError("ERROR: Failed to fetch daily market data for any futures symbols. Aborting signal update.")
@@ -1276,6 +1474,21 @@ def main():
         "signals": linda_signals,
     }
     (web_data_dir / "linda_signals_latest.json").write_text(json.dumps(linda_payload, indent=2), encoding="utf-8")
+
+    # 6. DeMark Sequential JSON
+    demark_payload = {
+        "timestamp": now_iso,
+        "date": latest_date,
+        "system": "DeMark",
+        "strategy": "DeMark Sequential Sell Countdown 13",
+        "total_scanned": len(demark_rows),
+        "total_countdown_active": sum(1 for r in demark_rows if r.get("countdown_active")),
+        "total_approaching_13": sum(1 for r in demark_rows if (r.get("countdown_count", 0) >= 10 and r.get("countdown_active"))),
+        "total_triggered": len(demark_trig),
+        "signals": demark_rows,
+        "triggered": demark_trig,
+    }
+    (web_data_dir / "demark_signals_latest.json").write_text(json.dumps(demark_payload, indent=2), encoding="utf-8")
 
     print(f"=== SUCCESSFULLY UPDATED ALL FUTURES SIGNAL FEEDS FOR {latest_date} ===")
 
@@ -1433,6 +1646,10 @@ def update_standalone_paper_trades(
                 elif side == "short" and low <= entry - 1.0 * atr_cur:
                     stop = min(stop, entry)
                     t["stop_loss"] = round(stop, 4)
+            elif strat == "DeMark Sequential":
+                if side == "short" and low <= entry - 1.0 * atr_cur:
+                    stop = min(stop, entry)
+                    t["stop_loss"] = round(stop, 4)
 
             donchian_low_20 = min(b.low for b in bars[-21:-1]) if len(bars) >= 21 else min(b.low for b in bars)
             donchian_high_20 = max(b.high for b in bars[-21:-1]) if len(bars) >= 21 else max(b.high for b in bars)
@@ -1470,6 +1687,7 @@ def update_standalone_paper_trades(
             if strat == "The Bradman" and duration >= 3: time_exit = True
             elif strat == "TooHot TooCold" and duration >= 4: time_exit = True
             elif strat == "YouHaveChosenWisely" and duration >= 5: time_exit = True
+            elif strat == "DeMark Sequential" and duration >= 10: time_exit = True
 
             # YouHaveChosenWisely: 2 consecutive closes across EMA20
             ema_exit = False
@@ -1759,6 +1977,28 @@ def update_standalone_paper_trades(
                     apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
                     trades.append(new_t)
                     trade_id_seq += 1
+
+            # Strategy 6: DeMark Sequential Sell Countdown 13
+            dm_row, dm_trig = analyze_demark(bars, sym)
+            if dm_trig and can_open_trade(sym):
+                entry_p = dm_trig["entry_price"]
+                stop_p = dm_trig["stop_loss"]
+                target_p = dm_trig["profit_target"]
+                risk_d = abs(entry_p - stop_p) * pt_val
+                raw_q = max(1, int(RISK_PER_TRADE_DOLLARS // risk_d)) if risk_d > 0 else 1
+                qty = min(raw_q, 5) if sym == "DX" else raw_q
+                new_t = {
+                    "id": f"pt_{sym}_DeMk_{cur_date.replace('-','')}_{trade_id_seq}",
+                    "symbol": sym, "symbol_name": sym_name, "strategy": "DeMark Sequential", "side": "short",
+                    "entry_date": cur_date, "entry_price": round(entry_p, 4), "qty": qty,
+                    "stop_loss": round(stop_p, 4), "profit_target": round(target_p, 4),
+                    "point_value": pt_val, "status": "OPEN", "current_price": round(b0.close, 4),
+                    "duration_days": 0, "initial_risk": round(risk_d * qty, 2),
+                    "created_at": cur_date + "T13:30:00Z", "updated_at": cur_date + "T20:00:00Z"
+                }
+                apply_trade_accounting(new_t, is_open=True, gross_pnl=(entry_p - b0.close) * pt_val * qty, ref_price=b0.close)
+                trades.append(new_t)
+                trade_id_seq += 1
 
             # Strategy 5: The Linda (Trend Day No-Touch Fade at Opening Bell)
             emas20 = compute_ema([b.close for b in bars[:-1]], 20)

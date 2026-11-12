@@ -2,7 +2,7 @@ export interface PaperTrade {
   id: string;
   symbol: string;
   symbol_name: string;
-  strategy: string; // 'Trendorama' | 'The Bradman' | 'YouHaveChosenWisely' | 'TooHot TooCold' | 'The Linda'
+  strategy: string; // 'Trendorama' | 'The Bradman' | 'YouHaveChosenWisely' | 'TooHot TooCold' | 'The Linda' | 'DeMark Sequential'
   side: 'long' | 'short';
   entry_date: string;
   entry_price: number;
