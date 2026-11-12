@@ -162,7 +162,7 @@ export default function Navigation() {
   const isFuturesSection = section && STRATEGY_LINKS.some((s) => s.key === section);
 
   const navItemClass = (active: boolean) =>
-    `h-8 px-3 rounded-lg text-sm inline-flex items-center gap-2 transition-colors duration-150 ease-desk ${
+    `h-8 px-3 rounded-lg text-sm inline-flex items-center gap-2 whitespace-nowrap shrink-0 transition-colors duration-150 ease-desk ${
       active
         ? 'bg-desk-raised text-desk-text font-medium shadow-inset-top border border-hairline'
         : 'text-desk-secondary hover:text-desk-text hover:bg-desk-raised/50'
@@ -195,15 +195,18 @@ export default function Navigation() {
                 Dashboard
               </Link>
 
-              {/* Futures strategies dropdown on lg, inline on 2xl */}
-              <div ref={dropdownRef} className="relative 2xl:hidden">
+              {/* Futures strategies dropdown on lg/xl/2xl, inline on ultra-wide min-[1720px] */}
+              <div ref={dropdownRef} className="relative min-[1720px]:hidden">
                 <button
                   type="button"
                   onClick={() => setStrategiesOpen((o) => !o)}
                   aria-expanded={strategiesOpen}
                   className={navItemClass(Boolean(isFuturesSection || strategiesOpen))}
                 >
-                  <span>Strategies</span>
+                  <span className="flex items-center gap-1.5">
+                    {isFuturesSection && <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />}
+                    <span>{isFuturesSection && section ? SECTION_LABELS[section] : 'Strategies'}</span>
+                  </span>
                   <ChevronDownIcon
                     className={`w-4 h-4 text-desk-muted transition-transform duration-150 ease-desk ${
                       strategiesOpen ? 'rotate-180' : ''
@@ -241,7 +244,7 @@ export default function Navigation() {
                 )}
               </div>
 
-              <div className="hidden 2xl:flex items-center gap-1">
+              <div className="hidden min-[1720px]:flex items-center gap-1">
                 {STRATEGY_LINKS.map((item) => (
                   <Link
                     key={item.key}
