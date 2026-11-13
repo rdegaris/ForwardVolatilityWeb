@@ -170,10 +170,10 @@ export default function Navigation() {
 
   return (
     <header className="sticky top-0 z-40 bg-desk-deep border-b border-hairline">
-      <div className="max-w-[1520px] mx-auto px-6 md:px-8">
-        <div className="h-14 flex items-center justify-between gap-6">
+      <div className="max-w-[1760px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="h-14 flex items-center justify-between gap-4">
           {/* Left: Brand + Primary links */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 xl:gap-5 min-w-0">
             <Link
               to="/"
               aria-label="OzCTA home"
@@ -273,10 +273,10 @@ export default function Navigation() {
           </div>
 
           {/* Right: Auth controls (one button max, Log in as quiet text link) */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3 shrink-0 whitespace-nowrap">
             {isAuthenticated ? (
               <>
-                <span className="text-xs text-desk-muted">
+                <span className="text-xs text-desk-muted whitespace-nowrap shrink-0">
                   Signed in as <span className="text-desk-secondary font-medium">{user?.firstName || user?.email}</span>
                 </span>
                 <button
@@ -285,7 +285,7 @@ export default function Navigation() {
                     logout();
                     navigate('/login');
                   }}
-                  className="h-8 px-3 rounded-lg text-sm text-desk-secondary hover:text-desk-text hover:bg-desk-raised/60 transition-colors duration-150 ease-desk"
+                  className="h-8 px-2.5 rounded-lg text-sm text-desk-secondary hover:text-desk-text hover:bg-desk-raised/60 transition-colors duration-150 ease-desk whitespace-nowrap shrink-0"
                 >
                   Log out
                 </button>
@@ -294,11 +294,11 @@ export default function Navigation() {
               <>
                 <Link
                   to="/login"
-                  className="text-sm text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk"
+                  className="text-sm text-desk-secondary hover:text-desk-text transition-colors duration-150 ease-desk whitespace-nowrap shrink-0"
                 >
                   Log in
                 </Link>
-                <Link to="/register" className="desk-btn-primary h-8 px-3.5 text-xs">
+                <Link to="/register" className="desk-btn-primary h-8 px-3.5 text-xs whitespace-nowrap shrink-0">
                   Create account
                 </Link>
               </>
@@ -328,7 +328,7 @@ export default function Navigation() {
       {/* Contextual Sub-Navigation Strip */}
       {section && SUB_NAV[section] && (
         <div className="border-t border-hairline bg-desk-bg/80">
-          <div className="max-w-[1520px] mx-auto px-6 md:px-8 h-10 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="max-w-[1760px] mx-auto px-4 sm:px-6 md:px-8 h-10 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap">
             <span className="flex items-center gap-2 text-xs font-medium text-desk-secondary shrink-0">
               <span className="h-1.5 w-1.5 rounded-full bg-desk-up" />
               {SECTION_LABELS[section]}
