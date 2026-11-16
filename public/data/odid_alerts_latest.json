@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-16T08:38:59.792509Z",
+  "timestamp": "2026-11-16T14:15:51.873173Z",
   "date": "2026-11-16",
   "system": "odid",
-  "total_alerts": 7,
+  "total_alerts": 6,
   "alerts": [
     {
       "symbol": "ES",
@@ -11,14 +11,14 @@
       "side": "short",
       "asof": "2026-11-16",
       "high_trigger": 7614.25,
-      "low_trigger": 7537.75,
-      "entry_stop": 7537.75,
-      "stop_loss": 7654.8629,
-      "last_close": 7556.75,
+      "low_trigger": 7520.25,
+      "entry_stop": 7520.25,
+      "stop_loss": 7638.2379,
+      "last_close": 7536.75,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 7614.25 / Down 7537.75"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 7614.25 / Down 7520.25"
     },
     {
       "symbol": "RTY",
@@ -27,14 +27,14 @@
       "side": "short",
       "asof": "2026-11-16",
       "high_trigger": 2808.0,
-      "low_trigger": 2781.3999,
-      "entry_stop": 2781.3999,
-      "stop_loss": 2834.5848,
-      "last_close": 2785.5,
+      "low_trigger": 2778.5,
+      "entry_stop": 2778.5,
+      "stop_loss": 2831.8299,
+      "last_close": 2783.1001,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 2808.00 / Down 2781.40"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 2808.00 / Down 2778.50"
     },
     {
       "symbol": "YM",
@@ -43,14 +43,14 @@
       "side": "short",
       "asof": "2026-11-16",
       "high_trigger": 52559.0,
-      "low_trigger": 52290.0,
-      "entry_stop": 52290.0,
-      "stop_loss": 53053.4574,
-      "last_close": 52353.0,
+      "low_trigger": 52275.0,
+      "entry_stop": 52275.0,
+      "stop_loss": 53039.2074,
+      "last_close": 52351.0,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 52559.00 / Down 52290.00"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 52559.00 / Down 52275.00"
     },
     {
       "symbol": "GC",
@@ -62,43 +62,27 @@
       "low_trigger": 3871.1001,
       "entry_stop": 3871.1001,
       "stop_loss": 3961.0165,
-      "last_close": 3859.2,
+      "last_close": 3866.8999,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
       "message": "TOO_COLD (INSIDE_DAY) on 2026-11-13 \u2014 Breakout triggered SHORT"
     },
     {
-      "symbol": "6E",
+      "symbol": "ZB",
       "pattern": "TOO_COLD (INSIDE_DAY)",
       "type": "TOO_COLD (INSIDE_DAY)",
       "side": "short",
       "asof": "2026-11-16",
-      "high_trigger": 1.1041,
-      "low_trigger": 1.1023,
-      "entry_stop": 1.1023,
-      "stop_loss": 1.1084,
-      "last_close": 1.1027,
-      "severity": "medium",
-      "eligible": true,
-      "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 1.10 / Down 1.10"
-    },
-    {
-      "symbol": "ZB",
-      "pattern": "TOO_COLD (INSIDE_DAY)",
-      "type": "TOO_COLD (INSIDE_DAY)",
-      "side": "long",
-      "asof": "2026-11-16",
-      "high_trigger": 105.5,
+      "high_trigger": 105.6875,
       "low_trigger": 105.2188,
-      "entry_stop": 105.5,
-      "stop_loss": 104.3878,
+      "entry_stop": 105.2188,
+      "stop_loss": 106.3403,
       "last_close": 105.375,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 105.50 / Down 105.22"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 105.69 / Down 105.22"
     },
     {
       "symbol": "ZN",
@@ -106,15 +90,15 @@
       "type": "TOO_COLD (INSIDE_DAY)",
       "side": "long",
       "asof": "2026-11-16",
-      "high_trigger": 105.3125,
+      "high_trigger": 105.4531,
       "low_trigger": 105.1406,
-      "entry_stop": 105.3125,
-      "stop_loss": 104.7155,
-      "last_close": 105.25,
+      "entry_stop": 105.4531,
+      "stop_loss": 104.849,
+      "last_close": 105.3125,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 105.31 / Down 105.14"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-16 \u2014 Breakout levels: Up 105.45 / Down 105.14"
     }
   ]
 }
