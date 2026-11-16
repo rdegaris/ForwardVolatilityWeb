@@ -1,21 +1,8 @@
 {
-  "timestamp": "2026-11-14T03:33:22.182383Z",
-  "date": "2026-11-13",
+  "timestamp": "2026-11-16T08:39:10.477675Z",
+  "date": "2026-11-16",
   "system": "S2",
   "open_trades": [
-    {
-      "symbol": "NG",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "E-mini Natural Gas (QG)",
-      "side": "long",
-      "qty": 3,
-      "avg_price": 3.334,
-      "stop_price": 3.1106,
-      "units": 1,
-      "unrealized_pnl": -697.5,
-      "asof": "2026-11-13"
-    },
     {
       "symbol": "GC",
       "exchange": "CME",
@@ -26,8 +13,8 @@
       "avg_price": 3879.3,
       "stop_price": 4018.5742,
       "units": 1,
-      "unrealized_pnl": -84.25,
-      "asof": "2026-11-13"
+      "unrealized_pnl": 199.75,
+      "asof": "2026-11-16"
     },
     {
       "symbol": "6E",
@@ -37,10 +24,10 @@
       "side": "short",
       "qty": 16,
       "avg_price": 1.1085,
-      "stop_price": 1.1181,
+      "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 975.51,
-      "asof": "2026-11-13"
+      "unrealized_pnl": 1155.52,
+      "asof": "2026-11-16"
     }
   ]
 }

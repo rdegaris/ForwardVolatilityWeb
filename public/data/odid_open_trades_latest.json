@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-11-14T03:33:22.182383Z",
-  "date": "2026-11-13",
+  "timestamp": "2026-11-16T08:39:10.477675Z",
+  "date": "2026-11-16",
   "system": "odid",
   "open_trades": [
     {
-      "symbol": "ES",
+      "symbol": "CL",
       "exchange": "CME",
       "currency": "USD",
-      "contract_local_symbol": "Micro E-mini S&P 500 (MES)",
+      "contract_local_symbol": "Micro WTI Crude Oil (MCL)",
       "side": "long",
-      "qty": 3,
-      "net_qty": 3,
-      "avg_price": 7598.75
+      "qty": 4,
+      "net_qty": 4,
+      "avg_price": 89.15
     }
   ]
 }
