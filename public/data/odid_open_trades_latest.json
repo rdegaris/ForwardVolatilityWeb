@@ -1,6 +1,17 @@
 {
-  "timestamp": "2026-11-17T08:24:39.552959Z",
+  "timestamp": "2026-11-17T14:06:11.602519Z",
   "date": "2026-11-17",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "ZB",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "30-Year T-Bond Futures",
+      "side": "long",
+      "qty": 1,
+      "net_qty": 1,
+      "avg_price": 105.75
+    }
+  ]
 }
