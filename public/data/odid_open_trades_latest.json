@@ -1,6 +1,17 @@
 {
-  "timestamp": "2026-11-18T14:05:58.774379Z",
+  "timestamp": "2026-11-18T17:34:10.825668Z",
   "date": "2026-11-18",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "6B",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro British Pound (M6B)",
+      "side": "short",
+      "qty": 51,
+      "net_qty": -51,
+      "avg_price": 1.3169
+    }
+  ]
 }

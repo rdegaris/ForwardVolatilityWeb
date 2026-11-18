@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-18T14:05:58.774379Z",
+  "timestamp": "2026-11-18T17:34:10.825668Z",
   "date": "2026-11-18",
   "system": "S2",
   "open_trades": [
@@ -13,7 +13,7 @@
       "avg_price": 3879.3,
       "stop_price": 3879.3,
       "units": 1,
-      "unrealized_pnl": 911.75,
+      "unrealized_pnl": 1292.75,
       "asof": "2026-11-18"
     },
     {
@@ -26,7 +26,20 @@
       "avg_price": 1.1085,
       "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 2075.53,
+      "unrealized_pnl": 2005.53,
+      "asof": "2026-11-18"
+    },
+    {
+      "symbol": "CL",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro WTI Crude Oil (MCL)",
+      "side": "short",
+      "qty": 3,
+      "avg_price": 83.88,
+      "stop_price": 90.4639,
+      "units": 1,
+      "unrealized_pnl": 716.25,
       "asof": "2026-11-18"
     }
   ]
