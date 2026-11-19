@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-11-19T17:33:51.621737+00:00",
+  "timestamp": "2026-11-19T20:14:37.078700+00:00",
   "model": "Prime Aggressive Model",
   "inception_date": "2026-10-28",
   "starting_balance": 45000.0,
   "price_date": "2026-11-18",
-  "total_value": 43094.12,
-  "day_change": -187.72,
-  "day_change_pct": -0.434,
-  "total_gain": -1905.88,
-  "total_gain_pct": -4.235,
+  "total_value": 43097.23,
+  "day_change": -184.62,
+  "day_change_pct": -0.427,
+  "total_gain": -1902.77,
+  "total_gain_pct": -4.228,
   "positions": [
     {
       "ticker": "ANODX",
@@ -26,7 +26,7 @@
       "gain": -38.67,
       "gain_pct": -2.455,
       "stale": false,
-      "current_pct": 3.57
+      "current_pct": 3.56
     },
     {
       "ticker": "BTMKX",
@@ -134,7 +134,7 @@
       "gain": -268.11,
       "gain_pct": -9.166,
       "stale": false,
-      "current_pct": 6.17
+      "current_pct": 6.16
     },
     {
       "ticker": "PTRQX",
@@ -143,16 +143,16 @@
       "shares": 155.1724,
       "basis_price": 11.6,
       "cost_basis": 1800.0,
-      "price": 11.51,
+      "price": 11.53,
       "prev_close": 11.51,
       "price_date": "2026-11-18",
-      "value": 1786.03,
-      "day_change": 0.0,
-      "day_change_pct": 0.0,
-      "gain": -13.97,
-      "gain_pct": -0.776,
+      "value": 1789.14,
+      "day_change": 3.1,
+      "day_change_pct": 0.174,
+      "gain": -10.86,
+      "gain_pct": -0.603,
       "stale": false,
-      "current_pct": 4.14
+      "current_pct": 4.15
     },
     {
       "ticker": "VEIRX",
@@ -170,7 +170,7 @@
       "gain": -60.96,
       "gain_pct": -1.231,
       "stale": false,
-      "current_pct": 11.35
+      "current_pct": 11.34
     },
     {
       "ticker": "VGSLX",
@@ -348,7 +348,7 @@
     },
     {
       "date": "2026-11-18",
-      "value": 43094.12
+      "value": 43097.23
     }
   ]
 }
