@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-18T21:20:45.148805Z",
-  "date": "2026-11-18",
+  "timestamp": "2026-11-19T00:45:55.159603Z",
+  "date": "2026-11-19",
   "system": "S2",
   "open_trades": [
     {
@@ -13,8 +13,8 @@
       "avg_price": 3879.3,
       "stop_price": 3879.3,
       "units": 1,
-      "unrealized_pnl": 1515.75,
-      "asof": "2026-11-18"
+      "unrealized_pnl": 1304.75,
+      "asof": "2026-11-19"
     },
     {
       "symbol": "6E",
@@ -26,21 +26,8 @@
       "avg_price": 1.1085,
       "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 1955.51,
-      "asof": "2026-11-18"
-    },
-    {
-      "symbol": "CL",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "Micro WTI Crude Oil (MCL)",
-      "side": "short",
-      "qty": 3,
-      "avg_price": 83.88,
-      "stop_price": 90.4639,
-      "units": 1,
-      "unrealized_pnl": 554.25,
-      "asof": "2026-11-18"
+      "unrealized_pnl": 2075.53,
+      "asof": "2026-11-19"
     },
     {
       "symbol": "NG",
@@ -50,10 +37,10 @@
       "side": "long",
       "qty": 3,
       "avg_price": 3.397,
-      "stop_price": 3.1612,
+      "stop_price": 3.1669,
       "units": 1,
-      "unrealized_pnl": 45.0,
-      "asof": "2026-11-18"
+      "unrealized_pnl": -60.0,
+      "asof": "2026-11-19"
     }
   ]
 }
