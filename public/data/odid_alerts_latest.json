@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-19T20:14:23.349514Z",
+  "timestamp": "2026-11-19T21:20:26.754028Z",
   "date": "2026-11-19",
   "system": "odid",
   "total_alerts": 4,
@@ -11,14 +11,14 @@
       "side": "short",
       "asof": "2026-11-19",
       "high_trigger": 7440.5,
-      "low_trigger": 7194.25,
-      "entry_stop": 7194.25,
-      "stop_loss": 7324.8729,
-      "last_close": 7198.5,
+      "low_trigger": 7183.25,
+      "entry_stop": 7183.25,
+      "stop_loss": 7314.4229,
+      "last_close": 7192.0,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 7440.50 / Down 7194.25"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 7440.50 / Down 7183.25"
     },
     {
       "symbol": "NQ",
@@ -27,14 +27,14 @@
       "side": "short",
       "asof": "2026-11-19",
       "high_trigger": 27838.0,
-      "low_trigger": 26571.5,
-      "entry_stop": 26571.5,
-      "stop_loss": 27363.1748,
-      "last_close": 26596.5,
+      "low_trigger": 26506.25,
+      "entry_stop": 26506.25,
+      "stop_loss": 27301.1873,
+      "last_close": 26563.75,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 27838.00 / Down 26571.50"
+      "message": "Armed TOO_HOT (OUTSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 27838.00 / Down 26506.25"
     },
     {
       "symbol": "NG",
@@ -43,14 +43,14 @@
       "side": "short",
       "asof": "2026-11-19",
       "high_trigger": 3.416,
-      "low_trigger": 3.254,
-      "entry_stop": 3.254,
-      "stop_loss": 3.4114,
-      "last_close": 3.272,
+      "low_trigger": 3.238,
+      "entry_stop": 3.238,
+      "stop_loss": 3.3962,
+      "last_close": 3.244,
       "severity": "medium",
       "eligible": true,
       "blocked_reason": null,
-      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 3.42 / Down 3.25"
+      "message": "Armed TOO_COLD (INSIDE_DAY) on 2026-11-19 \u2014 Breakout levels: Up 3.42 / Down 3.24"
     },
     {
       "symbol": "DX",
@@ -62,7 +62,7 @@
       "low_trigger": 103.588,
       "entry_stop": 103.974,
       "stop_loss": 103.4695,
-      "last_close": 103.871,
+      "last_close": 103.913,
       "severity": "high",
       "eligible": true,
       "blocked_reason": null,
