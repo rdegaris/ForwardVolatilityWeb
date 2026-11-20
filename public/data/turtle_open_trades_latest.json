@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-20T00:44:11.431346Z",
+  "timestamp": "2026-11-20T03:32:56.644822Z",
   "date": "2026-11-20",
   "system": "S2",
   "open_trades": [
@@ -11,9 +11,9 @@
       "side": "short",
       "qty": 1,
       "avg_price": 3879.3,
-      "stop_price": 3779.5577,
+      "stop_price": 3715.8404,
       "units": 1,
-      "unrealized_pnl": 2676.75,
+      "unrealized_pnl": 3545.75,
       "asof": "2026-11-20"
     },
     {
@@ -26,7 +26,7 @@
       "avg_price": 1.1085,
       "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 2075.53,
+      "unrealized_pnl": 2035.52,
       "asof": "2026-11-20"
     },
     {
@@ -39,20 +39,7 @@
       "avg_price": 3.397,
       "stop_price": 3.1612,
       "units": 1,
-      "unrealized_pnl": -1155.0,
-      "asof": "2026-11-20"
-    },
-    {
-      "symbol": "YM",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "Micro E-mini Dow Jones (MYM)",
-      "side": "short",
-      "qty": 3,
-      "avg_price": 50096.0,
-      "stop_price": 51353.0651,
-      "units": 1,
-      "unrealized_pnl": 1383.45,
+      "unrealized_pnl": -1132.5,
       "asof": "2026-11-20"
     },
     {
@@ -61,11 +48,24 @@
       "currency": "USD",
       "contract_local_symbol": "Micro British Pound (M6B)",
       "side": "short",
-      "qty": 34,
+      "qty": 33,
       "avg_price": 1.3136,
-      "stop_price": 1.3228,
+      "stop_price": 1.3231,
       "units": 1,
-      "unrealized_pnl": 994.26,
+      "unrealized_pnl": 841.15,
+      "asof": "2026-11-20"
+    },
+    {
+      "symbol": "NQ",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini Nasdaq 100 (MNQ)",
+      "side": "short",
+      "qty": 1,
+      "avg_price": 26366.5,
+      "stop_price": 27523.2284,
+      "units": 1,
+      "unrealized_pnl": -139.35,
       "asof": "2026-11-20"
     }
   ]
