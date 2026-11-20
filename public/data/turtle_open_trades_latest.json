@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-20T14:05:59.669591Z",
+  "timestamp": "2026-11-20T17:33:59.271970Z",
   "date": "2026-11-20",
   "system": "S2",
   "open_trades": [
@@ -13,7 +13,7 @@
       "avg_price": 3879.3,
       "stop_price": 3709.2704,
       "units": 1,
-      "unrealized_pnl": 3114.75,
+      "unrealized_pnl": 3500.75,
       "asof": "2026-11-20"
     },
     {
@@ -26,7 +26,7 @@
       "avg_price": 1.1085,
       "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 1675.51,
+      "unrealized_pnl": 1885.51,
       "asof": "2026-11-20"
     },
     {
@@ -39,7 +39,7 @@
       "avg_price": 3.397,
       "stop_price": 3.397,
       "units": 1,
-      "unrealized_pnl": 2055.0,
+      "unrealized_pnl": 2025.0,
       "asof": "2026-11-20"
     },
     {
@@ -52,7 +52,20 @@
       "avg_price": 1.3136,
       "stop_price": 1.3231,
       "units": 1,
-      "unrealized_pnl": 428.65,
+      "unrealized_pnl": 717.4,
+      "asof": "2026-11-20"
+    },
+    {
+      "symbol": "ES",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini S&P 500 (MES)",
+      "side": "short",
+      "qty": 1,
+      "avg_price": 7167.75,
+      "stop_price": 7369.6132,
+      "units": 1,
+      "unrealized_pnl": 655.03,
       "asof": "2026-11-20"
     },
     {
@@ -63,9 +76,9 @@
       "side": "short",
       "qty": 1,
       "avg_price": 26366.5,
-      "stop_price": 27549.5346,
+      "stop_price": 27584.8784,
       "units": 1,
-      "unrealized_pnl": 436.15,
+      "unrealized_pnl": 1600.65,
       "asof": "2026-11-20"
     },
     {
@@ -78,7 +91,7 @@
       "avg_price": 81.97,
       "stop_price": 88.2075,
       "units": 1,
-      "unrealized_pnl": -99.75,
+      "unrealized_pnl": -138.75,
       "asof": "2026-11-20"
     }
   ]
