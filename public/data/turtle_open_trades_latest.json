@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-19T21:20:35.983318Z",
-  "date": "2026-11-19",
+  "timestamp": "2026-11-20T00:44:11.431346Z",
+  "date": "2026-11-20",
   "system": "S2",
   "open_trades": [
     {
@@ -11,10 +11,10 @@
       "side": "short",
       "qty": 1,
       "avg_price": 3879.3,
-      "stop_price": 3841.8877,
+      "stop_price": 3779.5577,
       "units": 1,
-      "unrealized_pnl": 2188.75,
-      "asof": "2026-11-19"
+      "unrealized_pnl": 2676.75,
+      "asof": "2026-11-20"
     },
     {
       "symbol": "6E",
@@ -26,8 +26,8 @@
       "avg_price": 1.1085,
       "stop_price": 1.1085,
       "units": 1,
-      "unrealized_pnl": 2035.52,
-      "asof": "2026-11-19"
+      "unrealized_pnl": 2075.53,
+      "asof": "2026-11-20"
     },
     {
       "symbol": "NG",
@@ -40,7 +40,20 @@
       "stop_price": 3.1612,
       "units": 1,
       "unrealized_pnl": -1155.0,
-      "asof": "2026-11-19"
+      "asof": "2026-11-20"
+    },
+    {
+      "symbol": "YM",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini Dow Jones (MYM)",
+      "side": "short",
+      "qty": 3,
+      "avg_price": 50096.0,
+      "stop_price": 51353.0651,
+      "units": 1,
+      "unrealized_pnl": 1383.45,
+      "asof": "2026-11-20"
     },
     {
       "symbol": "6B",
@@ -50,10 +63,10 @@
       "side": "short",
       "qty": 34,
       "avg_price": 1.3136,
-      "stop_price": 1.323,
+      "stop_price": 1.3228,
       "units": 1,
-      "unrealized_pnl": 845.51,
-      "asof": "2026-11-19"
+      "unrealized_pnl": 994.26,
+      "asof": "2026-11-20"
     }
   ]
 }
