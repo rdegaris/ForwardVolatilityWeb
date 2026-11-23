@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-23T08:27:10.559042Z",
+  "timestamp": "2026-11-23T14:06:15.419954Z",
   "date": "2026-11-23",
   "system": "S2",
   "open_trades": [
@@ -13,7 +13,7 @@
       "avg_price": 3879.3,
       "stop_price": 3698.3803,
       "units": 1,
-      "unrealized_pnl": 2773.75,
+      "unrealized_pnl": 2480.75,
       "asof": "2026-11-23"
     },
     {
@@ -24,22 +24,9 @@
       "side": "short",
       "qty": 16,
       "avg_price": 1.1085,
-      "stop_price": 1.1085,
+      "stop_price": 1.1039,
       "units": 1,
-      "unrealized_pnl": 1685.53,
-      "asof": "2026-11-23"
-    },
-    {
-      "symbol": "6B",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "Micro British Pound (M6B)",
-      "side": "short",
-      "qty": 33,
-      "avg_price": 1.3136,
-      "stop_price": 1.3231,
-      "units": 1,
-      "unrealized_pnl": 222.4,
+      "unrealized_pnl": 2885.51,
       "asof": "2026-11-23"
     },
     {
@@ -52,7 +39,7 @@
       "avg_price": 7167.75,
       "stop_price": 7167.75,
       "units": 1,
-      "unrealized_pnl": 356.28,
+      "unrealized_pnl": 127.53,
       "asof": "2026-11-23"
     },
     {
@@ -65,7 +52,7 @@
       "avg_price": 26366.5,
       "stop_price": 26366.5,
       "units": 1,
-      "unrealized_pnl": 941.65,
+      "unrealized_pnl": 338.65,
       "asof": "2026-11-23"
     },
     {
@@ -78,7 +65,7 @@
       "avg_price": 81.97,
       "stop_price": 88.2323,
       "units": 1,
-      "unrealized_pnl": -312.75,
+      "unrealized_pnl": 317.25,
       "asof": "2026-11-23"
     },
     {
@@ -91,7 +78,20 @@
       "avg_price": 3.418,
       "stop_price": 3.418,
       "units": 1,
-      "unrealized_pnl": 825.0,
+      "unrealized_pnl": 622.5,
+      "asof": "2026-11-23"
+    },
+    {
+      "symbol": "6B",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro British Pound (M6B)",
+      "side": "short",
+      "qty": 33,
+      "avg_price": 1.3076,
+      "stop_price": 1.3172,
+      "units": 1,
+      "unrealized_pnl": 16.15,
       "asof": "2026-11-23"
     }
   ]
