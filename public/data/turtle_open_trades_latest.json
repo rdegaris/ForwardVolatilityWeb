@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-23T21:21:28.548956Z",
-  "date": "2026-11-23",
+  "timestamp": "2026-11-24T00:42:19.757894Z",
+  "date": "2026-11-24",
   "system": "S2",
   "open_trades": [
     {
@@ -13,8 +13,8 @@
       "avg_price": 3879.3,
       "stop_price": 3698.3803,
       "units": 1,
-      "unrealized_pnl": 2442.75,
-      "asof": "2026-11-23"
+      "unrealized_pnl": 2268.75,
+      "asof": "2026-11-24"
     },
     {
       "symbol": "6E",
@@ -24,10 +24,49 @@
       "side": "short",
       "qty": 16,
       "avg_price": 1.1085,
-      "stop_price": 1.1016,
+      "stop_price": 1.1032,
       "units": 1,
-      "unrealized_pnl": 3445.53,
-      "asof": "2026-11-23"
+      "unrealized_pnl": 3395.51,
+      "asof": "2026-11-24"
+    },
+    {
+      "symbol": "6B",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro British Pound (M6B)",
+      "side": "short",
+      "qty": 33,
+      "avg_price": 1.3136,
+      "stop_price": 1.3136,
+      "units": 1,
+      "unrealized_pnl": 2099.26,
+      "asof": "2026-11-24"
+    },
+    {
+      "symbol": "ES",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini S&P 500 (MES)",
+      "side": "short",
+      "qty": 1,
+      "avg_price": 7167.75,
+      "stop_price": 7379.6819,
+      "units": 1,
+      "unrealized_pnl": -509.97,
+      "asof": "2026-11-24"
+    },
+    {
+      "symbol": "NQ",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "Micro E-mini Nasdaq 100 (MNQ)",
+      "side": "short",
+      "qty": 1,
+      "avg_price": 26366.5,
+      "stop_price": 27626.3159,
+      "units": 1,
+      "unrealized_pnl": -940.35,
+      "asof": "2026-11-24"
     },
     {
       "symbol": "CL",
@@ -39,8 +78,8 @@
       "avg_price": 81.97,
       "stop_price": 88.2323,
       "units": 1,
-      "unrealized_pnl": 521.25,
-      "asof": "2026-11-23"
+      "unrealized_pnl": 446.25,
+      "asof": "2026-11-24"
     },
     {
       "symbol": "NG",
@@ -50,23 +89,10 @@
       "side": "long",
       "qty": 3,
       "avg_price": 3.418,
-      "stop_price": 3.418,
+      "stop_price": 3.1686,
       "units": 1,
-      "unrealized_pnl": 757.5,
-      "asof": "2026-11-23"
-    },
-    {
-      "symbol": "6B",
-      "exchange": "CME",
-      "currency": "USD",
-      "contract_local_symbol": "Micro British Pound (M6B)",
-      "side": "short",
-      "qty": 32,
-      "avg_price": 1.3076,
-      "stop_price": 1.3175,
-      "units": 1,
-      "unrealized_pnl": 815.51,
-      "asof": "2026-11-23"
+      "unrealized_pnl": 915.0,
+      "asof": "2026-11-24"
     }
   ]
 }
