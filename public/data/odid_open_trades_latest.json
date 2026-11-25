@@ -1,6 +1,17 @@
 {
-  "timestamp": "2026-11-25T00:46:39.651113Z",
+  "timestamp": "2026-11-25T03:34:23.841966Z",
   "date": "2026-11-25",
   "system": "odid",
-  "open_trades": []
+  "open_trades": [
+    {
+      "symbol": "ZN",
+      "exchange": "CME",
+      "currency": "USD",
+      "contract_local_symbol": "10-Year T-Note Futures",
+      "side": "long",
+      "qty": 3,
+      "net_qty": 3,
+      "avg_price": 106.8594
+    }
+  ]
 }
